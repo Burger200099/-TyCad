@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Requirement dialog of the parts library editor: one rating a generic part requires - what it applies to (the whole part or one of its child objects), the
   quantity (its unit is fixed by the quantity), minimum / typical / maximum (any of them, empty = not given), and a condition. Used to add a requirement and to
   change one. The numbers are read with a point or a comma as the decimal mark; the rest of the rules (min <= typ <= max, no duplicate) are the library's.

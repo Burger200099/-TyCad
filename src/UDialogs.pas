@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The program's dialogs, built in code: New Document (with every standard paper size) and the
   properties of a ladder rail object.
 

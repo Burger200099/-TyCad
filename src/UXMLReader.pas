@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Port of XMLReader.h/.cpp (CXMLReader).
 
   The C++ class was a hand-written streaming parser (plus xml_parse_tag.cpp, 496 lines).

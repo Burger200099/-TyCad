@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Port of the SPICE and VHDL netlist writers of NetList.cpp (CNetList::WriteSpiceFile, expand_spice, eval_spice_macro, get_attr,
   get_pin_by_number and WriteVHDLFile with its Bus_Properties helpers).
 

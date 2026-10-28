@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Document variables for title blocks and text: "$(SHEET) of $(SHEETCOUNT)" and friends.
 
   A variable is written $(NAME) (case-insensitive). "$$" is a literal dollar sign. An unknown

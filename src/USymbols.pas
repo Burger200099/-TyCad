@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Port of the symbol-definition part of Symbol.h/.cpp (CSymbolField, CDesignFileSymbol) and
   ListOfSymbols.*: the SYMBOLDEF tables stored inside each design.
 

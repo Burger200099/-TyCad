@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Draws a design sheet onto a TCanvas. This is the "Paint" half of the TinyCAD object classes,
   rewritten for the LCL canvas. Everything is positioned with the same TTransform the C++ code
   uses (zoom, origin, and the rotate/mirror/scale set up for a placed symbol), so symbols are drawn

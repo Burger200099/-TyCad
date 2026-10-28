@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { File names inside a design file (CTinyCadDoc::formatXMLFilename / unformatXMLFilename).
 
   A design stores the files it refers to (a hierarchical symbol's design) relative to the design's own

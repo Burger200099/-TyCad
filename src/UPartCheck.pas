@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The parts check of the design rules check (not in TinyCAD): for every placed part of a parts library, the product chosen for it is judged against what the part requires
   (UPartData.CheckFit, which follows the ProductFit views of parts_schema.sql), and one line and one marker is made for each problem:
     - a requirement the product does not meet (undersized, missing a rated quantity, mismatched): an error

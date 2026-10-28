@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The rules of the library manager (TinyCAD's CDlgLibraryBox, Library > Libraries...) without any window: what a library is called in the list, which file a name
   stands for, checking that a file is a library, making a new empty library, and cleaning one up (SQLite VACUUM). Every function reports a problem as the text the
   dialog shows. The dialog and the library panel keep the list; this unit knows only files.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Product dialog of the parts library editor: manufacturer, model number, series, class, status and description of one catalog product. Used to add a product
   and to change one. The rules (manufacturer + model number unique, class not abstract) are the library's.
 

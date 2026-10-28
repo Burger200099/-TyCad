@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Field dialog of the parts library editor: one field declared by a part class (name, type, unit, the values of an enum, whether parts must have it and a
   description). Subclasses inherit the field.
 

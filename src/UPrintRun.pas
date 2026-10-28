@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Printing a design: drawing one printed page onto a canvas, where the pages go (a printer, or bitmaps for the print preview and for tests) and the print job that
   cuts a design into pages and sends them (the drawing half of CTinyCadView::OnBeginPrinting / OnPrepareDC / OnDraw while printing, and the loop MFC runs).
 

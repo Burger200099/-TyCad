@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Test helper for placed symbols (TDrawMethod). For one placement it checks:
     draw path    the symbol drawn through Transform.SetTRM puts each pin where
                  TranslatePointToDesign says (two independent C++ code paths)

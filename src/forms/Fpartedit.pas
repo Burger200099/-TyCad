@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Part dialog of the parts library editor: name, class, reference letters, status and description of one generic part. It is used to add a part (the class
   is chosen here) and to change one (the class is shown but cannot be changed: values and child objects belong to the class). OK is refused while the name is empty.
   Setup fills it from a parts library; the properties give the entries back.

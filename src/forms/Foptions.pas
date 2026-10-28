@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Options dialog (TinyCAD's View > Options): three pages, as TinyCAD has them.
     Grid       the spacing of the grid (in the units chosen below, or one of the usual sizes), whether it is shown and whether
                it is snapped to, and whether lengths are shown in millimetres or inches

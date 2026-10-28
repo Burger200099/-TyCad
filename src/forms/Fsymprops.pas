@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Update Library dialog (TinyCAD's CDlgUpdateBox, IDD_UPDATE), shown when a symbol is stored in its library and for Symbol Properties: the library, the number of
   parts per package, the default orientation, the names of the symbol (a symbol can have several, the aliases), and for the name chosen its description, its attributes
   (Reference and Name first, which cannot be deleted or renamed, then the others, each with a display method and a default value) and its SPICE data (model, prolog,

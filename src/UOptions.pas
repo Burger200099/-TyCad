@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The values of the Options dialog and what can be done with them away from the dialog: converting lengths between millimetres and
   inches, reading a number the way a person types it, checking the values, and moving them between the program's settings
   (what new designs start with, kept in the registry) and the dialog. The dialog itself is in Foptions, and the main form applies

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Loading and saving the program's settings (the record ProgramSettings in consts.pas) with TRegistry, under
   HKEY_CURRENT_USER\REG_HPLSOFT_KEY (Software\HPL Software\TyCAD Electrical), each field as a value of its own.
   On systems without a registry the FPC Registry unit keeps the same keys and values in a file in the user's

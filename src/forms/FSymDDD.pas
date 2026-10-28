@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The parameter list of a placed symbol, dropped down from the Parameters button of the symbol's property frame (TinyCAD's list in the symbol tool options, CEditDlgMethodEdit:
   Parameter, Show?, Value, with Add and Delete).
     - every field of the symbol except the reference and the always hidden ones is a row;

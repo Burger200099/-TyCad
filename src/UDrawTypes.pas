@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Constants and small types from DrawingObject.h, color.h, Symbol.h, ArcPoint.h and UserColor.h.
   Original: Copyright 1994-2019 Matt Pyne, LGPL 2.1+. This port keeps that licence.
 

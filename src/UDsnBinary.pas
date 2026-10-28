@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Reader for TinyCAD's old binary .dsn design files (the format used before the files became XML).
 
   Port of the legacy branch of CTinyCadDoc::ReadFile (Io.cpp) together with everything it calls:

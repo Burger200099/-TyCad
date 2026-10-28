@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The property frame of a placed symbol, and of the symbol being placed: TinyCAD's symbol tool options (CEditDlgMethodEdit, IDD_METHOD) as ribbon controls.
     sbRotateSymbol   a click turns the symbol Up > Right > Down > Left; its arrow drops down the menu of the four directions and Mirror
     edRef            the reference (U?)                                  sym.ref

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Port of the netlist writers of NetList.cpp other than the Protel one (which is in UNetList): TinyCAD's own format, PADS-PCB (with
   and without values), Eagle script, gEDA PCB and XML, and CNetList::WriteNetListFile, which picks one by number.
 

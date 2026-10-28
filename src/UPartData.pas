@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { UPartData - what a design keeps of a part from a parts library (docs/parts_design_storage.md), and the fit check that needs only that.
 
   A design must open and be checked without the parts library, so the .dsn holds copies:

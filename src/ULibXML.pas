@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Library export and import as an XML file: port of CLibraryStore::SaveXML / LoadXML (LibraryStore.cpp) with CLibraryStoreNameSet::SaveXML / LoadXML and
   CSymbolRecord::SaveXML / LoadXML (Symbol.cpp), the menu commands File > Export all symbols... / Import symbols... of TinyCAD's library window and its
   context-menu command Export symbol.

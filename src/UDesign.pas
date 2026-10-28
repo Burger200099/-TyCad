@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Port of the document layer: Details.*, TransformSnap (Context.h), COption (Option.*),
   CTinyCadDoc's XML load/save (Io.cpp) and CTinyCadMultiDoc's file handling.
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Find panel: what TinyCAD's Find lists, in a frame that takes the place of the symbol library panel in the left
   panel of the main window. An entry and a Find button ask for the text; each object that mentions it is listed in
   lbFindResults ("Label: VCC", "Power: +5V" ...). Choosing an entry takes the main window to that object, which has a red

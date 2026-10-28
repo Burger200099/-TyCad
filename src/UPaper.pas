@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Paper sizes and the page border.
 
   Internal units are 0.2 mm (CDetails::M_NPIXELSPERMM = 5 per mm), so an A4 landscape sheet is

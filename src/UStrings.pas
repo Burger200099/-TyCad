@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 unit UStrings;
 
 { Every text the program shows (messages, undo names, file dialogs, names of objects ...) is a resourcestring here, grouped by the file that uses it.

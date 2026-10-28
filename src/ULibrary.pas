@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Port of LibrarySQLite.* and the library parts of Symbol.cpp (CLibraryStoreNameSet,
   CLibraryStoreSymbol): reading and writing .TCLib symbol libraries.
 

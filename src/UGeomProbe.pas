@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Test helper: for an object, pick a point that must lie on it, and check the hit-test
   agrees. Used by designtest and libtest ("geom" modes) on real files. }
 unit UGeomProbe;

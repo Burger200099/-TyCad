@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Colors dialog (TinyCAD's Options > Colors): the colors a schematic is drawn in - the background, wires, buses, junctions,
   no-connect marks, pins, power symbols and the three colors of a note - each shown as a swatch with a button to change it, and a
   button to go back to the standard colors. The dialog only holds the colors; the main form applies them to the design and

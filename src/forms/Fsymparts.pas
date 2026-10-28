@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Parts per Package dialog of the symbol editor (TinyCAD's Library > Set parts per package and Homogeneous / Heterogeneous Symbol, put in one window): how many parts
   the package has (1 to 26) and whether every part has a drawing of its own (heterogeneous) or all share one drawing whose pins are told apart by their part.
 

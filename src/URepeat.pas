@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Counting names and pin numbers when objects are placed one after another (TinyCAD's Options > Repeat Directions).
 
   Place a label, text or pin, and the next one to place starts as a copy of it with its number counted up or down: net names A1, A2, A3 ... or pin numbers 1, 2, 3 ... counting down

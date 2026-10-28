@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Check Design Rules dialog (TinyCAD's CDlgERCBox): eleven check boxes in two groups, the "design errors" (duplicated references, unconnected
   items, more than one item on a no-connect net, unassigned reference designators) and the "design warnings" (power connected to power, power
   connected to an output, output connected to an output, no output driving input(s), unconnected nets, multiple net names on the same net and

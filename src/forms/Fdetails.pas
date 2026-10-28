@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Design Details dialog: the title block text of a sheet (title, author, organisation, document
   number, revision, date, sheets), whether the title block is shown, the rulers (the drawing
   frame), the border, the automatic sheet numbers and the revision history. TinyCAD's own dialog

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Symbol Properties dialog of the parts library editor: drawing standard, purpose and name of one symbol of a part. What is allowed is checked by the library
   (TPartsLibrary.AddSymbol / UpdateSymbolInfo), which explains a refusal.
 

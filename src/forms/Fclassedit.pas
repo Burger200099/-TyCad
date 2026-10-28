@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Class dialog of the parts library editor: name, parent, abstract flag and description of one part class. Used to add a class (under the class chosen in the
   tree) and to change one, including moving it under another parent (a class cannot be moved under itself or its own subclasses, so those are not listed).
 

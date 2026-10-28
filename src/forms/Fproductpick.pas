@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Choose Product window: the products the parts library offers for a placed generic part, each with how well it fits the part's requirements (Fits, Fits (oversized),
   Does not fit with the counts). A product is chosen by selecting its row and pressing OK or by double clicking it. The controls are in Fproductpick.lfm (a TfrmBase with OK and Cancel); only the rows are made in code.
 

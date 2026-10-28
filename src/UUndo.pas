@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Undo and redo.
 
   Each undo step is a snapshot of the whole design (as the same text a save would write) taken just

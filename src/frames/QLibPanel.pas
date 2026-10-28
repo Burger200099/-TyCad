@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The symbol library panel: a frame that shows every open symbol library (.TCLib file) as a tree. The
   top level of the tree is the library file and its children are the symbols (records) in it, so
   several libraries can be open at once, as in TinyCAD. Selecting a symbol shows a preview; double

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Object properties for the ribbon: a uniform way to list, read and change what can be edited on an
   object, and to change one property on many objects at once (the multi-select mass change).
 

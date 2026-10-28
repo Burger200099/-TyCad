@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { CSplitButton - a split button: clicking the main part runs the button's action (OnClick), clicking the arrow part opens a pop-up menu (DownArrowPopup).
   Drawn with the platform theme (ThemeServices) so it looks like the other buttons; the arrow is a small triangle drawn here, so no symbol font is needed.
   Made in code (TSplitButton.Create(Owner); Parent := ...) or put on the palette by registering the unit in a package.

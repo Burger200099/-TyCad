@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Design Markers window (TinyCAD's CDlgERCListBox): a window that stays open beside the sheet and lists what the design rules check found, one line
   for each marker on the sheets. Choosing a line shows the marker (the main form finds it and shows its sheet); the buttons are Close, Re-check, and the
   convenience buttons Generate Symbol References, Generate PCB Netlist and Generate SPICE Netlist. Closing the window (the Close button or the window's own

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { CFontNameCombo - a drop-down list of the fonts installed on the computer, each name drawn in its own typeface.
     - FontName: the font chosen (read and set it by name; a name that is not installed, as in a design made on another computer, is added to the list so that the box shows it);
     - it is a list to choose from (the box is not typed into): typing chooses the font whose name starts with what was typed; a key pressed within a second of the one before adds to it

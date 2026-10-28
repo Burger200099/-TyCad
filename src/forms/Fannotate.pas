@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Generate Symbol References dialog (TinyCAD's CDlgAnnotateBox, IDD_ANNOTATE): the action (add or remove references), which references (all,
   un-numbered, or those of symbols with a given reference prefix, typed in a box), whether all sheets are covered, where the numbers start (a default
   of 1, or a typed value) and a button that, instead of numbering at once, hands out numbers one click at a time (the reference painter). OK, Cancel,

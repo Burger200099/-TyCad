@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { A demonstration property frame (see QPropFrame): the line color, width and style of a wire, and a fill type that a wire does not have (so it is hidden).
   It is not registered by the program; the self-test script registers it (registerframe) and a person can copy it as the start of a frame of their own.
 

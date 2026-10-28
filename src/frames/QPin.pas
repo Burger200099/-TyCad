@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The property frame of a pin of a symbol being drawn (CEditDlgPinEdit as ribbon controls). Every editor is bound to its property by QPropFrame, by its name:
     edPinName        the name of the pin                                   pin.name
     edPinNumber      the number (a text: 1, A3, ...)                       pin.number

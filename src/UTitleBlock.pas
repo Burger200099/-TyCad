@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Where everything of the extended title block goes, worked out from the page alone, so that the painter only has to draw it and a test can check the numbers.
 
   The standard block is TinyCAD's: 400 units wide and 9 lines of 18 units high in the bottom right corner of the page (set in from the edge by the width of the

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The arithmetic of printing a design: how many pages a sheet takes at a print scale, which part
   of which sheet each page shows, the print zoom, and the scale text of the Print dialog. No
   drawing and no printer here; the printer (or the preview, or a test) only has to tell this unit
