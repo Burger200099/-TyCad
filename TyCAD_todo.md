@@ -231,7 +231,7 @@ Order matters: each phase builds on the one before. Every item follows the stand
 - [ ] E3 Several electrical views of one part (see D6)
 - [ ] E4 Units: store SI and convert on display? Current: unit text per rating with RatingQuantity.Unit; add a conversion table (mA -> A) so a 4-20 mA module and a 0.02 A product compare
 - [ ] E5 Currency/price storage for Offer (decimal as integer minor units)
-- [ ] E6 Schema version 2 plan: nothing shipped yet; the moment a parts file leaves the test folder, raise CURRENT with a step and keep docs/parts_upgrade.py in sync
+- [x] E6 Schema version 2 shipped with Symbol.ShowsObject (parts plan step 1). Old note: nothing shipped yet; the moment a parts file leaves the test folder, raise CURRENT with a step and keep docs/parts_upgrade.py in sync
 - [ ] E7 Localisation of class and quantity names (Name stays the key; add display names)
 
 ## Phase F - things to verify on Windows (cannot be done here)
@@ -358,3 +358,9 @@ Order matters: each phase builds on the one before. Every item follows the stand
 - DONE: stretching several chosen wires together by one end handle (the end nearest the handle on each wire).
 - DONE: focus returns to the text box after a pan.
 - DONE: second print check box for symbol property text.
+- DONE: Special > Export Wires (wire labels and bus names, CSV). Assumed 'wire marker text' = wire labels + bus names; power symbol net names are not included.
+- DONE: parameter list remembers its size for the session.
+- DONE: parts plan step 1: part symbols record the Coil/Pole/Contact they draw (schema v2), placed part keeps it in the .dsn. NEXT: step 2 'Insert contact of K1' (docs/parts_review_and_roadmap.md). Not seen on Windows: the Shows drop-down layout.
+- DONE: parts plan step 2 (Insert NO/NC/Next Free Contact of selected coil). NEXT: step 3 (rung assignment) / step 4 (cross-reference text with NO/NC and Add Rung Reference). Open: contact numbering across sheets is by reference text only; a coil with more contacts than the part has is just refused with a message.
+- DONE: ruler units (right-click menu on the rulers, Options > Sheets > Ruler Units). The choice is program-wide, not per design; say if it should be saved in each design.
+- DONE: pin property frame shown while the Pin tool is active. Open: a ghost of the pin under the cursor before the click (none is drawn today).

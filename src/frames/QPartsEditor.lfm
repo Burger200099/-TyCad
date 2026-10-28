@@ -763,6 +763,10 @@ object frPartsEditor: TfrPartsEditor
           item
             Caption = 'Size (bytes)'
             Width = 100
+          end
+          item
+            Caption = 'Shows'
+            Width = 140
           end>
         HideSelection = False
         ReadOnly = True

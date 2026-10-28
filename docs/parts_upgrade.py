@@ -10,8 +10,8 @@ A step is SQL text or a function(connection). Add a new one to STEPS when the sc
 so that new files and upgraded files end up identical (tests/run_partsupgrade.py compares them).
 Usage: parts_upgrade.py <file.TCParts>"""
 import os, shutil, sqlite3, sys, datetime
-CURRENT = 1
-STEPS = {}          # {from_version: sql text or callable(connection)}   e.g. STEPS[1] = "ALTER TABLE Part ADD COLUMN Gtin TEXT;"
+CURRENT = 2
+STEPS = {1: "ALTER TABLE Symbol ADD COLUMN ShowsObject INTEGER REFERENCES PartObject(ObjectID);"}          # {from_version: sql text or callable(connection)}   e.g. STEPS[1] = "ALTER TABLE Part ADD COLUMN Gtin TEXT;"
 class UpgradeError(Exception): pass
 def read_version(c):
     try: f, v = c.execute("select Format, SchemaVersion from FormatInfo").fetchone()

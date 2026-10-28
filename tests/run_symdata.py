@@ -56,7 +56,7 @@ fo = run(["newdoc A4", "registerframe x all", "tool symboltext", "frameinfo tool
 fi = [l for l in fo if l.startswith("FRAMEINFO")]
 check("the symbol text uses the symbol frame with no problems, for the tool and for the selection", sum(l.startswith("FRAMEINFO TfmSymbols") and "problems=0" in l for l in fi) == 2, fi)
 check("its frame has no resize or power editor (they are hidden: not bound)", not any("sym.canscale" in l or "sym.showpower" in l for l in fi), fi)
-check("the parameter list shows Name and Other and 'add' gives a third row", "SYMLIST rows Name|Yes|Symbol text ## Other|No|" in fo and "SYMLIST state visible=1 delete=0 editing=0 rows=3" in fo, [l for l in fo if l.startswith("SYMLIST")])
+check("the parameter list shows Name and Other and 'add' gives a third row (the new row is selected: Delete is on and its value is being edited)", "SYMLIST rows Name|Yes|Symbol text ## Other|No|" in fo and "SYMLIST state visible=1 delete=1 editing=1 rows=3" in fo, [l for l in fo if l.startswith("SYMLIST")])
 
 # ---- the text box of the tool's panel: the text typed there is the text of what is placed; with none, a placed one still shows something (an empty one could not be seen or clicked)
 t_csv = os.path.join(tmp, "t.csv")

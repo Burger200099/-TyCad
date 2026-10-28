@@ -175,7 +175,13 @@ resourcestring
   rsAnObjectCannotBePlaced = 'An object cannot be placed below itself or below one of its own children.';
   rsTheObjectHoldsValuesOf = 'The object holds values of fields that the new kind does not have.';
   rsThatObjectIsNotIn = 'That object is not in this library.';
-  rsASymbolPinOutlineTerminal = 'A symbol pin, outline terminal or 3D terminal uses this object or one inside it; remove that first.';
+  rsSelectTheCoilFirst = 'Select the coil (a placed part symbol) first.';
+  rsThePartsLibraryOfThat = 'The parts library of that part is not the one open in the Parts tab.';
+  rsHasNoFreeContact = '%s has no free %s contact left.';
+  rsThatPartHasNoContactSymbol = 'That part has no schematic symbol that shows a contact.';
+  rsWholeDevice = '(whole device)';
+  rsASymbolCanOnlyShow = 'A symbol can only show a coil, a pole or a contact of its part.';
+  rsASymbolPinOutlineTerminal = 'A symbol, symbol pin, outline terminal or 3D terminal uses this object or one inside it; remove that first.';
   rsTheProductIsNotIn = 'The product is not in this library.';
   rsTheProductBelongsToAnother = 'The product belongs to another class than the part, so it cannot be suggested for it.';
   rsTheProductNeedsAManufacturer = 'The product needs a manufacturer.';
@@ -685,6 +691,8 @@ resourcestring
   rsExportSymbolBoM = 'Export Symbol BoM';
   rsExportSymbolData = 'Export Symbol Data';
   rsCannotWriteTheSymbolDataFile = 'Cannot write the symbol data file.  Please try again with a different filename.';
+  rsExportWires = 'Export Wires';
+  rsCannotWriteTheWiresFile = 'Cannot write the wires file.  Please try again with a different filename.';
   rsCSVFileCsvCsvAll = 'CSV file (*.csv)|*.csv|All files (*.*)|*.*';
   rsCreateSpiceNetList = 'Create Spice Net List';
   rsSPICENetNetAllFiles = 'SPICE (*.net)|*.net|All files (*.*)|*.*';

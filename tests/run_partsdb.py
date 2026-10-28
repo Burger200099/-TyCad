@@ -31,7 +31,7 @@ for i in range(len(parts)):
 o = run(S)
 li = db.execute("select Name, LibraryUID from LibraryInfo").fetchone()
 op = [l for l in o if l.startswith("PARTSOPEN")]
-check("the file opens, with the library's name, GUID, the schema version and the counts the database has", op == ["PARTSOPEN ok version=1 name=%s uid=%s parts=%d classes=%d" % (li[0], li[1], len(parts), db.execute("select count(*) from PartClass").fetchone()[0])], op)
+check("the file opens, with the library's name, GUID, the schema version and the counts the database has", op == ["PARTSOPEN ok version=2 name=%s uid=%s parts=%d classes=%d" % (li[0], li[1], len(parts), db.execute("select count(*) from PartClass").fetchone()[0])], op)
 got = [l[5:].split("|")[1:] for l in o if l.startswith("PART ") and not l.startswith("PART end")]
 check("the parts come in the order class name then part name, with GUID, name, class and description", got == [[u, nm, cl, de] for _, u, nm, cl, de in parts], got)
 check("opening a file at the current version does not change it (same bytes, no backup)", sha(f) == h0 and not os.path.exists(f + ".v1.bak"))
@@ -78,19 +78,21 @@ check("a missing file, a newer file, a text file and a TinyCAD library are each 
 check("the message for the newer file says so, and for a TinyCAD library says it is not a TyCAD parts file", "newer" in er[1] and (not have_tc or "not a TyCAD parts file" in er[3]), er)
 check("the refused files are untouched, and nothing is listed after a refusal", sha(newer) == hn and sha(txt) == ht and (not have_tc or sha(tcl) == hashlib.sha256(open(tc, "rb").read()).hexdigest()) and "PART end" in o and not any(l.startswith("PART 0") for l in o))
 # ---- the upgrade machinery with made-up steps
-g = os.path.join(tmp, "up.TCParts"); shutil.copy(f, g)
+f1 = os.path.join(tmp, "v1.TCParts"); shutil.copy(f, f1); x = sqlite3.connect(f1)   # a version 1 file (version 2 added Symbol.ShowsObject)
+x.execute("alter table Symbol drop column ShowsObject"); x.execute("update FormatInfo set SchemaVersion=1"); x.execute("pragma user_version=1"); x.commit(); x.close(); h1 = sha(f1)
+g = os.path.join(tmp, "up.TCParts"); shutil.copy(f1, g)
 o = run(["pdbupgrade %s 3 ALTER_TABLE_Part_ADD_COLUMN_Gtin_TEXT; update_Product_set_Series='x'_where_Series_is_null;" % g])
 c = sqlite3.connect(g)
 check("an old file goes through both steps: version, columns, data, history, backup", o == ["PARTSUPGRADE 3"] and "Gtin" in [r[1] for r in c.execute("pragma table_info(Part)")]
       and c.execute("select SchemaVersion from FormatInfo").fetchone()[0] == 3 and c.execute("pragma user_version").fetchone()[0] == 3
       and c.execute("select FromVersion,ToVersion from SchemaHistory order by 1").fetchall() == [(1, 2), (2, 3)] and c.execute("select count(*) from Product where Series is null").fetchone()[0] == 0
-      and os.path.exists(g + ".v1.bak") and sha(g + ".v1.bak") == h0, o)
-b = os.path.join(tmp, "bad.TCParts"); shutil.copy(f, b)
+      and os.path.exists(g + ".v1.bak") and sha(g + ".v1.bak") == h1, o)
+b = os.path.join(tmp, "bad.TCParts"); shutil.copy(f1, b)
 o = run(["pdbupgrade %s 3 ALTER_TABLE_Part_ADD_COLUMN_Ok1_TEXT; ALTER_TABLE_NoSuchTable_ADD_COLUMN_x_TEXT;" % b])
 c = sqlite3.connect(b)
 check("a failing step is undone and reported, the step before it stays", len(o) == 1 and o[0].startswith("PARTSUPGRADE error") and c.execute("select SchemaVersion from FormatInfo").fetchone()[0] == 2
       and "Ok1" in [r[1] for r in c.execute("pragma table_info(Part)")] and c.execute("select count(*) from SchemaHistory").fetchone()[0] == 1, o)
-d = os.path.join(tmp, "m.TCParts"); shutil.copy(f, d); hd = sha(d)
+d = os.path.join(tmp, "m.TCParts"); shutil.copy(f1, d); hd = sha(d)
 o = run(["pdbupgrade %s 4 ALTER_TABLE_Part_ADD_COLUMN_A_TEXT;" % d])
 check("a missing step is refused before anything is written (no backup either)", o and o[0].startswith("PARTSUPGRADE error") and sha(d) == hd and not os.path.exists(d + ".v1.bak"), o)
 print("%d checks, %d failed" % (n[0], len(fails))); sys.exit(1 if fails else 0)

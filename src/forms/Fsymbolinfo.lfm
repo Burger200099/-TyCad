@@ -1,16 +1,16 @@
 inherited frmSymbolInfo: TfrmSymbolInfo
   Left = 700
-  Height = 190
+  Height = 226
   Top = 300
   Width = 460
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Symbol Properties'
-  ClientHeight = 190
+  ClientHeight = 226
   ClientWidth = 460
   Position = poOwnerFormCenter
   inherited pnlButtons: TPanel
-    Top = 132
+    Top = 168
     Width = 460
     ClientWidth = 456
     inherited btnOK: TButton
@@ -85,5 +85,23 @@ inherited frmSymbolInfo: TfrmSymbolInfo
     Top = 86
     Width = 320
     TabOrder = 2
+  end
+  object lblShows: TLabel[7]
+    Left = 12
+    Height = 15
+    Top = 126
+    Width = 100
+    Caption = 'S&hows:'
+    FocusControl = cbShows
+  end
+  object cbShows: TComboBox[8]
+    Left = 120
+    Height = 23
+    Hint = 'The coil, pole or contact of the part this symbol draws (a relay is a coil symbol and contact symbols); the whole device when it draws all of it'
+    Top = 122
+    Width = 320
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 3
   end
 end

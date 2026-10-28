@@ -41,10 +41,13 @@ type
     SheetBorder, SheetRulers: Boolean;   // what the sheet of a new design starts with: a border, rulers ...
     SheetCols, SheetRows: Integer;       // ... the rulers' columns and rows (1 to 26; the rows are shown as a letter)
     SheetMarginMm: Double;               // ... the distance of the border from the edge of the page, millimetres
+    RulerUnits: Integer;                 // the units of the rulers round the drawing area: UNITS_MM, UNITS_INCHES, or -1 = those of the sheet
   end;
 
 { a length in millimetres as a number of the given units, and back }
 function MmToUnits(Mm: Double; Units: Integer): Double;
+{ the units the rulers round the drawing area show for a sheet: the one chosen for the rulers (ProgramSettings.RulerUnits), else the sheet's own }
+function RulerUnitsFor(SheetUnits: Integer): Integer;
 function UnitsToMm(Value: Double; Units: Integer): Double;
 function UnitsSuffix(Units: Integer): String;
 { a length as text for the screen: "12.5 mm" or "0.492 in" }
@@ -92,6 +95,24 @@ begin
     Result := Mm / MM_PER_INCH
   else
     Result := Mm;
+end;
+
+{ ===========================================================================
+  RulerUnitsFor  (function)
+  Parameters:
+    SheetUnits: Integer - the units of the sheet (UNITS_MM or UNITS_INCHES)
+  Returns:
+    Integer - UNITS_MM or UNITS_INCHES
+  Notes:
+    The rulers round the drawing area have a unit of their own, so the grid can be in millimetres and the rulers in inches. Until one is chosen (RulerUnits is -1) they
+    follow the sheet.
+  =========================================================================== }
+function RulerUnitsFor(SheetUnits: Integer): Integer;
+begin
+  if ProgramSettings.RulerUnits in [UNITS_MM, UNITS_INCHES] then
+    Result := ProgramSettings.RulerUnits
+  else
+    Result := SheetUnits;
 end;
 
 { ===========================================================================
@@ -355,6 +376,7 @@ begin
     Result.SheetCols := NewSheetCols;
     Result.SheetRows := NewSheetRows;
     Result.SheetMarginMm := NewSheetMarginMm;
+    Result.RulerUnits := RulerUnits;
   end;
 end;
 
@@ -389,6 +411,7 @@ begin
     NewSheetCols := D.SheetCols;
     NewSheetRows := D.SheetRows;
     NewSheetMarginMm := D.SheetMarginMm;
+    RulerUnits := D.RulerUnits;
   end;
 end;
 

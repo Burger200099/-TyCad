@@ -82,6 +82,8 @@ type
     procedure DoHide; override;
     procedure KeyDown(var Key: Word; Shift: TShiftState); override;
   public
+    { drops down at the size the list was last given in this session (the grip, or ResizeTo), when it was given one }
+    procedure Popup(AAnchor: TControl); override;
     { the symbol whose parameters are listed (the one selected or the one being placed) }
     procedure Attach(AMethod: TDrawMethod);
     procedure AttachMany(const AMethods: array of TDrawMethod);
@@ -111,10 +113,13 @@ type
 
 implementation
 
-
 uses UStrings;
 
 {$R *.lfm}
+
+var
+  GRememberedSize: TPoint;     // the size the list was last resized to in this session ((0, 0) until it is resized); a new list opens at it
+
 
 const
   SPACING = 5;        // the space between the symbol and its texts (CEditDlgMethodEdit)
@@ -588,6 +593,10 @@ begin
     Exit;
   FEditing := False;
   CommitCell(aRow - 1, aCol, NewValue);
+  { the grid keeps its editor on the cell (goAlwaysShowEditor): the next text typed there is an edit of the same cell, and its Enter must be taken too
+    (it was ignored, and only taken when something else made the list read the fields again) }
+  if grdParams.EditorMode and (aRow - 1 = FEditRow) and (aCol = FEditCol) and CellEditable(FEditRow, FEditCol) then
+    FEditing := True;
 end;
 
 { ===========================================================================
@@ -837,6 +846,26 @@ begin
   if T + NH > W.Bottom then
     T := W.Bottom - NH;
   SetBounds(L, T, NW, NH);
+  GRememberedSize := Point(Width, Height);
+end;
+
+{ ===========================================================================
+  TfrmSymbolPropList.Popup  (procedure)
+  Parameters:
+    AAnchor: TControl - the button it drops from
+  Notes:
+    A list that was resized earlier in this session opens at that size (the Properties panel is rebuilt for each selection, and the list with it, so the size is kept here, not in the form);
+    it is not kept for the next run of the program.
+  =========================================================================== }
+procedure TfrmSymbolPropList.Popup(AAnchor: TControl);
+begin
+  if (GRememberedSize.X > 0) and (GRememberedSize.Y > 0) then
+  begin
+    FDragging := False;
+    ResizeTo(GRememberedSize.X, GRememberedSize.Y);
+    GRememberedSize := Point(Width, Height);
+  end;
+  inherited Popup(AAnchor);
 end;
 
 procedure TfrmSymbolPropList.ilResizeMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);

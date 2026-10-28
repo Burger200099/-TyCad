@@ -296,6 +296,8 @@ type
     { the properties a draw tool can be given (line colour and style, fill, font ...) and the ones chosen so far }
     function ToolPropDefs(ATool: TViewTool): TPropDefArray;
     function ToolPropValue(ATool: TViewTool; const AName: String): String;
+    { gives a pin the values the next pin will have: those of the pin placed last (its number and name counted on) with what was chosen in the Pin tool's panel over them }
+    procedure FillPendingPin(Pn: TDrawPin);
     procedure SetToolDefault(ATool: TViewTool; const AName, AValue: String);
     procedure ClearToolDefaults;
     function WireAngleNow: Integer;
@@ -2344,9 +2346,7 @@ var
   BS: TDrawBusSlash;
   Tx: TDrawText;
   St: TDrawSymbolText;
-  Pn, Prev: TDrawPin;
-  i: Integer;
-  Num, PName: String;
+  Pn: TDrawPin;
 begin
   if ((FTool = vtOrigin) and (not Sheet.Options.EditLibrary)) or
      ((FTool = vtPin) and (not Sheet.Options.EditLibrary) and (not Sheet.IsHierarchicalSymbol)) then
@@ -2358,26 +2358,11 @@ begin
     vtPin:
       begin
         P := SnapPoint(NoSnap);
-        { the pin starts as the one placed last (if it is still there): its direction, length, shape and so on, with its number and name counted on }
-        Prev := nil;
-        if FLastPinId <> 0 then
-          for i := 0 to Sheet.Drawing.Count - 1 do
-            if (Sheet.Drawing[i].Id = FLastPinId) and (Sheet.Drawing[i] is TDrawPin) then
-              Prev := TDrawPin(Sheet.Drawing[i]);
         BeginChange(rsAddPin);
         Pn := TDrawPin.Create(Sheet.Options);
-        if Prev <> nil then
-        begin
-          Pn.Dir := Prev.Dir; Pn.Length := Prev.Length; Pn.NumberPos := Prev.NumberPos; Pn.Which := Prev.Which;
-          Pn.Elec := Prev.Elec; Pn.Show := Prev.Show; Pn.CentreName := Prev.CentreName;
-          Num := Prev.Number; PName := Prev.Str;
-          NextPinValues(Num, PName, FPinDir, FNameDir);
-          Pn.Number := Num; Pn.Str := PName;
-        end
-        else
-        begin
-          Pn.Number := '1'; Pn.Str := '';
-        end;
+        FillPendingPin(Pn);
+        if FToolDefaults[vtPin] <> nil then
+          FToolDefaults[vtPin].Clear;      // (what was chosen in the panel was for this pin; the next one counts on from it)
         Pn.Part := Sheet.Options.EditPart;
         Pn.PointA := P;
         Pn.DetermineSize;
@@ -2908,7 +2893,8 @@ begin
         end;
       end;
       { a field (reference, name, value ...) of the one selected symbol is dragged by itself, and keeps its new place relative to the symbol }
-      if (Button = mbLeft) and (not (ssShift in Shift)) and (FSelected.Count = 1) then
+      { (a symbol text is one block of text: a press on any line of it moves all of it, the lines are not dragged out of it) }
+      if (Button = mbLeft) and (not (ssShift in Shift)) and (FSelected.Count = 1) and (not (TObject(FSelected[0]) is TDrawSymbolText)) then
       begin
         FFieldCode := TDrawingObject(FSelected[0]).FieldAt(P);
         if FFieldCode >= FIELD_BASE then
@@ -3415,6 +3401,20 @@ begin
       end;
     Exit;
   end;
+  if ATool = vtPin then
+  begin
+    { the pin about to be placed: all of its properties (a pin can only be placed while a symbol is edited) }
+    if Sheet.Options.EditLibrary or Sheet.IsHierarchicalSymbol then
+    begin
+      Sample := TDrawPin.Create(Sheet.Options);
+      try
+        Result := ObjectProps(Sample);
+      finally
+        Sample.Free;
+      end;
+    end;
+    Exit;
+  end;
   Sample := ToolSampleOf(Sheet.Options, ATool);
   if Sample = nil then
     Exit;
@@ -3456,6 +3456,42 @@ begin
 end;
 
 { ===========================================================================
+  TSchematicView.FillPendingPin  (procedure)
+  Parameters:
+    Pn: TDrawPin - a new pin
+  Notes:
+    The pin starts as the one placed last (if it is still there): its direction, length, shape and so on, with its number and name counted on; a first pin starts as a new
+    pin does. What was chosen in the Pin tool's panel before the pin is put down (FToolDefaults) is applied over that. Used for the panel's values and for the pin placed.
+  =========================================================================== }
+procedure TSchematicView.FillPendingPin(Pn: TDrawPin);
+var
+  Prev: TDrawPin;
+  i: Integer;
+  Num, PName: String;
+begin
+  Prev := nil;
+  if FLastPinId <> 0 then
+    for i := 0 to Sheet.Drawing.Count - 1 do
+      if (Sheet.Drawing[i].Id = FLastPinId) and (Sheet.Drawing[i] is TDrawPin) then
+        Prev := TDrawPin(Sheet.Drawing[i]);
+  if Prev <> nil then
+  begin
+    Pn.Dir := Prev.Dir; Pn.Length := Prev.Length; Pn.NumberPos := Prev.NumberPos; Pn.Which := Prev.Which;
+    Pn.Elec := Prev.Elec; Pn.Show := Prev.Show; Pn.CentreName := Prev.CentreName;
+    Num := Prev.Number; PName := Prev.Str;
+    NextPinValues(Num, PName, FPinDir, FNameDir);
+    Pn.Number := Num; Pn.Str := PName;
+  end
+  else
+  begin
+    Pn.Number := '1'; Pn.Str := '';
+  end;
+  if FToolDefaults[vtPin] <> nil then
+    for i := 0 to FToolDefaults[vtPin].Count - 1 do
+      SetProp(Pn, FToolDefaults[vtPin].Names[i], FToolDefaults[vtPin].ValueFromIndex[i]);
+end;
+
+{ ===========================================================================
   TSchematicView.ToolPropValue  (function)
   Parameters:
     ATool: TViewTool
@@ -3480,6 +3516,17 @@ begin
   if (ATool = vtPlace) and (FGhost <> nil) then
   begin
     GetProp(FGhost, AName, Result);      { (the symbol being placed holds what was chosen for it) }
+    Exit;
+  end;
+  if ATool = vtPin then
+  begin
+    Sample := TDrawPin.Create(Sheet.Options);       { (the pin as the next one will be) }
+    try
+      FillPendingPin(TDrawPin(Sample));
+      GetProp(Sample, AName, Result);
+    finally
+      Sample.Free;
+    end;
     Exit;
   end;
   if AName = 'wire.angle' then

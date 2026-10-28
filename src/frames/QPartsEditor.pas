@@ -345,6 +345,8 @@ type
     function AddSymbolDrawing(PartID: Int64; const AStandard, APurpose, AName, ABlob: String; out NewID: Int64): Boolean;
     function StoreSymbolDrawing(SymbolID: Int64; const ABlob: String): Boolean;
     function ChangeSymbolInfo(SymbolID: Int64; const AStandard, APurpose, AName: String): Boolean;
+    { SymbolID draws ObjectID of its part (0 = the whole device); False with LastError when refused }
+    function ChangeSymbolShows(SymbolID, ObjectID: Int64): Boolean;
     function MakeDefaultSymbol(SymbolID: Int64): Boolean;
     function RemoveSymbol(SymbolID: Int64): Boolean;
     procedure CmdSymNew;
@@ -2802,6 +2804,7 @@ begin
         else
           It.SubItems.Add('');
         It.SubItems.Add(IntToStr(FSymbols[i].Bytes));
+        It.SubItems.Add(FSymbols[i].ShowsName);
         It.Data := Pointer(PtrInt(i));
         if FSymbols[i].ID = WantID then
           Chosen := It;
@@ -2922,6 +2925,24 @@ begin
   Result := True;
 end;
 
+function TfrPartsEditor.ChangeSymbolShows(SymbolID, ObjectID: Int64): Boolean;
+begin
+  Result := False;
+  FLastError := '';
+  try
+    FLib.SetSymbolShows(SymbolID, ObjectID);
+  except
+    on E: EPartsError do
+    begin
+      FLastError := E.Message;
+      Exit;
+    end;
+  end;
+  ReloadAfterSymbolStore(CurrentSymPartID);
+  FillSymbols(SymbolID);
+  Result := True;
+end;
+
 function TfrPartsEditor.MakeDefaultSymbol(SymbolID: Int64): Boolean;
 begin
   Result := False;
@@ -3021,10 +3042,10 @@ begin
     Exit;
   Dlg := TfrmSymbolInfo.Create(Self);
   try
-    Dlg.Setup(FSymbols[Row].Standard, FSymbols[Row].Purpose, FSymbols[Row].Name);
+    Dlg.Setup(FSymbols[Row].Standard, FSymbols[Row].Purpose, FSymbols[Row].Name, FLib.FunctionObjects(CurrentSymPartID), FSymbols[Row].ShowsID);
     while Dlg.ShowModal = mrOK do
     begin
-      if ChangeSymbolInfo(FSymbols[Row].ID, Dlg.Standard, Dlg.Purpose, Dlg.SymName) then
+      if ChangeSymbolInfo(FSymbols[Row].ID, Dlg.Standard, Dlg.Purpose, Dlg.SymName) and ChangeSymbolShows(FSymbols[Row].ID, Dlg.ShowsID) then
         Break;
       ShowError(FLastError);
     end;

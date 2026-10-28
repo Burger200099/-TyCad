@@ -715,9 +715,40 @@ msgctxt "ustrings.rsthatobjectisnotin"
 msgid "That object is not in this library."
 msgstr ""
 
+#: ustrings.rsselectthecoilfirst
+msgctxt "ustrings.rsselectthecoilfirst"
+msgid "Select the coil (a placed part symbol) first."
+msgstr ""
+
+#: ustrings.rsthepartslibraryofthat
+msgctxt "ustrings.rsthepartslibraryofthat"
+msgid "The parts library of that part is not the one open in the Parts tab."
+msgstr ""
+
+#: ustrings.rshasnofreecontact
+#, object-pascal-format
+msgctxt "ustrings.rshasnofreecontact"
+msgid "%s has no free %s contact left."
+msgstr ""
+
+#: ustrings.rsthatparthasnocontactsymbol
+msgctxt "ustrings.rsthatparthasnocontactsymbol"
+msgid "That part has no schematic symbol that shows a contact."
+msgstr ""
+
+#: ustrings.rswholedevice
+msgctxt "ustrings.rswholedevice"
+msgid "(whole device)"
+msgstr ""
+
+#: ustrings.rsasymbolcanonlyshow
+msgctxt "ustrings.rsasymbolcanonlyshow"
+msgid "A symbol can only show a coil, a pole or a contact of its part."
+msgstr ""
+
 #: ustrings.rsasymbolpinoutlineterminal
 msgctxt "ustrings.rsasymbolpinoutlineterminal"
-msgid "A symbol pin, outline terminal or 3D terminal uses this object or one inside it; remove that first."
+msgid "A symbol, symbol pin, outline terminal or 3D terminal uses this object or one inside it; remove that first."
 msgstr ""
 
 #: ustrings.rstheproductisnotin
@@ -3079,6 +3110,16 @@ msgstr ""
 #: ustrings.rscannotwritethesymboldatafile
 msgctxt "ustrings.rscannotwritethesymboldatafile"
 msgid "Cannot write the symbol data file.  Please try again with a different filename."
+msgstr ""
+
+#: ustrings.rsexportwires
+msgctxt "ustrings.rsexportwires"
+msgid "Export Wires"
+msgstr ""
+
+#: ustrings.rscannotwritethewiresfile
+msgctxt "ustrings.rscannotwritethewiresfile"
+msgid "Cannot write the wires file.  Please try again with a different filename."
 msgstr ""
 
 #: ustrings.rscsvfilecsvcsvall
@@ -6053,6 +6094,21 @@ msgctxt "tfrmoptions.pcoptions.tssheets.label8.caption"
 msgid "New Sheet Default Behavior"
 msgstr ""
 
+#: tfrmoptions.pcoptions.tssheets.radiogroup1.caption
+msgctxt "tfrmoptions.pcoptions.tssheets.radiogroup1.caption"
+msgid "Ruler Units"
+msgstr ""
+
+#: tfrmoptions.pcoptions.tssheets.radiogroup1.rbrulermm.caption
+msgctxt "tfrmoptions.pcoptions.tssheets.radiogroup1.rbrulermm.caption"
+msgid "mm"
+msgstr ""
+
+#: tfrmoptions.pcoptions.tssheets.radiogroup1.rbrulerin.caption
+msgctxt "tfrmoptions.pcoptions.tssheets.radiogroup1.rbrulerin.caption"
+msgid "inches"
+msgstr ""
+
 #: tfrmoptions.pnlnavigation.caption
 msgctxt "tfrmoptions.pnlnavigation.caption"
 msgid "Buttons for tabs"
@@ -6812,6 +6868,16 @@ msgstr ""
 #: tfrmsymbolinfo.edname.hint
 msgctxt "tfrmsymbolinfo.edname.hint"
 msgid "The name of the symbol; empty takes the part's name"
+msgstr ""
+
+#: tfrmsymbolinfo.lblshows.caption
+msgctxt "tfrmsymbolinfo.lblshows.caption"
+msgid "S&hows:"
+msgstr ""
+
+#: tfrmsymbolinfo.cbshows.hint
+msgctxt "tfrmsymbolinfo.cbshows.hint"
+msgid "The coil, pole or contact of the part this symbol draws (a relay is a coil symbol and contact symbols); the whole device when it draws all of it"
 msgstr ""
 
 #: tfrmsymbolparts.caption
@@ -8704,6 +8770,46 @@ msgctxt "tfrmmain.mmain.mspecial.msymboldata.hint"
 msgid "Write every symbol and symbol text with all of its fields, one column per field name, as a CSV file"
 msgstr ""
 
+#: tfrmmain.mmain.mspecial.mexportwires.caption
+msgctxt "tfrmmain.mmain.mspecial.mexportwires.caption"
+msgid "Export &Wires..."
+msgstr ""
+
+#: tfrmmain.mmain.mspecial.mexportwires.hint
+msgctxt "tfrmmain.mmain.mspecial.mexportwires.hint"
+msgid "Write the text of every wire label and bus name, with its sheet and position, as a CSV file"
+msgstr ""
+
+#: tfrmmain.mmain.mspecial.minsertcontactno.caption
+msgctxt "tfrmmain.mmain.mspecial.minsertcontactno.caption"
+msgid "Insert &NO Contact of Selected Coil"
+msgstr ""
+
+#: tfrmmain.mmain.mspecial.minsertcontactno.hint
+msgctxt "tfrmmain.mmain.mspecial.minsertcontactno.hint"
+msgid "Place the next unused normally open contact of the selected relay or contactor, with its reference"
+msgstr ""
+
+#: tfrmmain.mmain.mspecial.minsertcontactnc.caption
+msgctxt "tfrmmain.mmain.mspecial.minsertcontactnc.caption"
+msgid "Insert N&C Contact of Selected Coil"
+msgstr ""
+
+#: tfrmmain.mmain.mspecial.minsertcontactnc.hint
+msgctxt "tfrmmain.mmain.mspecial.minsertcontactnc.hint"
+msgid "Place the next unused normally closed contact of the selected relay or contactor, with its reference"
+msgstr ""
+
+#: tfrmmain.mmain.mspecial.minsertcontactfree.caption
+msgctxt "tfrmmain.mmain.mspecial.minsertcontactfree.caption"
+msgid "Insert Next &Free Contact of Selected Coil"
+msgstr ""
+
+#: tfrmmain.mmain.mspecial.minsertcontactfree.hint
+msgctxt "tfrmmain.mmain.mspecial.minsertcontactfree.hint"
+msgid "Place the next unused contact, of any form, of the selected relay or contactor, with its reference"
+msgstr ""
+
 #: tfrmmain.mmain.mspecial.mduprefs.caption
 msgctxt "tfrmmain.mmain.mspecial.mduprefs.caption"
 msgid "Check &Duplicate References..."
@@ -10264,6 +10370,26 @@ msgctxt "tfrmmain.pmalignmentoptions.mialign1pxgrid.hint"
 msgid "Draw the grid dots one pixel wide (symbol editing)"
 msgstr ""
 
+#: tfrmmain.pmrulerunits.mirulermm.caption
+msgctxt "tfrmmain.pmrulerunits.mirulermm.caption"
+msgid "Millimetres"
+msgstr ""
+
+#: tfrmmain.pmrulerunits.mirulermm.hint
+msgctxt "tfrmmain.pmrulerunits.mirulermm.hint"
+msgid "Show the rulers in millimetres"
+msgstr ""
+
+#: tfrmmain.pmrulerunits.mirulerin.caption
+msgctxt "tfrmmain.pmrulerunits.mirulerin.caption"
+msgid "Inches"
+msgstr ""
+
+#: tfrmmain.pmrulerunits.mirulerin.hint
+msgctxt "tfrmmain.pmrulerunits.mirulerin.hint"
+msgid "Show the rulers in inches"
+msgstr ""
+
 #: tfrmmain.pmclosedocmenu.miclosealldoc.caption
 msgctxt "tfrmmain.pmclosedocmenu.miclosealldoc.caption"
 msgid "Close All"
@@ -11127,6 +11253,11 @@ msgstr ""
 #: tfrpartseditor.pceditor.tssymbols.lvsymbols.columns[4].caption
 msgctxt "tfrpartseditor.pceditor.tssymbols.lvsymbols.columns[4].caption"
 msgid "Size (bytes)"
+msgstr ""
+
+#: tfrpartseditor.pceditor.tssymbols.lvsymbols.columns[5].caption
+msgctxt "tfrpartseditor.pceditor.tssymbols.lvsymbols.columns[5].caption"
+msgid "Shows"
 msgstr ""
 
 #: tfrpartseditor.pceditor.tsproducts.caption

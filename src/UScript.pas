@@ -1145,6 +1145,14 @@ begin
     else
       WriteLn('PE sym info error ', Ed.LastError);
   end
+  else if Sub = 'shows' then
+  begin
+    { pe sym shows|<row>|<object id, 0 = the whole device> }
+    if Ed.ChangeSymbolShows(Ed.SymbolIDOfRow(Row), StrToInt64Def(A[2], 0)) then
+      WriteLn('PE sym shows ok')
+    else
+      WriteLn('PE sym shows error ', Ed.LastError);
+  end
   else if Sub = 'default' then
   begin
     if Ed.MakeDefaultSymbol(Ed.SymbolIDOfRow(Row)) then
@@ -1344,6 +1352,7 @@ end;
 procedure RunScript(Form: TfrmMain; const FileName: String);
 var
   Lines, T, Lines2, ListAny: TStringList;
+  WireN: Integer;
   Fr: TFrame;
   PopM: TPopupMenu;
   PeEd: TfrPartsEditor;
@@ -1377,7 +1386,7 @@ var
   FTCombo: TFontNameCombo;
   KMsg: TLMKey;
   FS: TFileStream;
-  Txt: String;
+  Txt, Txt2, Txt3: String;
   DF: TfrmDetails;
   ApplyAll: Boolean;
   PF: TfrmPageSetup;
@@ -2279,6 +2288,14 @@ begin
             if O is TDrawText then
               WriteLn('TEXTBOX ', FormatFloat('0.000', Abs(TDrawText(O).PointB.x - TDrawText(O).PointA.x) / UNITS_PER_MM, DefaultFormatSettings), ' ',
                 FormatFloat('0.000', Abs(TDrawText(O).PointB.y - TDrawText(O).PointA.y) / UNITS_PER_MM, DefaultFormatSettings));
+          end
+        else if Cmd = 'selectobj' then
+          begin
+            { selectobj <index> : selects only the object of that index in the sheet's drawing; prints SELECTOBJ <selected count> }
+            Form.View.ClearSelection;
+            Form.View.SelectObject(Form.View.Sheet.Drawing[StrToInt(T[1])], False);
+            Settle;
+            WriteLn('SELECTOBJ ', Form.View.SelectedCount);
           end
         else if Cmd = 'selectalike' then begin
           Form.View.SelectAllAlike;
@@ -3497,6 +3514,11 @@ begin
                     OptF.cbSymbolSize.Text := OptVal;
                     OptF.SymbolFontChange(nil);
                   end
+                else if OptKey = 'rulerunits' then
+                begin
+                  OptF.rbRulerMM.Checked := LowerCase(OptVal) <> 'in';
+                  OptF.rbRulerIN.Checked := LowerCase(OptVal) = 'in';
+                end
                 else if OptKey = 'symbold' then
                   OptF.sbBold.Down := OptVal = '1'
                 else if OptKey = 'symitalic' then
@@ -3731,6 +3753,13 @@ begin
           begin
             { symdata <file> : Special > Export Symbol Data (CSV) to that file; prints SYMDATA wrote=<0|1> }
             WriteLn('SYMDATA wrote=', Ord(Form.WriteSymbolData(T[1])));
+            Settle;
+          end
+        else if Cmd = 'wirexport' then
+          begin
+            { wirexport <file> : Special > Export Wires (CSV) to that file; prints WIREXPORT wrote=<0|1> rows=<n> }
+            k := Ord(Form.WriteWires(T[1], WireN));
+            WriteLn('WIREXPORT wrote=', k, ' rows=', WireN);
             Settle;
           end
         else if Cmd = 'partslist' then
@@ -4398,6 +4427,26 @@ begin
             WriteLn('PDBPLACE ', T[1], ' ', Form.PlacePartRow(StrToInt(T[1]), Num(T[2]), Num(T[3])));
             Settle;
           end
+        else if Cmd = 'insertcontact' then
+          begin
+            { insertcontact <NO|NC|any> <x mm> <y mm> [yes|no] : Special > Insert (NO / NC / Next Free) Contact of Selected Coil, then a click at the point to put it down;
+              yes / no answer the compatibility warning in advance. Prints INSERTCONTACT <placed|nosel|nolibrary|none|nosymbol|refused|nosheet|blocked> <contact name> }
+            if T.Count > 4 then
+              if LowerCase(T[4]) = 'yes' then
+                Form.PartsWarnMode := 1
+              else
+                Form.PartsWarnMode := 2;
+            if LowerCase(T[1]) = 'any' then
+              Txt2 := ''
+            else
+              Txt2 := UpperCase(T[1]);
+            Txt3 := Form.InsertContactOf(Txt2, Txt);
+            WriteLn('INSERTCONTACT ', Txt3, ' ', Txt);
+            if Txt3 = 'placed' then
+              Form.View.ClickAt(Form.View.DesignToScreen(DPoint(Num(T[2]) * UNITS_PER_MM, Num(T[3]) * UNITS_PER_MM)).x,
+                                Form.View.DesignToScreen(DPoint(Num(T[2]) * UNITS_PER_MM, Num(T[3]) * UNITS_PER_MM)).y, []);
+            Settle;
+          end
         else if (Cmd = 'pdbchoose') or (Cmd = 'pdbtype') or (Cmd = 'pdbclear') or (Cmd = 'pdbinfo') or (Cmd = 'pdbfit') then
           PartCommand(Form, T)
         else if Cmd = 'pdbpick' then
@@ -4526,6 +4575,19 @@ begin
             Settle;
             WriteLn('VIEWRULERS wanted=', Ord(Form.RulersWanted), ' top=', Ord(Form.RulerTop.Visible), ' left=', Ord(Form.RulerLeft.Visible), ' menu=', Ord(Form.miShowViewRulers.Checked),
               ' box=', Ord(Form.miAlignShowRulers.Checked), ' saved=', Ord(ProgramSettings.ShowViewRulers));
+          end
+        else if Cmd = 'rulerunits' then
+          begin
+            { rulerunits mm | in | popup | status : the ruler menu (right click on a ruler). mm / in click its item; popup opens it (the ticks are set as they would be shown);
+              status only reports. Prints RULERUNITS saved=<-1|0|1> mm=<ticked> in=<ticked> topmenu=<1 if the top ruler has the menu> leftmenu=<same> }
+            if LowerCase(T[1]) = 'mm' then
+              Form.DoRulerUnits(Form.miRulerMM)
+            else if LowerCase(T[1]) = 'in' then
+              Form.DoRulerUnits(Form.miRulerIN);
+            Form.RulerUnitsPopup(nil);
+            Settle;
+            WriteLn('RULERUNITS saved=', ProgramSettings.RulerUnits, ' mm=', Ord(Form.miRulerMM.Checked), ' in=', Ord(Form.miRulerIN.Checked), ' topmenu=',
+              Ord(Form.RulerTop.PopupMenu = Form.pmRulerUnits), ' leftmenu=', Ord(Form.RulerLeft.PopupMenu = Form.pmRulerUnits));
           end
         else if Cmd = 'rulerinfo' then
           begin

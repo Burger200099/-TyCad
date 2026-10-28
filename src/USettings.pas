@@ -100,6 +100,7 @@ begin
     ShowPosition := True;                  // the Position bar is shown to begin with
     LastPartsFile := '';
     PartsWarningOff := False;              // the warning about parts is shown until the person turns it off
+    RulerUnits := -1;                      // the rulers use the sheet's units until the person chooses
     ShowViewRulers := True;                // so are the rulers round the drawing area (TinyCAD shows them)
   end;
   for i := UC_WIRE to UC_NOTETEXT_TEXT do UserColorOverride[i] := -1;
@@ -295,6 +296,9 @@ begin
           ShowPosition := ReadBoolSafe(R, REG_SHOWPOSITION, ShowPosition);
           LastPartsFile := ReadTextSafe(R, REG_PARTSFILE, LastPartsFile);
           PartsWarningOff := ReadBoolSafe(R, REG_PARTSWARNING, PartsWarningOff);
+          RulerUnits := ReadIntSafe(R, REG_RULERUNITS, RulerUnits);
+          if (RulerUnits < -1) or (RulerUnits > 1) then
+            RulerUnits := -1;
           ShowViewRulers := ReadBoolSafe(R, REG_SHOWVIEWRULERS, ShowViewRulers);
           ReopenDesigns := ReadBoolSafe(R, REG_REOPEN, ReopenDesigns);
           SymbolFontName := ReadTextSafe(R, REG_SYMFONTNAME, SymbolFontName);
@@ -435,6 +439,7 @@ begin
           R.WriteBool(REG_SHOWPOSITION, ShowPosition);
           R.WriteString(REG_PARTSFILE, LastPartsFile);
           R.WriteBool(REG_PARTSWARNING, PartsWarningOff);
+          R.WriteInteger(REG_RULERUNITS, RulerUnits);
           R.WriteBool(REG_SHOWVIEWRULERS, ShowViewRulers);
           R.WriteBool(REG_REOPEN, ReopenDesigns);
           R.WriteString(REG_SYMFONTNAME, SymbolFontName);

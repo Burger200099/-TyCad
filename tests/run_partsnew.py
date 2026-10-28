@@ -4,7 +4,7 @@ program under Xvfb (script 'pdbtab new <file>' = the menu command without its Sa
 Oracles (all independent of the program's own code): the schema is applied by Python's sqlite3 from docs/parts_schema.sql and the taxonomy built by
 docs/parts_seed.py; the new file must have the same objects (names and normalised SQL), the same taxonomy rows, FormatInfo/LibraryInfo as the format says,
 PRAGMA integrity/foreign key checks clean, and must accept a part with a rating (and refuse a rating with a wrong unit, by the schema's own trigger).
-  - the file: objects equal to the reference schema, user_version 1, FormatInfo, LibraryInfo (name = file name, a GUID that differs between two files)
+  - the file: objects equal to the reference schema, user_version 2, FormatInfo, LibraryInfo (name = file name, a GUID that differs between two files)
   - taxonomy equal to the seed's; no parts, no products
   - usable: a part and a product can be inserted in Python; the program opens the file again (0 rows) and then lists the part
   - an existing file is replaced (new GUID); an impossible path gives an error and leaves no file
@@ -39,9 +39,9 @@ c = sqlite3.connect(a); r2 = sqlite3.connect(b)
 oa, orf = objects(c), objects(ref)
 check("same tables, views and triggers as the reference schema", set(oa) == set(orf), (set(orf) ^ set(oa)))
 check("every definition equals the reference's", all(oa[k] == orf[k] for k in orf if k in oa), [k for k in orf if k in oa and oa[k] != orf[k]])
-check("user_version 1", c.execute("pragma user_version").fetchone()[0] == 1)
+check("user_version 2", c.execute("pragma user_version").fetchone()[0] == 2)
 fi = c.execute("select Format,SchemaVersion,TinyCADCompatible,Generator from FormatInfo").fetchall()
-check("FormatInfo: TyCAD-Parts, version 1, not TinyCAD compatible", fi == [("TyCAD-Parts", 1, 0, "TyCAD")], fi)
+check("FormatInfo: TyCAD-Parts, version 2, not TinyCAD compatible", fi == [("TyCAD-Parts", 2, 0, "TyCAD")], fi)
 li = c.execute("select LibraryUID,Name,Created from LibraryInfo").fetchall()
 check("LibraryInfo: one row, name = file name, a GUID, a creation stamp", len(li) == 1 and li[0][1] == "Mine" and li[0][2], li)
 check("the GUID is a GUID and differs between two files", bool(li) and uuid.UUID(li[0][0]) and li[0][0] != r2.execute("select LibraryUID from LibraryInfo").fetchone()[0])

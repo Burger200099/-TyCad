@@ -17,7 +17,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ComCtrls, ExtCtrls, StdCtrls, Buttons,
   LCLType, LCLProc, TypInfo, Math, Spin, UDPoint, UDrawTypes, UGeometry, UResources, UDrawingObjects, USymbols, UDesign, UDsnBinary, ULibrary, ULibXML, UPaper,
   UProps, UUndo, UView, UDialogs, consts, Fnewdoc, Fabout, QLibPanel, QFindPanel, UDocs, USettings, UOptions, Foptions, {Fcolors,}
-  UFind, Fdetails, Fpagesetup, Fpartslist, UPartsList, USymbolBom, Fnetlist, UNetWriters,
+  UFind, Fdetails, Fpagesetup, Fpartslist, UPartsList, USymbolBom, UWireExport, UContacts, Fnetlist, UNetWriters,
   USpiceVhdl, UErc, UPartCheck, Fercopts, Fercwin, UAnnotate, Fannotate, Types, Finput,
   Fbase, Fsymbolinfo, QPropFrame, QPropFrameList, StrUtils, Printers, PrintersDlgs, UPrint,
   UPrintRun, Fprint, Fpreview, UExport, Fexport, Flibraries, ULibManager,
@@ -319,6 +319,13 @@ type
     mPartsList: TMenuItem;
     mSymbolBom: TMenuItem;
     mSymbolData: TMenuItem;
+    mExportWires: TMenuItem;
+    pmRulerUnits: TPopupMenu;
+    miRulerMM: TMenuItem;
+    miRulerIN: TMenuItem;
+    mInsertContactNO: TMenuItem;
+    mInsertContactNC: TMenuItem;
+    mInsertContactFree: TMenuItem;
     mDupRefs: TMenuItem;
     mNetList: TMenuItem;
     mCheckRules: TMenuItem;
@@ -506,6 +513,7 @@ type
     procedure DoPartsList(Sender: TObject);
     procedure DoSymbolBom(Sender: TObject);
     procedure DoSymbolData(Sender: TObject);
+    procedure DoExportWires(Sender: TObject);
     procedure DoCheckDupRefs(Sender: TObject);
     procedure DoNetList(Sender: TObject);
     procedure DoCheckRules(Sender: TObject);
@@ -622,6 +630,8 @@ type
     procedure DoColors(Sender: TObject);
     procedure DoShowPosition(Sender: TObject);
     procedure DoShowViewRulers(Sender: TObject);
+    procedure DoRulerUnits(Sender: TObject);
+    procedure RulerUnitsPopup(Sender: TObject);
     procedure ViewMovedForRulers(Sender: TObject);
     procedure ArcTypeChangedByView(Sender: TObject);
     procedure DoRepeatNameUp(Sender: TObject);
@@ -680,6 +690,11 @@ type
     procedure PartPlace(Sender: TObject; PartIndex: Integer);
     function PartsWarningAccepted: Boolean;
     function PlacePart(PartIndex: Integer): String;
+    function BeginPlacePart(PL: TPartsLibrary; PartIndex: Integer; const Xml, Ref: String; const Copy: TPartCopy): String;
+    function InsertContactOf(const Form: String; out Chosen: String): String;
+    procedure DoInsertContactNO(Sender: TObject);
+    procedure DoInsertContactNC(Sender: TObject);
+    procedure DoInsertContactFree(Sender: TObject);
     function ChooseProduct: String;
     procedure HookSymbolFrame(AFrame: TfmSymbols);
     procedure SymbolAutoShowChange(Sender: TObject);
@@ -994,6 +1009,7 @@ type
     function WritePartsList(const AFileName: String; const Opt: TBomOptions): Boolean;
     function WriteSymbolBom(const AFileName: String): Boolean;
     function WriteSymbolData(const AFileName: String): Boolean;
+    function WriteWires(const AFileName: String; out Count: Integer): Boolean;
     function CheckDuplicateRefs(Quiet: Boolean): String;
     function CurrentFileName: String;
     function ExportNetList(F: TfrmNetlist): Boolean;
@@ -1347,6 +1363,8 @@ begin
   FRulerLeft.Visible := False;
   FRulerTop.Font.Name := 'Segoe UI';
   FRulerLeft.Font.Name := 'Segoe UI';
+  FRulerTop.PopupMenu := pmRulerUnits;      // (the rulers are only there to click on while they are shown)
+  FRulerLeft.PopupMenu := pmRulerUnits;
   tcDocs.PopupMenu := pmDocTabs;
   frameLibraryPanel.OnPlace := @LibPlace;
   frameLibraryPanel.OnPartPlace := @PartPlace;
@@ -1655,6 +1673,10 @@ begin
   mPartsList.Enabled := FDesign <> nil;
   mSymbolBom.Enabled := FDesign <> nil;
   mSymbolData.Enabled := FDesign <> nil;
+  mExportWires.Enabled := FDesign <> nil;
+  mInsertContactNO.Enabled := FDesign <> nil;
+  mInsertContactNC.Enabled := FDesign <> nil;
+  mInsertContactFree.Enabled := FDesign <> nil;
   mDupRefs.Enabled := FDesign <> nil;
   mNetList.Enabled := FDesign <> nil;
   mCheckRules.Enabled := FDesign <> nil;
@@ -1993,6 +2015,7 @@ begin
     vtLabel: Result := 'label';
     vtPower: Result := 'power';
     vtPlace: Result := 'method';
+    vtPin: Result := 'pin';
   else
     Result := '';
   end;
@@ -5620,6 +5643,43 @@ begin
 end;
 
 { ===========================================================================
+  TfrmMain.RulerUnitsPopup  (procedure)
+  Parameters:
+    Sender: TObject - the ruler menu
+  Notes:
+    The menu of the rulers (right click on a ruler): the units the rulers show now are ticked.
+  =========================================================================== }
+procedure TfrmMain.RulerUnitsPopup(Sender: TObject);
+var
+  U: Integer;
+begin
+  U := UNITS_MM;
+  if (FDesign <> nil) and (FView.Sheet <> nil) then
+    U := FView.Sheet.Options.Units;
+  U := RulerUnitsFor(U);
+  miRulerMM.Checked := U = UNITS_MM;
+  miRulerIN.Checked := U = UNITS_INCHES;
+end;
+
+{ ===========================================================================
+  TfrmMain.DoRulerUnits  (procedure)
+  Parameters:
+    Sender: TObject - the millimetres or the inches item of the ruler menu
+  Notes:
+    The rulers show the chosen units from now on (and at the next start): the grid and the position bar keep the sheet's units. The choice is the same one Options > Sheets >
+    Ruler Units makes.
+  =========================================================================== }
+procedure TfrmMain.DoRulerUnits(Sender: TObject);
+begin
+  if Sender = miRulerIN then
+    ProgramSettings.RulerUnits := UNITS_INCHES
+  else
+    ProgramSettings.RulerUnits := UNITS_MM;
+  SaveSettings;
+  UpdateViewRulers;
+end;
+
+{ ===========================================================================
   TfrmMain.DoShowViewRulers  (procedure)
   Parameters:
     Sender: TObject - the component that raised the event
@@ -7684,6 +7744,52 @@ begin
   Target := AskFileToWrite(SaveDlg, rsExportSymbolData, rsCSVFileCsvCsvAll, 'csv', Def + '.csv');
   if Target <> '' then
     WriteSymbolData(Target);
+end;
+
+{ ===========================================================================
+  TfrmMain.WriteWires  (function)
+  Parameters:
+    const AFileName: String - the file to write
+    out Count: Integer - the number of wire labels and bus names written
+  Returns:
+    Boolean - True when the file was written
+  Notes:
+    Writes the text on the wires of the current design (UWireExport.WireTextCsv), UTF-8. A file that cannot be written gives a message and False.
+  =========================================================================== }
+function TfrmMain.WriteWires(const AFileName: String; out Count: Integer): Boolean;
+begin
+  Count := 0;
+  Result := False;
+  if FDesign = nil then
+    Exit;
+  Result := SaveTextFile(AFileName, WireTextCsv(FDesign, Count));
+  if not Result then
+    ReportProblem(rsCannotWriteTheWiresFile);
+end;
+
+{ ===========================================================================
+  TfrmMain.DoExportWires  (procedure)
+  Parameters:
+    Sender: TObject - the menu item
+  Notes:
+    Special > Export Wires...: asks for a file (the design's name with _wires.csv to start with) and writes the text of every wire label and bus name.
+  =========================================================================== }
+procedure TfrmMain.DoExportWires(Sender: TObject);
+var
+  Target, Def: String;
+  N: Integer;
+begin
+  if FDesign = nil then
+    Exit;
+  FView.CancelTool;
+  Def := ChangeFileExt(GetFileName, '');
+  if Def = '' then
+    Def := 'wires'
+  else
+    Def := Def + '_wires';
+  Target := AskFileToWrite(SaveDlg, rsExportWires, rsCSVFileCsvCsvAll, 'csv', Def + '.csv');
+  if Target <> '' then
+    WriteWires(Target, N);
 end;
 
 { ===========================================================================
@@ -13962,9 +14068,6 @@ end;
 function TfrmMain.PlacePart(PartIndex: Integer): String;
 var
   PL: TPartsLibrary;
-  Sym: TDesignFileSymbol;
-  Id: Integer;
-  M: TDrawMethod;
   Xml: String;
 begin
   PL := frameLibraryPanel.PartsLibrary;
@@ -13985,17 +14088,41 @@ begin
   end;
   if not PartsWarningAccepted then
     Exit('refused');
+  Result := BeginPlacePart(PL, PartIndex, Xml, '', PL.PartCopyOf(PartIndex));
+end;
+
+{ ===========================================================================
+  TfrmMain.BeginPlacePart  (function)
+  Parameters:
+    PL: TPartsLibrary - the library
+    PartIndex: Integer - the part
+    const Xml: String - the symbol drawing to place
+    const Ref: String - the reference to give; '' = the part's reference letters followed by ?
+    const Copy: TPartCopy - the part data the placed symbol keeps (PartCopyOf, with what it shows set by the caller if different)
+  Returns:
+    String - 'placed' or 'nosymbol' (the drawing could not be read)
+  Notes:
+    Shared by PlacePart and InsertContactOf: makes the symbol from the drawing with the part's name and description and puts it on the cursor to be put down.
+  =========================================================================== }
+function TfrmMain.BeginPlacePart(PL: TPartsLibrary; PartIndex: Integer; const Xml, Ref: String; const Copy: TPartCopy): String;
+var
+  Sym: TDesignFileSymbol;
+  Id: Integer;
+  M: TDrawMethod;
+begin
   Sym := TDesignFileSymbol.Create(FView.Sheet.Options);
   Sym.Name := PL.Parts[PartIndex].Name;
   Sym.Description := PL.Parts[PartIndex].Description;
-  if PL.Parts[PartIndex].RefPrefix <> '' then
+  if Ref <> '' then
+    Sym.Reference := Ref
+  else if PL.Parts[PartIndex].RefPrefix <> '' then
     Sym.Reference := PL.Parts[PartIndex].RefPrefix + '?'
   else
     Sym.Reference := 'U?';
   Sym.Ppp := 1;
   Sym.NameType := default_show;
   Sym.RefType := default_show;
-  Sym.PartInfo := PL.PartCopyOf(PartIndex);
+  Sym.PartInfo := Copy;
   if not LoadLibrarySymbolBlob(FView.Sheet, Sym, Xml) then
   begin
     Sym.Free;
@@ -14006,6 +14133,95 @@ begin
   M := TDrawMethod.CreateFromSymbol(FView.Sheet.Options, Id, 0);
   FView.BeginPlace(M);
   Result := 'placed';
+end;
+
+{ ===========================================================================
+  TfrmMain.InsertContactOf  (function)
+  Parameters:
+    const Form: String - NO or NC wanted; '' = the next free contact of any form
+    out Chosen: String - the name of the contact chosen (when 'placed')
+  Returns:
+    String - 'placed', 'nosheet', 'blocked', 'nosel' (no single part symbol is selected), 'nolibrary' (its parts library is not the open one), 'nosymbol' (the part has no
+    contact symbol), 'none' (no free contact of that form is left) or 'refused' (the warning was answered No)
+  Notes:
+    Parts plan step 2. The selected symbol (the coil) names the device: its part and its reference. The contacts of the part that are already placed with that reference
+    are looked for in the whole design (UContacts), the next unused one of the wanted form is taken, and the contact symbol of the part is put on the cursor with the
+    coil's reference and the chosen contact in its part data. When none is left the status bar says so and nothing is placed.
+  =========================================================================== }
+function TfrmMain.InsertContactOf(const Form: String; out Chosen: String): String;
+var
+  PL: TPartsLibrary;
+  M: TDrawMethod;
+  Info: TPartCopy;
+  Idx, K: Integer;
+  Contacts: TContactInfoArray;
+  Xml, Ref: String;
+begin
+  Chosen := '';
+  if FView.Sheet = nil then
+    Exit('nosheet');
+  if FView.Sheet.Options.EditLibrary then
+    Exit('blocked');
+  M := FView.SelectedSymbol;
+  if (M = nil) or not (M.GetSymbolData is TDesignFileSymbol) or TDesignFileSymbol(M.GetSymbolData).PartInfo.IsEmpty then
+  begin
+    sbMainBar.Panels[0].Text := rsSelectTheCoilFirst;
+    Exit('nosel');
+  end;
+  Info := TDesignFileSymbol(M.GetSymbolData).PartInfo;
+  Ref := M.GetRef;
+  PL := frameLibraryPanel.PartsLibrary;
+  if PL <> nil then
+    Idx := PL.FindPart(Info.UID)
+  else
+    Idx := -1;
+  if Idx < 0 then
+  begin
+    sbMainBar.Panels[0].Text := rsThePartsLibraryOfThat;
+    Exit('nolibrary');
+  end;
+  Contacts := PL.ContactObjects(PL.Parts[Idx].ID);
+  K := NextFreeContact(Contacts, UsedContactNames(FDesign, Info.UID, Ref), Form);
+  if K < 0 then
+  begin
+    sbMainBar.Panels[0].Text := Format(rsHasNoFreeContact, [Ref, Form]);
+    Exit('none');
+  end;
+  Xml := PL.ContactSymbolXml(PL.Parts[Idx].ID, Contacts[K].Form);
+  if Xml = '' then
+  begin
+    sbMainBar.Panels[0].Text := rsThatPartHasNoContactSymbol;
+    Exit('nosymbol');
+  end;
+  if not PartsWarningAccepted then
+    Exit('refused');
+  Info := PL.PartCopyOf(Idx);
+  Info.ObjectName := Contacts[K].Name;
+  Info.ObjectKind := 'Contact';
+  Info.ObjectForm := Contacts[K].Form;
+  Chosen := Contacts[K].Name;
+  Result := BeginPlacePart(PL, Idx, Xml, Ref, Info);
+end;
+
+procedure TfrmMain.DoInsertContactNO(Sender: TObject);
+var
+  C: String;
+begin
+  InsertContactOf('NO', C);
+end;
+
+procedure TfrmMain.DoInsertContactNC(Sender: TObject);
+var
+  C: String;
+begin
+  InsertContactOf('NC', C);
+end;
+
+procedure TfrmMain.DoInsertContactFree(Sender: TObject);
+var
+  C: String;
+begin
+  InsertContactOf('', C);
 end;
 
 { ===========================================================================
