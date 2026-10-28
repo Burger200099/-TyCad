@@ -1,0 +1,89 @@
+inherited frmSymbolInfo: TfrmSymbolInfo
+  Left = 700
+  Height = 190
+  Top = 300
+  Width = 460
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'Symbol Properties'
+  ClientHeight = 190
+  ClientWidth = 460
+  Position = poOwnerFormCenter
+  inherited pnlButtons: TPanel
+    Top = 132
+    Width = 460
+    ClientWidth = 456
+    inherited btnOK: TButton
+      Left = 200
+    end
+    inherited btnCancel: TButton
+      Left = 330
+    end
+    inherited btnApply: TButton
+      Visible = False
+    end
+  end
+  object lblStandard: TLabel[1]
+    Left = 12
+    Height = 15
+    Top = 18
+    Width = 100
+    Caption = '&Standard:'
+    FocusControl = cbStandard
+  end
+  object cbStandard: TComboBox[2]
+    Left = 120
+    Height = 23
+    Hint = 'The drawing standard of the symbol'
+    Top = 14
+    Width = 200
+    ItemHeight = 15
+    Items.Strings = (
+      'IEC'
+      'ANSI'
+      'JIC'
+      'DIN'
+    )
+    TabOrder = 0
+  end
+  object lblPurpose: TLabel[3]
+    Left = 12
+    Height = 15
+    Top = 54
+    Width = 100
+    Caption = '&Purpose:'
+    FocusControl = cbPurpose
+  end
+  object cbPurpose: TComboBox[4]
+    Left = 120
+    Height = 23
+    Hint = 'Where the symbol is used'
+    Top = 50
+    Width = 200
+    ItemHeight = 15
+    Items.Strings = (
+      'schematic'
+      'oneline'
+      'panel'
+      'block'
+    )
+    Style = csDropDownList
+    TabOrder = 1
+  end
+  object lblName: TLabel[5]
+    Left = 12
+    Height = 15
+    Top = 90
+    Width = 100
+    Caption = '&Name:'
+    FocusControl = edName
+  end
+  object edName: TEdit[6]
+    Left = 120
+    Height = 23
+    Hint = 'The name of the symbol; empty takes the part''s name'
+    Top = 86
+    Width = 320
+    TabOrder = 2
+  end
+end

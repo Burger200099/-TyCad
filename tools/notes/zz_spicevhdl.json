@@ -1,0 +1,158 @@
+{
+"UNetWriters.pas::EachPart": {
+"text": "Visits the placed symbols of every sheet in drawing order and calls Add for each; with OnlyFirst, a symbol whose reference has already been visited is skipped (the writers' set of references already written).",
+"params": {
+"Design": "the design",
+"OnlyFirst": "skip a reference already met",
+"Add": "called with each symbol and its reference"
+}
+},
+"USpiceVhdl.pas::TOrdMap.Search": {
+"text": "Binary search for a key among the sorted keys (compared by character code, as CString's operator< does). Index is where the key is, or where it would be inserted.",
+"params": {
+"K": "the key",
+"Index": "its position, or the position to insert it at"
+}
+},
+"USpiceVhdl.pas::TOrdMap.Has": {
+"text": "True if the key is in the map.",
+"params": {
+"K": "the key"
+}
+},
+"USpiceVhdl.pas::TOrdMap.Get": {
+"text": "std::map's operator[]: the value stored for the key; a key that is not there is added with the default value (an empty string, 0 or nil) and that default is returned.",
+"params": {
+"K": "the key"
+}
+},
+"USpiceVhdl.pas::TOrdMap.SetValue": {
+"text": "Stores a value for a key, adding the key if it is not there.",
+"params": {
+"K": "the key",
+"V": "the value"
+}
+},
+"USpiceVhdl.pas::TOrdMap.Count": {
+"text": "The number of keys."
+},
+"USpiceVhdl.pas::TOrdMap.KeyAt": {
+"text": "The key at a position in key order.",
+"params": {
+"I": "the position, from 0"
+}
+},
+"USpiceVhdl.pas::TOrdMap.ValueAt": {
+"text": "The value at a position in key order.",
+"params": {
+"I": "the position, from 0"
+}
+},
+"USpiceVhdl.pas::DefaultWithExtension": {
+"text": "The design's file name with its last extension replaced by Ext; a name with no dot gives output followed by Ext.",
+"params": {
+"DesignFile": "the design's file name, empty if it has none",
+"Ext": "the extension, with its dot"
+}
+},
+"USpiceVhdl.pas::VhdlDefaultFileName": {
+"text": "The name the Create VHDL file dialog proposes: the design's name with .vhd, or output.vhd.",
+"params": {
+"DesignFile": "the design's file name"
+}
+},
+"USpiceVhdl.pas::SpiceDefaultFileName": {
+"text": "The name the Create Spice Net List dialog proposes: the design's name with .net, or output.net.",
+"params": {
+"DesignFile": "the design's file name"
+}
+},
+"USpiceVhdl.pas::CollectMethods": {
+"text": "Puts every placed symbol of the design, sheet by sheet in drawing order, in a list (the C++ walks them with componentsBegin and componentsNext).",
+"params": {
+"Design": "the design",
+"List": "receives the symbols"
+}
+},
+"USpiceVhdl.pas::TSpiceSymbol.Create": {
+"text": "CNetListSymbol: a symbol with no pins yet.",
+"params": {
+"AFileIdx": "the file index (0, the root design)",
+"ASheet": "the sheet number",
+"AMethod": "the placed symbol"
+}
+},
+"USpiceVhdl.pas::TSpiceSymbol.Destroy": {
+"text": "Frees the pin maps."
+},
+"USpiceVhdl.pas::TSpiceMaker.NetKey": {
+"text": "The key under which a net number is kept in the maps.",
+"params": {
+"N": "the net number"
+}
+},
+"USpiceVhdl.pas::TSpiceMaker.GetAttr": {
+"text": "CNetList::get_attr: \"refnum\" and \"ref\" give the symbol's reference (the reference path of a symbol of the root design is its reference); any other name is looked up among all the fields of the symbol, ignoring case.",
+"params": {
+"Sym": "the symbol",
+"Attr": "the attribute name",
+"R": "the value"
+}
+},
+"USpiceVhdl.pas::TrimWhite": {
+"text": "CString::Trim: removes white space from both ends.",
+"params": {
+"S": "the text"
+}
+},
+"mainform.pas::SaveTextFile": {
+"text": "Writes a text to a file, replacing it; False if the file cannot be written.",
+"params": {
+"AFileName": "the file",
+"AText": "what to put in it"
+}
+},
+"mainform.pas::TfrmMain.SpiceProposedName": {
+"text": "The name the Create Spice Net List dialog proposes: the design's name with .net, or output.net for a design with no dot in its name."
+},
+"mainform.pas::TfrmMain.VhdlProposedName": {
+"text": "The name the Create VHDL file dialog proposes: the design's name with .vhd, or output.vhd for a design with no dot in its name."
+},
+"nettest.pas::DoNodes": {
+"text": "Test mode: prints every node of every net in net order, as NODE, net, label, preferred label, reference, pin, then P and the pin's name, number and electrical type (or N and three dashes when the node is not a pin), then the sheet number (from 1) and the placed symbol the node belongs to as sheet:number (or a dash).",
+"params": {
+"InName": "the .dsn file"
+}
+},
+"netwtest.pas::WriteTextFile": {
+"text": "Writes a text to a file.",
+"params": {
+"OutName": "the file",
+"T": "the text"
+}
+},
+"netwtest.pas::DoVhdl": {
+"text": "Test mode: writes the VHDL file of a design as it would be written to PathName (which names the entity), with line feeds.",
+"params": {
+"InName": "the design",
+"PathName": "the file name given to the writer",
+"OutName": "where the text is put"
+}
+},
+"netwtest.pas::DoSpice": {
+"text": "Test mode: writes the SPICE file and its error text with line feeds, and prints R and the number of errors.",
+"params": {
+"InName": "the design",
+"OutName": "the SPICE file",
+"Stamp": "the date and time for the first line",
+"ErrName": "the error file",
+"Heading": "the design name in the error text"
+}
+},
+"netwtest.pas::DoHelpers": {
+"text": "Test mode: runs the helpers of the SPICE and VHDL writers on the lines of a file and prints each answer as R followed by the result. A line is the kind (atoi, bus, decl, ref, entity, vdefault, sdefault, errname or stamp), the text and a third value, separated by tabs.",
+"params": {
+"FileName": "the file of test lines"
+}
+}
+}

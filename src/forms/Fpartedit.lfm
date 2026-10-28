@@ -1,0 +1,117 @@
+inherited frmPartEdit: TfrmPartEdit
+  Left = 700
+  Height = 330
+  Top = 300
+  Width = 560
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'Add Part'
+  ClientHeight = 330
+  ClientWidth = 560
+  OnCloseQuery = FormCloseQuery
+  Position = poOwnerFormCenter
+  inherited pnlButtons: TPanel
+    Top = 272
+    Width = 560
+    ClientWidth = 556
+    inherited btnOK: TButton
+      Left = 300
+    end
+    inherited btnCancel: TButton
+      Left = 430
+    end
+    inherited btnApply: TButton
+      Visible = False
+    end
+  end
+  object lblName: TLabel[1]
+    Left = 12
+    Height = 15
+    Top = 14
+    Width = 100
+    Caption = '&Name:'
+    FocusControl = edName
+  end
+  object edName: TEdit[2]
+    Left = 120
+    Height = 23
+    Hint = 'The name of the generic part (it must be different from the other parts of its class)'
+    Top = 10
+    Width = 420
+    TabOrder = 0
+  end
+  object lblClass: TLabel[3]
+    Left = 12
+    Height = 15
+    Top = 50
+    Width = 100
+    Caption = '&Class:'
+    FocusControl = cbClass
+  end
+  object cbClass: TComboBox[4]
+    Left = 120
+    Height = 23
+    Hint = 'The kind of part: it decides the fields, the child objects and the products the part can have (it cannot be changed afterwards)'
+    Top = 46
+    Width = 420
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 1
+  end
+  object lblRef: TLabel[5]
+    Left = 12
+    Height = 15
+    Top = 86
+    Width = 100
+    Caption = '&Reference letters:'
+    FocusControl = edRef
+  end
+  object edRef: TEdit[6]
+    Left = 120
+    Height = 23
+    Hint = 'The letters a placed part starts its reference with (K gives K1, K2 ...)'
+    Top = 82
+    Width = 120
+    TabOrder = 2
+  end
+  object lblStatus: TLabel[7]
+    Left = 12
+    Height = 15
+    Top = 122
+    Width = 100
+    Caption = '&Status:'
+    FocusControl = cbStatus
+  end
+  object cbStatus: TComboBox[8]
+    Left = 120
+    Height = 23
+    Hint = 'active, obsolete, preview or custom'
+    Top = 118
+    Width = 160
+    ItemHeight = 15
+    Items.Strings = (
+      'active'
+      'obsolete'
+      'preview'
+      'custom'
+    )
+    Style = csDropDownList
+    TabOrder = 3
+  end
+  object lblDescription: TLabel[9]
+    Left = 12
+    Height = 15
+    Top = 158
+    Width = 100
+    Caption = '&Description:'
+    FocusControl = edDescription
+  end
+  object edDescription: TEdit[10]
+    Left = 120
+    Height = 23
+    Hint = 'What the part is'
+    Top = 154
+    Width = 420
+    TabOrder = 4
+  end
+end

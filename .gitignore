@@ -1,0 +1,25 @@
+# build output
+/lib/
+/bin/
+/build/
+*.ppu
+*.o
+*.a
+*.compiled
+*.rsj
+backup/
+*.bak
+*.exe
+*.dbg
+
+# Lazarus per-user files
+*.lps
+*.or
+/lib-*/
+__pycache__/
+*.pyc
+
+# scratch / working files
+/work/
+*.rar
+*.zip

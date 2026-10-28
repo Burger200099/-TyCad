@@ -1,0 +1,651 @@
+{
+"TDesignFile.AddSheet": {
+"text": "Adds an empty sheet at the end (a part of the symbol, in symbol mode).",
+"returns": "the new sheet"
+},
+"TSymbolEditor.MakeDesign": {
+"text": "Copies the symbol's drawing into a design file the drawing view can edit, with the pins of the first part showing, and gives its objects ids.",
+"returns": "a design file in symbol mode; the caller owns it"
+},
+"TSymbolEditor.TakeDesign": {
+"text": "Replaces the symbol's drawing with what the design holds: every sheet for a heterogeneous symbol, the first sheet otherwise. The names and fields are not touched. This is how the drawing view's work reaches the symbol before it is stored.",
+"params": {
+"D": "the design the view has been editing"
+}
+},
+"TSymbolEditor.CloneSet": {
+"text": "What the Symbol Properties dialog edits, so Cancel leaves the symbol as it was.",
+"returns": "a copy of the symbol's names and fields; the caller owns it"
+},
+"TSymbolEditor.ReplaceSet": {
+"text": "Puts the names, fields and default orientation of an edited copy in place of the symbol's own. The symbol keeps its id in the library and its number of parts.",
+"params": {
+"Src": "the edited copy"
+}
+},
+"TSymbolEditor.SetLibrary": {
+"text": "Points the editor at a library object (not owned).",
+"params": {
+"ALib": "the library object that holds the symbol's library now"
+}
+},
+"TSymbolEditor.ApplyPartCount": {
+"text": "Set parts per package (CTinyCadMultiSymbolDoc::OnLibrarySetpartsperpackage): a symbol with a drawing for each part gains or loses sheets from the end; a shared drawing loses the pins of the parts that are gone and shows the last part if it was showing one that is gone.",
+"params": {
+"D": "the symbol-mode design being edited",
+"N": "the number of parts (1 to 26)"
+}
+},
+"TSymbolEditor.ApplyHeterogeneous": {
+"text": "Homogeneous / Heterogeneous Symbol. As in TinyCAD the kind can only be changed while the symbol has one part per package; choosing the kind it already is does nothing.",
+"returns": "False when the symbol has several parts, so nothing changed",
+"params": {
+"D": "the symbol-mode design being edited",
+"Value": "True for a drawing for each part, False for one shared drawing"
+}
+},
+"TSchematicPainter.PaintObjects": {
+"text": "Draws only these objects of a sheet, none of them highlighted and nothing else (no page, border or title block): what Export Image draws of a selection.",
+"params": {
+"Sheet": "the sheet the objects are on",
+"Objects": "the objects to draw (TDrawingObject), in order"
+}
+},
+"TSchematicPainter.PaintOriginMarker": {
+"text": "The mark TinyCAD puts on the origin of a library symbol that is being edited (CDrawOrigin::Paint): a cross 6 units each way in very light grey (208, 208, 208).",
+"params": {
+"const P": "the origin, in design units"
+}
+},
+"LibraryName": {
+"text": "What the Libraries list shows for a library (TinyCAD shows the path without the extension; the name alone keeps the list short and the folder is in the hint).",
+"returns": "the name",
+"params": {
+"const FileName": "path of the library"
+}
+},
+"LibraryHasExtension": {
+"text": "Tells a symbol library from another file by its extension.",
+"returns": "True for .TCLib in any case",
+"params": {
+"const FileName": "a file name"
+}
+},
+"LibraryNewFileName": {
+"text": "A name without .TCLib gets it (an other extension is replaced), as TinyCAD's New does. A .tclib typed in lower case is kept as typed.",
+"returns": "the file to make",
+"params": {
+"const Chosen": "the name typed in the New dialog"
+}
+},
+"LibraryCheck": {
+"text": "TinyCAD's Attach: the file is opened and its symbols read. A file with another extension is refused (the old .mdb and .idx libraries are not read by this port).",
+"returns": "True when it opens as a symbol library",
+"params": {
+"const FileName": "path of the file",
+"out Err": "why it is not a library ('' when it is)"
+}
+},
+"LibraryCreate": {
+"text": "Makes an empty library with TinyCAD's tables. A file that is already there is left alone (TinyCAD's CREATE TABLE fails on it) and the message is TinyCAD's \"Cannot create library\".",
+"returns": "True when the file was made",
+"params": {
+"const FileName": "path of the new file",
+"out Err": "why it could not be made ('' when it was)"
+}
+},
+"LibraryCleanup": {
+"text": "TinyCAD's Cleanup: runs VACUUM on the library's database.",
+"returns": "True when the file was compacted",
+"params": {
+"ALib": "the open library",
+"out Err": "why it failed ('' when it worked)"
+}
+},
+"LibrariesState": {
+"text": "For the script command \"libraries\".",
+"returns": "what the dialog shows: the list, the selected name and which buttons are enabled",
+"params": {
+"F": "the Library Setup dialog"
+}
+},
+"Esc": {
+"text": "Line breaks of a message become \" / \" so that a script's output stays one line a step.",
+"returns": "the text on one line",
+"params": {
+"const S": "text"
+}
+},
+"SymbolInfoLines": {
+"text": "For the script commands \"sym\" and \"syminfo\": a line SYMINFO about the current document (symbol or not) and a SYMPIN line for every pin of every sheet.",
+"params": {
+"Form": "the main window"
+}
+},
+"SymPropsState": {
+"text": "For the script command \"symprops\": the names, the name showing, the description, the orientation, the grid (a row is its three cells), the SPICE texts and the buttons.",
+"returns": "what the dialog shows",
+"params": {
+"F": "the Symbol Properties dialog"
+}
+},
+"TSymbolLibrary.Cleanup": {
+"text": "Compacts the library file (SQLite VACUUM), as TinyCAD's Cleanup does; the symbols are not changed."
+},
+"TDocument.DisplayName": {
+"text": "The name shown for the document: the file name without its folder, or \"Untitled N\" while it has never been saved; a symbol being edited shows its first name with \"(symbol)\", or \"New symbol\" before it has one.",
+"returns": "the name"
+},
+"TfrLibraryPanel.CanCloseEntry": {
+"text": "Asks the owner (OnQueryClose) whether the library can be closed; it cannot while a symbol of it is being edited.",
+"returns": "True when the library may be closed",
+"params": {
+"Index": "position in the list of open libraries"
+}
+},
+"TfrLibraryPanel.SelectedLibIndex": {
+"text": "The library of the selected node, whether the node is the library or one of its symbols.",
+"returns": "the position among the open libraries, -1 when nothing is selected"
+},
+"TfrLibraryPanel.SelectedSetIndex": {
+"text": "Which symbol is selected.",
+"returns": "the position of the symbol's set in its library, -1 when a library or nothing is selected"
+},
+"TfrLibraryPanel.SelectSymbolId": {
+"text": "Opens the library and selects the symbol, showing its preview.",
+"returns": "True when the symbol is listed (the filter may hide it)",
+"params": {
+"LibIndex": "position among the open libraries",
+"SymbolId": "the id of the symbol's set in that library"
+}
+},
+"TfrLibraryPanel.CommandEnabled": {
+"text": "New needs a library (or one of its symbols) to be selected; the others need a symbol.",
+"returns": "True when it can be asked for now",
+"params": {
+"Cmd": "the command"
+}
+},
+"TfrLibraryPanel.Command": {
+"text": "Asks the owner (OnSymbolCommand) to do a symbol command on the selection, when it can be done.",
+"params": {
+"Cmd": "the command"
+}
+},
+"TfrLibraryPanel.PopupCommand": {
+"text": "Pop-up menu handler for the symbol commands.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrLibraryPanel.PopupCopyTo": {
+"text": "Pop-up menu handler for Copy to.",
+"params": {
+"Sender": "the menu item (its Tag is the library's position)"
+}
+},
+"TfrLibraryPanel.PopupOpen": {
+"text": "As the menu opens the commands are enabled or dimmed for the selection, and Copy to lists the open libraries (TinyCAD's FillLibraryNames).",
+"params": {
+"Sender": "the pop-up menu"
+}
+},
+"TfrLibraryPanel.IndexOfFile": {
+"text": "Finds the open library read from a file (the same file under another spelling of its path counts as the same).",
+"returns": "the position among the open libraries, or -1",
+"params": {
+"const FileName": "path of a library file"
+}
+},
+"TfrmSymbolParts.Load": {
+"text": "Shows the symbol's present number of parts and kind of symbol.",
+"params": {
+"AParts": "the symbol's number of parts per package",
+"AHetero": "True if every part has its own drawing"
+}
+},
+"TfrmSymbolParts.PartsChange": {
+"text": "The kind of symbol can be changed while the package has one part (before or after this change); with several parts the box is dimmed.",
+"params": {
+"Sender": "the count"
+}
+},
+"TfrmSymbolParts.Parts": {
+"text": "The number of parts typed.",
+"returns": "the count"
+},
+"TfrmSymbolParts.Hetero": {
+"text": "Whether every part has a drawing of its own.",
+"returns": "True if ticked"
+},
+"TfrmSymbolParts.SetParts": {
+"text": "Types a number of parts (the box limits it to 1 to 26).",
+"params": {
+"N": "the count"
+}
+},
+"TfrmSymbolParts.SetHetero": {
+"text": "Ticks or clears the box when it is enabled.",
+"params": {
+"Value": "ticked or not"
+}
+},
+"TfrmSymbolParts.HeteroEnabled": {
+"text": "Whether the box can be changed now.",
+"returns": "True if it can be changed"
+},
+"TfrmOptions.FormCreate": {
+"text": "Shows the OK, Cancel and Apply buttons (when the form is activated) and gives Apply its handler. Color Stuff:     The rows of the dialog (a name, a swatch showing the color and a Change button for each listed color) are made in the form designer; the Tag of a swatch and of its button is the color's id. This only lists the swatches by id so that a color can find its swatch.",
+"params": {
+"Sender": "the component that raised the event"
+}
+},
+"TfrmOptions.ListedIds": {
+"text": "The ids of the colors the dialog lists, in the order they are shown.",
+"returns": "the ids"
+},
+"TfrmOptions.ColorName": {
+"text": "What a color is called in the dialog (Background, Wires, Buses ...).",
+"returns": "its name, empty for a color that is not listed",
+"params": {
+"Id": "the color's id"
+}
+},
+"TfrmOptions.ColorOf": {
+"text": "The color now held for an id.",
+"returns": "the color",
+"params": {
+"Id": "the color's id"
+}
+},
+"TfrmOptions.SetColor": {
+"text": "Gives a color a value, as choosing it does, and shows it on its swatch. An id that is not a color of a design is ignored.",
+"params": {
+"Id": "the color's id",
+"AColor": "Cardinal"
+}
+},
+"TfrmOptions.ChooseColor": {
+"text": "Asks for a color for one id with the form's color dialog (ColorDlg, a TColorDialog placed on the form at design time), starting from the one it has; if one is chosen it is set. An id that is not a color of a design is ignored.",
+"params": {
+"Id": "the color's id"
+}
+},
+"TfrmOptions.ResetClick": {
+"text": "The Reset button was pressed: all the colors go back to the standard ones.",
+"params": {
+"Sender": "the button"
+}
+},
+"TfrmOptions.ChangeClick": {
+"text": "A Change button was pressed: choose the color of its row.",
+"params": {
+"Sender": "the button"
+}
+},
+"TfrmSymbolProps.FieldTypeIndex": {
+"text": "Turns the text of a Display Method cell back into the SymbolFieldType value.",
+"returns": "the display method's number (0 to 6), 0 when the text is none of them",
+"params": {
+"const S": "the text of a Display Method cell"
+}
+},
+"TfrmSymbolProps.Load": {
+"text": "Takes a copy of the symbol's names and fields to edit and shows the first name, with the library, the number of parts and the default orientation.",
+"params": {
+"Ed": "the symbol",
+"const LibName": "the library's name for the top of the dialog"
+}
+},
+"TfrmSymbolProps.NameCount": {
+"text": "How many names the list shows.",
+"returns": "the count"
+},
+"TfrmSymbolProps.CurrentName": {
+"text": "Which name the rest of the dialog shows.",
+"returns": "the position of the name showing"
+},
+"TfrmSymbolProps.SelectName": {
+"text": "OnSelchangeListNames: the name showing is written back and the chosen one is shown.",
+"params": {
+"Index": "position in the list of names"
+}
+},
+"TfrmSymbolProps.NameSelect": {
+"text": "The list of names was clicked.",
+"params": {
+"Sender": "the list",
+"User": "True when the person chose"
+}
+},
+"TfrmSymbolProps.AddNameClick": {
+"text": "Add name.",
+"params": {
+"Sender": "the button"
+}
+},
+"TfrmSymbolProps.DeleteNameClick": {
+"text": "Delete name.",
+"params": {
+"Sender": "the button"
+}
+},
+"TfrmSymbolProps.AddFieldClick": {
+"text": "Add attribute.",
+"params": {
+"Sender": "the button"
+}
+},
+"TfrmSymbolProps.DeleteField": {
+"text": "OnDelete: removes an attribute; Reference and Name (the first two) cannot be removed.",
+"params": {
+"Row": "the row of the grid"
+}
+},
+"TfrmSymbolProps.DeleteFieldClick": {
+"text": "Delete attribute.",
+"params": {
+"Sender": "the button"
+}
+},
+"TfrmSymbolProps.FieldSelect": {
+"text": "A cell of the grid was chosen: Delete attribute follows the row. Reference and Name keep their names (the first column of those rows is not edited).",
+"params": {
+"Sender": "the grid",
+"aCol": "column",
+"aRow": "row",
+"var CanSelect": "set False to refuse"
+}
+},
+"TfrmSymbolProps.SetCell": {
+"text": "Types into a cell as a person does. The first column of Reference and Name cannot be changed; the name's default value is the name.",
+"params": {
+"Row": "row of the grid",
+"Col": "column (0 parameter, 1 display method, 2 default value)",
+"const Value": "the text"
+}
+},
+"TfrmSymbolProps.Cell": {
+"text": "What a cell shows.",
+"returns": "the text",
+"params": {
+"Row": "row of the grid",
+"Col": "column"
+}
+},
+"TfrmSymbolProps.Edited": {
+"text": "Writes the name showing back and gives an independent copy of the edited names, with the default orientation chosen.",
+"returns": "a copy of the edited names and fields; the caller owns it"
+},
+"TfrmLibraries.SelectByName": {
+"text": "Selects the first library of that name, as clicking it does.",
+"returns": "True when there was one",
+"params": {
+"const AName": "a name in the list"
+}
+},
+"TfrmLibraries.AddFiles": {
+"text": "TinyCAD's OnAdd: each file is checked and, if it is a library not in use already, added to the libraries in use. A file that is not a library gives a message and the others go on. A library that is already in use is left as it is.",
+"params": {
+"Files": "paths of the files chosen"
+}
+},
+"TfrmLibraries.NewLibrary": {
+"text": "TinyCAD's OnNew: an empty library file (.TCLib) is made and added to the libraries in use. A file that is there already is not touched and a message says so.",
+"returns": "True when the library was made and added",
+"params": {
+"const Chosen": "the file name chosen"
+}
+},
+"TfrmLibraries.RemoveSelected": {
+"text": "TinyCAD's OnRemove: takes the selected library out of the libraries in use (the file is not deleted), unless it is in use, which gives IDS_NODELETE and changes nothing."
+},
+"TfrmLibraries.CleanupSelected": {
+"text": "TinyCAD's OnCleanup: compacts the selected library's file, unless it is in use, which gives IDS_NOCLEANUP. The selection stays."
+},
+"TfrmMain.SetToolButton": {
+"text": "Sets everything AddToolButton does, but does not create the button; it joins the group of tool buttons so one stays pressed, and its Tag holds the tool number.",
+"returns": "boolean",
+"params": {
+"Button": "which mouse button",
+"ATool": "TViewTool"
+}
+},
+"TfrmMain.IsSymbolDoc": {
+"text": "Tells a symbol being edited from a design.",
+"returns": "True if the current document is a library symbol being edited"
+},
+"TfrmMain.SheetTabCaption": {
+"text": "A sheet's name, or \"Sheet N\"; the sheets of a symbol with a drawing for each part are \"Part A\", \"Part B\" and so on.",
+"returns": "the text of its tab",
+"params": {
+"Index": "the sheet"
+}
+},
+"TfrmMain.SymbolSheetsLocked": {
+"text": "The sheets of a symbol are its parts, changed with Parts per Package only; says so in the status bar.",
+"returns": "True if the sheets cannot be changed (a symbol is being edited)"
+},
+"TfrmMain.BeginExportImage": {
+"text": "The start of File > Export Image: any drawing tool is put away, then the dialog gets the remembered kind, scale and turn, the design's name for the file, and whether a selection or the whole sheet will be saved.",
+"returns": "the dialog, filled as it starts; the caller shows it and frees it"
+},
+"TfrmMain.ExportImageFile": {
+"text": "Keeps the dialog's choices (whether or not the file could be written) and saves the picture of the selected objects, or of the sheet showing when nothing is selected. A file that cannot be written gives a message and nothing else happens.",
+"returns": "True when the file was written",
+"params": {
+"F": "the dialog, after Export"
+}
+},
+"TfrmMain.DoExportImage": {
+"text": "Handler (File > Export Image...): shows the Export Image dialog and, on Export, saves the picture.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.LibraryIsInUse": {
+"text": "TinyCAD's IsLibInUse: a library cannot be removed or cleaned up while an editing window has it: a symbol of it open in the symbol editor, or a file a test lists.",
+"returns": "True when it is being edited",
+"params": {
+"const FileName": "path of a library"
+}
+},
+"TfrmMain.RestoreLibraries": {
+"text": "Opens the libraries that were in use when the program was last closed (TinyCAD loads its \"Libraries\" at start). A file that is gone or cannot be read is left out, and drops off the saved list the next time the list changes.",
+"returns": "how many libraries are open afterwards"
+},
+"TfrmMain.DoLibraries": {
+"text": "Menu handler (Library > Libraries...): shows the Library Setup dialog. Its changes are made as they are asked for, as in TinyCAD.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.SymbolDocIndex": {
+"text": "Finds the document in which a symbol of a library is being edited.",
+"returns": "the position in the list of documents, -1 when it is not open",
+"params": {
+"const LibFile": "the library file",
+"SymbolId": "the symbol's id in that library"
+}
+},
+"TfrmMain.StartSymbolDoc": {
+"text": "Makes the document for a symbol and shows it; the sheet is the symbol's drawing.",
+"returns": "the new document",
+"params": {
+"Ed": "the symbol (owned by the document afterwards)",
+"const LibFile": "the library it belongs to"
+}
+},
+"TfrmMain.OpenSymbolDoc": {
+"text": "Edit symbol: opens the symbol for drawing as a document of its own. A symbol that is already being edited is just shown.",
+"returns": "the document, nil when it cannot be opened",
+"params": {
+"LibIndex": "which open library",
+"SetIndex": "which symbol of it"
+}
+},
+"TfrmMain.NewSymbolDoc": {
+"text": "New symbol: an empty symbol with one part, no name yet (the Update Library dialog asks for it when the symbol is stored) and the reference prefix U?.",
+"returns": "the document, nil when there is no such library",
+"params": {
+"LibIndex": "which open library"
+}
+},
+"TfrmMain.StoreSymbolDoc": {
+"text": "Store in library: the drawing the view made goes into the symbol, the symbol is checked (errors stop it: no name, a repeated name, a pin of a part that is not there, two pins on one spot; warnings do not), and it is stored in its library in place of the symbol it came from. The library list shows it again and the document has no unsaved changes.",
+"returns": "True if the symbol was stored",
+"params": {
+"Doc": "the document of a symbol",
+"out Msg": "the errors that stopped it, or the warnings"
+}
+},
+"TfrmMain.DeleteLibrarySymbol": {
+"text": "Delete symbol: removes the symbol with its names and fields from the library file. A symbol that is being edited is not deleted.",
+"returns": "True if it was deleted",
+"params": {
+"LibIndex": "which open library",
+"SetIndex": "which symbol",
+"out Msg": "why not"
+}
+},
+"TfrmMain.DuplicateLibrarySymbol": {
+"text": "Duplicate symbol: stores a copy of the symbol in the same library, its names followed by \" copy\" so that the two can be told apart; the copy is selected.",
+"returns": "True if it was done",
+"params": {
+"LibIndex": "which open library",
+"SetIndex": "which symbol",
+"out Msg": "why not"
+}
+},
+"TfrmMain.CopyLibrarySymbol": {
+"text": "Copy to: stores a copy of the symbol, with its names and fields, in another open library.",
+"returns": "True if it was done",
+"params": {
+"LibIndex": "the library the symbol is in",
+"SetIndex": "which symbol",
+"TargetIndex": "the library to copy it to",
+"out Msg": "why not"
+}
+},
+"TfrmMain.BeginSymbolProps": {
+"text": "The start of Library > Symbol Properties and of storing a symbol (TinyCAD's Update Library dialog).",
+"returns": "the dialog filled from the symbol being edited, nil when the current document is not a symbol; the caller shows it and frees it"
+},
+"TfrmMain.EndSymbolProps": {
+"text": "OK puts the edited names, description, attributes and orientation into the symbol, which then has unsaved changes. Cancel changes nothing. The caller frees the dialog.",
+"params": {
+"F": "the dialog",
+"Accept": "True for OK"
+}
+},
+"TfrmMain.BeginSymbolParts": {
+"text": "The start of Library > Parts per Package.",
+"returns": "the dialog filled from the symbol, nil when the current document is not a symbol; the caller shows it and frees it"
+},
+"TfrmMain.EndSymbolParts": {
+"text": "OK sets the number of parts and the kind of symbol. The kind is changed while the symbol has one part (before the count when it grows, after it when it shrinks to one). A symbol with a drawing for each part gains or loses sheets; a shared drawing loses the pins of the parts that are gone. The view starts again on the changed design (its undo history is cleared).",
+"params": {
+"F": "the dialog",
+"Accept": "True for OK"
+}
+},
+"TfrmMain.SymbolPartText": {
+"text": "\"Part B of 3\" for the part being drawn; empty when the symbol is not being edited or has one part.",
+"returns": "for the status bar"
+},
+"TfrmMain.ShowSymbolPart": {
+"text": "Chooses the part drawn: a symbol with a drawing for each part shows that part's sheet; a shared drawing shows only the pins of that part, and new pins belong to it.",
+"params": {
+"Part": "the part, 0-based (kept within the symbol's parts)"
+}
+},
+"TfrmMain.DoSymbolPart": {
+"text": "Library > Previous Part / Next Part.",
+"params": {
+"Sender": "the menu item (Tag -1 for the previous part, 1 for the next)"
+}
+},
+"TfrmMain.DoSymbolCommand": {
+"text": "New symbol, Edit symbol, Delete symbol (after asking), Duplicate symbol and Symbol properties (the symbol is opened for editing and the dialog shown) on the symbol chosen in the library list.",
+"params": {
+"Sender": "the library panel",
+"Cmd": "the command chosen in its pop-up menu or the Library menu"
+}
+},
+"TfrmMain.DoSymbolCopyTo": {
+"text": "Copy to: the symbol chosen in the list is copied to another open library.",
+"params": {
+"Sender": "the library panel",
+"TargetIndex": "the library chosen"
+}
+},
+"TfrmMain.LibraryQueryClose": {
+"text": "A library cannot be closed while one of its symbols is being edited.",
+"params": {
+"Sender": "the library panel",
+"const FileName": "the library about to be closed",
+"var Allow": "set False to refuse"
+}
+},
+"TfrmMain.DoSymbolMenuCommand": {
+"text": "The symbol commands of the Library menu act on the symbol chosen in the library list, as the list's pop-up menu does.",
+"params": {
+"Sender": "the Library menu item (its Tag is the TSymbolCommand)"
+}
+},
+"TfrmMain.DoStoreSymbol": {
+"text": "Store in library (and File > Save of a symbol): the Update Library dialog is shown first (names, description, attributes); OK stores the symbol. Problems are shown.",
+"params": {
+"Sender": "the menu item or Save"
+}
+},
+"TfrmMain.DoSymbolProps": {
+"text": "Library > Symbol Properties...: shows the dialog for the symbol being edited.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.DoSymbolParts": {
+"text": "Library > Parts per Package...: shows the dialog for the symbol being edited.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.LibraryMenuOpen": {
+"text": "The Library menu is opening: its symbol commands are brought up to date.",
+"params": {
+"Sender": "the Library menu"
+}
+},
+"TfrmMain.DoToolMenu": {
+"text": "Ribbon handler: starts the drawing tool whose number is in the button's Tag (or returns to select).",
+"params": {
+"Sender": "the tool button"
+}
+},
+"TfrmPrint.SetRange": {
+"text": "Sets the pages and copies (what the Printer button's dialog decided) and shows them: the Pages box is put on All pages or on the range.",
+"params": {
+"AFrom": "first page, 0 (with ATo 0) for all pages",
+"ATo": "last page",
+"ACopies": "number of copies",
+"ACollate": "True to collate them"
+}
+},
+"TfrmPrint.ValidationError": {
+"text": "The scale must be above 0 and at most 10000 per cent (TinyCAD takes any number; a scale of 0 stops it, and a huge one makes it try for millions of pages). When a range of pages is asked for, both of its ends must be whole numbers from 1 to the number of pages (a first page after the last is allowed: the pages are then printed from the lower to the higher).",
+"returns": "the message, empty when the scale and the range of pages will do"
+},
+"TfrmPrint.GetFromPage": {
+"text": "Read from the Pages box.",
+"returns": "the first page to print, 0 when all the pages are printed (or the box is no number)"
+},
+"TfrmPrint.GetToPage": {
+"text": "Read from the Pages box.",
+"returns": "the last page to print, 0 when all the pages are printed (or the box is no number)"
+},
+"TSymbolEditor.Validate": {
+"text": "Checks the symbol for mistakes. Errors: an empty or repeated name, a pin in a part the symbol does not have, two pins on the same spot. Warnings: no reference prefix, a pin with no number, pins off the grid (one warning that counts them), a repeated pin number (power pins excepted), a part without pins, no pins at all.",
+"returns": "the findings; empty when all is well"
+}
+}

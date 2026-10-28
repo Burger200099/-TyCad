@@ -1,0 +1,82 @@
+{
+ "RungButtonIcon": {
+  "text": "The picture of the rung numbers button: three numbered rows beside a rail, drawn here with the canvas and added once to the shared speed button images (later calls give the same index). Replace it with a drawn icon in the image list when there is one.",
+  "returns": "the image index in the shared speed button images"
+ },
+ "TfmLadder.FontKeyPress": {
+  "text": "Type-ahead in the font list: typed letters pick the first font whose name starts with them, until a pause of a second.",
+  "params": {
+   "Sender": "the font combo box",
+   "Key": "the typed character (cleared once used)"
+  }
+ },
+ "TfmLadder.AfterCreate": {
+  "text": "Frame set-up: hides the caption label and fills the font list with the installed fonts, drawn in their own faces."
+ },
+ "TfmRungs.FontKeyPress": {
+  "text": "Type-ahead in the font list: typed letters pick the first font whose name starts with them, until a pause of a second.",
+  "params": {
+   "Sender": "the font combo box",
+   "Key": "the typed character (cleared once used)"
+  }
+ },
+ "TfmRungs.AfterCreate": {
+  "text": "Frame set-up: hides the caption label and fills the font list with the installed fonts, drawn in their own faces."
+ },
+ "TPageHolder.Geo": {
+  "text": "Answers the options' question about the page with the geometry the current test command set.",
+  "returns": "the page size and border inset"
+ },
+ "FV": {
+  "text": "Reads token k of the command as a number.",
+  "returns": "the number",
+  "params": {
+   "k": "token position"
+  }
+ },
+ "IV": {
+  "text": "Reads token k of the command as an integer.",
+  "returns": "the integer",
+  "params": {
+   "k": "token position"
+  }
+ },
+ "Fmt": {
+  "text": "Formats a number for the test output (up to 12 significant digits).",
+  "returns": "the text",
+  "params": {
+   "V": "the number"
+  }
+ },
+ "Split": {
+  "text": "Splits a command line into tokens.",
+  "params": {
+   "Line": "the line"
+  }
+ },
+ "R": {
+  "text": "Formats a rectangle as 'left top right bottom' for the test output.",
+  "returns": "the text",
+  "params": {
+   "B": "the rectangle"
+  }
+ },
+ "CmdLAYOUT": {
+  "text": "Command LAYOUT: prints the grid's area, row height, number column width and row height text, then every column of every page."
+ },
+ "CmdAT": {
+  "text": "Command AT: prints the rung number at a point, or none."
+ },
+ "CmdNUM": {
+  "text": "Command NUM: prints the number shown for a row of a page and the rectangle of its cell."
+ },
+ "CmdMOVE": {
+  "text": "Command MOVE: shifts and rotates the grid every way it can be asked to and prints whether anything changed, and whether it can be resized."
+ },
+ "CmdPROPS": {
+  "text": "Command PROPS: lists the grid's properties, sets and reads each through UProps, and tries bad and out-of-range values."
+ },
+ "CmdBAD": {
+  "text": "Command BAD: loads a file whose rung grid has out-of-range settings and prints what they were brought to."
+ }
+}

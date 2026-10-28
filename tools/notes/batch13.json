@@ -1,0 +1,238 @@
+{
+"CopySelection": {
+"text": "Writes the selected objects of a sheet as clipboard data: the sheet XML with its header, resources and symbol definitions but only the selected objects, which is what TinyCAD puts on the clipboard under \"TinyCAD Design\". Only the resources the selected objects use are written.",
+"returns": "the number of objects written (0 writes nothing)",
+"params": {
+"Sheet": "the sheet the objects are on",
+"Selected": "the objects to copy",
+"Dest": "where to write the data"
+}
+},
+"PasteStream": {
+"text": "Reads clipboard data (or any sheet of a .dsn file) into a sheet the way TinyCAD's Import does: the data's fonts, line styles, fills and symbols are merged with the sheet's own, the objects are added with new ids and nothing else of the sheet changes. Trailing zero bytes (Windows rounds clipboard blocks up) are ignored; data that is not a TinyCAD drawing is refused and leaves the sheet unchanged.",
+"returns": "True if objects were pasted",
+"params": {
+"Design": "the design (new objects get their ids from it)",
+"Sheet": "the sheet to paste into",
+"Src": "the clipboard data",
+"Imported": "receives the new objects (not owned)"
+}
+},
+"BlockReference": {
+"text": "The point of a pasted block that follows the mouse: the largest x and y over the objects' points, snapped to the grid (the block's bottom-right corner), as CDrawBlockImport::Import works it out.",
+"returns": "the reference point",
+"params": {
+"Sheet": "the sheet (its grid snaps the result)",
+"Imported": "the pasted objects"
+}
+},
+"TDragWire.Create": {
+"text": "Creates the record for a wire taking part in a drag: which of its ends move, with no attachment to another wire yet.",
+"params": {
+"AObj": "the wire",
+"AMoveA": "True if its first end moves with the drag",
+"AMoveB": "True if its second end moves with the drag"
+}
+},
+"TWireEngine.DW": {
+"text": "One entry of the dragged-wire list.",
+"returns": "the entry",
+"params": {
+"Index": "position"
+}
+},
+"TWireEngine.FindDWire": {
+"text": "Finds the entry for a wire in the dragged-wire list.",
+"returns": "the entry, or nil if the wire is not dragged",
+"params": {
+"Obj": "the wire"
+}
+},
+"IsWireOrBus": {
+"text": "Whether an object is a wire or a bus (the objects that stretch when something attached moves).",
+"returns": "True for wires and buses",
+"params": {
+"Obj": "the object"
+}
+},
+"TWireEngine.AddWireToCollection": {
+"text": "Adds a wire to the drag, or, if it is already there, makes both of its ends move that were asked to (CDragUtils::AddWireToCollection). A newly added wire brings along the wires attached to it.",
+"params": {
+"N": "the entry to add; the list takes it, or frees it when the wire was already there"
+}
+},
+"TWireEngine.AddWiresAtPoint": {
+"text": "Adds every wire that is not selected and ends at a point (a pin, say) to the drag, with that end moving.",
+"params": {
+"P": "the connection point"
+}
+},
+"TWireEngine.AddAttachedObjects": {
+"text": "Adds the wires that start or end on the middle of a dragged wire, remembering how far along it they are, so they are put back at the same fraction when it moves (CDragUtils::AddAttachedObjects).",
+"params": {
+"Wire": "the wire being dragged",
+"WireMoveA": "True if its first end moves",
+"WireMoveB": "True if its second end moves"
+}
+},
+"TWireEngine.MoveAttachedObjects": {
+"text": "After a wire has moved, puts the wires attached to it back at the same fraction along it, and does the same for wires attached to those (CDragUtils::MoveAttachedObjects).",
+"params": {
+"Wire": "the wire that moved"
+}
+},
+"TWireEngine.DisplayDraggedWires": {
+"text": "Marks every dragged wire for the junction check and clears its \"already moved\" flags, ready for the next step."
+},
+"TWireEngine.CollectDragged": {
+"text": "Finds every wire that has to follow the selection (CDragUtils::Begin): wires ending at the connection points of the selected objects, and for selected wires the ends inside the selection area (if neither end is inside, both move)."
+},
+"TWireEngine.BeginDrag": {
+"text": "Starts a move of the selected objects. The area is the rectangle the selection was picked with: a selected wire with an end inside it only has that end moved, so it stretches; a click picks with a point, a selection box with its rectangle.",
+"params": {
+"AreaA": "first corner of the area",
+"AreaB": "opposite corner"
+}
+},
+"TWireEngine.DragBy": {
+"text": "Moves the selection by a step and stretches the wires attached to it (CDragUtils::Drag): the objects shift, wire ends at their connection points follow, wires attached to the middle of those wires follow along, and junctions that are needed or no longer needed are added or removed.",
+"params": {
+"R": "how far to move, in design units"
+}
+},
+"TWireEngine.MoveBy": {
+"text": "Moves the selection by a step without dragging wires along (CDragUtils::Move), then re-checks junctions. The view uses it for Ctrl-drag and while a pasted block follows the mouse.",
+"params": {
+"R": "how far to move, in design units"
+}
+},
+"TWireEngine.FinishDrag": {
+"text": "Ends a move: merges collinear wires, removes zero-length ones, and re-checks junctions with splitting allowed (CDragUtils::End). Call once, when the mouse is released."
+},
+"TSchematicView.ClipFormat": {
+"text": "The clipboard format that carries TinyCAD drawings, registered under the name \"TinyCAD Design\" the first time it is needed.",
+"returns": "the format id"
+},
+"TSchematicView.StartDragEngine": {
+"text": "Creates the wire engine for a move of the current selection, using the area the selection was picked with."
+},
+"TSchematicView.PruneSelection": {
+"text": "Removes from the selection any object that is no longer on the sheet (merging or cleaning wires can delete selected ones)."
+},
+"TSchematicView.CopyToClipboard": {
+"text": "Puts the selected objects on the clipboard in TinyCAD's format (\"TinyCAD Design\"), so they can be pasted here or into TinyCAD."
+},
+"TSchematicView.CutSelection": {
+"text": "Copies the selection to the clipboard and deletes it."
+},
+"TSchematicView.ClipboardHasDrawing": {
+"text": "Whether the clipboard holds TinyCAD data or text that might be drawing XML.",
+"returns": "True if a paste could be tried"
+},
+"TSchematicView.ClipboardToStream": {
+"text": "Reads the clipboard into a stream: the \"TinyCAD Design\" data, or, as TinyCAD does, plain text tried as drawing XML.",
+"params": {
+"S": "receives the data, positioned at the start"
+}
+},
+"TSchematicView.ClipboardText": {
+"text": "The clipboard's drawing data as text (for tests).",
+"returns": "the data, empty when there is none"
+},
+"TSchematicView.SetClipboardText": {
+"text": "Replaces the clipboard's contents with the given text as TinyCAD data (for tests, to stand in for a copy made in TinyCAD).",
+"params": {
+"Data": "the data"
+}
+},
+"TSchematicView.PasteFromClipboard": {
+"text": "Pastes the clipboard: the data's resources are merged into the sheet, the new objects are added and selected, and the block follows the mouse (its bottom-right corner under the pointer) until a click drops it. Data that is not a TinyCAD drawing leaves everything unchanged and says so in the status line."
+},
+"TSchematicView.DropPaste": {
+"text": "Places the pasted block where it is: joins wires that now meet, adds or removes junctions, and keeps the whole paste as one undo step."
+},
+"TSchematicView.CancelPaste": {
+"text": "Throws the pasted block away (right click or Esc while it follows the mouse): the objects are deleted and no undo step is kept."
+},
+"TSchematicView.DuplicateSelection": {
+"text": "Copies the selection and pastes it, so the copy follows the mouse until dropped."
+},
+"TfrmMain.DoCut": {
+"text": "Handler: copies the selection to the clipboard and deletes it.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TfrmMain.DoCopy": {
+"text": "Handler: copies the selection to the clipboard in TinyCAD's format.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TfrmMain.DoPaste": {
+"text": "Handler: pastes what is on the clipboard (from this program or from TinyCAD); the pasted objects follow the mouse until a click drops them.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TfrmMain.DoDuplicate": {
+"text": "Handler: copies and pastes the selection in one step.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"cliptest.pas::LoadDesign": {
+"text": "Loads a design (or makes an empty one for the name NEW) with the ids assigned.",
+"returns": "the design; the caller owns it",
+"params": {
+"Name": "a .dsn file, or NEW"
+}
+},
+"cliptest.pas::DoCopy": {
+"text": "Test mode: loads a design, selects objects of its first sheet (all, by class or by position) and writes them as clipboard data.",
+"params": {
+"InName": "the design",
+"OutName": "where to write the data",
+"Spec": "all, class:<names> or index:<numbers>"
+}
+},
+"cliptest.pas::DoPaste": {
+"text": "Test mode: pastes clipboard data (or a .dsn) into the first sheet of a design, prints how many objects came in and where the block reference is, and saves the result.",
+"params": {
+"ClipName": "the clipboard data",
+"TargetName": "a design, or NEW",
+"OutName": "where to save",
+"BlockOnly": "True to skip saving"
+}
+},
+"edittest.pas::DoLoad": {
+"text": "Replaces the test world with a design from a file."
+},
+"edittest.pas::DoSelSym": {
+"text": "Selects the k-th placed symbol of the sheet."
+},
+"edittest.pas::DoSelIdx": {
+"text": "Selects objects by their position in the drawing."
+},
+"edittest.pas::DoDragBy": {
+"text": "Drags (or, when Plain, only moves) the selection by a step, repeated n times, as a click on its first object would.",
+"params": {
+"Plain": "True to move without stretching wires"
+}
+},
+"edittest.pas::DoSelPins": {
+"text": "Prints the visible pins of the selected symbol with their reference, number and position on the sheet."
+},
+"edittest.pas::DoAllPins": {
+"text": "Prints every visible pin of every placed symbol with its reference, number and position."
+},
+"edittest.pas::DoStrip": {
+"text": "Deletes net labels and power symbols, which connect by name, so connectivity depends on wires, junctions and pins only."
+},
+"edittest.pas::DoCountSym": {
+"text": "Prints how many symbols are placed on the sheet."
+},
+"edittest.pas::DoNets": {
+"text": "Builds the netlist and prints one line per net."
+}
+}

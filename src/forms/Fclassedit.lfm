@@ -1,0 +1,86 @@
+inherited frmClassEdit: TfrmClassEdit
+  Left = 700
+  Height = 270
+  Top = 300
+  Width = 560
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'Add Class'
+  ClientHeight = 270
+  ClientWidth = 560
+  OnCloseQuery = FormCloseQuery
+  Position = poOwnerFormCenter
+  inherited pnlButtons: TPanel
+    Top = 212
+    Width = 560
+    ClientWidth = 556
+    inherited btnOK: TButton
+      Left = 300
+    end
+    inherited btnCancel: TButton
+      Left = 430
+    end
+    inherited btnApply: TButton
+      Visible = False
+    end
+  end
+  object lblName: TLabel[1]
+    Left = 12
+    Height = 15
+    Top = 14
+    Width = 100
+    Caption = '&Name:'
+    FocusControl = edName
+  end
+  object edName: TEdit[2]
+    Left = 120
+    Height = 23
+    Hint = 'The name of the class (unique in the library)'
+    Top = 10
+    Width = 420
+    TabOrder = 0
+  end
+  object lblParent: TLabel[3]
+    Left = 12
+    Height = 15
+    Top = 50
+    Width = 100
+    Caption = '&Parent class:'
+    FocusControl = cbParent
+  end
+  object cbParent: TComboBox[4]
+    Left = 120
+    Height = 23
+    Hint = 'The class this one specialises: it inherits all the fields and child kinds of its parents'
+    Top = 46
+    Width = 420
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 1
+  end
+  object chAbstract: TCheckBox[5]
+    Left = 120
+    Height = 19
+    Hint = 'An abstract class holds no parts; it only gives its fields to its subclasses'
+    Top = 84
+    Width = 200
+    Caption = '&Abstract (holds no parts)'
+    TabOrder = 2
+  end
+  object lblDescription: TLabel[6]
+    Left = 12
+    Height = 15
+    Top = 122
+    Width = 100
+    Caption = '&Description:'
+    FocusControl = edDescription
+  end
+  object edDescription: TEdit[7]
+    Left = 120
+    Height = 23
+    Hint = 'What the class is'
+    Top = 118
+    Width = 420
+    TabOrder = 3
+  end
+end

@@ -1,0 +1,146 @@
+inherited fmPin: TfmPin
+  Height = 240
+  Width = 505
+  ClientHeight = 240
+  ClientWidth = 505
+  DesignLeft = 500
+  DesignTop = 361
+  inherited lbCaption: TLabel
+    Top = 225
+    Width = 505
+    Caption = 'Pin'
+  end
+  object lbNumber: TLabel[1]
+    Left = 135
+    Height = 15
+    Top = 42
+    Width = 44
+    Caption = 'Number'
+  end
+  object edPinName: TEdit[2]
+    Left = 48
+    Height = 23
+    Top = 6
+    Width = 139
+    TabOrder = 0
+    
+  end
+  object lbName: TLabel[3]
+    Left = 9
+    Height = 15
+    Top = 9
+    Width = 32
+    Caption = 'Name'
+  end
+  object edPinNumber: TEdit[4]
+    Hint = 'The number of the pin'
+    Left = 186
+    Height = 23
+    Top = 38
+    Width = 50
+    TabOrder = 1
+  end
+  object lbNumPos: TLabel[5]
+    Left = 250
+    Height = 15
+    Top = 42
+    Width = 43
+    Caption = 'Number pos.'
+  end
+  object sePinNumPos: TSpinEdit[6]
+    Hint = 'Where along the pin the number is written'
+    Left = 298
+    Height = 23
+    Top = 38
+    Width = 50
+    TabOrder = 2
+  end
+  object lbLength: TLabel[7]
+    Left = 199
+    Height = 15
+    Top = 9
+    Width = 37
+    Caption = 'Length'
+  end
+  object sePinLength: TSpinEdit[8]
+    Hint = 'The length of the pin'
+    Left = 244
+    Height = 23
+    Top = 6
+    Width = 50
+    TabOrder = 3
+  end
+  object lbShape: TLabel[9]
+    Left = 360
+    Height = 15
+    Top = 42
+    Width = 25
+    Caption = 'Type'
+  end
+  object cbPinShape: TComboBox[10]
+    Hint = 'The type of the pin'
+    Left = 392
+    Height = 23
+    Top = 38
+    Width = 100
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 4
+  end
+  object lbElec: TLabel[11]
+    Left = 304
+    Height = 15
+    Top = 9
+    Width = 75
+    Caption = 'Electrical Type'
+  end
+  object cbPinElec: TComboBox[12]
+    Hint = 'The electrical type of the pin'
+    Left = 392
+    Height = 23
+    Top = 6
+    Width = 100
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 5
+  end
+  object sbPinShowName: TSpeedButton[13]
+    Hint = 'Show the name'
+    Left = 9
+    Height = 28
+    Top = 36
+    Width = 28
+    AllowAllUp = True
+    Flat = True
+    GroupIndex = 1
+    Images = frmSharedControls.ilSpeedBtn
+    ImageIndex = 72
+    ImageWidth = 24
+  end
+  object sbPinShowNumber: TSpeedButton[14]
+    Hint = 'Show the number'
+    Left = 43
+    Height = 28
+    Top = 36
+    Width = 28
+    AllowAllUp = True
+    Flat = True
+    GroupIndex = 2
+    Images = frmSharedControls.ilSpeedBtn
+    ImageIndex = 73
+    ImageWidth = 24
+  end
+  object sbPinCentre: TSpeedButton[15]
+    Hint = 'Centre the name on the pin'
+    Left = 77
+    Height = 28
+    Top = 36
+    Width = 28
+    AllowAllUp = True
+    Flat = True
+    GroupIndex = 3
+    Images = frmSharedControls.ilSpeedBtn
+    ImageIndex = 74
+    ImageWidth = 24
+  end
+end

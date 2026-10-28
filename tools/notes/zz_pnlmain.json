@@ -1,0 +1,6 @@
+{
+"TfrmMain.pnlMainClick": {
+"text": "Handler for a click on the main panel; the user's design wired it but it does nothing yet.",
+"params": {"Sender": "the panel"}
+}
+}

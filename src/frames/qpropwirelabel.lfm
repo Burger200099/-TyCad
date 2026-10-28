@@ -1,0 +1,176 @@
+inherited fmPropWireLabel: TfmPropWireLabel
+  Height = 114
+  Width = 479
+  ClientHeight = 114
+  ClientWidth = 479
+  DesignLeft = 793
+  DesignTop = 312
+  inherited lbCaption: TLabel
+    Top = 99
+    Width = 479
+    Caption = 'WireLabel'
+  end
+  object lbSep1: TPanel[1]
+    Left = 270
+    Height = 99
+    Top = 0
+    Width = 2
+    Align = alLeft
+    TabOrder = 0
+  end
+  object plText: TPanel[2]
+    Left = 0
+    Height = 99
+    Top = 0
+    Width = 270
+    Align = alLeft
+    BevelOuter = bvNone
+    ClientHeight = 99
+    ClientWidth = 270
+    TabOrder = 1
+    object edText: TEdit
+      Left = 5
+      Height = 23
+      Top = 9
+      Width = 259
+      TabOrder = 0
+      Text = 'edText'
+    end
+    object lbDirection: TLabel
+      Left = 5
+      Height = 15
+      Top = 49
+      Width = 51
+      Caption = 'Direction:'
+    end
+    object cbTextDirection: TComboBox
+      Left = 64
+      Height = 23
+      Top = 45
+      Width = 56
+      ItemHeight = 15
+      ItemIndex = 3
+      Items.Strings = (
+        'Up'
+        'Down'
+        'Left'
+        'Right'
+      )
+      Style = csDropDownList
+      TabOrder = 1
+      Text = 'Right'
+      OnChange = cbTextDirectionChange
+    end
+    object lbType: TLabel
+      Left = 133
+      Height = 15
+      Top = 49
+      Width = 28
+      Caption = 'Type:'
+    end
+    object cbTextDirection1: TComboBox
+      Left = 168
+      Height = 23
+      Top = 45
+      Width = 96
+      ItemHeight = 15
+      ItemIndex = 3
+      Items.Strings = (
+        'Normal'
+        'Input'
+        'Output'
+        'Input/Output'
+      )
+      Style = csDropDownList
+      TabOrder = 2
+      Text = 'Input/Output'
+    end
+    object lbWire: TLabel
+      Left = 0
+      Height = 15
+      Top = 84
+      Width = 270
+      Align = alBottom
+      Alignment = taCenter
+      Caption = 'Text'
+    end
+  end
+  object plFont: TPanel[3]
+    Left = 272
+    Height = 99
+    Top = 0
+    Width = 206
+    Align = alLeft
+    BevelOuter = bvNone
+    ClientHeight = 99
+    ClientWidth = 206
+    TabOrder = 2
+    object lbFont: TLabel
+      Left = 0
+      Height = 15
+      Top = 84
+      Width = 206
+      Align = alBottom
+      Alignment = taCenter
+      Caption = 'Font'
+    end
+    object cbFont: TFontNameCombo
+      Left = 12
+      Height = 32
+      Top = 4
+      Width = 188
+      ItemHeight = 26
+      Style = csOwnerDrawFixed
+      TabOrder = 0
+    end
+    object cbFontSize: TComboBox
+      Left = 12
+      Height = 23
+      Top = 45
+      Width = 52
+      ItemHeight = 15
+      ItemIndex = 4
+      Items.Strings = (
+        '8'
+        '9'
+        '10'
+        '11'
+        '12'
+        '14'
+        '16'
+        '18'
+        '20'
+        '22'
+        '24'
+        '26'
+        '28'
+        '32'
+        '38'
+        '48'
+        '72'
+      )
+      TabOrder = 1
+      Text = '12'
+    end
+    object sbBold: TSpeedButton
+      Left = 72
+      Height = 32
+      Top = 41
+      Width = 32
+      GroupIndex = 1
+      Images = frmSharedControls.ilFontGlyphs
+      ImageIndex = 2
+      ImageWidth = 24
+    end
+    object sbItalic: TSpeedButton
+      Left = 112
+      Height = 32
+      Top = 41
+      Width = 32
+      GroupIndex = 2
+      Images = frmSharedControls.ilFontGlyphs
+      ImageIndex = 3
+      ImageWidth = 24
+    end
+  end
+end

@@ -1,0 +1,47 @@
+object frDemoBad: TfrDemoBad
+  Left = 0
+  Height = 73
+  Top = 0
+  Width = 300
+  ClientHeight = 73
+  ClientWidth = 300
+  TabOrder = 0
+  DesignLeft = 0
+  DesignTop = 0
+  object edLineWidth: TEdit
+    Left = 4
+    Height = 23
+    Hint = 'A text box where a whole number is edited'
+    Top = 4
+    Width = 60
+    TabOrder = 0
+  end
+  object spLineColor: TSpinEdit
+    Left = 4
+    Height = 23
+    Hint = 'A number box where a color is edited'
+    Top = 38
+    Width = 60
+    TabOrder = 1
+  end
+  object cbLineStyle: TComboBox
+    Left = 80
+    Height = 23
+    Hint = 'The first drop-down for the line style'
+    Top = 4
+    Width = 130
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 2
+  end
+  object cbStyleLineStyle: TComboBox
+    Left = 80
+    Height = 23
+    Hint = 'A second drop-down for the same property'
+    Top = 38
+    Width = 130
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 3
+  end
+end

@@ -1,0 +1,406 @@
+{
+"ActivePointsOf": {
+"text": "The connection points of an object, i.e. TinyCAD's GetActive: the visible pins of a placed symbol, a power symbol's point, the point of an input/output label, or both ends of a bus slash. Wires, junctions and shapes have none. Wire snapping and junction checks use these.",
+"returns": "array of points; empty when the object has no connection points",
+"params": {
+"Obj": "the object to ask"
+}
+},
+"PointNotEqual": {
+"text": "True when two points differ by more than the 0.001 tolerance TinyCAD uses when comparing points (the opposite of PointsClose).",
+"returns": "True if the points are different"
+},
+"TWireEngine.Create": {
+"text": "Creates the engine for editing one sheet of a design. It keeps the lists the merge and junction passes use (discarded wires, dragged wires, the junction to-do list).",
+"params": {
+"ADesign": "the design (used to give new objects ids)",
+"ASheet": "the sheet being edited"
+}
+},
+"TWireEngine.Destroy": {
+"text": "Frees the working lists. The sheet and its objects are not owned by the engine."
+},
+"TWireEngine.Opts": {
+"text": "The options of the sheet being edited (snap grid, auto-junction and auto-snap settings, zoom).",
+"returns": "the sheet's option object"
+},
+"TWireEngine.IndexInDrawing": {
+"text": "Finds an object in the sheet's drawing list; used to forget wires that a merge or discard has already removed.",
+"returns": "position in the list, or -1 when the object is not on the sheet",
+"params": {
+"Obj": "the object to look for"
+}
+},
+"TWireEngine.DeleteObject": {
+"text": "Removes an object from the sheet (the list frees it) and clears the single-selection reference if it pointed at that object.",
+"params": {
+"Obj": "the object to delete"
+}
+},
+"TWireEngine.AddObject": {
+"text": "Adds an object to the sheet, giving it a new object id first if it has none.",
+"params": {
+"Obj": "the object to add; the sheet takes ownership"
+}
+},
+"TWireEngine.AddNewJunction": {
+"text": "Creates a junction dot at Q and adds it to the sheet (TinyCAD's AddNewJunction). It does not check whether one is already there, as in TinyCAD.",
+"returns": "the new junction",
+"params": {
+"Q": "where the junction goes"
+}
+},
+"TWireEngine.StickyPoint": {
+"text": "Where the cursor \"sticks\" while drawing (a port of GetStickyPoint): a pin or other connection point, or the nearest point on a wire, when within the snap range; otherwise the grid point. Also reports whether sticking here would join three or more things so a junction is wanted. With auto-snap off it returns the grid point.",
+"returns": "the point to use",
+"params": {
+"NoSnap": "the raw mouse position",
+"Pins": "consider connection points of symbols, power symbols and labels",
+"Wires": "consider points on existing wires",
+"IsStuck": "set True when the result is a pin or wire point",
+"IsJunction": "set True when a junction would be needed there"
+}
+},
+"TWireEngine.TodoAdd": {
+"text": "Appends a point or a line to the list of places whose junction requirement must be re-checked.",
+"params": {
+"A": "the point, or the line's start",
+"B": "the line's end (ignored for a point)",
+"IsPoint": "True when only A matters"
+}
+},
+"TWireEngine.AddObjectToTodo": {
+"text": "Notes what needs a junction check because of this object: a wire's whole line, a junction's point, or an object's connection points. Does nothing when auto-junction is off.",
+"params": {
+"Obj": "the object that was added, moved or removed"
+}
+},
+"TWireEngine.CheckJunctionRequirement#3": {
+"text": "Checks every point along the line A-B where something touches it (wire ends, junctions, connection points) and applies the single-point check at each, in the order TinyCAD does (sorted points, no duplicates).",
+"params": {
+"A": "start of the line",
+"B": "end of the line",
+"PerformSplit": "allow wires to be split and merged, not just junctions added or removed"
+}
+},
+"TWireEngine.CheckJunctionRequirement#2": {
+"text": "Decides whether a junction belongs at Q: adds one when three or more things meet at a wire end, removes one that is no longer needed (merging the two collinear wires it joined), and with PerformSplit splits a wire that another wire ends in the middle of. A port of TinyCAD's CJunctionUtils.",
+"params": {
+"Q": "the point to check",
+"PerformSplit": "allow wires to be split and merged"
+}
+},
+"TWireEngine.CheckTodoList": {
+"text": "Runs the junction check for everything on the to-do list, empties the list, and (when splitting) deletes the wires the checks marked as merged away.",
+"params": {
+"PerformSplit": "allow splitting and merging"
+}
+},
+"TWireEngine.EndDrag": {
+"text": "Finishes an edit of the wires in the dragged list (CDragUtils::End): drops wires that are gone, merges them with collinear neighbours, cleans zero-length ones, then runs the junction checks."
+},
+"TWireEngine.MergeLinePoint": {
+"text": "Entry point used after a wire has been stored: treats it as the dragged wire and runs the merge, clean and junction pass so it joins neighbouring wires and gets junctions and splits.",
+"params": {
+"Obj": "the wire just added to the sheet"
+}
+},
+"TWireTool.Create": {
+"text": "Creates a wire or line tool bound to an engine and sets it up as TinyCAD does: wires use the 90 degree angle mode and the default wire style; plain lines draw at any angle.",
+"params": {
+"AEngine": "the engine for the sheet being drawn on",
+"AKind": "xWire for wires, xLineEx2 for lines"
+}
+},
+"TWireTool.BeginEdit": {
+"text": "Resets the tool to \"waiting for the first point\": no segment in progress, no sticking, no segments stored yet."
+},
+"TWireTool.StickyFor": {
+"text": "The point to use for a mouse position: wires stick to pins and wires through the engine; plain lines just snap to the grid.",
+"returns": "the point to use",
+"params": {
+"NoSnap": "the raw mouse position"
+}
+},
+"TWireTool.ToAngle": {
+"text": "Applies the angle rule to the end point B of the segment being drawn: in 90 degree mode it picks horizontal-first or vertical-first for the dog-leg; in 45 degree mode it forces B onto the nearest 45 degree line; otherwise it does nothing."
+},
+"TWireTool.LButtonDown": {
+"text": "Handles a left click as TinyCAD's line tool does. The first click starts a segment (adding a junction if it starts on a wire or pin junction and copying the style of a wire under it). Later clicks store the segment (as an L of two wires in 90 degree mode when the end sticks) and carry on from the end, or finish when the end stuck to a pin or wire.",
+"params": {
+"NoSnap": "the raw mouse position"
+}
+},
+"TWireTool.RButtonDown": {
+"text": "Ends the wire being drawn (right click or finish): removes junctions that are no longer needed at its ends and goes back to waiting for a first point.",
+"returns": "True when a segment was in progress"
+},
+"TWireTool.DblLButtonDown": {
+"text": "A double click: places the last segment and ends the wire.",
+"params": {
+"NoSnap": "the raw mouse position"
+}
+},
+"TWireTool.LButtonUp": {
+"text": "On releasing the mouse: if the user pressed and dragged a real distance (more than 10 units) the wire is placed and ended, so press-drag-release draws a wire; otherwise the tool stays in click-click mode.",
+"params": {
+"NoSnap": "the raw mouse position"
+}
+},
+"TWireTool.Move": {
+"text": "Follows the mouse: while a segment is being drawn it updates the end point (with sticking) and applies the angle rule; while waiting for the first point it just tracks where a click would land.",
+"params": {
+"NoSnap": "the raw mouse position"
+}
+},
+"TWireTool.EndEdit": {
+"text": "Called when the tool is dropped: finishes any wire in progress."
+},
+"TWireTool.Preview": {
+"text": "Gives the middle point of the rubber band to draw: the corner of the dog-leg in 90 degree mode, or the start point when the band is one straight piece.",
+"params": {
+"Corner": "set to the corner point of the rubber band"
+}
+},
+"ReferencePoint": {
+"text": "Where an object \"is\" for finding its ladder line: the middle of a placed symbol's connection points, otherwise the middle of its box, otherwise its first point (junctions use their point).",
+"returns": "the reference point in design units",
+"params": {
+"Obj": "the object"
+}
+},
+"LineNumberOfObject": {
+"text": "Finds the ladder line an object sits on: the first ladder on the sheet whose rails enclose the object's reference point, and the line number at that height.",
+"returns": "True when the object is between a ladder's rails",
+"params": {
+"Sheet": "the sheet to look on",
+"Obj": "the object",
+"Number": "set to the line number (0 when not on a ladder)"
+}
+},
+"Where": {
+"text": "Formats a line reference for display: the plain line number on the same sheet, \"sheet.line\" on another sheet, or \"?\" when the object is not on a ladder.",
+"returns": "the text to show",
+"params": {
+"OwnSheet": "1-based number of the sheet the text is on",
+"R": "the sheet number and line to show"
+}
+},
+"TextFor": {
+"text": "Works out what a linked text should say. Mode 0 gives the ladder line of its target; mode 1 gives the lines of the other symbols that share the target's reference, sorted by sheet then line and separated by commas (\"-\" when there are none, \"?\" when the target no longer exists).",
+"returns": "the resolved text without prefix or suffix",
+"params": {
+"Design": "the design to search",
+"OwnSheet": "zero-based index of the sheet the text is on",
+"X": "the linked text object"
+}
+},
+"UpdateLinks": {
+"text": "Recomputes the text of every linked text object in the design and refreshes its layout. Call after anything that can change a line number: moving, adding or deleting objects, or editing a ladder.",
+"params": {
+"Design": "the design to update"
+}
+},
+"TUndoManager.Create": {
+"text": "Creates an undo manager for a design with a depth limit of 100 steps and empty history.",
+"params": {
+"ADesign": "the design whose history is kept"
+}
+},
+"TUndoManager.SetDesign": {
+"text": "Points the manager at a different design (or none), allows empty sheets on it, and clears the history.",
+"params": {
+"ADesign": "the new design"
+}
+},
+"TUndoManager.Reset": {
+"text": "Clears the undo and redo history and any change in progress."
+},
+"TUndoManager.BeginChange": {
+"text": "First half of a change that might turn out to do nothing: takes the snapshot now but does not put it on the undo stack yet.",
+"params": {
+"ACaption": "name of the action, shown for Undo",
+"ASel": "ids of the selected objects before the change",
+"ASheet": "the sheet being shown before the change"
+}
+},
+"TUndoManager.HasPending": {
+"text": "Says whether BeginChange has been called without a matching Commit or Discard.",
+"returns": "True while a snapshot is waiting"
+},
+"TUndoManager.DiscardChange": {
+"text": "Throws away the pending snapshot because nothing changed, so no undo step is created."
+},
+"TUndoManager.CommitChange": {
+"text": "Keeps the pending snapshot as an undo step (dropping the oldest when over the limit) and clears the redo history, since a new change has been made."
+},
+"TUndoManager.Take": {
+"text": "Captures the whole design as the text a save would write, together with the selection and sheet to restore.",
+"returns": "the snapshot",
+"params": {
+"ACaption": "name of the action",
+"ASel": "ids of the selected objects",
+"ASheet": "current sheet index"
+}
+},
+"TUndoManager.Restore": {
+"text": "Reloads the design in place from a snapshot. Object ids only ever go up across a restore, so ids of deleted objects are not reused; the file name is kept.",
+"params": {
+"S": "the snapshot to restore",
+"ASel": "set to the ids to select afterwards",
+"ASheet": "set to the sheet to show afterwards"
+}
+},
+"TUndoManager.Push": {
+"text": "Takes a snapshot immediately and puts it on the undo stack (the one-step form of BeginChange plus CommitChange). Call before making a change.",
+"params": {
+"ACaption": "name of the action",
+"ASel": "ids of the selected objects",
+"ASheet": "current sheet index"
+}
+},
+"TUndoManager.CanUndo": {
+"text": "Whether there is anything to undo.",
+"returns": "True if the undo stack is not empty"
+},
+"TUndoManager.CanRedo": {
+"text": "Whether there is anything to redo.",
+"returns": "True if the redo stack is not empty"
+},
+"TUndoManager.UndoCount": {
+"text": "How many steps can be undone.",
+"returns": "size of the undo stack"
+},
+"TUndoManager.RedoCount": {
+"text": "How many steps can be redone.",
+"returns": "size of the redo stack"
+},
+"TUndoManager.UndoCaption": {
+"text": "The name of the action Undo would reverse, for a menu or hint.",
+"returns": "the caption, or empty when nothing can be undone"
+},
+"TUndoManager.RedoCaption": {
+"text": "The name of the action Redo would repeat, for a menu or hint.",
+"returns": "the caption, or empty when nothing can be redone"
+},
+"TUndoManager.Undo": {
+"text": "Undoes the last step: saves the current state on the redo stack, then restores the previous snapshot. Gives back what to select and which sheet to show.",
+"returns": "True if a step was undone",
+"params": {
+"CurSel": "ids selected now (kept for Redo)",
+"CurSheet": "sheet shown now (kept for Redo)",
+"ASel": "set to the ids to select after the undo",
+"ASheet": "set to the sheet to show after the undo"
+}
+},
+"TUndoManager.Redo": {
+"text": "Repeats the last undone step: saves the current state on the undo stack, then restores the redo snapshot.",
+"returns": "True if a step was redone",
+"params": {
+"CurSel": "ids selected now",
+"CurSheet": "sheet shown now",
+"ASel": "set to the ids to select afterwards",
+"ASheet": "set to the sheet to show afterwards"
+}
+},
+"PaperCount": {
+"text": "Number of standard paper sizes in the table.",
+"returns": "the count"
+},
+"PaperInfo": {
+"text": "One entry of the paper table: name, family and size in millimetres (landscape, width not less than height).",
+"returns": "the table entry",
+"params": {
+"Index": "position in the table, 0-based"
+}
+},
+"PaperIndexByName": {
+"text": "Looks a paper up by its name, ignoring case.",
+"returns": "its index, or -1 if there is no such paper",
+"params": {
+"Name": "the paper name, e.g. \"ANSI B (Tabloid)\""
+}
+},
+"PaperDescription": {
+"text": "A text for pick lists: name, size in millimetres and in inches.",
+"returns": "for example \"ANSI B (Tabloid) - 431.8 x 279.4 mm (17 x 11 in)\"",
+"params": {
+"Index": "position in the table"
+}
+},
+"PaperUnits": {
+"text": "The page size in internal units (0.2 mm each) for a paper, rounding halves up so every size is rounded the same way.",
+"params": {
+"Index": "position in the table",
+"Landscape": "True for landscape, False for portrait",
+"W": "set to the page width",
+"H": "set to the page height"
+}
+},
+"MatchPaper": {
+"text": "Finds which standard paper a page size is, within a tolerance, in either orientation; when several fit the closest wins.",
+"returns": "the paper's index, or -1 for a custom size",
+"params": {
+"W": "page width, internal units",
+"H": "page height, internal units",
+"Tol": "allowed difference per side, internal units",
+"Landscape": "set True if it matched in landscape"
+}
+},
+"DescribePage": {
+"text": "Describes a page size for display: the paper name and orientation, or \"Custom W x H mm\".",
+"returns": "the description",
+"params": {
+"W": "page width, internal units",
+"H": "page height, internal units"
+}
+},
+"BorderRect": {
+"text": "The border rectangle: the page inset by the same margin on every side (it stands for the printer's unprintable edge).",
+"returns": "the rectangle in internal units",
+"params": {
+"PageW": "page width",
+"PageH": "page height",
+"Margin": "inset on each side, internal units"
+}
+},
+"VariableNames": {
+"text": "Lists the names of every title-block variable (SHEET, SHEETCOUNT, TITLE, REV ...) so a program can offer them in a pick list.",
+"returns": "the names, without the $( )"
+},
+"SheetOfText": {
+"text": "The text \"N of M\" for a sheet: its number and the number of sheets in the file.",
+"returns": "e.g. \"2 of 7\"",
+"params": {
+"Design": "the design",
+"SheetIndex": "zero-based index of the sheet"
+}
+},
+"SheetsText": {
+"text": "The sheet's Sheets field: \"N of M\" worked out automatically when auto-numbering is on, otherwise the text the user typed.",
+"returns": "the text to show",
+"params": {
+"Design": "the design",
+"SheetIndex": "zero-based index of the sheet"
+}
+},
+"Lookup": {
+"text": "Finds the value of one variable for a sheet (case already upper). Values come from the sheet's title block, revision history, paper, border and the file name.",
+"returns": "True if the name is a known variable",
+"params": {
+"Design": "the design",
+"SheetIndex": "zero-based sheet index",
+"Name": "variable name in upper case",
+"Value": "set to the variable's value"
+}
+},
+"ExpandVariables": {
+"text": "Replaces every $(NAME) in Text with its value for the given sheet. \"$$\" gives a literal dollar sign; an unknown name or a \"$(\" with no closing bracket is left exactly as typed.",
+"returns": "the expanded text (unchanged if the sheet index is out of range)",
+"params": {
+"Design": "the design",
+"SheetIndex": "zero-based sheet index",
+"Text": "text that may contain $(...) variables"
+}
+}
+}

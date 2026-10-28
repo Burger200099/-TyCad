@@ -1,0 +1,139 @@
+object frmPreview: TfrmPreview
+  Left = 300
+  Height = 760
+  Top = 80
+  Width = 1000
+  Caption = 'Print Preview'
+  ClientHeight = 760
+  ClientWidth = 1000
+  DesignTimePPI = 120
+  KeyPreview = True
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
+  OnResize = FormResize
+  Position = poOwnerFormCenter
+  LCLVersion = '3.0.0.3'
+  object pnlTop: TPanel
+    Left = 0
+    Height = 52
+    Top = 0
+    Width = 1000
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 52
+    ClientWidth = 1000
+    TabOrder = 0
+    object btnPrint: TButton
+      Hint = 'Print the design'
+      Left = 8
+      Height = 36
+      Top = 8
+      Width = 110
+      Caption = '&Print...'
+      ModalResult = 6
+      TabOrder = 0
+    end
+    object btnNext: TButton
+      Hint = 'Show the next page'
+      Left = 126
+      Height = 36
+      Top = 8
+      Width = 110
+      Caption = '&Next Page'
+      OnClick = btnNextClick
+      TabOrder = 1
+    end
+    object btnPrev: TButton
+      Hint = 'Show the previous page'
+      Left = 244
+      Height = 36
+      Top = 8
+      Width = 110
+      Caption = 'P&rev Page'
+      OnClick = btnPrevClick
+      TabOrder = 2
+    end
+    object btnTwo: TButton
+      Hint = 'Show two pages at once, or one'
+      Left = 362
+      Height = 36
+      Top = 8
+      Width = 110
+      Caption = 'Two &Page'
+      OnClick = btnTwoClick
+      TabOrder = 3
+    end
+    object btnZoomIn: TButton
+      Hint = 'Make the pages larger'
+      Left = 480
+      Height = 36
+      Top = 8
+      Width = 110
+      Caption = 'Zoom &In'
+      OnClick = btnZoomInClick
+      TabOrder = 4
+    end
+    object btnZoomOut: TButton
+      Hint = 'Make the pages smaller'
+      Left = 598
+      Height = 36
+      Top = 8
+      Width = 110
+      Caption = 'Zoom &Out'
+      OnClick = btnZoomOutClick
+      TabOrder = 5
+    end
+    object btnClose: TButton
+      Hint = 'Close the preview'
+      Left = 716
+      Height = 36
+      Top = 8
+      Width = 110
+      Cancel = True
+      Caption = '&Close'
+      ModalResult = 1
+      TabOrder = 6
+    end
+  end
+  object pnlBottom: TPanel
+    Left = 0
+    Height = 32
+    Top = 728
+    Width = 1000
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 32
+    ClientWidth = 1000
+    TabOrder = 1
+    object lbStatus: TLabel
+      Left = 12
+      Height = 20
+      Top = 6
+      Width = 900
+      AutoSize = False
+      Caption = 'lbStatus'
+    end
+  end
+  object sbPages: TScrollBox
+    Left = 0
+    Height = 676
+    Top = 52
+    Width = 1000
+    HorzScrollBar.Page = 1
+    VertScrollBar.Page = 1
+    Align = alClient
+    Color = clAppWorkspace
+    ParentColor = False
+    TabOrder = 2
+    object pbPage: TPaintBox
+      Hint = 'The pages as they will be printed (click to zoom)'
+      Left = 0
+      Height = 600
+      Top = 0
+      Width = 900
+      OnMouseUp = pbPageMouseUp
+      OnPaint = pbPagePaint
+    end
+  end
+end

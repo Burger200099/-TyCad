@@ -1,0 +1,336 @@
+{
+"UDrawingObjects.pas::TDrawError.Create": {
+"text": "Creates a new TDrawError at the origin with error number 0. The design rules check sets the position and number after creating it.",
+"params": {
+"AOpts": "the sheet options of the sheet the marker is on"
+}
+},
+"UDrawingObjects.pas::TDrawError.GetType": {
+"text": "Identifies this class's kind of object. The netlist ignores it and the file writer skips it.",
+"returns": "the TObjType code xError"
+},
+"UDrawingObjects.pas::TDrawError.SaveXML": {
+"text": "Does nothing: a check marker is not part of the design and is never written to a file.",
+"params": {
+"W": "the XML writer"
+}
+},
+"UDrawingObjects.pas::TDrawError.LoadXML": {
+"text": "Does nothing: a check marker is never read from a file.",
+"params": {
+"R": "the XML reader"
+}
+},
+"UDrawingObjects.pas::TDrawError.IsInside": {
+"text": "Selection test, copied from CDrawError::IsInside: the marker is a square of half-size 6 (ERRORSIZE) around its point and counts as inside when that square touches the rectangle.",
+"returns": "True if the marker is selected by that rectangle",
+"params": {
+"Left": "left edge",
+"Right": "right edge",
+"Top": "top edge",
+"Bottom": "bottom edge"
+}
+},
+"UDrawingObjects.pas::TDrawError.Clone": {
+"text": "Makes a copy of this marker (same point and error number).",
+"returns": "the new object; the caller owns it"
+},
+"UErc.pas::TStrMap.Search": {
+"text": "Binary search in byte order.",
+"returns": "True if the key is in the map",
+"params": {
+"K": "the key",
+"Index": "where the key is, or would be inserted"
+}
+},
+"UErc.pas::TStrMap.Find": {
+"text": "Looks a key up.",
+"returns": "True if the key is in the map",
+"params": {
+"K": "the key",
+"Value": "its value"
+}
+},
+"UErc.pas::TStrMap.Has": {
+"text": "Membership test.",
+"returns": "True if the key is in the map",
+"params": {
+"K": "the key"
+}
+},
+"UErc.pas::TStrMap.SetValue": {
+"text": "map[key] = value: adds the key or replaces its value.",
+"params": {
+"K": "the key",
+"V": "the value"
+}
+},
+"UErc.pas::TStrMap.Count": {
+"text": "Size of the map.",
+"returns": "the number of keys"
+},
+"UErc.pas::TStrMap.KeyAt": {
+"text": "The key at a position in key order.",
+"returns": "the key",
+"params": {
+"I": "position in key order"
+}
+},
+"UErc.pas::TStrMap.ValueAt": {
+"text": "The value at a position in key order.",
+"returns": "the value",
+"params": {
+"I": "position in key order"
+}
+},
+"UErc.pas::ErcOptionsFromWord": {
+"text": "Unpacks the ErrorTest bit field: bit 0 is DupRef, then UnConnect, NoConnect, Power, OutputPwr, Output, NoOutput, UnConnected, MultipleNetNames, NonCaseDistinctNetNames, UnAssignedRefDes.",
+"returns": "the checks it turns on",
+"params": {
+"W": "the registry value"
+}
+},
+"UErc.pas::ErcOptionsToWord": {
+"text": "Packs the checks into the ErrorTest bit field (the unused bits 11 to 15 are zero).",
+"returns": "the registry value",
+"params": {
+"O": "the checks"
+}
+},
+"UErc.pas::ErcDefaultWord": {
+"text": "The registry default of the \"ERC\" value: every check on.",
+"returns": "$FFFF"
+},
+"UErc.pas::ErcMessage": {
+"text": "The strings of TinyCad.rc for the check's messages.",
+"returns": "the text, empty for a number that is not a message",
+"params": {
+"Id": "the message number"
+}
+},
+"UErc.pas::ErcTableLookup": {
+"text": "One step of the state machine.",
+"returns": "the new net type, or an error id of ERR_BASE + 1 or more",
+"params": {
+"NetType": "the net type so far (0..6)",
+"NodeType": "the type of the next node (0..6)"
+}
+},
+"UErc.pas::SixDigits": {
+"text": "Rounds the exact decimal value of X to six significant digits the way the C library does (exact ties go to the even digit). The exact value is built with whole-number arithmetic: the mantissa times 2^e is the mantissa times 5^-e shifted by -e places when e is negative.",
+"params": {
+"X": "a finite number greater than zero",
+"Digits": "six digits",
+"E10": "the decimal exponent of the first digit"
+}
+},
+"UErc.pas::FormatG": {
+"text": "Six significant digits, trailing zeros and a bare point removed, and the exponent form (1e+06, 1e-05) when the decimal exponent is below -4 or at least 6. The digits are exact (see SixDigits), so the result is the C library's for every number.",
+"returns": "the number as printf(\"%g\") writes it",
+"params": {
+"X": "the number"
+}
+},
+"UErc.pas::ClearErcMarkers": {
+"text": "Deletes every TDrawError object from every sheet (CTinyCadDoc::DeleteErrors).",
+"returns": "how many markers were removed",
+"params": {
+"Design": "the design"
+}
+},
+"UErc.pas::CountErcMarkers": {
+"text": "Counts the TDrawError objects.",
+"returns": "the number of markers on all sheets",
+"params": {
+"Design": "the design"
+}
+},
+"UErc.pas::RunErc": {
+"text": "DoSpecialCheck / DoSpecialVHDLCheck without the window: the same scans in the same order. Marker k belongs to line k of the messages. Markers of an earlier check are removed first.",
+"returns": "the number of errors (markers) found",
+"params": {
+"Design": "the design to check; markers are added to its sheets",
+"O": "the checks that are on",
+"Vhdl": "True for the VHDL check (bus nets joined, output to output allowed)",
+"AlwaysShowList": "True to add the \"No errors\" line when nothing was found",
+"Messages": "receives the result lines (not cleared first)"
+}
+},
+"erctest.pas::DoCheck": {
+"text": "Test mode: runs the check on a design and prints the count, the markers and the lines.",
+"params": {
+"Vhdl": "True for the VHDL check",
+"W": "the options word",
+"InName": "path of the design"
+}
+},
+"Fercopts.pas::TfrmErcOptions.SetOptions": {
+"text": "CDlgERCBox::OnInitDialog: copies the choices into the check boxes.",
+"params": {
+"O": "the checks to show as on"
+}
+},
+"Fercopts.pas::TfrmErcOptions.Options": {
+"text": "CDlgERCBox::OnOK: reads the check boxes.",
+"returns": "the checks that are ticked"
+},
+"Fercopts.pas::TfrmErcOptions.LoadFromSettings": {
+"text": "Fills the dialog with the choices kept in the settings (the registry WORD, all on by default)."
+},
+"Fercwin.pas::TfrmErcList.Fill": {
+"text": "Empties the list and adds the lines, each without the line end some of them carry.",
+"params": {
+"Lines": "the lines of the check's result"
+}
+},
+"Fercwin.pas::TfrmErcList.SetSelect": {
+"text": "Selects a line without it counting as the user's choice (so the sheet is not scrolled to it).",
+"params": {
+"Index": "the line, -1 for none"
+}
+},
+"Fercwin.pas::TfrmErcList.ChooseItem": {
+"text": "What clicking a line does: selects it and raises the choice event (CDlgERCListBox::OnClick). Used by the list's own event and by tests.",
+"params": {
+"Index": "the line"
+}
+},
+"Fercwin.pas::TfrmErcList.ItemText": {
+"text": "The text of a line.",
+"returns": "the text",
+"params": {
+"Index": "the line"
+}
+},
+"Fercwin.pas::TfrmErcList.ErrorsSelectionChange": {
+"text": "LBN_SELCHANGE: the user chose a line.",
+"params": {
+"Sender": "the list",
+"User": "True when the user made the change"
+}
+},
+"Fercwin.pas::TfrmErcList.FormClose": {
+"text": "The window's own close button does what Close does (the window is hidden by the main form).",
+"params": {
+"Sender": "the component that raised the event",
+"CloseAction": "what to do with the window"
+}
+},
+"UPainter.pas::TSchematicPainter.PaintError": {
+"text": "Draws the marker as CDrawError::Paint does: an empty circle of radius 6 with a 5 unit pen, dark red (127,0,0), or in the bus color when it is the selected marker.",
+"params": {
+"O": "the design rules check marker"
+}
+},
+"mainform.pas::TfrmMain.DoNetList": {
+"text": "Handler (Special > Create PCB Net List): drops any drawing tool, checks the design rules (the Design Markers window opens when there are errors), shows the PCB Export dialog and, on Export, writes the netlist of the current design. The choices are remembered when Export is pressed, whether or not the file could be written.",
+"params": {
+"Sender": "the component that raised the event"
+}
+},
+"mainform.pas::TfrmMain.BeginErcDialog": {
+"text": "The start of Special > Check Design Rules (CTinyCadView::OnSpecialCheck): any drawing tool is put away and the dialog gets the checks that are on (the registry WORD \"ERC\").",
+"returns": "the dialog, filled with the choices kept; the caller shows it and frees it"
+},
+"mainform.pas::TfrmMain.FinishErcDialog": {
+"text": "What Check does: the choices are kept, then the check runs and its list is shown.",
+"returns": "the number of errors found",
+"params": {
+"F": "the dialog, after Check was pressed",
+"Vhdl": "True for the VHDL check"
+}
+},
+"mainform.pas::TfrmMain.RunCheck": {
+"text": "DoSpecialCheck / DoSpecialVHDLCheck of the current design: the markers of an earlier check are taken away, the check puts its markers on the sheets and the Design Markers window shows the lines when there are errors or AlwaysShow (then with the line \"No errors were found\"). When nothing is to be shown an open window for this design is closed (TinyCAD would leave the earlier list there). The checks that are on are the ones kept in the settings.",
+"returns": "the number of errors",
+"params": {
+"Vhdl": "True for the VHDL check",
+"AlwaysShow": "True to show the list even when nothing was found"
+}
+},
+"mainform.pas::TfrmMain.ShowErcList": {
+"text": "Opens the Design Markers window (or reuses it) with the lines (CDlgERCListBox::Open).",
+"params": {
+"ADoc": "the document the markers are in",
+"Lines": "the lines of the result"
+}
+},
+"mainform.pas::TfrmMain.CloseErcWindow": {
+"text": "Closes the Design Markers window (CDlgERCListBox::Close): the markers are taken off the document's sheets. Not cleared when the document is being closed.",
+"params": {
+"DoClear": "True to take the markers off the sheets"
+}
+},
+"mainform.pas::TfrmMain.ErcCloseRequest": {
+"text": "The Close button or the window's close button.",
+"params": {
+"Sender": "the window"
+}
+},
+"mainform.pas::TfrmMain.ErcRecheck": {
+"text": "The Re-check button: the markers are taken off and the plain check is run again, whichever check made the list (as TinyCAD does).",
+"params": {
+"Sender": "the window"
+}
+},
+"mainform.pas::TfrmMain.ErcPcbNetlist": {
+"text": "The Generate PCB Netlist button: Special > Create PCB Net List for the design.",
+"params": {
+"Sender": "the window"
+}
+},
+"mainform.pas::TfrmMain.ErcSpiceNetlist": {
+"text": "The Generate SPICE Netlist button: Special > Create Spice Net List for the design.",
+"params": {
+"Sender": "the window"
+}
+},
+"mainform.pas::TfrmMain.ErcItemChosen": {
+"text": "CDlgERCListBox::OnClick: shows the marker with that number: the document and the sheet it is on, the sheet scrolled to put the marker in the middle (the zoom is the user's), the marker selected and brought to the front of the sheet's objects.",
+"params": {
+"Sender": "the window",
+"Index": "the line chosen"
+}
+},
+"mainform.pas::TfrmMain.BeginNetList": {
+"text": "The start of Special > Create PCB Net List (CTinyCadView::OnSpecialNet): any drawing tool is put away, the design rules are checked (the list shows only when there are errors), then the dialog is made.",
+"returns": "the PCB Export dialog, filled as it starts; the caller shows it and frees it"
+},
+"mainform.pas::TfrmMain.BeginSpice": {
+"text": "The start of Special > Create Spice Net List: any drawing tool is put away and the design rules are checked, then the name to propose is worked out.",
+"returns": "the file name the Save dialog proposes"
+},
+"mainform.pas::TfrmMain.BeginVhdl": {
+"text": "The start of Special > Create VHDL file: any drawing tool is put away and the VHDL design rules are checked, then the name to propose is worked out.",
+"returns": "the file name the Save dialog proposes"
+},
+"mainform.pas::TfrmMain.ErcChoose": {
+"text": "For tests: chooses a line of the Design Markers window as a click does.",
+"params": {
+"Index": "the line"
+}
+},
+"mainform.pas::TfrmMain.ErcPress": {
+"text": "For tests: presses a button of the Design Markers window (a dimmed button does nothing).",
+"params": {
+"AButton": "close, recheck or annotate"
+}
+},
+"mainform.pas::TfrmMain.ErcWindowText": {
+"text": "For tests: the Design Markers window: open, the document it belongs to, the number of lines, the line selected, whether the symbol reference button is enabled, and the lines (separated by |).",
+"returns": "the text"
+},
+"nettest.pas::Num": {
+"text": "Test mode helper.",
+"returns": "the number with all its digits, for a program that reads it back",
+"params": {
+"X": "number"
+}
+},
+"nettest.pas::DoErcNodes": {
+"text": "Test mode: prints the nodes with the details the design rules check reads, and the placed symbols.",
+"params": {
+"InName": "the .dsn file"
+}
+}
+}

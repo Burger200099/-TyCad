@@ -1,0 +1,10 @@
+{
+"GetVer": {
+"text": "The program's version as text from the constants in consts: \"v major.minor\", plus a letter when the revision is not 0 (1 = a, 2 = b ...).",
+"returns": "for example \"v 1.2\" or \"v 1.2c\""
+},
+"GetVerEx": {
+"text": "Describes the operating system: on Windows \"Microsoft Windows\" and the release name that matches the build number (from the W_VER table); on Linux the values read from /etc/os-release (pretty name, version, and so on) with their quotation marks removed, kept in L_VER. Other systems give an empty string.",
+"returns": "the operating system description"
+}
+}

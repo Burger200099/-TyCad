@@ -1,0 +1,145 @@
+object frFindPanel: TfrFindPanel
+  Left = 0
+  Height = 335
+  Top = 0
+  Width = 196
+  ClientHeight = 335
+  ClientWidth = 196
+  LCLVersion = '4.8.0.0'
+  TabOrder = 0
+  DesignLeft = 1180
+  DesignTop = 382
+  object pnlHeader: TPanel
+    Left = 0
+    Height = 24
+    Top = 0
+    Width = 196
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 24
+    ClientWidth = 196
+    TabOrder = 0
+    object lbCaption: TLabel
+      Left = 5
+      Height = 15
+      Top = 4
+      Width = 23
+      Caption = 'Find'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object btnClose: TSpeedButton
+      Left = 172
+      Height = 24
+      Hint = 'Close the find results'
+      Top = 0
+      Width = 24
+      Align = alRight
+      Flat = True
+      Font.Color = clRed
+      Font.Height = -16
+      Font.Style = [fsBold]
+      Images = frmSharedControls.ilTinyIcons
+      ImageIndex = 0
+      ShowHint = True
+      ParentFont = False
+      ParentShowHint = False
+      OnClick = btnCloseClick
+    end
+  end
+  object pnlEntry: TPanel
+    Left = 0
+    Height = 29
+    Top = 24
+    Width = 196
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 29
+    ClientWidth = 196
+    TabOrder = 1
+    object edFindText: TEdit
+      Left = 5
+      Height = 23
+      Hint = 'The text to look for'
+      Top = 3
+      Width = 186
+      Align = alClient
+      BorderSpacing.Left = 5
+      BorderSpacing.Top = 3
+      BorderSpacing.Right = 5
+      BorderSpacing.Bottom = 3
+      TabOrder = 0
+      TextHint = 'Text to find'
+      OnKeyPress = edFindTextKeyPress
+    end
+  end
+  object pnlButton: TPanel
+    Left = 0
+    Height = 32
+    Top = 53
+    Width = 196
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 32
+    ClientWidth = 196
+    TabOrder = 2
+    object cbFindInAll: TCheckBox
+      Left = 87
+      Height = 20
+      Top = 6
+      Width = 105
+      Align = alRight
+      BorderSpacing.Top = 6
+      BorderSpacing.Right = 4
+      BorderSpacing.Bottom = 6
+      Caption = 'Search all Sheets'
+      Hint = 'Ticked: look in every sheet of the document; not ticked: only in the sheet shown'
+      ShowHint = True
+      Checked = True
+      State = cbChecked
+      TabOrder = 1
+    end
+    object btnFind: TButton
+      Left = 5
+      Height = 26
+      Hint = 'Find the text in the design'
+      Top = 3
+      Width = 64
+      Align = alLeft
+      BorderSpacing.Left = 5
+      BorderSpacing.Top = 3
+      BorderSpacing.Bottom = 3
+      Caption = 'Find'
+      TabOrder = 0
+      OnClick = btnFindClick
+    end
+  end
+  object lbFindResults: TListBox
+    Left = 5
+    Height = 225
+    Hint = 'What was found; click an item to see it'
+    Top = 90
+    Width = 186
+    Align = alClient
+    BorderSpacing.Left = 5
+    BorderSpacing.Top = 5
+    BorderSpacing.Right = 5
+    BorderSpacing.Bottom = 5
+    ItemHeight = 0
+    TabOrder = 3
+    OnClick = lbFindResultsClick
+    OnSelectionChange = lbFindResultsSelectionChange
+  end
+  object lblCount: TLabel
+    Left = 6
+    Height = 15
+    Top = 320
+    Width = 190
+    Align = alBottom
+    BorderSpacing.Left = 6
+    Caption = ' '
+    Layout = tlCenter
+    ParentColor = False
+  end
+end

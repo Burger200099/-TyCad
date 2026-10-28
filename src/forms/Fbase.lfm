@@ -1,0 +1,58 @@
+object frmBase: TfrmBase
+  Left = 671
+  Height = 396
+  Top = 390
+  Width = 605
+  ClientHeight = 396
+  ClientWidth = 605
+  Position = poScreenCenter
+  KeyPreview = True
+  LCLVersion = '4.8.0.0'
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  object pnlButtons: TPanel
+    Left = 0
+    Height = 58
+    Top = 338
+    Width = 605
+    Align = alBottom
+    BevelOuter = bvNone
+    BorderStyle = bsSingle
+    ClientHeight = 54
+    ClientWidth = 601
+    TabOrder = 0
+    object btnOK: TButton
+      Left = 355
+      Height = 33
+      Hint = 'Accept the changes and close this window'
+      Top = 8
+      Width = 102
+      Anchors = [akTop, akRight]
+      Caption = '&OK'
+      ModalResult = 1
+      TabOrder = 1
+    end
+    object btnCancel: TButton
+      Left = 477
+      Height = 33
+      Hint = 'Close this window without making any changes'
+      Top = 8
+      Width = 102
+      Anchors = [akTop, akRight]
+      Caption = '&Cancel'
+      ModalResult = 2
+      TabOrder = 0
+    end
+    object btnApply: TButton
+      Left = 232
+      Height = 33
+      Hint = 'Make the changes now and keep this window open'
+      Top = 8
+      Width = 102
+      Anchors = [akTop, akRight]
+      Caption = '&Apply'
+      TabOrder = 2
+      OnClick = btnApplyClick
+    end
+  end
+end

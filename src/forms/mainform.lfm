@@ -1,0 +1,3262 @@
+object frmMain: TfrmMain
+  Left = 855
+  Height = 477
+  Top = 490
+  Width = 1623
+  Caption = 'frmMain'
+  ClientHeight = 477
+  ClientWidth = 1623
+  Menu = mMain
+  Position = poScreenCenter
+  LCLVersion = '4.8.0.0'
+  OnActivate = FormActivate
+  AllowDropFiles = True
+  OnCloseQuery = FormCloseQuery
+  OnDropFiles = FormDropFiles
+  OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
+  OnResize = FormResize
+  object sbMainBar: TStatusBar
+    Left = 0
+    Height = 23
+    Hint = 'Messages, the position of the pointer and the grid settings'
+    Top = 454
+    Width = 1623
+    Panels = <    
+      item
+        Text = 'Ready'
+        Width = 40
+      end    
+      item
+        Text = 'WxH'
+        Width = 40
+      end    
+      item
+        Alignment = taRightJustify
+        Text = 'Paper'
+        Width = 40
+      end    
+      item
+        Alignment = taCenter
+        Text = 'center blank'
+        Width = 200
+      end    
+      item
+        Alignment = taRightJustify
+        Text = 'Zoom'
+        Width = 48
+      end    
+      item
+        Alignment = taRightJustify
+        Bevel = pbNone
+        Text = 'spacer'
+        Width = 40
+      end>
+    SimplePanel = False
+  end
+  object pnlPosition: TPanel
+    Left = 0
+    Height = 32
+    Top = 422
+    Width = 1623
+    Align = alBottom
+    BevelOuter = bvNone
+    BorderStyle = bsSingle
+    ClientHeight = 28
+    ClientWidth = 1619
+    TabOrder = 3
+    Visible = False
+    object lbZoomPct: TLabel
+      Left = 4
+      Height = 20
+      Hint = 'The zoom (100% is one pixel to each 0.2 mm unit)'
+      Top = 6
+      Width = 32
+      AutoSize = False
+      Layout = tlCenter
+      ParentColor = False
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object lblPosition: TLabel
+      Left = 40
+      Height = 20
+      Hint = 'Where the pointer is (snapped to the grid, from the origin)'
+      Top = 6
+      Width = 168
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = ' '
+      Layout = tlCenter
+      ParentColor = False
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object sbPosSnap: TSpeedButton
+      Left = 220
+      Height = 26
+      Hint = 'Snap to the grid'
+      Top = 1
+      Width = 72
+      AllowAllUp = True
+      Caption = 'Snap'
+      Flat = True
+      GroupIndex = 4
+      ShowHint = True
+      ParentShowHint = False
+      OnClick = DoToggleSnap
+    end
+    object sbPosGridSize: TSpeedButton
+      Left = 298
+      Height = 26
+      Hint = 'Change to the next standard grid size'
+      Top = 1
+      Width = 96
+      Caption = 'Grid size'
+      Flat = True
+      ShowHint = True
+      ParentShowHint = False
+      OnClick = DoToggleGridSize
+    end
+    object edPosGrid: TEdit
+      Left = 400
+      Height = 23
+      Hint = 'The grid size'
+      Top = 3
+      Width = 64
+      ReadOnly = True
+      TabStop = False
+      TabOrder = 0
+    end
+    object lblPosUnits: TLabel
+      Left = 470
+      Height = 15
+      Top = 7
+      Width = 31
+      Caption = '.1mm'
+      ParentColor = False
+    end
+  end
+  object pnlLeft: TPanel
+    Left = 0
+    Height = 254
+    Top = 168
+    Width = 220
+    Align = alLeft
+    Caption = 'Left'
+    ClientHeight = 254
+    ClientWidth = 220
+    TabOrder = 1
+    OnClick = pnlLeftClick
+    inline frameLibraryPanel: TfrLibraryPanel
+      Left = 1
+      Height = 252
+      Top = 1
+      Width = 218
+      Align = alClient
+      ClientHeight = 252
+      ClientWidth = 218
+      inherited pbPreview: TPaintBox
+        Top = 116
+        Width = 218
+      end
+      inherited Splitter1: TSplitter
+        Top = 111
+        Width = 218
+      end
+      inherited pcLibrary: TPageControl
+        Height = 111
+        Width = 218
+        inherited tsSymbols: TTabSheet
+          ClientHeight = 83
+          ClientWidth = 210
+          inherited edFilter: TEdit
+            Width = 210
+          end
+          inherited lbCaption: TLabel
+            Width = 210
+          end
+          inherited tvLib: TTreeView
+            Height = 45
+            Width = 210
+          end
+        end
+        inherited tsParts: TTabSheet
+          ClientHeight = 83
+          ClientWidth = 210
+          inherited lbPartsCaption: TLabel
+            Width = 210
+          end
+          inherited btnPartsOpen: TButton
+            Width = 210
+          end
+          inherited lvParts: TListView
+            Height = 43
+            Width = 210
+          end
+        end
+      end
+    end
+  end
+  object pnlMain: TPanel
+    Left = 225
+    Height = 254
+    Top = 168
+    Width = 1398
+    Align = alClient
+    Caption = 'Center'
+    ClientHeight = 254
+    ClientWidth = 1398
+    TabOrder = 2
+    OnClick = pnlMainClick
+    object tcSheetTabs: TTabControl
+      Left = 1
+      Height = 26
+      Top = 227
+      Width = 1396
+      Images = frmSharedControls.ilSheetTabs
+      OnChange = SheetTabChange
+      OnGetImageIndex = SheetTabImage
+      TabPosition = tpBottom
+      Align = alBottom
+      Font.Height = -16
+      Options = [nboShowAddTabButton]
+      ParentFont = False
+      PopupMenu = pmSheetTabs
+      TabOrder = 0
+      OnMouseDown = tcSheetTabsMouseDown
+    end
+  end
+  object Splitter1: TSplitter
+    Left = 220
+    Height = 254
+    Hint = 'Drag to change the size of the panel'
+    Top = 168
+    Width = 5
+  end
+  object FRibbon: TPageControl
+    Left = 0
+    Height = 142
+    Hint = 'The toolbars'
+    Top = 26
+    Width = 1623
+    ActivePage = FTabView
+    Align = alTop
+    Images = frmSharedControls.ilSpeedBtn
+    TabIndex = 1
+    TabOrder = 4
+    OnChange = RibbonPageChange
+    object FTabHome: TTabSheet
+      Caption = 'Home'
+      ClientHeight = 99
+      ClientWidth = 1615
+      object rpHomeFile: TPanel
+        Left = 0
+        Height = 99
+        Top = 0
+        Width = 174
+        Align = alLeft
+        BevelOuter = bvNone
+        ClientHeight = 99
+        ClientWidth = 174
+        TabOrder = 0
+        object lbHomeFile: TLabel
+          Left = 0
+          Height = 15
+          Top = 84
+          Width = 174
+          Align = alBottom
+          Alignment = taCenter
+          Caption = 'File'
+        end
+        object sbHomeFileNew: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'New Document (Ctrl+N)'
+          Top = 4
+          Width = 28
+          Flat = True
+          ImageIndex = 0
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoNew
+        end
+        object sbHomeFileOpen: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Open Document (Ctrl+O)'
+          Top = 32
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 1
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoOpen
+        end
+        object sbHomeFileSave: TSpeedButton
+          Left = 36
+          Height = 28
+          Hint = 'Save Document (Ctrl+S)'
+          Top = 4
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 2
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoSave
+        end
+        object sbHomeFileNew1: TSpeedButton
+          Left = 68
+          Height = 28
+          Hint = 'Save the document under another name'
+          Top = 4
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 3
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoSaveAs
+        end
+        object sbHomeFileSaveAll: TSpeedButton
+          Left = 68
+          Height = 28
+          Hint = 'Save every design that has unsaved changes (Ctrl+Shift+S)'
+          Top = 32
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 33
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoSaveAll
+        end
+        object sbHomeFilePrint: TSpeedButton
+          Left = 106
+          Height = 28
+          Hint = 'Print the design (Ctrl+P)'
+          Top = 4
+          Width = 32
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 36
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoPrint
+        end
+        object Panel1: TPanel
+          Left = 100
+          Height = 56
+          Top = 4
+          Width = 2
+          TabOrder = 0
+          OnClick = Panel1Click
+        end
+        object sbHomeFilePageSetup: TSpeedButton
+          Left = 106
+          Height = 28
+          Hint = 'Paper size and orientation of this sheet'
+          Top = 32
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 38
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoPageSetup
+        end
+        object sbHomeFilePrintPreview: TSpeedButton
+          Left = 138
+          Height = 28
+          Hint = 'See the pages the design will print on'
+          Top = 4
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 37
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoPrintPreview
+        end
+        object sbHomeFilePrintSetup: TSpeedButton
+          Left = 138
+          Height = 28
+          Hint = 'Choose the printer and its settings'
+          Top = 32
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 39
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoPrintSetup
+        end
+      end
+      object rpSep1: TPanel
+        Left = 382
+        Height = 99
+        Top = 0
+        Width = 2
+        Align = alLeft
+        TabOrder = 1
+      end
+      object rpHomeEdit: TPanel
+        Left = 384
+        Height = 99
+        Top = 0
+        Width = 178
+        Align = alLeft
+        BevelOuter = bvNone
+        ClientHeight = 99
+        ClientWidth = 178
+        TabOrder = 2
+        object lbHomeEdit: TLabel
+          Left = 0
+          Height = 15
+          Top = 84
+          Width = 178
+          Align = alBottom
+          Alignment = taCenter
+          Caption = 'Edit'
+        end
+        object sbHomeEditUndo: TSpeedButton
+          Left = 68
+          Height = 28
+          Hint = 'Undo (Ctrl+Z)'
+          Top = 4
+          Width = 70
+          Alignment = taLeftJustify
+          Caption = ' Undo'
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 4
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoUndo
+        end
+        object sbHomeEditRedo: TSpeedButton
+          Left = 68
+          Height = 28
+          Hint = 'Redo (Ctrl+Y)'
+          Top = 32
+          Width = 70
+          Alignment = taLeftJustify
+          Caption = 'Redo'
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 5
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoRedo
+        end
+        object sbHomeEditDelete: TSpeedButton
+          Left = 142
+          Height = 28
+          Hint = 'Delete the selection (Del)'
+          Top = 4
+          Width = 28
+          Alignment = taLeftJustify
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 6
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoDelete
+        end
+        object sbHomeEditCut: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Cut Selection (Ctrl+X)'
+          Top = 4
+          Width = 28
+          Alignment = taLeftJustify
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 7
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoCut
+        end
+        object sbHomeEditCopy: TSpeedButton
+          Left = 36
+          Height = 28
+          Hint = 'Copy Selection (Ctrl+C)'
+          Top = 4
+          Width = 28
+          Alignment = taLeftJustify
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 8
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoCopy
+        end
+        object sbHomeEditPaste: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Paste Clipboard (Ctrl+V)'
+          Top = 32
+          Width = 28
+          Alignment = taLeftJustify
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 9
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoPaste
+        end
+        object sbHomeEditDupe: TSpeedButton
+          Left = 36
+          Height = 28
+          Hint = 'Duplicate Selection'
+          Top = 32
+          Width = 28
+          Alignment = taLeftJustify
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 10
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoDuplicate
+        end
+      end
+      object rpSep2: TPanel
+        Left = 562
+        Height = 99
+        Top = 0
+        Width = 2
+        Align = alLeft
+        TabOrder = 3
+      end
+      object rpHomeSelection: TPanel
+        Left = 564
+        Height = 99
+        Top = 0
+        Width = 307
+        Align = alLeft
+        BevelOuter = bvNone
+        ClientHeight = 99
+        ClientWidth = 307
+        TabOrder = 4
+        object lbHomeSelection: TLabel
+          Left = 0
+          Height = 15
+          Top = 84
+          Width = 307
+          Align = alBottom
+          Alignment = taCenter
+          Caption = 'Selection'
+        end
+        object sbHomeSelectOne: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Select objects (Esc)'
+          Top = 4
+          Width = 74
+          Caption = ' Select'
+          Flat = True
+          GroupIndex = 8
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 11
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object sbHomeSelectAll: TSpeedButton
+          Left = 82
+          Height = 28
+          Hint = 'Select everything (Ctrl+A)'
+          Top = 4
+          Width = 80
+          Caption = 'Select All'
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 17
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoSelectAll
+        end
+        object sbHomeSelectRLeft: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Rotate the selection left (Ctrl+L)'
+          Top = 32
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 15
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoRotateLeft
+        end
+        object sbHomeSelectRRight: TSpeedButton
+          Left = 36
+          Height = 28
+          Hint = 'Rotate the selection right (Ctrl+R)'
+          Top = 32
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 16
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoRotateRight
+        end
+        object sbHomeSelectFlip: TSpeedButton
+          Left = 82
+          Height = 28
+          Hint = 'Flip the selection left to right'
+          Top = 32
+          Width = 54
+          Caption = 'Flip'
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 14
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoFlip
+        end
+        object sbHomeSelectBackward: TSpeedButton
+          Left = 168
+          Height = 28
+          Hint = 'Send the selection to the back'
+          Top = 32
+          Width = 102
+          Alignment = taLeftJustify
+          Caption = 'Send to Back'
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 12
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoSendToBack
+        end
+        object sbHomeSelectForward: TSpeedButton
+          Left = 168
+          Height = 28
+          Hint = 'Bring the selection to the front'
+          Top = 4
+          Width = 109
+          Caption = 'Bring to Front'
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 13
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoBringToFront
+        end
+      end
+      object rpSheetDoc: TPanel
+        Left = 176
+        Height = 99
+        Top = 0
+        Width = 206
+        Align = alLeft
+        BevelOuter = bvNone
+        ClientHeight = 99
+        ClientWidth = 206
+        TabOrder = 5
+        object lbSheetDoc: TLabel
+          Left = 0
+          Height = 15
+          Top = 84
+          Width = 206
+          Align = alBottom
+          Alignment = taCenter
+          Caption = 'Document'
+        end
+        object sbHomeDocDetails: TSpeedButton
+          Left = 124
+          Height = 28
+          Hint = 'Title block, rulers, border and revisions of this sheet (Ctrl+D)'
+          Top = 4
+          Width = 83
+          Caption = 'Details'
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 26
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoDesignDetails
+        end
+        object sbHomeDocSetup: TSpeedButton
+          Left = 124
+          Height = 28
+          Hint = 'Paper size and orientation of this sheet'
+          Top = 32
+          Width = 72
+          Alignment = taLeftJustify
+          Caption = 'Setup'
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 27
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoPageSetup
+        end
+        object sbHomeDocFind: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Find text in the design'
+          Top = 4
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 34
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoFind
+        end
+        object sbHomeDocFindReplace: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Find and replace text in the design'
+          Top = 32
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 35
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoFindReplace
+        end
+        object sbCloseDocs: TSplitButton
+          Left = 40
+          Height = 28
+          Top = 4
+          Width = 80
+          Caption = 'Close'
+          Color = clBtnFace
+          DownArrowPopup = pmCloseDocMenu
+          ImageIndex = 25
+          Images = frmSharedControls.ilSpeedBtn
+          ImageWidth = 24
+          Flat = True
+          ParentColor = False
+          OnClick = DoCloseDocument
+        end
+      end
+      object rpSep4: TPanel
+        Left = 174
+        Height = 99
+        Top = 0
+        Width = 2
+        Align = alLeft
+        TabOrder = 6
+      end
+    end
+    object FTabView: TTabSheet
+      Caption = 'View'
+      ClientHeight = 99
+      ClientWidth = 1615
+      object rpViewView: TPanel
+        Left = 0
+        Height = 99
+        Top = 0
+        Width = 72
+        Align = alLeft
+        BevelOuter = bvNone
+        ClientHeight = 99
+        ClientWidth = 72
+        TabOrder = 0
+        object sbViewViewZoomIn: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Zoom in'
+          Top = 4
+          Width = 32
+          Alignment = taLeftJustify
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 28
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoZoomIn
+        end
+        object lbViewView: TLabel
+          Left = 0
+          Height = 15
+          Top = 84
+          Width = 72
+          Align = alBottom
+          Alignment = taCenter
+          Caption = 'Zoom'
+        end
+        object sbViewViewZoomOut: TSpeedButton
+          Left = 36
+          Height = 28
+          Hint = 'Zoom out'
+          Top = 4
+          Width = 32
+          Alignment = taLeftJustify
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 29
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoZoomOut
+        end
+        object sbViewViewZoomFit: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Show the whole page'
+          Top = 32
+          Width = 32
+          Alignment = taLeftJustify
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 30
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoZoomFit
+        end
+        object sbViewViewZoomPage: TSpeedButton
+          Left = 36
+          Height = 28
+          Hint = 'Actual size'
+          Top = 32
+          Width = 32
+          Alignment = taLeftJustify
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 31
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoZoom100
+        end
+      end
+      object rpSep6: TPanel
+        Left = 72
+        Height = 99
+        Top = 0
+        Width = 2
+        Align = alLeft
+        TabOrder = 1
+      end
+      object rpViewGrid: TPanel
+        Left = 74
+        Height = 99
+        Top = 0
+        Width = 144
+        Align = alLeft
+        Alignment = taLeftJustify
+        BevelOuter = bvNone
+        ClientHeight = 99
+        ClientWidth = 144
+        TabOrder = 2
+        object sbViewGridSnapTo: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Turn snapping to the grid on or off'
+          Top = 4
+          Width = 102
+          AllowAllUp = True
+          Caption = 'Snap to Grid'
+          Flat = True
+          GroupIndex = 2
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 22
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToggleSnap
+        end
+        object sbViewGridSizeUp: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Change the grid size'
+          Top = 32
+          Width = 32
+          Alignment = taLeftJustify
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 24
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoGridSizeUp
+        end
+        object lbViewGrid: TLabel
+          Left = 0
+          Height = 15
+          Top = 84
+          Width = 144
+          Align = alBottom
+          Alignment = taCenter
+          Caption = 'Grid'
+        end
+        object sbViewGridSize: TSpeedButton
+          Left = 40
+          Height = 28
+          Hint = 'Change the grid size'
+          Top = 32
+          Width = 80
+          Alignment = taLeftJustify
+          Caption = 'Grid Size'
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 23
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoGridButton
+        end
+        object sbViewGridShow: TSpeedButton
+          Left = 112
+          Height = 28
+          Hint = 'Show or hide the grid dots'
+          Top = 4
+          Width = 32
+          AllowAllUp = True
+          Flat = True
+          GroupIndex = 3
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 32
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToggleGrid
+        end
+      end
+      object rpSep7: TPanel
+        Left = 218
+        Height = 99
+        Top = 0
+        Width = 2
+        Align = alLeft
+        TabOrder = 3
+      end
+      object rpViewPosition: TPanel
+        Left = 220
+        Height = 99
+        Top = 0
+        Width = 69
+        Align = alLeft
+        BevelOuter = bvNone
+        ClientHeight = 99
+        ClientWidth = 69
+        TabOrder = 4
+        object lbViewPosition: TLabel
+          Left = 0
+          Height = 15
+          Top = 84
+          Width = 69
+          Align = alBottom
+          Alignment = taCenter
+          Caption = 'Alignment'
+        end
+        object sbView: TSplitButton
+          Left = 8
+          Height = 28
+          Hint = 'Show the Position bar (pressed = shown); the arrow: rulers and the 1 px grid'
+          Top = 4
+          Width = 56
+          DownArrowPopup = pmAlignmentOptions
+          ImageIndex = 63
+          Images = frmSharedControls.ilSpeedBtn
+          ImageWidth = 24
+          Flat = True
+          AutoCheck = True
+          ParentShowHint = False
+          ShowHint = True
+          OnClick = DoShowPosition
+        end
+      end
+      object pnlPropsSep: TPanel
+        Left = 501
+        Height = 99
+        Top = 0
+        Width = 2
+        Align = alLeft
+        TabOrder = 5
+        Visible = False
+      end
+      object plPropsProperties: TPanel
+        Left = 503
+        Height = 99
+        Top = 0
+        Width = 170
+        Align = alLeft
+        BevelOuter = bvNone
+        ClientHeight = 99
+        ClientWidth = 170
+        TabOrder = 6
+        Visible = False
+        object lbPropsProperties: TLabel
+          Left = 0
+          Height = 15
+          Top = 84
+          Width = 170
+          Align = alBottom
+          Alignment = taCenter
+          Caption = 'lbPropsProperties'
+        end
+      end
+      object rpSheetSheets: TPanel
+        Left = 352
+        Height = 99
+        Top = 0
+        Width = 149
+        Align = alLeft
+        BevelOuter = bvNone
+        ClientHeight = 99
+        ClientWidth = 149
+        TabOrder = 7
+        OnClick = rpSheetSheetsClick
+        object lbSheetSheets: TLabel
+          Left = 0
+          Height = 15
+          Top = 84
+          Width = 149
+          Align = alBottom
+          Alignment = taCenter
+          Caption = 'Sheets'
+        end
+        object sbSheetSheetsRename: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Rename the current sheet (or double-click its tab)'
+          Top = 4
+          Width = 76
+          Caption = 'Rename'
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 18
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoRenameSheet
+        end
+        object sbSheetSheetsRemove: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Remove the current sheet'
+          Top = 32
+          Width = 76
+          Caption = 'Remove'
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 19
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoRemoveSheet
+        end
+        object sbSheetSheetsLeft: TSpeedButton
+          Left = 82
+          Height = 28
+          Hint = 'Move the current sheet left'
+          Top = 4
+          Width = 54
+          Caption = 'Left'
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 20
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoMoveSheetLeft
+        end
+        object sbSheetSheetsRight: TSpeedButton
+          Left = 82
+          Height = 28
+          Hint = 'Move the current sheet right'
+          Top = 32
+          Width = 56
+          Caption = 'Right'
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 21
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoMoveSheetRight
+        end
+      end
+      object rpSheetDetails: TPanel
+        Left = 291
+        Height = 99
+        Top = 0
+        Width = 59
+        Align = alLeft
+        BevelOuter = bvNone
+        ClientHeight = 99
+        ClientWidth = 59
+        TabOrder = 8
+        object lbSheetDetails: TLabel
+          Left = 0
+          Height = 15
+          Top = 84
+          Width = 59
+          Align = alBottom
+          Alignment = taCenter
+          Caption = 'Details'
+        end
+        object sbSheetDetails: TSplitButton
+          Left = 4
+          Height = 28
+          Hint = 'Show the rulers round the page (pressed = on); the arrow: border, margin and the ruler counts'
+          Top = 4
+          Width = 50
+          ImageIndex = 64
+          Images = frmSharedControls.ilSpeedBtn
+          ImageWidth = 24
+          Flat = True
+          ParentShowHint = False
+          ShowHint = True
+          OnClick = DoDesignDetailsRuler
+        end
+        object sbExtendedInfo: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Show the revision table beside the title block, and the notes and reference above it'
+          Top = 32
+          Width = 28
+          AllowAllUp = True
+          Flat = True
+          GroupIndex = 7
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 65
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoDesignDetailsExtended
+        end
+      end
+      object Panel3: TPanel
+        Left = 350
+        Height = 99
+        Top = 0
+        Width = 2
+        Align = alLeft
+        TabOrder = 9
+      end
+      object Panel2: TPanel
+        Left = 289
+        Height = 99
+        Top = 0
+        Width = 2
+        Align = alLeft
+        TabOrder = 10
+      end
+    end
+    object FTabDraw: TTabSheet
+      Caption = 'Draw'
+      ClientHeight = 99
+      ClientWidth = 1615
+      object rpDrawWires: TPanel
+        Left = 72
+        Height = 99
+        Top = 0
+        Width = 163
+        Align = alLeft
+        BevelOuter = bvNone
+        ClientHeight = 99
+        ClientWidth = 163
+        TabOrder = 0
+        object lbDrawWires: TLabel
+          Left = 0
+          Height = 15
+          Top = 84
+          Width = 134
+          Align = alBottom
+          Alignment = taCenter
+          Caption = 'Wires'
+        end
+        object sbDrawWiresWire: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Draw wires'
+          Top = 4
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 40
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object sbDrawWiresWireLabel: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Name a wire or bus'
+          Top = 36
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 41
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object sbDrawWiresJunction: TSpeedButton
+          Left = 36
+          Height = 28
+          Hint = 'Place a junction dot'
+          Top = 4
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 42
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object sbDrawWiresNoConnect: TSpeedButton
+          Left = 36
+          Height = 28
+          Hint = 'Place a no-connect mark'
+          Top = 36
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 43
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object sbDrawWiresPower: TSpeedButton
+          Left = 68
+          Height = 28
+          Hint = 'Place a power symbol'
+          Top = 4
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 44
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object sbDrawWiresBus: TSpeedButton
+          Left = 68
+          Height = 28
+          Hint = 'Draw a bus'
+          Top = 36
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 45
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object sbDrawWiresBusSlash: TSpeedButton
+          Left = 100
+          Height = 28
+          Hint = 'Place a bus slash'
+          Top = 4
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 46
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object sbDrawWiresText: TSpeedButton
+          Left = 100
+          Height = 28
+          Hint = 'Place text'
+          Top = 36
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 47
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object sbDrawWiresSymbolText: TSpeedButton
+          Left = 132
+          Height = 28
+          Hint = 'Place symbol text (text that holds symbol fields for reports)'
+          Top = 36
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 47
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+      end
+      object plSep10: TPanel
+        Left = 206
+        Height = 99
+        Top = 0
+        Width = 2
+        Align = alLeft
+        TabOrder = 1
+      end
+      object plDrawShapes: TPanel
+        Left = 208
+        Height = 99
+        Top = 0
+        Width = 134
+        Align = alLeft
+        BevelOuter = bvNone
+        ClientHeight = 99
+        ClientWidth = 134
+        TabOrder = 2
+        object Label1: TLabel
+          Left = 0
+          Height = 15
+          Top = 84
+          Width = 134
+          Align = alBottom
+          Alignment = taCenter
+          Caption = 'Shapes'
+        end
+        object sbDrawShapesLine: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Draw a line'
+          Top = 4
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 48
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object sbDrawShapesPoly: TSpeedButton
+          Left = 36
+          Height = 28
+          Hint = 'Draw a polygon'
+          Top = 4
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 49
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object sbDrawShapesRect: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Draw a rectangle'
+          Top = 36
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 50
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object sbDrawShapesCircle: TSpeedButton
+          Left = 36
+          Height = 28
+          Hint = 'Draw a circle'
+          Top = 36
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 51
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object sbDrawShapesArc: TSpeedButton
+          Left = 68
+          Height = 28
+          Hint = 'Draw an arc'
+          Top = 36
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 52
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object sbDrawShapesNote: TSpeedButton
+          Left = 100
+          Height = 28
+          Hint = 'Place a note'
+          Top = 4
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 53
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object sbDrawShapesCloud: TSpeedButton
+          Left = 100
+          Height = 28
+          Hint = 'Draw a revision cloud'
+          Top = 36
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 54
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+      end
+      object plDrawMeasure: TPanel
+        Left = 344
+        Height = 99
+        Top = 0
+        Width = 82
+        Align = alLeft
+        BevelOuter = bvNone
+        ClientHeight = 99
+        ClientWidth = 82
+        TabOrder = 3
+        object lbDrawMeasure: TLabel
+          Left = 0
+          Height = 15
+          Top = 84
+          Width = 82
+          Align = alBottom
+          Alignment = taCenter
+          Caption = 'Measurements'
+        end
+        object sbDrawMeasureRulerV: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Place a vertical ruler line'
+          Top = 4
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 55
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object sbDrawMeasureRulerH: TSpeedButton
+          Left = 36
+          Height = 28
+          Hint = 'Place a horizontal ruler line'
+          Top = 4
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 56
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object sbDrawMeasureRulerAB: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Measure the distance between two points'
+          Top = 36
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 57
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+      end
+      object plSep11: TPanel
+        Left = 342
+        Height = 99
+        Top = 0
+        Width = 2
+        Align = alLeft
+        TabOrder = 4
+      end
+      object plSep12: TPanel
+        Left = 426
+        Height = 99
+        Top = 0
+        Width = 2
+        Align = alLeft
+        TabOrder = 5
+      end
+      object plDrawLadder: TPanel
+        Left = 428
+        Height = 99
+        Top = 0
+        Width = 170
+        Align = alLeft
+        BevelOuter = bvNone
+        ClientHeight = 99
+        ClientWidth = 170
+        TabOrder = 6
+        object sbDrawLadderAdd: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Draw ladder rails'
+          Top = 4
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 58
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object lbDrawLadder: TLabel
+          Left = 0
+          Height = 15
+          Top = 84
+          Width = 170
+          Align = alBottom
+          Alignment = taCenter
+          Caption = 'Ladders'
+        end
+        object sbDrawLadderLink: TSpeedButton
+          Left = 36
+          Height = 28
+          Hint = 'Link a ladder rung to its contacts'
+          Top = 4
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 59
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object sbDrawLadderContact: TSpeedButton
+          Left = 68
+          Height = 28
+          Hint = 'Place a ladder contact'
+          Top = 4
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 60
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object sbDrawLadderRungs: TSpeedButton
+          Left = 100
+          Height = 28
+          Hint = 'Rung numbers: add or select the sheet''s rung number grid'
+          Top = 4
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 70
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+      end
+      object plSelect: TPanel
+        Left = 0
+        Height = 99
+        Top = 0
+        Width = 70
+        Align = alLeft
+        BevelOuter = bvNone
+        ClientHeight = 99
+        ClientWidth = 70
+        TabOrder = 7
+        object sbDrawSelect: TSpeedButton
+          Left = 4
+          Height = 28
+          Hint = 'Select objects (Esc)'
+          Top = 4
+          Width = 28
+          Flat = True
+          GroupIndex = 9
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 61
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+        object miDrawInsertPicture: TSpeedButton
+          Left = 36
+          Height = 28
+          Hint = 'Select objects (Esc)'
+          Top = 4
+          Width = 28
+          Flat = True
+          GroupIndex = 9
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 62
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoInsertPicture
+        end
+        object miDrawPin: TSpeedButton
+          Left = 36
+          Height = 28
+          Hint = 'Add a wire connection pin'
+          Top = 36
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 71
+          ImageWidth = 24
+          Visible = False
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
+      end
+      object plSep13: TPanel
+        Left = 70
+        Height = 99
+        Top = 0
+        Width = 2
+        Align = alLeft
+        TabOrder = 8
+      end
+    end
+  end
+  object pbRibbonDisplay: TPaintBox
+    Left = 0
+    Height = 26
+    Hint = 'The toolbars'
+    Top = 0
+    Width = 1623
+    Align = alTop
+    OnMouseDown = RibbonTabsMouseDown
+    OnMouseLeave = RibbonTabsMouseLeave
+    OnMouseMove = RibbonTabsMouseMove
+    OnPaint = RibbonTabsPaint
+  end
+  object mMain: TMainMenu
+    Left = 200
+    Top = 192
+    object mFile: TMenuItem
+      Caption = '&File'
+      Hint = 'File commands'
+      object mNewProject: TMenuItem
+        Caption = '&New...'
+        Hint = 'Start a new drawing'
+        ShortCut = 16462
+        OnClick = DoNew
+      end
+      object mOpenFile: TMenuItem
+        Caption = '&Open...'
+        Hint = 'Open an existing drawing'
+        ShortCut = 16463
+        OnClick = DoOpen
+      end
+      object mSave: TMenuItem
+        Caption = '&Save'
+        Hint = 'Save the drawing'
+        ShortCut = 16467
+        OnClick = DoSave
+      end
+      object mSaveAs: TMenuItem
+        Caption = 'Save &As...'
+        Hint = 'Save the drawing under another name'
+        OnClick = DoSaveAs
+      end
+      object mSaveAll: TMenuItem
+        Caption = 'Save A&ll'
+        Hint = 'Save every open drawing'
+        ShortCut = 24659
+        OnClick = DoSaveAll
+      end
+      object miClose: TMenuItem
+        Caption = '&Close'
+        Hint = 'Close this drawing'
+        ShortCut = 16499
+        OnClick = DoCloseDocument
+      end
+      object miCloseAll: TMenuItem
+        Caption = 'Close &All'
+        Hint = 'Close every open drawing'
+        OnClick = DoCloseAllDocuments
+      end
+      object Separator2: TMenuItem
+        Caption = '-'
+      end
+      object miFileImport: TMenuItem
+        Caption = '&Import...'
+        Hint = 'Import another design or a TinyCAD file into this sheet'
+        ShortCut = 16457
+        OnClick = DoImport
+      end
+      object miExportImage: TMenuItem
+        Caption = 'Export Image...'
+        Hint = 'Save the sheet or the selection as a picture file'
+        OnClick = DoExportImage
+      end
+      object mSepPrint: TMenuItem
+        Caption = '-'
+      end
+      object mPrint: TMenuItem
+        Caption = '&Print...'
+        Hint = 'Print the design'
+        ShortCut = 16464
+        OnClick = DoPrint
+      end
+      object mPrintPreview: TMenuItem
+        Caption = 'Print Pre&view'
+        Hint = 'See the pages the design will print on'
+        OnClick = DoPrintPreview
+      end
+      object mPageSetup: TMenuItem
+        Caption = 'P&age Setup...'
+        Hint = 'Paper size and orientation of this sheet'
+        OnClick = DoPageSetup
+      end
+      object mPrintSetup: TMenuItem
+        Caption = 'Print Set&up...'
+        Hint = 'Choose the printer and its settings'
+        OnClick = DoPrintSetup
+      end
+      object Separator8: TMenuItem
+        Caption = '-'
+      end
+      object miDetails: TMenuItem
+        Caption = 'Design &Details...'
+        Hint = 'Change the title block, rulers and border of this sheet'
+        OnClick = DoDesignDetails
+      end
+      object mSep1: TMenuItem
+        Caption = '-'
+      end
+      object mExit: TMenuItem
+        Caption = 'E&xit'
+        Hint = 'Close the program'
+        OnClick = DoFileExit
+      end
+    end
+    object mEdit: TMenuItem
+      Caption = '&Edit'
+      Hint = 'Editing commands'
+      object mUndo: TMenuItem
+        Caption = '&Undo'
+        Hint = 'Take back the last change'
+        ShortCut = 16474
+        OnClick = DoUndo
+      end
+      object mRedo: TMenuItem
+        Caption = '&Redo'
+        Hint = 'Do the change again that was taken back'
+        ShortCut = 16473
+        OnClick = DoRedo
+      end
+      object Separator5: TMenuItem
+        Caption = '-'
+      end
+      object miCut: TMenuItem
+        Caption = '&Cut'
+        Hint = 'Cut the selection to the clipboard'
+        ShortCut = 16472
+        OnClick = DoCut
+      end
+      object miCopy: TMenuItem
+        Caption = 'Cop&y'
+        Hint = 'Copy the selection to the clipboard'
+        ShortCut = 16451
+        OnClick = DoCopy
+      end
+      object miCopyTo: TMenuItem
+        Caption = 'Copy &To...'
+        Hint = 'Save the selection as a design file of its own'
+        ShortCut = 16453
+        OnClick = DoCopyTo
+      end
+      object miPaste: TMenuItem
+        Caption = '&Paste'
+        Hint = 'Paste from the clipboard, then click where it goes'
+        ShortCut = 16470
+        OnClick = DoPaste
+      end
+      object miDupe: TMenuItem
+        Caption = 'Duplica&te'
+        Hint = 'Make a copy of the selection and place it'
+        ShortCut = 16452
+        OnClick = DoDuplicate
+      end
+      object mDelete: TMenuItem
+        Caption = '&Delete'
+        Hint = 'Delete the selection'
+        ShortCut = 46
+        OnClick = DoDelete
+      end
+      object Separator6: TMenuItem
+        Caption = '-'
+      end
+      object miSelect: TMenuItem
+        Caption = 'Select'
+        GroupIndex = 1
+        Hint = 'Select objects'
+        OnClick = DoToolButton
+      end
+      object mSelectAll: TMenuItem
+        Caption = 'Select &All'
+        Hint = 'Select everything on the sheet'
+        ShortCut = 16449
+        OnClick = DoSelectAll
+      end
+      object mSheetSep3: TMenuItem
+        Caption = '-'
+      end
+      object MenuItem1: TMenuItem
+        Caption = 'Tr&anslate'
+        Hint = 'Rotate, flip and change the stacking order of the selection'
+        object miRotateL: TMenuItem
+          Caption = 'Rotate &Left'
+          Hint = 'Rotate the selection left (Ctrl+L)'
+          ShortCut = 16460
+          OnClick = DoRotateLeft
+        end
+        object miRotateR: TMenuItem
+          Caption = 'Rotate &Right'
+          Hint = 'Rotate the selection right (Ctrl+R)'
+          ShortCut = 16466
+          OnClick = DoRotateRight
+        end
+        object miFlip: TMenuItem
+          Caption = 'Fl&ip'
+          Hint = 'Flip the selection left to right'
+          OnClick = DoFlip
+        end
+        object miBringFront: TMenuItem
+          Caption = 'Bring to &Front'
+          Hint = 'Bring the selection to the front'
+          OnClick = DoBringToFront
+        end
+        object miSendBack: TMenuItem
+          Caption = 'Send to &Back'
+          Hint = 'Send the selection to the back'
+          OnClick = DoSendToBack
+        end
+      end
+      object Separator7: TMenuItem
+        Caption = '-'
+      end
+      object miZoomIn: TMenuItem
+        Caption = 'Zoom In'
+        Hint = 'Zoom in'
+        ShortCut = 33
+        OnClick = DoZoomIn
+      end
+      object miZoomOut: TMenuItem
+        Caption = 'Zoom Ou&t'
+        Hint = 'Zoom out'
+        ShortCut = 34
+        OnClick = DoZoomOut
+      end
+      object Separator12: TMenuItem
+        Caption = '-'
+      end
+      object miColors: TMenuItem
+        Caption = 'Co&lors...'
+        Hint = 'Change the colours of the design'
+        OnClick = DoColors
+      end
+      object miObjProps: TMenuItem
+        Caption = 'Object &Properties'
+        Hint = 'Show the properties of the selected object'
+        OnClick = DoProperties
+      end
+      object mOptions: TMenuItem
+        Caption = '&Options...'
+        Hint = 'Change the grid, snap, automatic save and color settings'
+        OnClick = DoOptions
+      end
+    end
+    object miSearch: TMenuItem
+      Caption = '&Search'
+      Hint = 'Search the design'
+      object miFind: TMenuItem
+        Caption = '&Find'
+        Hint = 'Find text, symbols and references in the design'
+        ShortCut = 16454
+        OnClick = DoFind
+      end
+      object miFindNext: TMenuItem
+        Caption = 'Find &Next'
+        Hint = 'Go to the next find result'
+        ShortCut = 114
+        OnClick = DoFindNext
+      end
+      object miFindPrev: TMenuItem
+        Caption = 'Find &Previous'
+        Hint = 'Go to the previous find result'
+        ShortCut = 8306
+        OnClick = DoFindPrevious
+      end
+      object miFindReplace: TMenuItem
+        Caption = '&Replace...'
+        Hint = 'Find and replace text in the design'
+        ShortCut = 16456
+        OnClick = DoFindReplace
+      end
+    end
+    object mInsert: TMenuItem
+      Caption = '&Insert'
+      Hint = 'Draw and place objects'
+      object miWires: TMenuItem
+        Caption = '&Wires'
+        Hint = 'Wires, labels, power and text'
+        object miDrawWire: TMenuItem
+          Caption = 'Wire'
+          GroupIndex = 2
+          Hint = 'Draw wires'
+          RadioItem = True
+          OnClick = DoToolMenu
+        end
+        object miDrawLabel: TMenuItem
+          Caption = 'Label'
+          GroupIndex = 2
+          Hint = 'Name a wire or bus'
+          RadioItem = True
+          OnClick = DoToolMenu
+        end
+        object miDrawJunction: TMenuItem
+          Caption = 'Junction'
+          GroupIndex = 2
+          Hint = 'Place a junction dot'
+          RadioItem = True
+          OnClick = DoToolMenu
+        end
+        object miDrawWireNoCon: TMenuItem
+          Caption = 'Wire Without Connection'
+          GroupIndex = 2
+          Hint = 'Place a no-connect mark'
+          RadioItem = True
+          OnClick = DoToolMenu
+        end
+        object miDrawPower: TMenuItem
+          Caption = 'Power'
+          GroupIndex = 2
+          Hint = 'Place a power symbol'
+          RadioItem = True
+          OnClick = DoToolMenu
+        end
+        object miDrawBus: TMenuItem
+          Caption = 'Bus'
+          GroupIndex = 2
+          Hint = 'Draw a bus'
+          RadioItem = True
+          OnClick = DoToolMenu
+        end
+        object miDrawBusSlash: TMenuItem
+          Caption = 'Bus Slash'
+          GroupIndex = 2
+          Hint = 'Place a bus slash'
+          RadioItem = True
+          OnClick = DoToolMenu
+        end
+        object miDrawText: TMenuItem
+          Caption = 'Text'
+          GroupIndex = 2
+          Hint = 'Place text'
+          RadioItem = True
+          OnClick = DoToolMenu
+        end
+        object miDrawSymbolText: TMenuItem
+          Caption = 'Symbol text'
+          GroupIndex = 2
+          Hint = 'Place symbol text (text that holds symbol fields for reports)'
+          RadioItem = True
+          OnClick = DoToolMenu
+        end
+      end
+      object miShapes: TMenuItem
+        Caption = '&Shapes'
+        Hint = 'Lines, shapes and notes'
+        object miDrawLine: TMenuItem
+          Caption = 'Line'
+          Hint = 'Draw a line'
+          OnClick = DoToolMenu
+        end
+        object miDrawPolygon: TMenuItem
+          Caption = 'Polygon'
+          Hint = 'Draw a polygon'
+          OnClick = DoToolMenu
+        end
+        object miDrawRect: TMenuItem
+          Caption = 'Rectangle'
+          Hint = 'Draw a rectangle'
+          OnClick = DoToolMenu
+        end
+        object miDrawCircle: TMenuItem
+          Caption = 'Circle'
+          Hint = 'Draw a circle'
+          OnClick = DoToolMenu
+        end
+        object miDrawArc: TMenuItem
+          Caption = 'Arc'
+          Hint = 'Draw an arc'
+          OnClick = DoToolMenu
+        end
+        object miDrawNote: TMenuItem
+          Caption = 'Note'
+          Hint = 'Place a note'
+          OnClick = DoToolMenu
+        end
+        object miDrawCloud: TMenuItem
+          Caption = 'Cloud'
+          Hint = 'Draw a revision cloud'
+          OnClick = DoToolMenu
+        end
+      end
+      object miMeasure: TMenuItem
+        Caption = '&Measurements'
+        Hint = 'Rulers and measuring'
+        object miDrawRulerV: TMenuItem
+          Caption = 'Vertical Ruler'
+          Hint = 'Place a vertical ruler line'
+          OnClick = DoToolMenu
+        end
+        object miDrawRulerH: TMenuItem
+          Caption = 'Horizontal Ruler'
+          Hint = 'Place a horizontal ruler line'
+          OnClick = DoToolMenu
+        end
+        object miDrawRulerAB: TMenuItem
+          Caption = 'Point to Point Ruler'
+          Hint = 'Measure the distance between two points'
+          OnClick = DoToolMenu
+        end
+      end
+      object Separator1: TMenuItem
+        Caption = '-'
+      end
+      object mLadder: TMenuItem
+        Caption = '&Ladder'
+        Hint = 'Ladder diagram objects'
+        object miLadderRails: TMenuItem
+          Caption = 'Ladder Rails'
+          Hint = 'Draw ladder rails'
+          OnClick = DoInsertLadder
+        end
+        object miDrawRefLine: TMenuItem
+          Caption = 'Ladder Link'
+          Hint = 'Link a ladder rung to its contacts'
+          OnClick = DoToolMenu
+        end
+        object miDrawContact: TMenuItem
+          Caption = 'Ladder Contact'
+          Hint = 'Place a ladder contact'
+          OnClick = DoToolMenu
+        end
+        object miLadderRungs: TMenuItem
+          Caption = 'Rung Numbers'
+          Hint = 'Add or select the sheet''s rung number grid'
+          OnClick = DoToolMenu
+        end
+      end
+      object Separator11: TMenuItem
+        Caption = '-'
+      end
+      object miInsertPicture: TMenuItem
+        Caption = '&Insert Picture...'
+        Hint = 'Insert a picture into the sheet'
+        OnClick = DoInsertPicture
+      end
+    end
+    object mSheet: TMenuItem
+      Caption = '&Sheet'
+      Hint = 'Sheet commands'
+      object mAddSheet: TMenuItem
+        Caption = '&Add Sheet'
+        Hint = 'Add a new sheet to the drawing'
+        OnClick = DoAddSheet
+      end
+      object mRemoveSheet: TMenuItem
+        Caption = '&Remove Sheet'
+        Hint = 'Remove this sheet from the drawing'
+        OnClick = DoRemoveSheet
+      end
+      object miRenameSheet: TMenuItem
+        Caption = 'R&ename Sheet...'
+        Hint = 'Change the name of this sheet'
+        OnClick = DoRenameSheet
+      end
+      object Separator14: TMenuItem
+        Caption = '-'
+      end
+      object miShowRulers: TMenuItem
+        Caption = 'Show Rulers'
+        Hint = 'Show or hide the rulers of this sheet (counts across and down)'
+        OnClick = DoDesignDetailsRuler
+      end
+      object miExtendedInfo: TMenuItem
+        Caption = 'Show Detailed Block'
+        Hint = 'Show or hide the extended information of the title block'
+        OnClick = DoDesignDetailsExtended
+      end
+      object Separator9: TMenuItem
+        Caption = '-'
+      end
+      object miMoveSheetLeft: TMenuItem
+        Caption = 'Move &Left'
+        Hint = 'Move this sheet one place to the left'
+        OnClick = DoMoveSheetLeft
+      end
+      object miMoveSheetRight: TMenuItem
+        Caption = 'Move &Right'
+        Hint = 'Move this sheet one place to the right'
+        OnClick = DoMoveSheetRight
+      end
+      object Separator10: TMenuItem
+        Caption = '-'
+      end
+      object mAddHierSheet: TMenuItem
+        Caption = 'Add &Hierarchical Symbol'
+        Hint = 'Add the sheet that draws this design as a symbol, with its pins'
+        OnClick = DoAddHierarchicalSymbol
+      end
+    end
+    object mSpecial: TMenuItem
+      Caption = 'S&pecial'
+      Hint = 'Net lists, checks and reports'
+      object mNetList: TMenuItem
+        Caption = 'Create PCB &Net List...'
+        Hint = 'Make a net list for a PCB program'
+        OnClick = DoNetList
+      end
+      object mCheckRules: TMenuItem
+        Caption = '&Check Design Rules...'
+        Hint = 'Check the design for wiring mistakes'
+        OnClick = DoCheckRules
+      end
+      object mVhdlCheck: TMenuItem
+        Caption = 'V&HDL Check Design Rules...'
+        Hint = 'Check the design against VHDL layout rules'
+        OnClick = DoVhdlCheckRules
+      end
+      object mAnnotate: TMenuItem
+        Caption = '&Generate Symbol References...'
+        Hint = 'Automatically create or remove the symbol references'
+        OnClick = DoAnnotate
+      end
+      object mPartsList: TMenuItem
+        Caption = 'Create &Parts List...'
+        Hint = 'Make a list of the parts used'
+        OnClick = DoPartsList
+      end
+      object mSymbolBom: TMenuItem
+        Caption = 'Export Symbol &BoM (CSV)...'
+        Hint = 'Write a table of the symbols used, one row per kind, as a CSV file'
+        OnClick = DoSymbolBom
+      end
+      object mSymbolData: TMenuItem
+        Caption = 'Export Symbol &Data (CSV)...'
+        Hint = 'Write every symbol and symbol text with all of its fields, one column per field name, as a CSV file'
+        OnClick = DoSymbolData
+      end
+      object mDupRefs: TMenuItem
+        Caption = 'Check &Duplicate References...'
+        Hint = 'Find symbols that have the same reference'
+        OnClick = DoCheckDupRefs
+      end
+      object mSpecialSep1: TMenuItem
+        Caption = '-'
+      end
+      object mSpice: TMenuItem
+        Caption = 'Create Spice Net List...'
+        Hint = 'Make a SPICE net list'
+        OnClick = DoSpiceNetList
+      end
+      object mSpecialSep2: TMenuItem
+        Caption = '-'
+      end
+      object mVhdl: TMenuItem
+        Caption = 'Create &VHDL file'
+        Hint = 'Make a VHDL file'
+        OnClick = DoVhdlFile
+      end
+      object mSpecialSep3: TMenuItem
+        Caption = '-'
+      end
+      object mInsertDesign: TMenuItem
+        Caption = 'Insert another design as symbol...'
+        Hint = 'Place another design on this sheet as a symbol'
+        OnClick = DoInsertDesign
+      end
+      object mAddHierSymbol: TMenuItem
+        Caption = 'Add hierarchical symbol'
+        Hint = 'Add the sheet that draws this design as a symbol, with its pins'
+        OnClick = DoAddHierarchicalSymbol
+      end
+      object mSpecialSep4: TMenuItem
+        Caption = '-'
+      end
+      object mReloadHier: TMenuItem
+        Caption = 'Reload symbol from design'
+        Hint = 'Read the chosen symbol''s design again'
+        OnClick = DoReloadHierSymbol
+      end
+      object mChangeHier: TMenuItem
+        Caption = 'Change design of symbol...'
+        Hint = 'Choose another design for the chosen symbol'
+        OnClick = DoChangeHierDesign
+      end
+      object mOpenHier: TMenuItem
+        Caption = 'Open design of symbol'
+        Hint = 'Open the chosen symbol''s design'
+        OnClick = DoOpenHierDesign
+      end
+    end
+    object mSymbol: TMenuItem
+      Caption = 'S&ymbols'
+      Hint = 'Symbol library commands'
+      object mLibraries: TMenuItem
+        Caption = '&Libraries...'
+        Hint = 'Add, remove and make the symbol libraries in use'
+        OnClick = DoLibraries
+      end
+      object sepLibraries: TMenuItem
+        Caption = '-'
+      end
+      object mLibSymbol: TMenuItem
+        Caption = '&Symbol from Library'
+        Hint = 'Place the symbol chosen in the library list'
+        OnClick = DoPlaceSymbol
+      end
+      object miReplaceSymbol: TMenuItem
+        Caption = '&Replace Symbol...'
+        Hint = 'Replace the selected symbol with another one'
+        OnClick = DoReplaceSymbol
+      end
+      object Separator4: TMenuItem
+        Caption = '-'
+      end
+      object mOpenLibs: TMenuItem
+        Caption = '&Open Symbol Libraries'
+        Hint = 'Open a symbol library file'
+        OnClick = DoOpenLibrary
+      end
+      object sepSymbol1: TMenuItem
+        Caption = '-'
+      end
+      object miSymNew: TMenuItem
+        Caption = '&New Symbol...'
+        Hint = 'Draw a new symbol for the library chosen in the library list'
+        OnClick = DoSymbolMenuCommand
+      end
+      object miSymEdit: TMenuItem
+        Tag = 1
+        Caption = '&Edit Symbol'
+        Hint = 'Open the symbol chosen in the library list for drawing'
+        OnClick = DoSymbolMenuCommand
+      end
+      object miSymDuplicate: TMenuItem
+        Tag = 3
+        Caption = 'D&uplicate Symbol'
+        Hint = 'Store a copy of the chosen symbol in its library'
+        OnClick = DoSymbolMenuCommand
+      end
+      object miSymDelete: TMenuItem
+        Tag = 2
+        Caption = '&Delete Symbol'
+        Hint = 'Delete the chosen symbol from its library'
+        OnClick = DoSymbolMenuCommand
+      end
+      object miSymCommandProps: TMenuItem
+        Tag = 4
+        Caption = 'Symbol &Properties of Chosen...'
+        Hint = 'Change the names, description and attributes of the chosen symbol'
+        OnClick = DoSymbolMenuCommand
+      end
+      object sepSymbol3: TMenuItem
+        Caption = '-'
+      end
+      object miSymExport: TMenuItem
+        Tag = 5
+        Caption = 'E&xport Symbol...'
+        Hint = 'Write the symbol chosen in the library list to an XML file'
+        OnClick = DoSymbolMenuCommand
+      end
+      object miSymExportLib: TMenuItem
+        Tag = 6
+        Caption = 'Export &all Symbols...'
+        Hint = 'Write every symbol of the library chosen in the library list to an XML file'
+        OnClick = DoSymbolMenuCommand
+      end
+      object miSymImport: TMenuItem
+        Tag = 7
+        Caption = '&Import Symbols...'
+        Hint = 'Add the symbols of an XML file to the library chosen in the library list'
+        OnClick = DoSymbolMenuCommand
+      end
+      object sepSymbol2: TMenuItem
+        Caption = '-'
+      end
+      object miSymPin: TMenuItem
+        Tag = 24
+        Caption = 'Pi&n'
+        GroupIndex = 2
+        Hint = 'Place pins on the symbol being edited'
+        RadioItem = True
+        OnClick = DoToolMenu
+      end
+      object miSymOrigin: TMenuItem
+        Tag = 25
+        Caption = 'Or&igin'
+        GroupIndex = 2
+        Hint = 'Set the origin of the symbol being edited, the point it is placed by'
+        RadioItem = True
+        OnClick = DoToolMenu
+      end
+      object miSymProps: TMenuItem
+        Caption = 'Symbol Pro&perties...'
+        Hint = 'Names, description and attributes of the symbol being edited'
+        OnClick = DoSymbolProps
+      end
+      object miSymParts: TMenuItem
+        Caption = 'Parts per Pac&kage...'
+        Hint = 'The number of parts of the symbol being edited, and whether each has its own drawing'
+        OnClick = DoSymbolParts
+      end
+      object miSymPrevPart: TMenuItem
+        Tag = -1
+        Caption = 'Pre&vious Part'
+        Hint = 'Draw the previous part of the symbol'
+        OnClick = DoSymbolPart
+      end
+      object miSymNextPart: TMenuItem
+        Tag = 1
+        Caption = 'Next Pa&rt'
+        Hint = 'Draw the next part of the symbol'
+        OnClick = DoSymbolPart
+      end
+      object miSymStore: TMenuItem
+        Caption = '&Store in Library'
+        Hint = 'Store the symbol being edited in its library'
+        OnClick = DoStoreSymbol
+      end
+    end
+    object mParts: TMenuItem
+      Caption = '&Parts'
+      Hint = 'Parts library commands'
+      OnClick = PartsMenuOpen
+      object mPartsNew: TMenuItem
+        Caption = '&New Parts Library...'
+        Hint = 'Make a new, empty parts library file'
+        OnClick = DoNewPartsLibrary
+      end
+      object mPartsOpen: TMenuItem
+        Caption = '&Open Parts Library...'
+        Hint = 'Open a parts library file (the Parts tab of the library list shows it)'
+        OnClick = DoOpenPartsLibrary
+      end
+      object mPartsEdit: TMenuItem
+        Caption = '&Edit Parts Library...'
+        Hint = 'Open the parts library of the Parts tab for editing in a tab of its own'
+        OnClick = DoEditPartsLibrary
+      end
+      object mPartsSep1: TMenuItem
+        Caption = '-'
+      end
+      object mPartsAdd: TMenuItem
+        Caption = '&Add Part...'
+        Hint = 'Add a generic part to the library being edited'
+        OnClick = DoPartAdd
+      end
+      object mPartsProps: TMenuItem
+        Caption = 'Part &Properties...'
+        Hint = 'Change the name, reference letters, status and description of the chosen part'
+        OnClick = DoPartProperties
+      end
+      object mPartsDup: TMenuItem
+        Caption = '&Duplicate Part'
+        Hint = 'Make a copy of the chosen part with everything it has'
+        OnClick = DoPartDuplicate
+      end
+      object mPartsDel: TMenuItem
+        Caption = 'D&elete Part'
+        Hint = 'Delete the chosen part from the library'
+        OnClick = DoPartDelete
+      end
+      object mPartsSep2: TMenuItem
+        Caption = '-'
+      end
+      object mPartsClassAdd: TMenuItem
+        Caption = 'Add &Class...'
+        Hint = 'Add a class under the chosen one (Classes page of the parts library editor)'
+        OnClick = DoClassAdd
+      end
+      object mPartsClassProps: TMenuItem
+        Caption = 'Cl&ass Properties...'
+        Hint = 'Change the name, parent, abstract flag and description of the chosen class'
+        OnClick = DoClassProperties
+      end
+      object mPartsClassDel: TMenuItem
+        Caption = 'Delete Cl&ass'
+        Hint = 'Delete the chosen class (it must have no subclasses, parts or products)'
+        OnClick = DoClassDelete
+      end
+      object mPartsSep3: TMenuItem
+        Caption = '-'
+      end
+      object mPartsFieldAdd: TMenuItem
+        Caption = 'Add &Field...'
+        Hint = 'Declare a field on the chosen class; its subclasses inherit it'
+        OnClick = DoFieldAdd
+      end
+      object mPartsFieldProps: TMenuItem
+        Caption = 'Fi&eld Properties...'
+        Hint = 'Change the chosen field (only a field the class declares itself)'
+        OnClick = DoFieldProperties
+      end
+      object mPartsFieldDel: TMenuItem
+        Caption = 'Delete Fiel&d'
+        Hint = 'Delete the chosen field (no part may have a value for it)'
+        OnClick = DoFieldDelete
+      end
+      object mPartsSep4: TMenuItem
+        Caption = '-'
+      end
+      object mPartsObjAdd: TMenuItem
+        Caption = 'Add Ob&ject...'
+        Hint = 'Add a terminal, pole, channel ... to the chosen part (Objects page of the parts library editor)'
+        OnClick = DoObjectAdd
+      end
+      object mPartsObjProps: TMenuItem
+        Caption = 'Object Pr&operties...'
+        Hint = 'Change the chosen child object'
+        OnClick = DoObjectProperties
+      end
+      object mPartsObjDel: TMenuItem
+        Caption = 'Delete O&bject'
+        Hint = 'Delete the chosen child object and what is inside it'
+        OnClick = DoObjectDelete
+      end
+      object mPartsSep5: TMenuItem
+        Caption = '-'
+      end
+      object mPartsRatAdd: TMenuItem
+        Caption = 'Add Re&quirement...'
+        Hint = 'Add a rating the chosen part must have (Requirements page of the parts library editor)'
+        OnClick = DoRatingAdd
+      end
+      object mPartsRatProps: TMenuItem
+        Caption = 'Requirement Proper&ties...'
+        Hint = 'Change the chosen requirement'
+        OnClick = DoRatingProperties
+      end
+      object mPartsRatDel: TMenuItem
+        Caption = 'Delete Requ&irement'
+        Hint = 'Delete the chosen requirement'
+        OnClick = DoRatingDelete
+      end
+      object mPartsSep7: TMenuItem
+        Caption = '-'
+      end
+      object mPartsValSet: TMenuItem
+        Caption = 'Set Field &Value...'
+        Hint = 'Enter or change the value of the chosen field (Values page of the parts library editor)'
+        OnClick = DoValueSet
+      end
+      object mPartsValClear: TMenuItem
+        Caption = 'Clear Field Val&ue'
+        Hint = 'Remove the stored value of the chosen field'
+        OnClick = DoValueClear
+      end
+      object mPartsSep8: TMenuItem
+        Caption = '-'
+      end
+      object mPartsSymNew: TMenuItem
+        Caption = '&New Part Symbol...'
+        Hint = 'Draw a new symbol for the part (Symbols page of the parts library editor)'
+        OnClick = DoPartSymNew
+      end
+      object mPartsSymEdit: TMenuItem
+        Caption = 'Edit Part S&ymbol'
+        Hint = 'Edit the chosen symbol in the symbol editor'
+        OnClick = DoPartSymEdit
+      end
+      object mPartsSymImport: TMenuItem
+        Caption = 'Import Symbol from Li&brary Panel...'
+        Hint = 'Take the symbol chosen in the library panel as a new symbol of the part'
+        OnClick = DoPartSymImport
+      end
+      object mPartsSymProps: TMenuItem
+        Caption = 'Part Symbol Properti&es...'
+        Hint = 'Standard, purpose and name of the chosen symbol'
+        OnClick = DoPartSymProps
+      end
+      object mPartsSymDefault: TMenuItem
+        Caption = 'Make Default Sym&bol'
+        Hint = 'Place the chosen symbol by default'
+        OnClick = DoPartSymDefault
+      end
+      object mPartsSymDel: TMenuItem
+        Caption = 'Delete Part Symbo&l'
+        Hint = 'Delete the chosen symbol'
+        OnClick = DoPartSymDelete
+      end
+      object mPartsSep6: TMenuItem
+        Caption = '-'
+      end
+      object mPartsProdAdd: TMenuItem
+        Caption = 'Add Pro&duct...'
+        Hint = 'Add a catalog product (Products page of the parts library editor)'
+        OnClick = DoProductAdd
+      end
+      object mPartsProdProps: TMenuItem
+        Caption = 'Product Prope&rties...'
+        Hint = 'Change the chosen product'
+        OnClick = DoProductProps
+      end
+      object mPartsProdDel: TMenuItem
+        Caption = 'Delete Produ&ct'
+        Hint = 'Delete the chosen product with its ratings'
+        OnClick = DoProductDel
+      end
+      object mPartsProdSuggest: TMenuItem
+        Caption = 'Suggest Product for &Part'
+        Hint = 'Add the chosen product to (or remove it from) the products suggested for the part in the part box'
+        OnClick = DoProductSuggest
+      end
+      object mPartsProdPrefer: TMenuItem
+        Caption = 'Make Product Pre&ferred'
+        Hint = 'Make the chosen product the part''s preferred one (or a plain suggestion again)'
+        OnClick = DoProductPrefer
+      end
+      object mPartsProdRatAdd: TMenuItem
+        Caption = 'Add Product &Rating...'
+        Hint = 'Add a rating of the chosen product'
+        OnClick = DoProductRatAdd
+      end
+      object mPartsProdRatProps: TMenuItem
+        Caption = 'Product Rating P&roperties...'
+        Hint = 'Change the chosen product rating'
+        OnClick = DoProductRatProps
+      end
+      object mPartsProdRatDel: TMenuItem
+        Caption = 'Delete Product Ratin&g'
+        Hint = 'Delete the chosen product rating'
+        OnClick = DoProductRatDel
+      end
+      object mPartsSep9: TMenuItem
+        Caption = '-'
+      end
+      object mPartsProdImport: TMenuItem
+        Caption = 'Import Products from &CSV...'
+        Hint = 'Add products, their ratings and suggestions from a CSV file (all or nothing)'
+        OnClick = DoProductImport
+      end
+      object mPartsProdExport: TMenuItem
+        Caption = 'E&xport Products to CSV...'
+        Hint = 'Write the products, their ratings and suggestions to a CSV file'
+        OnClick = DoProductExport
+      end
+    end
+    object mView: TMenuItem
+      Caption = '&View'
+      Hint = 'Zoom and display settings'
+      object mZoomIn: TMenuItem
+        Caption = 'Zoom &In'
+        Hint = 'Make the drawing larger'
+        ShortCut = 33
+        OnClick = DoZoomIn
+      end
+      object mZoomOut: TMenuItem
+        Caption = 'Zoom &Out'
+        Hint = 'Make the drawing smaller'
+        ShortCut = 34
+        OnClick = DoZoomOut
+      end
+      object mZoomPage: TMenuItem
+        Caption = 'Zoom to &Page'
+        Hint = 'Show the whole page'
+        OnClick = DoZoomFit
+      end
+      object mZoom100: TMenuItem
+        Caption = 'Zoom &100%'
+        Hint = 'Show the drawing at its real size'
+        OnClick = DoZoom100
+      end
+      object Separator3: TMenuItem
+        Caption = '-'
+      end
+      object mShowGrid: TMenuItem
+        Caption = 'Show &Grid'
+        Checked = True
+        Hint = 'Show or hide the grid dots'
+        OnClick = DoToggleGrid
+      end
+      object mShowPosition: TMenuItem
+        Caption = 'Show &Position'
+        Checked = True
+        Hint = 'Show or hide the position bar'
+        OnClick = DoShowPosition
+      end
+      object Separator13: TMenuItem
+        Caption = '-'
+      end
+      object miGridSnap: TMenuItem
+        Caption = 'Snap to Grid'
+        Hint = 'Snap the pointer to the grid or let it move freely'
+        OnClick = DoToggleSnap
+      end
+      object miGridSize: TMenuItem
+        Caption = 'Grid Size'
+        Hint = 'The distance between the grid points'
+        object miGrid500: TMenuItem
+          Tag = 50
+          Caption = '0.5 mm'
+          GroupIndex = 1
+          Hint = 'Set the grid to this size'
+          RadioItem = True
+          OnClick = DoGridSize
+        end
+        object miGrid1000: TMenuItem
+          Tag = 100
+          Caption = '1 mm'
+          GroupIndex = 1
+          Hint = 'Set the grid to this size'
+          RadioItem = True
+          OnClick = DoGridSize
+        end
+        object miGrid1270: TMenuItem
+          Tag = 127
+          Caption = '1.27 mm (0.05 in)'
+          GroupIndex = 1
+          Hint = 'Set the grid to this size'
+          RadioItem = True
+          OnClick = DoGridSize
+        end
+        object miGrid2000: TMenuItem
+          Tag = 200
+          Caption = '2 mm'
+          GroupIndex = 1
+          Hint = 'Set the grid to this size'
+          RadioItem = True
+          OnClick = DoGridSize
+        end
+        object miGrid2540: TMenuItem
+          Tag = 254
+          Caption = '2.54 mm (0.1 in)'
+          GroupIndex = 1
+          Hint = 'Set the grid to this size'
+          RadioItem = True
+          OnClick = DoGridSize
+        end
+        object miGrid5000: TMenuItem
+          Tag = 500
+          Caption = '5 mm'
+          GroupIndex = 1
+          Hint = 'Set the grid to this size'
+          RadioItem = True
+          OnClick = DoGridSize
+        end
+        object miGrid10000: TMenuItem
+          Tag = 1000
+          Caption = '10 mm'
+          GroupIndex = 1
+          Hint = 'Set the grid to this size'
+          RadioItem = True
+          OnClick = DoGridSize
+        end
+        object miGridSep: TMenuItem
+          Caption = '-'
+        end
+        object miGridCustom: TMenuItem
+          Caption = 'Custom...'
+          Hint = 'Type in a grid size'
+          OnClick = DoGridCustom
+        end
+      end
+      object mSepRepeat: TMenuItem
+        Caption = '-'
+      end
+      object mRepeatDirections: TMenuItem
+        Caption = 'Repeat &Directions'
+        Hint = 'Which way names and pin numbers count when repeating'
+        object mRepeatNameUp: TMenuItem
+          Caption = '&Name Increment'
+          Checked = True
+          GroupIndex = 11
+          Hint = 'Count names upwards when repeating'
+          RadioItem = True
+          OnClick = DoRepeatNameUp
+        end
+        object mRepeatNameDown: TMenuItem
+          Caption = 'Name &Decrement'
+          GroupIndex = 11
+          Hint = 'Count names downwards when repeating'
+          RadioItem = True
+          OnClick = DoRepeatNameDown
+        end
+        object mSepRepeatPin: TMenuItem
+          Caption = '-'
+        end
+        object mRepeatPinUp: TMenuItem
+          Caption = 'Pin &Increment'
+          Checked = True
+          GroupIndex = 12
+          Hint = 'Count pin numbers upwards when repeating'
+          RadioItem = True
+          OnClick = DoRepeatPinUp
+        end
+        object mRepeatPinDown: TMenuItem
+          Caption = 'Pin D&ecrement'
+          GroupIndex = 12
+          Hint = 'Count pin numbers downwards when repeating'
+          RadioItem = True
+          OnClick = DoRepeatPinDown
+        end
+      end
+      object miShowPositionBar: TMenuItem
+        Caption = 'Show Position Bar'
+        Hint = 'Show or hide the position bar'
+        OnClick = DoShowPosition
+      end
+      object miShowViewRulers: TMenuItem
+        Caption = 'Show Viewport Rulers'
+        Hint = 'Show or hide the rulers along the top and left of the drawing area'
+        OnClick = DoShowViewRulers
+      end
+      object mTheme: TMenuItem
+        Caption = 'Theme'
+        Hint = 'Switch between the light and dark look'
+        OnClick = DoTheme
+      end
+    end
+    object mWindow: TMenuItem
+      Caption = '&Window'
+      Hint = 'Switch between the open drawings'
+      object miNextDoc: TMenuItem
+        Caption = '&Next Document'
+        Hint = 'Show the next open design'
+        ShortCut = 16393
+        OnClick = DoNextDocument
+      end
+      object miPrevDoc: TMenuItem
+        Caption = '&Previous Document'
+        Hint = 'Show the previous open design'
+        ShortCut = 24585
+        OnClick = DoPrevDocument
+      end
+      object miCloseDoc: TMenuItem
+        Caption = '&Close Document'
+        Hint = 'Close the design being shown'
+        ShortCut = 16471
+        OnClick = DoCloseDocument
+      end
+      object miCloseAllDocs: TMenuItem
+        Caption = 'Close &All Documents'
+        Hint = 'Close every open design'
+        OnClick = DoCloseAllDocuments
+      end
+    end
+    object mHelp: TMenuItem
+      Caption = '&Help'
+      Hint = 'Help and information'
+      object miPropTest: TMenuItem
+        Caption = 'Property Ribbon Test...'
+        Hint = 'Shows every Properties frame side by side so a frame can be looked at while it is designed'
+        OnClick = DoTestPropRibbon
+      end
+      object mAbout: TMenuItem
+        Caption = '&About...'
+        Hint = 'Information about this program'
+        OnClick = DoAbout
+      end
+    end
+  end
+  object pmSheet: TPopupMenu
+    Left = 248
+    Top = 192
+    object pmSheetAddHandle: TMenuItem
+      Tag = 4
+      Caption = 'Add handle'
+      Hint = 'Add a handle to the polygon at the click'
+      Visible = False
+      OnClick = ContextPolyClick
+    end
+    object pmSheetDelHandle: TMenuItem
+      Tag = 5
+      Caption = 'Delete handle'
+      Hint = 'Delete the handle nearest the click'
+      Visible = False
+      OnClick = ContextPolyClick
+    end
+    object pmSheetPolySep1: TMenuItem
+      Caption = '-'
+      Visible = False
+    end
+    object pmSheetFreeLine: TMenuItem
+      Caption = 'Free line'
+      Hint = 'Make the side nearest the click a straight line'
+      Visible = False
+      OnClick = ContextPolyClick
+    end
+    object pmSheetArcIn: TMenuItem
+      Tag = 1
+      Caption = 'Arc in'
+      Hint = 'Make the side nearest the click an arc curving in'
+      Visible = False
+      OnClick = ContextPolyClick
+    end
+    object pmSheetArcOut: TMenuItem
+      Tag = 2
+      Caption = 'Arc out'
+      Hint = 'Make the side nearest the click an arc curving out'
+      Visible = False
+      OnClick = ContextPolyClick
+    end
+    object pmSheetCurve: TMenuItem
+      Tag = 3
+      Caption = 'Curve'
+      Hint = 'Make the side nearest the click a curve'
+      Visible = False
+      OnClick = ContextPolyClick
+    end
+    object pmSheetPolySep2: TMenuItem
+      Caption = '-'
+      Visible = False
+    end
+    object pmSheetWireCut: TMenuItem
+      Caption = 'Add wire cut here'
+      Hint = 'Cut the wire in two at the click'
+      Visible = False
+      OnClick = ContextWireCutClick
+    end
+    object pmSheetMakeHoriz: TMenuItem
+      Caption = 'Make horizontal'
+      Hint = 'Straighten the line to horizontal'
+      Visible = False
+      OnClick = ContextLineClick
+    end
+    object pmSheetMakeVert: TMenuItem
+      Tag = 1
+      Caption = 'Make vertical'
+      Hint = 'Straighten the line to vertical'
+      Visible = False
+      OnClick = ContextLineClick
+    end
+    object pmSheetLineSep: TMenuItem
+      Caption = '-'
+      Visible = False
+    end
+    object pmSheetReloadHier: TMenuItem
+      Caption = 'Reload symbol from design'
+      Hint = 'Read the chosen symbol''s design again'
+      Visible = False
+      OnClick = DoReloadHierSymbol
+    end
+    object pmSheetOpenHier: TMenuItem
+      Caption = 'Open design'
+      Hint = 'Open the chosen symbol''s design'
+      Visible = False
+      OnClick = DoOpenHierDesign
+    end
+    object pmSheetHierSep: TMenuItem
+      Caption = '-'
+      Visible = False
+    end
+    object pmSheetReplaceSym: TMenuItem
+      Caption = 'Replace Symbol...'
+      Hint = 'Replace the selected symbol with another one'
+      Visible = False
+      OnClick = DoReplaceSymbol
+    end
+    object pmSheetSymSep: TMenuItem
+      Caption = '-'
+      Visible = False
+    end
+    object pmSheetUndo: TMenuItem
+      Caption = 'Undo'
+      Hint = 'Undo the last change'
+      ShortCut = 16474
+      OnClick = DoUndo
+    end
+    object pmSheetRedo: TMenuItem
+      Caption = 'Redo'
+      Hint = 'Redo the change that was undone'
+      ShortCut = 16473
+      OnClick = DoRedo
+    end
+    object pmSheetSep1: TMenuItem
+      Caption = '-'
+    end
+    object pmSheetZOrder: TMenuItem
+      Caption = 'Z-Order'
+      Hint = 'Change the stacking order of the selection'
+      object pmSheetBringFront: TMenuItem
+        Caption = 'Bring to Front'
+        Hint = 'Bring the selection to the front'
+        OnClick = DoBringToFront
+      end
+      object pmSheetSendBack: TMenuItem
+        Caption = 'Send to Back'
+        Hint = 'Send the selection to the back'
+        OnClick = DoSendToBack
+      end
+      object miAlignToGrid: TMenuItem
+        Caption = 'Align to Grid'
+        Hint = 'Move each selected object (not changing its shape) so that its first end, or the connection end of a pin, is on the nearest grid dot'
+        OnClick = DoAlignToGrid
+      end
+    end
+    object pmSheetSep2: TMenuItem
+      Caption = '-'
+    end
+    object pmSheetCut: TMenuItem
+      Caption = 'Cut'
+      Hint = 'Cut the selection to the clipboard'
+      ShortCut = 16472
+      OnClick = DoCut
+    end
+    object pmSheetCopy: TMenuItem
+      Caption = 'Copy'
+      Hint = 'Copy the selection to the clipboard'
+      ShortCut = 16451
+      OnClick = DoCopy
+    end
+    object pmSheetPaste: TMenuItem
+      Caption = 'Paste'
+      Hint = 'Paste the clipboard'
+      ShortCut = 16470
+      OnClick = DoPaste
+    end
+    object pmSheetDuplicate: TMenuItem
+      Caption = 'Duplicate'
+      Hint = 'Duplicate the selection'
+      ShortCut = 16469
+      OnClick = DoDuplicate
+    end
+    object pmSheetSelectAll: TMenuItem
+      Caption = 'Select All'
+      Hint = 'Select everything on the sheet'
+      ShortCut = 16449
+      OnClick = DoSelectAll
+    end
+    object pmSheetSelectAllAlike: TMenuItem
+      Caption = 'Select All Alike'
+      Hint = 'Select everything of the same kind as the selection'
+      OnClick = DoSelectAllAlike
+    end
+    object pmSheetSep3: TMenuItem
+      Caption = '-'
+    end
+    object pmSheetDelete: TMenuItem
+      Caption = 'Delete'
+      Hint = 'Delete the selection'
+      ShortCut = 46
+      OnClick = DoDelete
+    end
+    object pmSheetSep4: TMenuItem
+      Caption = '-'
+    end
+    object pmSheetRotateLeft: TMenuItem
+      Caption = 'Rotate Left'
+      Hint = 'Rotate the selection left'
+      ShortCut = 16460
+      OnClick = DoRotateLeft
+    end
+    object pmSheetRotateRight: TMenuItem
+      Caption = 'Rotate Right'
+      Hint = 'Rotate the selection right'
+      ShortCut = 16466
+      OnClick = DoRotateRight
+    end
+    object pmSheetFlip: TMenuItem
+      Caption = 'Flip'
+      Hint = 'Flip the selection left to right'
+      OnClick = DoFlip
+    end
+    object pmSheetSep5: TMenuItem
+      Caption = '-'
+    end
+    object pmSheetZoomIn: TMenuItem
+      Caption = 'Zoom In'
+      Hint = 'Zoom in'
+      ShortCut = 33
+      OnClick = DoZoomIn
+    end
+    object pmSheetZoomOut: TMenuItem
+      Caption = 'Zoom Out'
+      Hint = 'Zoom out'
+      ShortCut = 34
+      OnClick = DoZoomOut
+    end
+  end
+  object pmGridSize: TPopupMenu
+    Left = 360
+    Top = 192
+    object pmGrid500: TMenuItem
+      Tag = 50
+      Caption = '0.5 mm'
+      GroupIndex = 1
+      Hint = 'Set the grid to this size'
+      RadioItem = True
+      OnClick = DoGridSize
+    end
+    object pmGrid1000: TMenuItem
+      Tag = 100
+      Caption = '1 mm'
+      GroupIndex = 1
+      Hint = 'Set the grid to this size'
+      RadioItem = True
+      OnClick = DoGridSize
+    end
+    object pmGrid1270: TMenuItem
+      Tag = 127
+      Caption = '1.27 mm (0.05 in)'
+      GroupIndex = 1
+      Hint = 'Set the grid to this size'
+      RadioItem = True
+      OnClick = DoGridSize
+    end
+    object pmGrid2000: TMenuItem
+      Tag = 200
+      Caption = '2 mm'
+      GroupIndex = 1
+      Hint = 'Set the grid to this size'
+      RadioItem = True
+      OnClick = DoGridSize
+    end
+    object pmGrid2540: TMenuItem
+      Tag = 254
+      Caption = '2.54 mm (0.1 in)'
+      GroupIndex = 1
+      Hint = 'Set the grid to this size'
+      RadioItem = True
+      OnClick = DoGridSize
+    end
+    object pmGrid5000: TMenuItem
+      Tag = 500
+      Caption = '5 mm'
+      GroupIndex = 1
+      Hint = 'Set the grid to this size'
+      RadioItem = True
+      OnClick = DoGridSize
+    end
+    object pmGrid10000: TMenuItem
+      Tag = 1000
+      Caption = '10 mm'
+      GroupIndex = 1
+      Hint = 'Set the grid to this size'
+      RadioItem = True
+      OnClick = DoGridSize
+    end
+    object pmGridSep: TMenuItem
+      Caption = '-'
+    end
+    object pmGridCustom: TMenuItem
+      Caption = 'Custom...'
+      Hint = 'Type in a grid size'
+      OnClick = DoGridCustom
+    end
+  end
+  object pmDocTabs: TPopupMenu
+    Left = 416
+    Top = 192
+    object pmDocClose: TMenuItem
+      Caption = 'Close'
+      Hint = 'Close this document'
+      OnClick = DoCloseDocument
+    end
+    object pmDocCloseAll: TMenuItem
+      Caption = 'Close all'
+      Hint = 'Close every open document'
+      OnClick = DoCloseAllDocuments
+    end
+  end
+  object pmPolyDraw: TPopupMenu
+    Left = 472
+    Top = 192
+    object pmPolyFinish: TMenuItem
+      Tag = 1
+      Caption = 'Finish polygon'
+      Hint = 'Close off the polygon with the points so far'
+      OnClick = PolyDrawMenuClick
+    end
+    object pmPolyCancel: TMenuItem
+      Tag = 2
+      Caption = 'Cancel drawing'
+      Hint = 'Drop the polygon being drawn'
+      OnClick = PolyDrawMenuClick
+    end
+    object pmPolySep: TMenuItem
+      Caption = '-'
+    end
+    object pmPolyFree: TMenuItem
+      Tag = 10
+      Caption = 'Free line'
+      GroupIndex = 1
+      Hint = 'The next sides are straight lines'
+      RadioItem = True
+      OnClick = PolyDrawMenuClick
+    end
+    object pmPolyArcIn: TMenuItem
+      Tag = 11
+      Caption = 'Arc in'
+      GroupIndex = 1
+      Hint = 'The next sides are arcs curving in'
+      RadioItem = True
+      OnClick = PolyDrawMenuClick
+    end
+    object pmPolyArcOut: TMenuItem
+      Tag = 12
+      Caption = 'Arc out'
+      GroupIndex = 1
+      Hint = 'The next sides are arcs curving out'
+      RadioItem = True
+      OnClick = PolyDrawMenuClick
+    end
+  end
+  object pmArcDraw: TPopupMenu
+    Left = 472
+    Top = 248
+    object pmArcFinish: TMenuItem
+      Tag = 3
+      Caption = 'Finish arc'
+      Hint = 'Finish the arc with the points so far'
+      Visible = False
+      OnClick = ArcDrawMenuClick
+    end
+    object pmArcCancel: TMenuItem
+      Tag = 1
+      Caption = 'Cancel drawing'
+      Hint = 'Drop the arc being drawn'
+      OnClick = ArcDrawMenuClick
+    end
+    object pmArcSep: TMenuItem
+      Caption = '-'
+    end
+    object pmArcIn: TMenuItem
+      Tag = 11
+      Caption = 'Arc in'
+      GroupIndex = 1
+      Hint = 'Draw arcs curving in'
+      RadioItem = True
+      OnClick = ArcDrawMenuClick
+    end
+    object pmArcOut: TMenuItem
+      Tag = 12
+      Caption = 'Arc out'
+      GroupIndex = 1
+      Hint = 'Draw arcs curving out'
+      RadioItem = True
+      OnClick = ArcDrawMenuClick
+    end
+  end
+  object pmSheetTabs: TPopupMenu
+    OnPopup = pmSheetTabsPopup
+    Left = 304
+    Top = 192
+    object pmTabInsert: TMenuItem
+      Caption = 'Insert sheet'
+      Hint = 'Insert a new sheet after this one'
+      OnClick = DoInsertSheet
+    end
+    object pmTabDelete: TMenuItem
+      Caption = 'Delete sheet'
+      Hint = 'Delete this sheet'
+      OnClick = DoRemoveSheet
+    end
+    object pmTabRename: TMenuItem
+      Caption = 'Rename sheet...'
+      Hint = 'Rename this sheet'
+      OnClick = DoRenameSheet
+    end
+    object pmTabSep1: TMenuItem
+      Caption = '-'
+    end
+    object pmTabMoveLeft: TMenuItem
+      Caption = '<- Move Sheet left'
+      Hint = 'Move this sheet one place to the left'
+      OnClick = DoMoveSheetLeft
+    end
+    object pmTabMoveRight: TMenuItem
+      Caption = 'Move Sheet right ->'
+      Hint = 'Move this sheet one place to the right'
+      OnClick = DoMoveSheetRight
+    end
+    object pmTabSep2: TMenuItem
+      Caption = '-'
+    end
+    object pmTabHier: TMenuItem
+      Caption = 'Add hierarchical symbol'
+      Hint = 'Open this sheet as a hierarchical symbol'
+      OnClick = DoAddHierarchicalSymbol
+    end
+  end
+  object pmAlignmentOptions: TPopupMenu
+    Left = 376
+    Top = 192
+    object miAlignShowRulers: TMenuItem
+      Caption = 'Show Rulers'
+      Hint = 'Show or hide the rulers along the drawing area'
+      OnClick = DoShowViewRulers
+    end
+    object miAlign1pxgrid: TMenuItem
+      Caption = '1 px grid'
+      Enabled = False
+      Hint = 'Draw the grid dots one pixel wide (symbol editing)'
+      OnClick = DoOnePxGrid
+    end
+  end
+  object pmCloseDocMenu: TPopupMenu
+    Left = 472
+    Top = 192
+    object miCloseAllDoc: TMenuItem
+      Caption = 'Close All'
+      Hint = 'Close every open document'
+      OnClick = DoCloseAllDocuments
+    end
+  end
+end

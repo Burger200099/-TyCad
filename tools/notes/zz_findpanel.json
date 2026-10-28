@@ -1,0 +1,136 @@
+{
+"TfrFindPanel.GetFindText": {
+"text": "The text in the entry.",
+"returns": "the text"
+},
+"TfrFindPanel.SetFindText": {
+"text": "Puts a text in the entry.",
+"params": {
+"Value": "the text"
+}
+},
+"TfrFindPanel.FocusEntry": {
+"text": "Puts the cursor in the entry with its text selected, ready to type over."
+},
+"TfrFindPanel.SetResults": {
+"text": "Fills the list with what was found and shows the summary (\"4 found\", \"Not found\") beside the Find button. No entry is chosen.",
+"params": {
+"Items": "the lines to list",
+"Summary": "the short text beside the button"
+}
+},
+"TfrFindPanel.ClearResults": {
+"text": "Empties the list and shows a summary text.",
+"params": {
+"Summary": "the short text beside the button"
+}
+},
+"TfrFindPanel.SelectResult": {
+"text": "Chooses an entry of the list from the program (a red circle was clicked on the sheet). This does not report a choice: the sheet is already where it should be.",
+"params": {
+"Index": "the entry, 0 for the first"
+}
+},
+"TfrFindPanel.ResultCount": {
+"text": "How many entries the list has.",
+"returns": "the count"
+},
+"TfrFindPanel.ResultText": {
+"text": "The text of one entry of the list.",
+"returns": "the text, empty if there is no such entry",
+"params": {
+"Index": "the entry, 0 for the first"
+}
+},
+"TfrFindPanel.SelectedResult": {
+"text": "Which entry of the list is chosen.",
+"returns": "its number, -1 for none"
+},
+"TfrFindPanel.ResultChosen": {
+"text": "Reports the chosen entry to the owner (OnResultSelected)."
+},
+"TfrFindPanel.btnCloseClick": {
+"text": "The red X in the upper corner: asks the owner to close the find (OnCloseRequest).",
+"params": {
+"Sender": "the button"
+}
+},
+"TfrFindPanel.btnFindClick": {
+"text": "The Find button: asks the owner to look for the text in the entry (OnFindRequest).",
+"params": {
+"Sender": "the button"
+}
+},
+"TfrFindPanel.edFindTextKeyPress": {
+"text": "Keys in the entry: Enter looks for the text, Esc closes the find.",
+"params": {
+"Sender": "the entry",
+"Key": "the key (set to 0 when it was used)"
+}
+},
+"TfrFindPanel.lbFindResultsClick": {
+"text": "A click on the list: the entry is reported every time, even if it was chosen already, because the sheet may have been moved away from it since.",
+"params": {
+"Sender": "the list"
+}
+},
+"TfrFindPanel.lbFindResultsSelectionChange": {
+"text": "The chosen entry changed: reported when it was the user who did it (the arrow keys).",
+"params": {
+"Sender": "the list",
+"User": "True when the user changed it"
+}
+},
+"TSchematicView.SetMarkers": {
+"text": "Gives the view the red circles of what Find found (each with its sheet and its place). The circles belong to the view and not to the design, so they are never saved, undone, copied or netlisted. No circle is chosen.",
+"params": {
+"AMarkers": "the circles"
+}
+},
+"TSchematicView.ClearMarkers": {
+"text": "Takes all the red circles away."
+},
+"TSchematicView.SelectMarker": {
+"text": "Chooses one of the circles, which is then drawn bright red (-1 chooses none).",
+"params": {
+"Index": "its number in the list given to SetMarkers"
+}
+},
+"TSchematicView.MarkerCount": {
+"text": "How many red circles the view has.",
+"returns": "the count"
+},
+"TfrmMain.FindPanelClose": {
+"text": "Event handler: the find panel's red X (or Esc) was pressed, so close the find.",
+"params": {
+"Sender": "the panel"
+}
+},
+"TfrmMain.FindPanelFind": {
+"text": "Event handler: Enter or the Find button of the find panel, so search for the text in its entry.",
+"params": {
+"Sender": "the panel"
+}
+},
+"TfrmMain.RunFindPanel": {
+"text": "TinyCAD's Find: lists every object of the design (all sheets) that mentions the text, once each, as \"name: text\", puts a red circle on each, and shows how many were found. Nothing is chosen. A find made in another document earlier loses its circles.",
+"params": {
+"AText": "the text to look for"
+}
+},
+"TfrmMain.FindPanelResultSelected": {
+"text": "Event handler: an entry of the find list was clicked.",
+"params": {
+"Sender": "the panel",
+"Index": "the entry"
+}
+},
+"TfrmMain.FindPanelText": {
+"text": "The find panel as text, for tests: whether it is shown, the text searched for, the count, which entry and circle are chosen, how many circles the view has, which document the find belongs to, and the entries.",
+"returns": "the text"
+},
+"TfrmMain.FindHitsText": {
+"text": "Where each red circle is, as text, for tests: the size of the window, then for each its sheet, its position in mm, and its place in the window.",
+"returns": "the text"
+}
+}

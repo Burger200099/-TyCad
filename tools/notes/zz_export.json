@@ -1,0 +1,9 @@
+{
+"ExportKindExtension": {"text": "The extension of the files of a kind: '.png' for the bitmaps and '.svg' for the vector kinds (CDlgExportPNG::getExtension gives '.png' or '.emf').", "returns": "the extension with its dot", "params": {"AKind": "the kind, 0 to 3"}},
+"ExportKindIsSvg": {"text": "Tells the vector kinds from the bitmaps; the scale and the turn do nothing to an SVG.", "returns": "True for the SVG kinds", "params": {"AKind": "the kind, 0 to 3"}},
+"ExportKindIsBlackWhite": {"text": "Tells the black and white kinds from the colour ones.", "returns": "True for the black and white kinds", "params": {"AKind": "the kind, 0 to 3"}},
+"TfrmExportImage.FileName": {"text": "The file the picture is written to, as typed (without spaces at its ends).", "returns": "the file name"},
+"TfrmExportImage.Kind": {"text": "The kind of picture chosen in the list.", "returns": "0 colour PNG, 1 B&W PNG, 2 colour SVG, 3 B&W SVG"},
+"TfrmExportImage.Scale": {"text": "The scale typed in the Scale box.", "returns": "the scale in per cent, 0 when the box holds no whole number"},
+"TfrmExportImage.Rotate": {"text": "Whether the Rotate box is ticked.", "returns": "True when a PNG is to be turned a quarter turn"}
+}

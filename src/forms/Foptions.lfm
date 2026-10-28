@@ -1,0 +1,842 @@
+inherited frmOptions: TfrmOptions
+  Left = 1276
+  Height = 582
+  Top = 511
+  Width = 683
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'Options'
+  ClientHeight = 582
+  ClientWidth = 683
+  Position = poOwnerFormCenter
+  OnActivate = OptionsActivate
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  inherited pnlButtons: TPanel
+    Top = 524
+    Width = 683
+    ClientHeight = 54
+    ClientWidth = 679
+    TabOrder = 1
+    inherited btnOK: TButton
+      Left = 375
+    end
+    inherited btnCancel: TButton
+      Left = 527
+    end
+    inherited btnApply: TButton
+      Left = 223
+      OnClick = ApplyClicked
+    end
+  end
+  object pcOptions: TPageControl[1]
+    Left = 101
+    Height = 524
+    Hint = 'The groups of settings'
+    Top = 0
+    Width = 582
+    ActivePage = tsSheets
+    Align = alClient
+    TabIndex = 4
+    TabOrder = 0
+    object tsGrid: TTabSheet
+      Caption = 'tsGrid'
+      ClientHeight = 496
+      ClientWidth = 574
+      object Label1: TLabel
+        Left = 24
+        Height = 15
+        Top = 16
+        Width = 69
+        Caption = 'Grid spacing:'
+      end
+      object edGrid: TEdit
+        Left = 144
+        Height = 23
+        Hint = 'The grid spacing, in the chosen units'
+        Top = 13
+        Width = 56
+        TabOrder = 0
+        Text = '2'
+        OnChange = GridTextChange
+      end
+      object lblGridUnits: TLabel
+        Left = 208
+        Height = 15
+        Top = 16
+        Width = 22
+        Caption = 'mm'
+      end
+      object Label2: TLabel
+        Left = 24
+        Height = 15
+        Top = 56
+        Width = 77
+        Caption = 'Standard sizes:'
+      end
+      object cbPreset: TComboBox
+        Left = 144
+        Height = 23
+        Hint = 'Choose a standard grid spacing'
+        Top = 53
+        Width = 220
+        ItemHeight = 15
+        Style = csDropDownList
+        TabOrder = 1
+        OnChange = PresetChange
+      end
+      object cbShowGrid: TCheckBox
+        Left = 24
+        Height = 19
+        Hint = 'Show the grid dots on the page'
+        Top = 96
+        Width = 91
+        Caption = 'Show the grid'
+        TabOrder = 2
+      end
+      object cbSnapGrid: TCheckBox
+        Left = 24
+        Height = 19
+        Hint = 'Make objects land on the grid'
+        Top = 128
+        Width = 102
+        Caption = 'Snap to the grid'
+        TabOrder = 3
+      end
+      object rgUnits: TRadioGroup
+        Left = 41
+        Height = 84
+        Hint = 'Millimetres or inches'
+        Top = 160
+        Width = 300
+        AutoFill = True
+        Caption = 'Units'
+        ChildSizing.LeftRightSpacing = 6
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.ShrinkHorizontal = crsScaleChilds
+        ChildSizing.ShrinkVertical = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 1
+        ClientHeight = 64
+        ClientWidth = 296
+        ItemIndex = 0
+        Items.Strings = (
+          'Millimetres'
+          'Inches'
+        )
+        TabOrder = 4
+        OnClick = UnitsClick
+      end
+      object cbAutoJunction: TCheckBox
+        Left = 24
+        Height = 19
+        Hint = 'Make and remove junction dots for you'
+        Top = 256
+        Width = 246
+        Caption = 'Auto junctions: made and removed for you'
+        TabOrder = 5
+      end
+      object Label4: TLabel
+        Left = 232
+        Height = 15
+        Top = 364
+        Width = 143
+        Caption = 'design units (0.2 mm each)'
+      end
+      object edRange: TEdit
+        Left = 144
+        Height = 23
+        Hint = 'How near a pin or wire must be for the end of a wire to snap onto it'
+        Top = 360
+        Width = 80
+        TabOrder = 6
+        Text = '15'
+      end
+      object Label3: TLabel
+        Left = 48
+        Height = 15
+        Top = 364
+        Width = 62
+        Caption = 'Snap range:'
+      end
+      object cbAutoSnap: TCheckBox
+        Left = 24
+        Height = 19
+        Hint = 'Let wires snap onto nearby pins and wires'
+        Top = 336
+        Width = 278
+        Caption = 'Auto snap: wires snap onto nearby pins and wires'
+        TabOrder = 7
+        OnClick = AutoSnapClick
+      end
+      object Label7: TLabel
+        Left = 48
+        Height = 15
+        Top = 312
+        Width = 226
+        Caption = 'Hold Ctrl while moving to do the opposite.'
+      end
+      object cbAutoDrag: TCheckBox
+        Left = 24
+        Height = 19
+        Hint = 'Let wires stretch when you move a symbol'
+        Top = 288
+        Width = 254
+        Caption = 'Auto drag: wires stretch with a moved object'
+        TabOrder = 8
+      end
+    end
+    object tsAutoSave: TTabSheet
+      Caption = 'tsAutosave'
+      ClientHeight = 496
+      ClientWidth = 574
+      object cbAutoSave: TCheckBox
+        Left = 7
+        Height = 19
+        Hint = 'Keep a copy of each named design at regular intervals'
+        Top = 7
+        Width = 303
+        Caption = 'Save a copy of every named design at regular intervals'
+        TabOrder = 0
+        OnClick = AutoSaveClick
+      end
+      object Label5: TLabel
+        Left = 23
+        Height = 15
+        Top = 35
+        Width = 109
+        Caption = 'Time between saves:'
+      end
+      object edMinutes: TEdit
+        Left = 175
+        Height = 23
+        Hint = 'How many minutes between automatic saves'
+        Top = 31
+        Width = 80
+        TabOrder = 1
+        Text = '10'
+      end
+      object Label6: TLabel
+        Left = 269
+        Height = 15
+        Top = 35
+        Width = 89
+        Caption = 'minutes (1 to 60)'
+      end
+      object lblSaveNote: TLabel
+        Left = 23
+        Height = 60
+        Top = 67
+        Width = 480
+        AutoSize = False
+        Caption = 'The copy is written beside the design, with .autosave added to its name. The design itself is not changed.'
+        WordWrap = True
+      end
+      object cbReopen: TCheckBox
+        Left = 7
+        Height = 19
+        Hint = 'Open the designs that were open when the program was last closed'
+        Top = 127
+        Width = 357
+        Caption = 'Open the designs that were open when I last closed the program'
+        TabOrder = 2
+      end
+      object lblReopenNote: TLabel
+        Left = 23
+        Height = 44
+        Top = 155
+        Width = 480
+        AutoSize = False
+        Caption = 'Only designs that have a file are remembered. A file that is no longer there is skipped.'
+        WordWrap = True
+      end
+    end
+    object tsColors: TTabSheet
+      Caption = 'tsColors'
+      ClientHeight = 496
+      ClientWidth = 574
+      object pnlColors: TPanel
+        Left = 0
+        Height = 496
+        Top = 0
+        Width = 574
+        Align = alClient
+        BevelOuter = bvNone
+        ClientHeight = 496
+        ClientWidth = 574
+        TabOrder = 0
+        object lblBackground: TLabel
+          Left = 24
+          Height = 20
+          Top = 20
+          Width = 150
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'Background'
+          ParentColor = False
+        end
+        object pnlBackground: TPanel
+          Tag = 9
+          Left = 200
+          Height = 28
+          Top = 16
+          Width = 90
+          BevelOuter = bvLowered
+          TabOrder = 0
+        end
+        object btnBackground: TButton
+          Tag = 9
+          Left = 310
+          Height = 28
+          Hint = 'Choose the color of the page background'
+          Top = 16
+          Width = 120
+          Caption = 'Change...'
+          TabOrder = 1
+          OnClick = ChangeClick
+        end
+        object lblWires: TLabel
+          Left = 24
+          Height = 20
+          Top = 56
+          Width = 150
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'Wires'
+          ParentColor = False
+        end
+        object pnlWires: TPanel
+          Tag = 1
+          Left = 200
+          Height = 28
+          Top = 52
+          Width = 90
+          BevelOuter = bvLowered
+          TabOrder = 2
+        end
+        object btnWires: TButton
+          Tag = 1
+          Left = 310
+          Height = 28
+          Hint = 'Choose the color of wires'
+          Top = 52
+          Width = 120
+          Caption = 'Change...'
+          TabOrder = 3
+          OnClick = ChangeClick
+        end
+        object lblBuses: TLabel
+          Left = 24
+          Height = 20
+          Top = 92
+          Width = 150
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'Buses'
+          ParentColor = False
+        end
+        object pnlBuses: TPanel
+          Tag = 2
+          Left = 200
+          Height = 28
+          Top = 88
+          Width = 90
+          BevelOuter = bvLowered
+          TabOrder = 4
+        end
+        object btnBuses: TButton
+          Tag = 2
+          Left = 310
+          Height = 28
+          Hint = 'Choose the color of buses'
+          Top = 88
+          Width = 120
+          Caption = 'Change...'
+          TabOrder = 5
+          OnClick = ChangeClick
+        end
+        object lblJunctions: TLabel
+          Left = 24
+          Height = 20
+          Top = 128
+          Width = 150
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'Junctions'
+          ParentColor = False
+        end
+        object pnlJunctions: TPanel
+          Tag = 3
+          Left = 200
+          Height = 28
+          Top = 124
+          Width = 90
+          BevelOuter = bvLowered
+          TabOrder = 6
+        end
+        object btnJunctions: TButton
+          Tag = 3
+          Left = 310
+          Height = 28
+          Hint = 'Choose the color of junction dots'
+          Top = 124
+          Width = 120
+          Caption = 'Change...'
+          TabOrder = 7
+          OnClick = ChangeClick
+        end
+        object lblNoConnect: TLabel
+          Left = 24
+          Height = 20
+          Top = 164
+          Width = 150
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'No-connect marks'
+          ParentColor = False
+        end
+        object pnlNoConnect: TPanel
+          Tag = 4
+          Left = 200
+          Height = 28
+          Top = 160
+          Width = 90
+          BevelOuter = bvLowered
+          TabOrder = 8
+        end
+        object btnNoConnect: TButton
+          Tag = 4
+          Left = 310
+          Height = 28
+          Hint = 'Choose the color of no-connect marks'
+          Top = 160
+          Width = 120
+          Caption = 'Change...'
+          TabOrder = 9
+          OnClick = ChangeClick
+        end
+        object lblPins: TLabel
+          Left = 24
+          Height = 20
+          Top = 200
+          Width = 150
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'Pins'
+          ParentColor = False
+        end
+        object pnlPins: TPanel
+          Tag = 7
+          Left = 200
+          Height = 28
+          Top = 196
+          Width = 90
+          BevelOuter = bvLowered
+          TabOrder = 10
+        end
+        object btnPins: TButton
+          Tag = 7
+          Left = 310
+          Height = 28
+          Hint = 'Choose the color of pins'
+          Top = 196
+          Width = 120
+          Caption = 'Change...'
+          TabOrder = 11
+          OnClick = ChangeClick
+        end
+        object lblPower: TLabel
+          Left = 24
+          Height = 20
+          Top = 236
+          Width = 150
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'Power symbols'
+          ParentColor = False
+        end
+        object pnlPower: TPanel
+          Tag = 6
+          Left = 200
+          Height = 28
+          Top = 232
+          Width = 90
+          BevelOuter = bvLowered
+          TabOrder = 12
+        end
+        object btnPower: TButton
+          Tag = 6
+          Left = 310
+          Height = 28
+          Hint = 'Choose the color of power symbols'
+          Top = 232
+          Width = 120
+          Caption = 'Change...'
+          TabOrder = 13
+          OnClick = ChangeClick
+        end
+        object lblNoteFill: TLabel
+          Left = 24
+          Height = 20
+          Top = 272
+          Width = 150
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'Note background'
+          ParentColor = False
+        end
+        object pnlNoteFill: TPanel
+          Tag = 10
+          Left = 200
+          Height = 28
+          Top = 268
+          Width = 90
+          BevelOuter = bvLowered
+          TabOrder = 14
+        end
+        object btnNoteFill: TButton
+          Tag = 10
+          Left = 310
+          Height = 28
+          Hint = 'Choose the background color of notes'
+          Top = 268
+          Width = 120
+          Caption = 'Change...'
+          TabOrder = 15
+          OnClick = ChangeClick
+        end
+        object lblNoteLine: TLabel
+          Left = 24
+          Height = 20
+          Top = 308
+          Width = 150
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'Note border'
+          ParentColor = False
+        end
+        object pnlNoteLine: TPanel
+          Tag = 11
+          Left = 200
+          Height = 28
+          Top = 304
+          Width = 90
+          BevelOuter = bvLowered
+          TabOrder = 16
+        end
+        object btnNoteLine: TButton
+          Tag = 11
+          Left = 310
+          Height = 28
+          Hint = 'Choose the border color of notes'
+          Top = 304
+          Width = 120
+          Caption = 'Change...'
+          TabOrder = 17
+          OnClick = ChangeClick
+        end
+        object lblNoteText: TLabel
+          Left = 24
+          Height = 20
+          Top = 344
+          Width = 150
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'Note text'
+          ParentColor = False
+        end
+        object pnlNoteText: TPanel
+          Tag = 12
+          Left = 200
+          Height = 28
+          Top = 340
+          Width = 90
+          BevelOuter = bvLowered
+          TabOrder = 18
+        end
+        object btnNoteText: TButton
+          Tag = 12
+          Left = 310
+          Height = 28
+          Hint = 'Choose the text color of notes'
+          Top = 340
+          Width = 120
+          Caption = 'Change...'
+          TabOrder = 19
+          OnClick = ChangeClick
+        end
+        object btnReset: TButton
+          Left = 48
+          Height = 32
+          Hint = 'Put every color back to the standard colors'
+          Top = 403
+          Width = 120
+          Anchors = [akLeft, akBottom]
+          Caption = 'Defaults'
+          TabOrder = 20
+          OnClick = ResetClick
+        end
+      end
+    end
+    object TabSheet1: TTabSheet
+      Caption = 'tsFonts'
+      ClientHeight = 496
+      ClientWidth = 574
+      object gbSymbolFonts: TGroupBox
+        Left = 8
+        Height = 128
+        Top = 8
+        Width = 561
+        Caption = 'Symbol Font'
+        ClientHeight = 108
+        ClientWidth = 557
+        TabOrder = 0
+        object cbSymbolFont: TFontNameCombo
+          Left = 16
+          Height = 30
+          Hint = 'The font of the reference and the other text of symbols (and of pin names and numbers)'
+          Top = 16
+          Width = 229
+          ItemHeight = 24
+          ParentShowHint = False
+          ShowHint = True
+          Style = csOwnerDrawFixed
+          TabOrder = 0
+          OnChange = SymbolFontChange
+          OnSelect = SymbolFontChange
+        end
+        object lblSymbolSize: TLabel
+          Left = 387
+          Height = 15
+          Top = 22
+          Width = 11
+          Caption = 'pt'
+        end
+        object cbSymbolSize: TComboBox
+          Left = 331
+          Height = 23
+          Hint = 'The size in points'
+          Top = 19
+          Width = 48
+          ItemHeight = 15
+          ItemIndex = 2
+          Items.Strings = (
+            '6'
+            '7'
+            '8'
+            '9'
+            '10'
+            '11'
+            '12'
+            '14'
+            '16'
+            '18'
+            '20'
+            '24'
+          )
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+          Text = '8'
+          OnChange = SymbolFontChange
+          OnSelect = SymbolFontChange
+        end
+        object lblSymbolSample: TLabel
+          Left = 40
+          Height = 36
+          Top = 56
+          Width = 400
+          AutoSize = False
+          Caption = 'U1   Reference text'
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object sbBold: TSpeedButton
+          Left = 258
+          Height = 28
+          Hint = 'Bold'
+          Top = 17
+          Width = 28
+          AllowAllUp = True
+          GroupIndex = 1
+          Images = frmSharedControls.ilFontGlyphs
+          ImageIndex = 2
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = SymbolFontChange
+        end
+        object sbItalic: TSpeedButton
+          Left = 291
+          Height = 28
+          Hint = 'Italic'
+          Top = 17
+          Width = 28
+          AllowAllUp = True
+          GroupIndex = 2
+          Images = frmSharedControls.ilFontGlyphs
+          ImageIndex = 3
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = SymbolFontChange
+        end
+      end
+    end
+    object tsSheets: TTabSheet
+      Caption = 'tsSheets'
+      ClientHeight = 496
+      ClientWidth = 574
+      object cbSheetDetailsBorder: TCheckBox
+        Left = 16
+        Height = 19
+        Hint = 'Draw a border round the printable area'
+        Top = 32
+        Width = 85
+        Caption = 'Show Border'
+        TabOrder = 0
+        OnClick = SheetBorderClick
+      end
+      object cbSheetDetailsShowRuler: TCheckBox
+        Left = 16
+        Height = 19
+        Hint = 'Show the rulers round the page'
+        Top = 56
+        Width = 79
+        Caption = 'Show rulers'
+        TabOrder = 1
+        OnClick = SheetRulerClick
+      end
+      object lbSheetDetailsCols: TLabel
+        Left = 44
+        Height = 15
+        Top = 80
+        Width = 51
+        Caption = 'Columns:'
+      end
+      object lbSheetDetailsRows: TLabel
+        Left = 160
+        Height = 15
+        Top = 80
+        Width = 31
+        Caption = 'Rows:'
+      end
+      object lbSheetDetailsMargin: TLabel
+        Left = 256
+        Height = 15
+        Top = 80
+        Width = 71
+        Caption = 'Margin (mm)'
+      end
+      object edSheetDetailsMargin: TEdit
+        Left = 336
+        Height = 23
+        Hint = 'The distance of the border from the edge of the page, in millimetres'
+        Top = 76
+        Width = 48
+        TabOrder = 2
+        Text = 'edSheetDetailsMargin'
+      end
+      object edSheetDetailsRows: TEdit
+        Left = 200
+        Height = 23
+        Hint = 'How many rows the vertical ruler is divided into'
+        Top = 76
+        Width = 48
+        TabOrder = 3
+        Text = 'edSheetDetailsRows'
+      end
+      object edSheetDetailsCols: TEdit
+        Left = 104
+        Height = 23
+        Hint = 'How many columns the horizontal ruler is divided into'
+        Top = 76
+        Width = 48
+        TabOrder = 4
+        Text = 'edSheetDetailsCols'
+      end
+      object Label8: TLabel
+        Left = 8
+        Height = 15
+        Top = 10
+        Width = 146
+        Caption = 'New Sheet Default Behavior'
+      end
+      object Panel1: TPanel
+        Left = 168
+        Height = 2
+        Top = 17
+        Width = 394
+        TabOrder = 5
+      end
+    end
+  end
+  object pnlNavigation: TPanel[2]
+    Left = 0
+    Height = 524
+    Top = 0
+    Width = 101
+    Align = alLeft
+    BevelOuter = bvNone
+    Caption = 'Buttons for tabs'
+    ClientHeight = 524
+    ClientWidth = 101
+    TabOrder = 2
+    object tbGrid: TToggleBox
+      Left = 0
+      Height = 47
+      Hint = 'Show the grid and snap settings'
+      Top = 0
+      Width = 101
+      Align = alTop
+      Caption = 'Grid'
+      TabOrder = 0
+      OnChange = SelectTab
+    end
+    object tbAutosave: TToggleBox
+      Left = 0
+      Height = 47
+      Hint = 'Show the automatic save settings'
+      Top = 188
+      Width = 101
+      Align = alTop
+      Caption = 'Auto-save'
+      TabOrder = 1
+      OnChange = SelectTab
+    end
+    object tbColors: TToggleBox
+      Left = 0
+      Height = 47
+      Hint = 'Show the colors'
+      Top = 94
+      Width = 101
+      Align = alTop
+      Caption = 'Colors'
+      TabOrder = 2
+      OnChange = SelectTab
+    end
+    object tbFonts: TToggleBox
+      Left = 0
+      Height = 47
+      Hint = 'Show the automatic save settings'
+      Top = 141
+      Width = 101
+      Align = alTop
+      Caption = 'Fonts'
+      TabOrder = 3
+      OnChange = SelectTab
+    end
+    object tbSheets: TToggleBox
+      Left = 0
+      Height = 47
+      Hint = 'Show the automatic save settings'
+      Top = 47
+      Width = 101
+      Align = alTop
+      Caption = 'Sheets'
+      TabOrder = 4
+      OnChange = SelectTab
+    end
+  end
+end

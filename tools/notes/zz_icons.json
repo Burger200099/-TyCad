@@ -1,0 +1,25 @@
+{
+"TfrFindPanel.UseCloseIcon": {
+"text": "Shows the close button as a picture from an image list (the main form's ilTinyIcons) instead of the letter X. The frame is given the list by the owner, so it does not depend on the main form. If there is no such picture the letter X stays.",
+"params": {
+"AImages": "the image list",
+"AIndex": "which picture (0 is the red X)"
+}
+},
+"TSchematicView.CenterOnPoint": {
+"text": "Scrolls the sheet so that a point is in the middle of the window, as TinyCAD does for what the list of found items is showing. The zoom stays as the user has it.",
+"params": {
+"P": "a point of the sheet being shown"
+}
+},
+"TfrmMain.FindPanelText": {
+"text": "The find panel as text, for tests: whether it is shown, the text searched for, the count, which entry and circle are chosen, how many circles the view has, which document the find belongs to, where the close button is and which picture it shows, and the entries.",
+"returns": "the text"
+},
+"TfrFindPanel.Create": {
+"text": "Creates the frame from its form file and then checks that the form file really made every component this unit uses. QFindPanel.pas and QFindPanel.lfm must be the pair that belong together; if the form file is another version the field stays nil and its first use would be an access violation at a small address, so this raises an error that names the missing components instead.",
+"params": {
+"TheOwner": "the owner (the main form)"
+}
+}
+}

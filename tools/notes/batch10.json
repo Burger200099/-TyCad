@@ -1,0 +1,188 @@
+{
+"TSymbolDocument.RemoveLastSheet": {
+"text": "Removes the last part's sheet and its objects (used when a heterogeneous symbol is given fewer parts)."
+},
+"TSymbolEditor.Create": {
+"text": "Creates an editor bound to a library; nothing is open until NewSymbol or OpenSet.",
+"params": {
+"ALib": "the library that symbols are stored into (not owned)"
+}
+},
+"TSymbolEditor.Destroy": {
+"text": "Frees the editor's own copy of the symbol; the library is untouched."
+},
+"TSymbolEditor.Issue": {
+"text": "Appends a finding to a list of validation results.",
+"params": {
+"L": "the list (in/out)",
+"Severity": "0 for an error, 1 for a warning",
+"Text": "what is wrong"
+}
+},
+"TSymbolEditor.CopySet": {
+"text": "Makes a copy of a library set's data (parts per package, orientation, every name with reference, description, display types and fields), loading field values from the library first when a library is given. The copy has no database ids.",
+"returns": "the copy; the caller owns it",
+"params": {
+"Src": "the set to copy",
+"ALib": "the library to read field values from, or nil"
+}
+},
+"TSymbolEditor.NewSymbol": {
+"text": "Starts a new symbol: one name, no pins, and either one shared drawing or (heterogeneous) one drawing per part. Replaces whatever was being edited.",
+"params": {
+"AName": "the symbol's first name",
+"ARef": "its reference prefix, e.g. R? or U?",
+"ADescription": "the description shown in the library list",
+"AParts": "number of parts per package (at least 1)",
+"AHetero": "True if every part is drawn differently"
+}
+},
+"TSymbolEditor.OpenSet": {
+"text": "Opens an existing library symbol for editing on a private copy of its data and drawing, so the library can be re-read while editing.",
+"params": {
+"ASet": "the set to edit (from the library's list)"
+}
+},
+"TSymbolEditor.PartCount": {
+"text": "Number of parts per package.",
+"returns": "the count"
+},
+"TSymbolEditor.Heterogeneous": {
+"text": "Whether each part has its own drawing.",
+"returns": "True for a drawing per part"
+},
+"TSymbolEditor.PartSheet": {
+"text": "The sheet to draw a part on: that part's own sheet for a heterogeneous symbol, otherwise the one shared sheet.",
+"returns": "the sheet",
+"params": {
+"Part": "part number, 0-based"
+}
+},
+"TSymbolEditor.SetPartCount": {
+"text": "Changes the number of parts. A heterogeneous symbol gains or loses part sheets; a shared drawing loses the pins of parts that no longer exist.",
+"params": {
+"N": "the new number of parts (at least 1)"
+}
+},
+"TSymbolEditor.AddPin": {
+"text": "Adds a pin to a part: its connection point, name, number, direction, length and shape (0 normal, 1 dot, 2 clock, 3 dot and clock, 4 power, 5 hidden). Name and number are shown. On a shared drawing the pin is tagged with its part.",
+"returns": "the new pin",
+"params": {
+"Part": "part number, 0-based",
+"At": "the pin's connection point, in internal units",
+"AName": "the pin name",
+"ANumber": "the pin number",
+"ADir": "0 up, 1 down, 2 left, 3 right",
+"ALength": "length of the pin line",
+"AWhich": "the pin shape code"
+}
+},
+"TSymbolEditor.PinCount": {
+"text": "Number of pins in a part.",
+"returns": "the count",
+"params": {
+"Part": "part number, 0-based"
+}
+},
+"TSymbolEditor.AddAlias": {
+"text": "Adds another name for the same drawing (an alias, e.g. the 74HC00 for a 7400); it starts with the first name's extra fields.",
+"returns": "the new record",
+"params": {
+"AName": "the alias",
+"ARef": "its reference prefix",
+"ADescription": "its description"
+}
+},
+"TSymbolEditor.RemoveAlias": {
+"text": "Removes one name. The last remaining name cannot be removed.",
+"params": {
+"Index": "position of the name, 0-based"
+}
+},
+"TSymbolEditor.SetField": {
+"text": "Sets an extra field (such as Footprint) of one name, adding it if it is not there; field names are matched ignoring case.",
+"params": {
+"RecIndex": "which name, 0-based",
+"AName": "the field name",
+"ADefault": "its default value",
+"AType": "display type: 0 hidden, 1 shown ..."
+}
+},
+"TSymbolEditor.Validate": {
+"text": "Checks the symbol for mistakes. Errors: an empty or repeated name, a pin in a part the symbol does not have, two pins on the same spot. Warnings: no reference prefix, a pin with no number, a pin off the grid, a repeated pin number (power pins excepted), a part without pins, no pins at all.",
+"returns": "the findings; empty when all is well"
+},
+"TSymbolEditor.Save": {
+"text": "Stores the symbol in the library, replacing the symbol it was opened from (its old drawing, names and fields are removed), and returns its new id. The editor's copy is unaffected by the library re-reading itself.",
+"returns": "the symbol's new id in the library"
+},
+"TSymbolEditor.CopyTo": {
+"text": "Stores the symbol in another library as a new symbol.",
+"returns": "the new symbol's id in that library",
+"params": {
+"ADest": "the library to store into"
+}
+},
+"TSymbolEditor.DeleteFromLibrary": {
+"text": "Deletes the symbol this editor was opened from, with its names and fields, from its library."
+},
+"FindSetByName": {
+"text": "Finds the set that has a name.",
+"returns": "the set, or nil",
+"params": {
+"L": "the library",
+"AName": "the name to look for"
+}
+},
+"DoBuild": {
+"text": "Test mode: creates a library with a two pin symbol, a four-part IC with an alias and a field, and a two-part heterogeneous op-amp, and prints their ids.",
+"params": {
+"LibName": "the library file to create"
+}
+},
+"DoReopen": {
+"text": "Test mode: opens a symbol in the editor and prints its parts, pin counts, names and fields.",
+"params": {
+"LibName": "the library",
+"AName": "the symbol's name"
+}
+},
+"DoEdit": {
+"text": "Test mode: opens a symbol, adds a pin, changes its description, adds an alias and saves.",
+"params": {
+"LibName": "the library",
+"AName": "the symbol's name"
+}
+},
+"DoParts": {
+"text": "Test mode: cuts a symbol down to two parts and saves.",
+"params": {
+"LibName": "the library",
+"AName": "the symbol's name"
+}
+},
+"DoCopyTo": {
+"text": "Test mode: stores a symbol of one library into another (creating it if needed).",
+"params": {
+"SrcName": "the library to copy from",
+"AName": "the symbol's name",
+"DstName": "the library to copy into"
+}
+},
+"DoDelete": {
+"text": "Test mode: deletes a symbol from a library.",
+"params": {
+"LibName": "the library",
+"AName": "the symbol's name"
+}
+},
+"DoValidate": {
+"text": "Test mode: builds symbols with deliberate mistakes and prints what the check reports for each."
+},
+"symedittest.pas::Show": {
+"text": "Prints the check results for the symbol currently being edited.",
+"params": {
+"Title": "label for the case"
+}
+}
+}

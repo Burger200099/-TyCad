@@ -1,0 +1,151 @@
+{
+"UAnnotate.pas::AnnotateDefaults": {
+"text": "AnnotateSetup::AnnotateSetup: add, all references, the default start value, matching \"U?\", start 1, and only the current sheet.",
+"returns": "the first choices"
+},
+"UAnnotate.pas::RunAnnotate": {
+"text": "The two passes of CTinyCadView::OnSpecialAnnotate (see the unit's description). A symbol whose definition is missing (symbol number 0) cannot be changed; the caller tells the person.",
+"returns": "True if a symbol with no definition was met",
+"params": {
+"Design": "the design",
+"ActiveSheet": "the number of the sheet that is showing (0 is the first)",
+"S": "the choices"
+}
+},
+"UAnnotate.pas::PaintReference": {
+"text": "CDrawRefPainter::LButtonDown and RButtonUp: every placed symbol that the point is on gets the next number from StartVal (searching this sheet only), or goes back to its reference prefix.",
+"returns": "how many symbols were changed",
+"params": {
+"Sheet": "the sheet clicked on",
+"P": "the point (not snapped to the grid)",
+"StartVal": "the lowest number to give",
+"Remove": "True for the right button (take the number away)"
+}
+},
+"USymbols.pas::TDesignFileSymbol.IsHeterogeneous": {
+"text": "CDesignFileSymbol::IsHeterogeneous: heterogeneous symbols have different outlines per part.",
+"returns": "True if every part has its own outline"
+},
+"UDrawingObjects.pas::CAtoi": {
+"text": "C's atoi: skips white space, takes an optional sign and the digits that follow, stops at anything else, and gives 0 when there are no digits. A number too large for an Integer gives the largest (or smallest) Integer, as the Microsoft run time does.",
+"returns": "the number at the start of the text",
+"params": {
+"S": "the text"
+}
+},
+"UDrawingObjects.pas::TDrawMethod.HasRef": {
+"text": "CDrawMethod::HasRef: a reference with a \"?\" in it (R?, U?) has not been given its number yet.",
+"returns": "True if the reference is complete"
+},
+"UDrawingObjects.pas::TDrawMethod.GetRefVal": {
+"text": "CDrawMethod::GetRefVal: the number in the reference, read from its first digit (R12A gives 12); a reference with no digit gives 0.",
+"returns": "the number"
+},
+"UDrawingObjects.pas::TDrawMethod.SetRefVal": {
+"text": "CDrawMethod::SetRefVal: the reference becomes the symbol's reference prefix with its last \"?\" replaced by the number (U? and 3 give U3; a prefix with no \"?\" gives just the number). The C++ keeps the number in ten characters, so a number of more than nine characters gives none.",
+"params": {
+"Value": "the number"
+}
+},
+"UDrawingObjects.pas::TDrawMethod.SetRef": {
+"text": "CDrawMethod::SetRef: replaces the reference field's text.",
+"params": {
+"NewRef": "the reference text"
+}
+},
+"UDrawingObjects.pas::TDrawMethod.SetPart": {
+"text": "CDrawMethod::SetPart: changes the part and moves the symbol so that the first static point (the origin, or the upper-left visible pin) stays where it was.",
+"params": {
+"NewPart": "the part (0 is A)"
+}
+},
+"UDrawingObjects.pas::TDrawMethod.AddReference": {
+"text": "CDrawMethod::AddReference: gives the symbol the next free number for its reference prefix. The symbols of the searched sheets that have a number and the same prefix (not this one) are looked at: the next free number is one above the highest, but not below MinRef. A package of several parts that are alike in outline takes the next part of the last symbol of the same kind on its own sheet before it takes a new number.",
+"params": {
+"MinRef": "the lowest number to give",
+"Scan": "the drawings searched: every sheet, or the active one",
+"Own": "the drawing that holds this symbol"
+}
+},
+"UDrawingObjects.pas::TDrawMethod.RemoveReference": {
+"text": "CDrawMethod::RemoveReference: the reference goes back to the symbol's prefix (U?), and, for a symbol whose parts are alike in outline, the part goes back to the first."
+},
+"annotest.pas::Dump": {
+"text": "Prints one line for every placed symbol.",
+"params": {
+"D": "the design"
+}
+},
+"UView.pas::TSchematicView.BeginRefPainter": {
+"text": "Starts the reference painter (CDrawRefPainter): clicks give references, right clicks take them away, until another tool is chosen or Esc is pressed.",
+"params": {
+"StartVal": "the lowest number to give"
+}
+},
+"UView.pas::TSchematicView.PaintRef": {
+"text": "CDrawRefPainter::LButtonDown and RButtonUp: every symbol under the point gets the next number from the start value, or loses its number. Each click is one undo step.",
+"params": {
+"P": "the point clicked (not snapped to the grid)",
+"Remove": "True for the right button"
+}
+},
+"UView.pas::TSchematicView.RightClickAt": {
+"text": "For scripted tests: a press and release of the right button at a pixel position through the real handlers.",
+"params": {
+"X": "pixel x",
+"Y": "pixel y"
+}
+},
+"mainform.pas::TfrmMain.BeginAnnotateDialog": {
+"text": "The start of Special > Generate Symbol References (CTinyCadView::OnSpecialAnnotate): any drawing tool is put away and the dialog is filled with the choices of the last time.",
+"returns": "the dialog, filled as it starts; the caller shows it and frees it"
+},
+"mainform.pas::TfrmMain.FinishAnnotateDialog": {
+"text": "What the buttons do: Cancel changes nothing. The painter button keeps the choices and starts the reference painter at the start value. OK keeps the choices (and the two kept in the settings), numbers the symbols as one undo step and, when a symbol had no definition, says that some symbols could not be altered.",
+"returns": "True if a symbol with no definition was met",
+"params": {
+"F": "the dialog, after a button was pressed",
+"Res": "the button: mrOK, mrYes (use the reference painter) or anything else"
+}
+},
+"mainform.pas::TfrmMain.AnnotateScriptRun": {
+"text": "For tests: Special > Generate Symbol References answered the way a person does, without showing the dialog.",
+"returns": "what the dialog showed when it started, the choices when the button was pressed, and what happened",
+"params": {
+"Opts": "name=value answers: action (add, remove), which (all, unnum, match), match (text), value (default, start), start (text typed in the start box, which chooses \"Start at value\" as typing does), all (0 or 1) and press (ok, painter, cancel)"
+}
+},
+"mainform.pas::TfrmMain.AnnotateRefsText": {
+"text": "For tests: each sheet's placed symbols as index:reference:part:x:y, separated by semicolons, the sheets by \" | \".",
+"returns": "the symbols of every sheet"
+},
+"mainform.pas::TfrmMain.ErcAnnotate": {
+"text": "The Generate Symbol References button of the Design Markers window: the command of the Special menu, for the design the markers are in.",
+"params": {
+"Sender": "the window"
+}
+},
+"mainform.pas::TfrmMain.ErcPress": {
+"text": "For tests: presses a button of the Design Markers window (a dimmed button does nothing). The Generate Symbol References button's dialog is answered with Cancel unless the test said how to answer it.",
+"params": {
+"AButton": "close, recheck or annotate"
+}
+},
+"Fannotate.pas::DlgItemInt": {
+"text": "Windows' GetDlgItemInt as TinyCAD calls it (signed): an optional minus and then only digits; spaces, a plus sign, other characters, an empty text or a number outside the range of an Integer give 0.",
+"returns": "the number, or 0",
+"params": {
+"S": "the text of a box"
+}
+},
+"Fannotate.pas::TfrmAnnotate.SetSetup": {
+"text": "CDlgAnnotateBox::OnInitDialog: the choice of references and of all sheets are read from the program settings in place of the ones given; the rest are shown as given.",
+"params": {
+"S": "the choices kept from the last time"
+}
+},
+"Fannotate.pas::TfrmAnnotate.GetSetup": {
+"text": "CDlgAnnotateBox::ReadData.",
+"returns": "the choices shown"
+}
+}

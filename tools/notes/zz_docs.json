@@ -1,0 +1,257 @@
+{
+"TDocument.Destroy": {
+"text": "Frees the document: its view lets go of the design first, then the view and the design are freed."
+},
+"TDocument.DisplayName": {
+"text": "The name shown for the document: the file name without its folder, or \"Untitled N\" while it has never been saved.",
+"returns": "the name"
+},
+"TDocument.TabCaption": {
+"text": "The caption of the document's tab and Window menu entry: its name, followed by \" *\" when it has unsaved changes.",
+"returns": "the caption"
+},
+"TDocumentList.Create": {
+"text": "Creates an empty list of documents."
+},
+"TDocumentList.Destroy": {
+"text": "Frees the list and every document in it."
+},
+"TDocumentList.GetItem": {
+"text": "One document of the list.",
+"returns": "the document",
+"params": {
+"Index": "position, 0-based"
+}
+},
+"TDocumentList.Count": {
+"text": "How many documents are open.",
+"returns": "the count"
+},
+"TDocumentList.Add": {
+"text": "Adds a document for a design. A document without a file name gets the next \"Untitled\" number; the numbers are never reused, so closing Untitled 1 and opening a new one gives Untitled 2.",
+"returns": "the new document (its view is made by the caller)",
+"params": {
+"ADesign": "the design; the document owns it",
+"AFileName": "the file it came from, or empty"
+}
+},
+"TDocumentList.Delete": {
+"text": "Removes a document and frees it, with its view and design.",
+"params": {
+"Index": "position, 0-based"
+}
+},
+"TDocumentList.IndexOf": {
+"text": "Where a document is in the list.",
+"returns": "its position, or -1",
+"params": {
+"Doc": "the document"
+}
+},
+"TDocumentList.IndexOfFile": {
+"text": "Finds the open document that was loaded from or saved to a file (file names compared as the operating system compares them).",
+"returns": "its position, or -1 if that file is not open",
+"params": {
+"AFileName": "the file name"
+}
+},
+"TDocumentList.IndexOfView": {
+"text": "Finds the document that owns a view, used to work out which document an event came from.",
+"returns": "its position, or -1",
+"params": {
+"AView": "the view"
+}
+},
+"TfrmMain.GetCurDoc": {
+"text": "The document being shown.",
+"returns": "the document, or nil when none is open"
+},
+"TfrmMain.GetView": {
+"text": "The drawing area of the current document; while no document is open, the empty placeholder view.",
+"returns": "the view (never nil once the form is built)"
+},
+"TfrmMain.GetDesign": {
+"text": "The design of the current document.",
+"returns": "the design, or nil when none is open"
+},
+"TfrmMain.GetFileName": {
+"text": "The file name of the current document.",
+"returns": "the name, empty if it has never been saved or none is open"
+},
+"TfrmMain.SetFileName": {
+"text": "Gives the current document a file name and updates its tab and the Window menu.",
+"params": {
+"Value": "the new file name"
+}
+},
+"TfrmMain.GetModified": {
+"text": "Whether the current document has unsaved changes.",
+"returns": "True if it has"
+},
+"TfrmMain.SetModified": {
+"text": "Sets or clears the current document's unsaved-changes mark and updates its tab.",
+"params": {
+"Value": "True when there are unsaved changes"
+}
+},
+"TfrmMain.CreateView": {
+"text": "Makes a drawing area (hidden) inside the work area and connects its events to the main form. Each document has its own, so its undo history, zoom and selection stay with it.",
+"returns": "the new view"
+},
+"TfrmMain.FocusView": {
+"text": "Gives the keyboard focus to the current drawing area, when it can take it."
+},
+"TfrmMain.AddDocument": {
+"text": "Opens a design as a new document: gives it a view of its own, makes it the current one and shows it.",
+"returns": "the new document",
+"params": {
+"ADesign": "the design; the document owns it",
+"AFileName": "the file it came from, or empty for a new design"
+}
+},
+"TfrmMain.ActivateDocument": {
+"text": "Makes an open document the current one: shows its view and hides the others, then refreshes everything that depends on the current document (sheet tabs, title, paper status, ribbon, properties, tabs, Window menu). An index out of range is ignored.",
+"params": {
+"Index": "position in the list of documents"
+}
+},
+"TfrmMain.ShowNoDocument": {
+"text": "Goes to the state with no document open: shows the empty placeholder view and refreshes the window."
+},
+"TfrmMain.RefreshAfterDocumentChange": {
+"text": "Brings everything that shows the current document up to date after a document was added, switched to or closed."
+},
+"TfrmMain.UpdateDocTabs": {
+"text": "Makes the document tabs match the list of documents (names, modified marks, which one is current), shows the strip only while a document is open, and rebuilds the Window menu."
+},
+"TfrmMain.RebuildWindowMenu": {
+"text": "Rebuilds the Window menu: next and previous document (Ctrl+Tab, Ctrl+Shift+Tab), close document (Ctrl+W), close all, then one numbered entry per document with the current one ticked."
+},
+"TfrmMain.DocTabChange": {
+"text": "Event handler: another document tab was chosen, so show that document. Ignored while the tabs are being updated by the program.",
+"params": {
+"Sender": "the tab strip"
+}
+},
+"TfrmMain.DocTabMouseDown": {
+"text": "Mouse handler for the document tabs: a middle click closes the tab under the pointer; a right click makes it the current one so the pop-up menu (Close, Close all) acts on it.",
+"params": {
+"Sender": "the tab strip",
+"Button": "which button",
+"Shift": "modifier keys",
+"X": "x in the strip",
+"Y": "y in the strip"
+}
+},
+"TfrmMain.DocumentCount": {
+"text": "How many documents are open.",
+"returns": "the count"
+},
+"TfrmMain.DocumentIndex": {
+"text": "Which document is current.",
+"returns": "its position, or -1 when none is open"
+},
+"TfrmMain.DocumentCaption": {
+"text": "The tab caption of a document.",
+"returns": "the caption",
+"params": {
+"Index": "position in the list of documents"
+}
+},
+"TfrmMain.WindowMenuText": {
+"text": "The Window menu as text (caption, ticked, enabled for each entry), for tests.",
+"returns": "one entry after another, separated by semicolons"
+},
+"TfrmMain.CloseDocument": {
+"text": "Closes a document, with its view and design, and shows the one that takes its place (or the empty window when it was the last).",
+"returns": "False if the user cancelled or the index is out of range",
+"params": {
+"Index": "position in the list of documents",
+"Confirm": "True to ask about unsaved changes first"
+}
+},
+"TfrmMain.SaveCurrentAs": {
+"text": "Saves the current document under a name without asking, as Save As does once the file is chosen; it then has that name and no unsaved-changes mark.",
+"params": {
+"AFileName": "the file to write"
+}
+},
+"TfrmMain.ConfirmCloseDocument": {
+"text": "Asks whether to save a document before it is closed, when it has unsaved changes: Yes saves it (and the close goes on only if the save happened), No discards, Cancel stops. The document is brought to the front first so the user can see which one it is.",
+"returns": "True if it may be closed",
+"params": {
+"Index": "position in the list of documents"
+}
+},
+"TfrmMain.DoCloseDocument": {
+"text": "Handler (Window menu, Ctrl+W, ribbon, pop-up menu): closes the current document, asking about unsaved changes.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TfrmMain.DoCloseAllDocuments": {
+"text": "Handler: closes every document one by one, from the last, asking about unsaved changes; it stops if the user cancels.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.DoNextDocument": {
+"text": "Handler (Ctrl+Tab): shows the next document, going round to the first after the last.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TfrmMain.DoPrevDocument": {
+"text": "Handler (Ctrl+Shift+Tab): shows the previous document, going round to the last from the first.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.DoWindowItem": {
+"text": "Handler: a document entry of the Window menu was chosen, so show that document (its position is in the item's Tag).",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.OpenDesignFile": {
+"text": "Opens a design file as a new document. A file that is already open is just shown instead of being opened twice. Errors are raised.",
+"params": {
+"FileName": "path of the design"
+}
+},
+"TfrmMain.NewDesignWith": {
+"text": "Creates a new document with a paper size without showing the dialog (used by scripts).",
+"params": {
+"PaperName": "name from the paper table",
+"Landscape": "orientation"
+}
+},
+"TfrmMain.DoNew": {
+"text": "Menu handler: shows the New Document dialog and opens the new design as an extra document; the others stay open.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.DoOpen": {
+"text": "Menu handler: lets the user pick one or more .dsn files and opens each as a document of its own (one that is already open is shown instead). A file that cannot be read is reported and the others still open.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.FormCloseQuery": {
+"text": "Event handler: asks about the unsaved changes of every document before the program closes; the close is cancelled if the user cancels for any of them.",
+"params": {
+"Sender": "the form",
+"CanClose": "set False to cancel the close"
+}
+},
+"TfrmMain.ViewModified": {
+"text": "View event: a design changed. Marks the document that owns the view as modified, updates its tab, and (for the current document) the title and property values.",
+"params": {
+"Sender": "the view"
+}
+},
+"TfrmMain.Destroy": {
+"text": "Frees the property editors and the documents (each detaches and frees its own view and design). Safe if construction failed part way."
+}
+}

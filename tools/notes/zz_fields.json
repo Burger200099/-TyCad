@@ -1,0 +1,16 @@
+{
+"TDrawingObject.MoveFieldBy": {
+"text": "Moves a field of the object. Most objects have no fields, so nothing happens; a placed symbol moves the field's position (kept relative to the symbol).",
+"params": {
+"Field": "FIELD_BASE + the field's number, as FieldAt gave it",
+"R": "how far to move it"
+}
+},
+"TDrawingObject.FieldAt": {
+"text": "Is the point on a field of the object that can be dragged by itself? Most objects have none, so this is always -1; a placed symbol answers for its shown fields.",
+"returns": "FIELD_BASE + the field's number, or -1",
+"params": {
+"P": "a point of the sheet (not snapped)"
+}
+}
+}

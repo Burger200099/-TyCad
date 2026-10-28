@@ -1,0 +1,409 @@
+{
+"DSize": {
+"text": "Makes a size from a width and a height.",
+"returns": "the size",
+"params": {
+"ACx": "width",
+"ACy": "height"
+}
+},
+"DRect": {
+"text": "Makes a rectangle from its edges.",
+"returns": "the rectangle",
+"params": {
+"L": "left",
+"T": "top",
+"R": "right",
+"B": "bottom"
+}
+},
+"DRectWidth": {
+"text": "Width of a rectangle (right minus left; negative if it is not normalised).",
+"returns": "the width",
+"params": {
+"R": "the rectangle"
+}
+},
+"DRectHeight": {
+"text": "Height of a rectangle (bottom minus top; negative if it is not normalised).",
+"returns": "the height",
+"params": {
+"R": "the rectangle"
+}
+},
+"DRectNormalized": {
+"text": "Swaps edges where needed so left is not greater than right and top is not greater than bottom.",
+"returns": "the normalised rectangle",
+"params": {
+"R": "the rectangle"
+}
+},
+"DRectContains": {
+"text": "Whether a point lies inside or on the edge of a rectangle (normalised first).",
+"returns": "True if the point is inside",
+"params": {
+"R": "the rectangle",
+"P": "the point"
+}
+},
+"PointAdd": {
+"text": "Adds two points as vectors.",
+"returns": "A + B",
+"params": {
+"A": "first point",
+"B": "second point"
+}
+},
+"PointSub": {
+"text": "Subtracts one point from another.",
+"returns": "A - B",
+"params": {
+"A": "first point",
+"B": "second point"
+}
+},
+"PointDistance": {
+"text": "Straight-line distance between two points.",
+"returns": "the distance",
+"params": {
+"A": "first point",
+"B": "second point"
+}
+},
+"PointsClose": {
+"text": "TinyCAD's point equality: both coordinates within 0.001. The C++ operator== on CDPoint.",
+"returns": "True if the points count as the same point",
+"params": {
+"A": "first point",
+"B": "second point"
+}
+},
+"LineDistanceMode": {
+"text": "Distance from a point to a line segment (a port of CLineUtils): horizontal and vertical lines, diagonals, and the X-only and Y-only variants used when snapping to diagonal wires. Also gives the nearest point on the line.",
+"returns": "the distance",
+"params": {
+"A": "segment start",
+"B": "segment end",
+"P": "the point",
+"Mode": "0 normal, 1 measure along X only, 2 measure along Y only",
+"Nearest": "set to the closest point on the segment"
+}
+},
+"LineDistance": {
+"text": "Distance from a point to a line segment, with the nearest point.",
+"returns": "the distance",
+"params": {
+"A": "segment start",
+"B": "segment end",
+"P": "the point",
+"Nearest": "set to the closest point on the segment"
+}
+},
+"LineDistanceX": {
+"text": "Like LineDistance but measured horizontally (used to snap to diagonal wires).",
+"returns": "the distance",
+"params": {
+"A": "segment start",
+"B": "segment end",
+"P": "the point",
+"Nearest": "set to the nearest point"
+}
+},
+"LineDistanceY": {
+"text": "Like LineDistance but measured vertically (used to snap to diagonal wires).",
+"returns": "the distance",
+"params": {
+"A": "segment start",
+"B": "segment end",
+"P": "the point",
+"Nearest": "set to the nearest point"
+}
+},
+"RIsInside": {
+"text": "Recursive test of whether a segment passes through a rectangle (CLineUtils::IsInside): classifies both ends by area and, when undecided, splits the segment in two.",
+"returns": "True if the segment crosses or touches the rectangle",
+"params": {
+"P1": "segment start",
+"P2": "segment end",
+"Left": "rectangle left",
+"Right": "rectangle right",
+"Top": "rectangle top",
+"Bottom": "rectangle bottom"
+}
+},
+"LineIsInside": {
+"text": "Whether a segment touches a rectangle; a degenerate rectangle (one point) is a click test within the point-on-line distance.",
+"returns": "True if they touch",
+"params": {
+"A": "segment start",
+"B": "segment end",
+"Left": "rectangle left",
+"Right": "rectangle right",
+"Top": "rectangle top",
+"Bottom": "rectangle bottom"
+}
+},
+"LineIsPointOnLine": {
+"text": "Whether a point lies on a segment (within the point-on-line distance, 0.01) and how far along it, from 0 at A to 1 at B.",
+"returns": "True if the point is on the segment",
+"params": {
+"A": "segment start",
+"B": "segment end",
+"P": "the point",
+"DistanceAlong": "set to the fraction along the segment"
+}
+},
+"LinePointAt": {
+"text": "The point a fraction of the way along a segment (clamped to the ends).",
+"returns": "the point",
+"params": {
+"A": "segment start",
+"B": "segment end",
+"DistanceAlong": "0 = A, 1 = B"
+}
+},
+"LineLength": {
+"text": "Length of a segment.",
+"returns": "the length",
+"params": {
+"A": "segment start",
+"B": "segment end"
+}
+},
+"LineIsDiagonal": {
+"text": "Whether a segment is neither horizontal nor vertical.",
+"returns": "True if diagonal",
+"params": {
+"A": "segment start",
+"B": "segment end"
+}
+},
+"SnapToGrid": {
+"text": "Rounds a coordinate to the nearest grid line (halves round up); unchanged when snapping is off or the grid is 0. TinyCAD's Transform::Snap.",
+"returns": "the snapped value",
+"params": {
+"Grid": "grid spacing",
+"GridSnapOn": "whether snapping is enabled",
+"D": "the coordinate"
+}
+},
+"RotatePointAbout": {
+"text": "Rotates or mirrors a point about a centre point: 2 and 3 turn it left and right, 4 mirrors left to right, and so on for the codes TinyCAD uses.",
+"returns": "the new position",
+"params": {
+"P": "the point",
+"C": "the centre",
+"Dir": "rotation / mirror code"
+}
+},
+"DoRotateDir": {
+"text": "The new direction of a pin, power symbol or label after a rotation or mirror (table taken from TinyCAD).",
+"returns": "the new direction 0-3 (up, down, left, right)",
+"params": {
+"OldDir": "current direction 0-3",
+"NewDir": "rotation 2, 3 or 4"
+}
+},
+"DoRotateMethod": {
+"text": "The new rotation / mirror state (0-7) of a placed symbol after a further rotation or mirror (table taken from TinyCAD).",
+"returns": "the new state",
+"params": {
+"OldDir": "current state 0-7",
+"NewDir": "rotation 2, 3 or 4"
+}
+},
+"TTransform.Create": {
+"text": "Creates a transform with no origin offset, zoom 1 and no scaling, as TinyCAD's Transform does."
+},
+"TTransform.Round": {
+"text": "Rounds to the nearest integer, halves away from zero, as the C++ code does.",
+"returns": "the rounded value",
+"params": {
+"D": "the number"
+}
+},
+"TTransform.DoubleScale": {
+"text": "Multiplies a length by the zoom factor without rounding.",
+"returns": "the scaled length",
+"params": {
+"A": "length in design units"
+}
+},
+"TTransform.ScaleX": {
+"text": "Design x to pixel x: applies the symbol scaling, subtracts the origin, multiplies by the zoom and adds the pixel offset.",
+"returns": "pixel x",
+"params": {
+"A": "design x"
+}
+},
+"TTransform.ScaleY": {
+"text": "Design y to pixel y (flipped when the y axis points up, as inside a symbol view).",
+"returns": "pixel y",
+"params": {
+"A": "design y"
+}
+},
+"TTransform.SetZoomFactor": {
+"text": "Sets the zoom (pixels per design unit).",
+"params": {
+"Z": "the zoom factor"
+}
+},
+"TTransform.GetOrigin": {
+"text": "The design point at the top left of the view.",
+"returns": "the origin"
+},
+"TTransform.GetScaledOrigin": {
+"text": "The origin after the symbol scaling is applied.",
+"returns": "the scaled origin"
+},
+"TTransform.GetZoomFactor": {
+"text": "The zoom (pixels per design unit).",
+"returns": "the zoom factor"
+},
+"TTransform.GetRotMir": {
+"text": "The current rotation / mirror state (0-7) set up by SetTRM.",
+"returns": "the state"
+},
+"TTransform.GetIsYUp": {
+"text": "Whether y is currently inverted (true while drawing a symbol view).",
+"returns": "True when y points up"
+},
+"TTransform.SetScaling": {
+"text": "Sets the x and y scaling of a placed symbol, swapped when the symbol is rotated a quarter turn.",
+"params": {
+"Rot": "rotation / mirror state",
+"X": "x scale",
+"Y": "y scale"
+}
+},
+"TTransform.GetScaling": {
+"text": "Reads the current x and y scaling the way SetScaling stored it.",
+"params": {
+"Rot": "rotation / mirror state",
+"X": "set to the x scale",
+"Y": "set to the y scale"
+}
+},
+"TTransform.SetTRM": {
+"text": "Starts drawing inside a placed symbol: sets translation, rotation and mirror from the symbol's position, size and state, and returns the previous origin to restore with EndTRM.",
+"returns": "the previous origin",
+"params": {
+"Os": "where the symbol is placed",
+"Bound": "the symbol's size (its top right)",
+"Rotate": "rotation / mirror state 0-7"
+}
+},
+"TTransform.EndTRM": {
+"text": "Ends drawing inside a symbol by restoring the previous origin and clearing the rotation.",
+"params": {
+"Os": "the origin SetTRM returned"
+}
+},
+"TTransform.Scale#2": {
+"text": "Design position to pixel position.",
+"returns": "the pixel position",
+"params": {
+"X": "design x",
+"Y": "design y"
+}
+},
+"TTransform.Scale@tdpoint": {
+"text": "Design point to pixel position.",
+"returns": "the pixel position",
+"params": {
+"P": "the design point"
+}
+},
+"TTransform.Scale@tdrect": {
+"text": "Design rectangle to pixel rectangle.",
+"returns": "the pixel rectangle",
+"params": {
+"R": "the design rectangle"
+}
+},
+"TTransform.ScaleDist": {
+"text": "A length in design units as whole pixels.",
+"returns": "pixels",
+"params": {
+"Dist": "length in design units"
+}
+},
+"TTransform.RotateDir": {
+"text": "A direction after the current rotation / mirror, so pins and text keep reading correctly inside a rotated symbol.",
+"returns": "the direction to draw with",
+"params": {
+"Dir": "direction 0-3 in the symbol"
+}
+},
+"TTransform.DeScaleX": {
+"text": "Pixel x to design x.",
+"returns": "design x",
+"params": {
+"A": "pixel x"
+}
+},
+"TTransform.DeScaleY": {
+"text": "Pixel y to design y.",
+"returns": "design y",
+"params": {
+"A": "pixel y"
+}
+},
+"TTransform.DeScale@tpoint": {
+"text": "Pixel position to design point.",
+"returns": "the design point",
+"params": {
+"P": "pixel position"
+}
+},
+"TTransform.DeScale@double": {
+"text": "A length in pixels to design units.",
+"returns": "length in design units",
+"params": {
+"A": "length in pixels"
+}
+},
+"TTransform.DeScaleSnapped": {
+"text": "Pixel position to design point, snapped to the grid.",
+"returns": "the snapped design point",
+"params": {
+"Grid": "grid spacing",
+"GridSnapOn": "whether snapping is on",
+"P": "pixel position"
+}
+},
+"RoundHalfUp": {
+"text": "Rounds halves up (toward positive infinity), unlike Pascal's Round which rounds halves to even.",
+"returns": "the rounded value",
+"params": {
+"X": "the number"
+}
+},
+"TApproxTextMetrics.Create": {
+"text": "Creates the default text measurer, which approximates Windows' Arial measuring: character advance widths, the 5x \"datum\" scale and per-glyph rounding."
+},
+"TApproxTextMetrics.TextExtent": {
+"text": "Measures text in a font: width from per-character advances (scaled by the font height and any requested width) and height from the font height. An empty string measures 0 by 0, as GDI does. Geometry that depends on text size (reference points, label boxes) uses this.",
+"returns": "width and height in design units",
+"params": {
+"Str": "the text",
+"Font": "the font resource"
+}
+},
+"TFixedTextMetrics.CreateWith": {
+"text": "Creates a test measurer where every character has the same width and every line the same height.",
+"params": {
+"AWidth": "width of one character",
+"AHeight": "height of a line"
+}
+},
+"TFixedTextMetrics.TextExtent": {
+"text": "Width is characters times the fixed width; height is the fixed height. Used so tests get exact, predictable results.",
+"returns": "the size",
+"params": {
+"Str": "the text",
+"Font": "the font resource (ignored)"
+}
+}
+}

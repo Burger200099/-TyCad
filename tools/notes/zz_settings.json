@@ -1,0 +1,38 @@
+{
+"MRUCount": {
+"text": "How many recently used files there are.",
+"returns": "a number from 0 to MRU_COUNT (4)"
+},
+"MRUFile": {
+"text": "One of the recently used files.",
+"returns": "its full name, or empty if there is none at that place",
+"params": {
+"Index": "position in the list, 0 for the newest"
+}
+},
+"TfrmMain.NoteFileUsed": {
+"text": "Records that a file was opened or saved: it goes to the top of the recently used files, the list is saved to the registry, and the File menu entries are rebuilt.",
+"params": {
+"AFileName": "the file"
+}
+},
+"TfrmMain.DoOpenRecent": {
+"text": "Click handler of the recently used files in the File menu: opens the file the item stands for (its number is in the item's Tag).",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.OpenRecentFile": {
+"text": "Opens the n-th recently used file as a document, as choosing it in the File menu does. A file that is no longer there is not opened: it is taken off the list (and the registry), and a message says so. Any other error opening it is reported and the list is left alone.",
+"params": {
+"Index": "position in the list, 0 for the newest"
+}
+},
+"TfrmMain.RecentMenuText": {
+"text": "The File menu entries made from the recently used files, as text (caption, then the full file name, for each), for tests.",
+"returns": "the entries, each followed by a semicolon; the separator shows as \"-\""
+},
+"settingstest.pas::Show": {
+"text": "Prints the recently used files the settings hold."
+}
+}

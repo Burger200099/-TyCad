@@ -1,0 +1,263 @@
+{
+"ValidDate": {
+"text": "Whether a year, month and day make a date that exists (a day of 29 February only in a leap year).",
+"returns": "True if it is a real date",
+"params": {
+"Y": "the year",
+"M": "the month, 1 to 12",
+"D": "the day"
+}
+},
+"FullYear": {
+"text": "A year as the full number: a two figure year is 2000 to 2069 (below 70) or 1970 to 1999; a four figure one is as it is.",
+"returns": "the year",
+"params": {
+"Y": "the year as typed",
+"Digits": "how many figures it was typed with"
+}
+},
+"TfrmColors.ListedIds": {
+"text": "The ids of the colors the dialog lists, in the order they are shown.",
+"returns": "the ids"
+},
+"TfrmColors.ColorName": {
+"text": "What a color is called in the dialog (Background, Wires, Buses ...).",
+"returns": "its name, empty for a color that is not listed",
+"params": {
+"Id": "the color's id"
+}
+},
+"TfrmColors.ColorOf": {
+"text": "The color now held for an id.",
+"returns": "the color",
+"params": {
+"Id": "the color's id"
+}
+},
+"TfrmColors.SetColor": {
+"text": "Gives a color a value, as choosing it does, and shows it on its swatch. An id that is not a color of a design is ignored.",
+"params": {
+"Id": "the color's id",
+"Color": "the new color"
+}
+},
+"TfrmColors.ChooseColor": {
+"text": "Asks for a color for one id with the form's color dialog (ColorDlg, a TColorDialog placed on the form at design time), starting from the one it has; if one is chosen it is set. An id that is not a color of a design is ignored.",
+"params": {
+"Id": "the color's id"
+}
+},
+"TfrmColors.ChangeClick": {
+"text": "A Change button was pressed: choose the color of its row.",
+"params": {
+"Sender": "the button"
+}
+},
+"TfrmColors.ResetClick": {
+"text": "The Reset button was pressed: all the colors go back to the standard ones.",
+"params": {
+"Sender": "the button"
+}
+},
+"NotesToCell": {
+"text": "A revision's notes as the grid shows them on one line: each line break becomes a paragraph sign with a space either side.",
+"returns": "the text for the cell",
+"params": {
+"N": "the notes, lines separated by LF"
+}
+},
+"CellToNotes": {
+"text": "What was typed in a description cell back as notes: a paragraph sign (with or without the spaces round it) is a line break again.",
+"returns": "the notes with LF between lines",
+"params": {
+"C": "the text of the cell"
+}
+},
+"TfrmDetails.NewestLabel": {
+"text": "The label of the newest revision of what the dialog holds, judged by date or by revision as the order checkbox says (rows left empty are not counted); empty if there is none. This is what the read-only Revision box shows.",
+"returns": "the label"
+},
+"TfrmDetails.FillGrid": {
+"text": "Fills the grid of the extended information from the revision list: the heading, a row for each revision, and the empty last row that adds one when it is clicked."
+},
+"TfrmDetails.AddRowAsync": {
+"text": "Adds a revision a moment after the last row was chosen (the grid cannot be changed while it is choosing), and leaves the new row ready to be typed in.",
+"params": {
+"Data": "not used"
+}
+},
+"TfrmDetails.GridSetCell": {
+"text": "Types text into a cell of the grid, as a person does: the revision takes it and everything that shows the list is brought up to date. Row 1 is the first revision.",
+"params": {
+"ACol": "the column: 0 REV, 1 DATE, 2 DESCRIPTION, 3 BY",
+"ARow": "the row",
+"AText": "the text"
+}
+},
+"TfrmDetails.GridCell": {
+"text": "The text of a cell of the grid.",
+"returns": "the text",
+"params": {
+"ACol": "the column",
+"ARow": "the row"
+}
+},
+"TfrmDetails.GridRowCount": {
+"text": "How many rows the grid has: the heading, the revisions and the row that adds one.",
+"returns": "the count"
+},
+"TfrmDetails.DeleteGridRow": {
+"text": "Removes the revision of a row of the grid (not the heading or the row that adds one) from the list.",
+"params": {
+"ARow": "the row"
+}
+},
+"TfrmDetails.RowDeleteClick": {
+"text": "The Delete row button: removes the revision of the row the grid stands on.",
+"params": {
+"Sender": "the button"
+}
+},
+"TfrmDetails.sgRevsKeyDown": {
+"text": "Ctrl and Delete in the grid remove the revision of the row it stands on.",
+"params": {
+"Sender": "the grid",
+"Key": "the key (set to 0 when it was used)",
+"Shift": "the shift keys"
+}
+},
+"TfrmOptions.OptionsActivate": {
+"text": "Shows the OK, Cancel and Apply buttons when the dialog is activated (the base form shows only OK and Cancel).",
+"params": {
+"Sender": "the form"
+}
+},
+"TfrmOptions.ApplyClicked": {
+"text": "The Apply button: if what is in the dialog can be used, asks the owner to apply it now and leaves the dialog open; otherwise says what is wrong.",
+"params": {
+"Sender": "the button"
+}
+},
+"TfrmOptions.ValidationError": {
+"text": "What is wrong with what the dialog holds, or an empty string if it can be used.",
+"returns": "the message"
+},
+"TfrmOptions.FormCloseQuery": {
+"text": "Pressing OK checks the values first: if they cannot be used a message says why and the dialog stays open.",
+"params": {
+"Sender": "the form",
+"CanClose": "set False to keep the dialog open"
+}
+},
+"TfrmOptions.AutoSnapClick": {
+"text": "The range of auto snap is only entered while auto snap is ticked.",
+"params": {
+"Sender": "the check box"
+}
+},
+"TfrmOptions.AutoSaveClick": {
+"text": "The minutes between automatic saves are only entered while automatic saving is ticked.",
+"params": {
+"Sender": "the check box"
+}
+},
+"MmToUnits": {
+"text": "A length in millimetres as a number of the given units.",
+"returns": "the length in those units",
+"params": {
+"Mm": "the length in millimetres",
+"Units": "UNITS_MM or UNITS_INCHES"
+}
+},
+"UnitsToMm": {
+"text": "A length in the given units as millimetres, rounded to a millionth so that 0.05 inch is 1.27 mm and not 1.2700000000000002.",
+"returns": "the length in millimetres",
+"params": {
+"Value": "the length",
+"Units": "UNITS_MM or UNITS_INCHES"
+}
+},
+"UnitsSuffix": {
+"text": "The abbreviation of the units: mm or in.",
+"returns": "the abbreviation",
+"params": {
+"Units": "UNITS_MM or UNITS_INCHES"
+}
+},
+"PositionText": {
+"text": "A position for the status bar: \"x, y\" with the units after it, one decimal in millimetres and three in inches, always with a point.",
+"returns": "the text",
+"params": {
+"XMm": "x in millimetres",
+"YMm": "y in millimetres",
+"Units": "the units to show it in"
+}
+},
+"NumberText": {
+"text": "A number for an edit box: no digits that mean nothing (rounded to five decimals, seven figures) and no trailing zeros.",
+"returns": "the text",
+"params": {
+"Value": "the number"
+}
+},
+"OptionsFromSettings": {
+"text": "The program's settings (what a new design starts with) as the values of the Options dialog.",
+"returns": "the values"
+},
+"OptionsToSettings": {
+"text": "Puts the values of the Options dialog into the program's settings, which are what is kept for next time.",
+"params": {
+"D": "the values"
+}
+},
+"ReadBoolSafe": {
+"text": "Reads a yes/no value from the registry; the default if it is missing or cannot be read.",
+"returns": "the value",
+"params": {
+"R": "the open registry key",
+"Name": "the value's name",
+"Default": "what to give if it is not there"
+}
+},
+"ReadTextSafe": {
+"text": "Reads a text value from the registry; the default if it is missing or cannot be read.",
+"returns": "the text",
+"params": {
+"R": "the open registry key",
+"Name": "the value's name",
+"Default": "what to give if it is not there"
+}
+},
+"TfrmMain.UseSettingsAsDefaults": {
+"text": "Makes what the program has saved the start of every new design: the grid spacing, snapping and showing, the units and the auto drag, snap and junction settings."
+},
+"TfrmMain.CurrentOptions": {
+"text": "What the Options dialog should show now: the open design's own settings, or the program's when no design is open.",
+"returns": "the values"
+},
+"TfrmMain.RefreshGridMenuCaptions": {
+"text": "Writes the usual grid sizes of the grid menu in the units the design now shows lengths in.",
+"params": {
+"Units": "UNITS_MM or UNITS_INCHES"
+}
+},
+"TfrmMain.OptionsApplyRequest": {
+"text": "The Apply button of the Options dialog: applies the dialog's values now, if they can be used.",
+"params": {
+"Sender": "the dialog"
+}
+},
+"TfrmMain.AutoSaveTick": {
+"text": "The automatic save timer ran out: saves a copy of every named design (the timer is stopped while it does and started again after).",
+"params": {
+"Sender": "the timer"
+}
+},
+"TfrmMain.AutoSaveInfo": {
+"text": "The automatic save as text, for tests: the minutes, whether the timer runs and its interval in milliseconds.",
+"returns": "the text"
+},
+"ShowOptions": {
+"text": "Test driver: prints the options in the settings and the colors the user has changed."
+}
+}

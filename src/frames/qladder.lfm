@@ -1,0 +1,211 @@
+inherited fmLadder: TfmLadder
+  Height = 117
+  Width = 420
+  ClientHeight = 117
+  ClientWidth = 420
+  DesignLeft = 543
+  DesignTop = 450
+  inherited lbCaption: TLabel
+    Top = 102
+    Width = 420
+  end
+  object plFont: TPanel[1]
+    Left = 0
+    Height = 102
+    Top = 0
+    Width = 206
+    Align = alLeft
+    BevelOuter = bvNone
+    ClientHeight = 102
+    ClientWidth = 206
+    TabOrder = 0
+    object lbFont: TLabel
+      Left = 0
+      Height = 15
+      Top = 87
+      Width = 206
+      Align = alBottom
+      Alignment = taCenter
+      Caption = 'Font'
+    end
+    object cbFont: TFontNameCombo
+      Left = 12
+      Height = 32
+      Hint = 'Font'
+      Top = 8
+      Width = 188
+      ItemHeight = 26
+      ParentShowHint = False
+      ShowHint = True
+      Style = csOwnerDrawFixed
+      TabOrder = 0
+    end
+    object cbFontSize: TComboBox
+      Left = 12
+      Height = 23
+      Hint = 'Font size (points)'
+      Top = 49
+      Width = 52
+      ItemHeight = 15
+      ItemIndex = 4
+      Items.Strings = (
+        '8'
+        '9'
+        '10'
+        '11'
+        '12'
+        '14'
+        '16'
+        '18'
+        '20'
+        '22'
+        '24'
+        '26'
+        '28'
+        '32'
+        '38'
+        '48'
+        '72'
+      )
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+      Text = '12'
+    end
+    object sbBold: TSpeedButton
+      Left = 72
+      Height = 32
+      Hint = 'Bold'
+      Top = 45
+      Width = 32
+      GroupIndex = 1
+      Images = frmSharedControls.ilFontGlyphs
+      ImageIndex = 2
+      ImageWidth = 24
+      ShowHint = True
+      ParentShowHint = False
+      OnClick = sbBoldClick
+    end
+    object sbItalic: TSpeedButton
+      Left = 112
+      Height = 32
+      Hint = 'Italic'
+      Top = 45
+      Width = 32
+      GroupIndex = 2
+      Images = frmSharedControls.ilFontGlyphs
+      ImageIndex = 3
+      ImageWidth = 24
+      ShowHint = True
+      ParentShowHint = False
+    end
+    object cbFontColor: TColorButton
+      Left = 152
+      Height = 32
+      Hint = 'Text colour'
+      Top = 45
+      Width = 48
+      BorderWidth = 2
+      ButtonColorSize = 16
+      ButtonColor = clBlack
+      ColorDialog = frmSharedControls.DlgColor
+      ShowHint = True
+      ParentShowHint = False
+    end
+  end
+  object plSep1: TPanel[2]
+    Left = 206
+    Height = 102
+    Top = 0
+    Width = 2
+    Align = alLeft
+    TabOrder = 1
+  end
+  object plLadder: TPanel[3]
+    Left = 208
+    Height = 102
+    Top = 0
+    Width = 208
+    Align = alLeft
+    BevelOuter = bvNone
+    ClientHeight = 102
+    ClientWidth = 208
+    TabOrder = 2
+    object lbLadder: TLabel
+      Left = 0
+      Height = 15
+      Top = 87
+      Width = 208
+      Align = alBottom
+      Alignment = taCenter
+      Caption = 'Ladder rails'
+    end
+    object cbLineColor: TColorButton
+      Left = 16
+      Height = 32
+      Hint = 'Rail colour'
+      Top = 8
+      Width = 64
+      BorderWidth = 2
+      ButtonColorSize = 16
+      ButtonColor = clBlack
+      ColorDialog = frmSharedControls.DlgColor
+      ShowHint = True
+      ParentShowHint = False
+    end
+    object lbWidth: TLabel
+      Left = 19
+      Height = 15
+      Top = 53
+      Width = 32
+      Caption = 'Width'
+    end
+    object lbLeft: TLabel
+      Left = 108
+      Height = 15
+      Top = 14
+      Width = 42
+      Caption = 'Left bus'
+    end
+    object lbRight: TLabel
+      Left = 108
+      Height = 15
+      Top = 53
+      Width = 50
+      Caption = 'Right bus'
+    end
+    object seLineWidth: TSpinEdit
+      Left = 56
+      Height = 23
+      Hint = 'Rail line width (1, 2, 3 ...)'
+      Top = 49
+      Width = 50
+      MaxValue = 9
+      MinValue = 1
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
+      Value = 1
+    end
+    object edLeft: TEdit
+      Left = 164
+      Height = 23
+      Hint = 'Wire number of the left bus, shown above the left rail'
+      Top = 10
+      Width = 40
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+    end
+    object edRight: TEdit
+      Left = 164
+      Height = 23
+      Hint = 'Wire number of the right bus, shown above the right rail'
+      Top = 49
+      Width = 40
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+    end
+  end
+end

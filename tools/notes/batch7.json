@@ -1,0 +1,421 @@
+{
+"TDesignFileSymbol.Create": {
+"text": "Creates an empty symbol definition belonging to a sheet's options, with no parts and no cached drawings.",
+"params": {
+"AOpts": "the sheet options the symbol is part of"
+}
+},
+"TDesignFileSymbol.Destroy": {
+"text": "Frees the parts and the cached views."
+},
+"TDesignFileSymbol.MethodList": {
+"text": "The master drawing of one part.",
+"returns": "the drawing objects of that part",
+"params": {
+"Index": "part number, 0-based"
+}
+},
+"TDesignFileSymbol.MethodCount": {
+"text": "Number of drawings (parts) the symbol has.",
+"returns": "the count"
+},
+"TDesignFileSymbol.ClearMethods": {
+"text": "Removes all part drawings and invalidates the cached views (the saved reference points are kept)."
+},
+"TDesignFileSymbol.AddMethod": {
+"text": "Adds an empty part drawing.",
+"returns": "the new list of drawing objects"
+},
+"TDesignFileSymbol.CreateNoSymbol": {
+"text": "Makes the stand-in \"no symbol\" definition: a plain rectangle, used when a placed symbol's definition is missing."
+},
+"LoadFieldXML": {
+"text": "Reads one symbol field definition (name, default value, type) from XML.",
+"params": {
+"R": "the XML reader on the FIELD element",
+"F": "receives the field definition"
+}
+},
+"SaveFieldXML": {
+"text": "Writes one symbol field definition as a FIELD element.",
+"params": {
+"W": "the XML writer",
+"F": "the field definition",
+"Simple": "True to write only the short form used inside placed symbols"
+}
+},
+"LoadObjectBlock": {
+"text": "Reads a block of drawing objects (a part's drawing) and its origin from XML into a list.",
+"params": {
+"R": "the XML reader",
+"Opts": "the sheet options the objects belong to",
+"List": "receives the objects"
+}
+},
+"SaveObjectBlock": {
+"text": "Writes a list of drawing objects as a TinyCAD element, without the details block.",
+"params": {
+"W": "the XML writer",
+"List": "the objects to write"
+}
+},
+"TDesignFileSymbol.LoadXML": {
+"text": "Reads a symbol definition (name, reference, fields, parts, and any saved reference points) from XML. Reference points saved by TinyCAD are remembered so views reproduce the saved geometry.",
+"params": {
+"R": "the XML reader on the symbol"
+}
+},
+"TDesignFileSymbol.SaveXML": {
+"text": "Writes the symbol definition, optionally with the reference points of the cached views (sorted as TinyCAD sorts them).",
+"params": {
+"W": "the XML writer",
+"WithRefPoints": "True to include REF_POINT entries"
+}
+},
+"SymbolXMLText": {
+"text": "The symbol's XML as text, used to decide whether two symbols are the same.",
+"returns": "the XML text",
+"params": {
+"S": "the symbol",
+"WithRef": "include the reference points"
+}
+},
+"TDesignFileSymbol.SameAs": {
+"text": "Whether another symbol is the same: same name and same XML content (reference points ignored).",
+"returns": "True if they are the same symbol",
+"params": {
+"Other": "the symbol to compare with"
+}
+},
+"TDesignFileSymbol.GetMethodObjects": {
+"text": "Copies the drawing objects for a part into a list: for heterogeneous symbols the part's own drawing; otherwise the shared drawing without the pins of other parts; power pins are converted to normal pins when shown (CreateSymbol's selection step).",
+"params": {
+"Part": "part number",
+"IncludePower": "whether power pins are shown",
+"Dest": "receives the copies"
+}
+},
+"TSymbolFilter.Destroy": {
+"text": "Frees the cached view."
+},
+"TDesignFileSymbol.FindFilter": {
+"text": "Finds the cache entry for a part and power-pin setting.",
+"returns": "the entry, or nil if none yet",
+"params": {
+"Part": "part number",
+"Power": "power pins shown"
+}
+},
+"TDesignFileSymbol.CachedRefCount": {
+"text": "Number of cached (part, power) entries.",
+"returns": "the count"
+},
+"TDesignFileSymbol.CachedRef": {
+"text": "Reads one cache entry's part, power flag and reference point (for saving them).",
+"params": {
+"Index": "entry number",
+"Part": "set to the part",
+"Power": "set to the power flag",
+"Ref": "set to the reference point"
+}
+},
+"TDesignFileSymbol.ComputeTr": {
+"text": "Works out the symbol's size (the \"top right\" used by rotation) from its objects: the snapped far corner, as CreateSymbol and GetTr do.",
+"returns": "the size point",
+"params": {
+"L": "the drawing objects"
+}
+},
+"TDesignFileSymbol.BuildView": {
+"text": "Builds the drawing used when a symbol is placed: copies of the part's objects shifted so the reference point is the origin, with layout updated. Uses the saved reference point when there is one, otherwise computes it from the pins and extent.",
+"returns": "the view; the caller owns it",
+"params": {
+"Part": "part number",
+"Power": "power pins shown",
+"HaveRef": "True when Ref is a saved reference point",
+"Ref": "the saved reference point"
+}
+},
+"TDesignFileSymbol.CreateView": {
+"text": "Builds and caches the view for a part and power setting (reusing a saved reference point).",
+"returns": "the cache entry",
+"params": {
+"Part": "part number",
+"Power": "power pins shown"
+}
+},
+"TDesignFileSymbol.ComputeRefPoint": {
+"text": "Computes the reference point a fresh view would have, without caching it.",
+"returns": "the reference point",
+"params": {
+"Part": "part number",
+"IncludePower": "power pins shown"
+}
+},
+"TDesignFileSymbol.GetView": {
+"text": "The cached view for a part and power setting, building it on first use.",
+"returns": "the view",
+"params": {
+"Part": "part number",
+"IncludePower": "power pins shown"
+}
+},
+"TDesignFileSymbol.GetTr": {
+"text": "The symbol's size for placing it. Only heterogeneous symbols use the part number; all parts of a normal symbol use part 0's size, as in TinyCAD.",
+"returns": "the size point",
+"params": {
+"Part": "part number",
+"IncludePower": "power pins shown"
+}
+},
+"TDesignFileSymbol.GetOrigin": {
+"text": "The origin of the symbol's view (part 0 unless heterogeneous).",
+"returns": "the origin point",
+"params": {
+"Part": "part number",
+"IncludePower": "power pins shown"
+}
+},
+"TDesignFileSymbol.PartsPerPackage": {
+"text": "How many parts the symbol has (gates in an IC).",
+"returns": "the number of parts"
+},
+"TDesignFileSymbol.SymbolName": {
+"text": "The symbol's name.",
+"returns": "the name"
+},
+"TDesignFileSymbol.SymbolReference": {
+"text": "The symbol's reference prefix, e.g. R or U.",
+"returns": "the reference prefix"
+},
+"TDesignFileSymbol.SymbolNameType": {
+"text": "How the name field is shown.",
+"returns": "the name field type code"
+},
+"TDesignFileSymbol.SymbolRefType": {
+"text": "How the reference field is shown.",
+"returns": "the reference field type code"
+},
+"TDesignFileSymbol.FieldCount": {
+"text": "Number of extra fields the symbol defines.",
+"returns": "the count"
+},
+"TDesignFileSymbol.FieldName": {
+"text": "Name of an extra field.",
+"returns": "the name",
+"params": {
+"Index": "field number"
+}
+},
+"TDesignFileSymbol.FieldDefault": {
+"text": "Default value of an extra field.",
+"returns": "the default text",
+"params": {
+"Index": "field number"
+}
+},
+"TDesignFileSymbol.FieldType": {
+"text": "Display type of an extra field (shown, hidden, always hidden).",
+"returns": "the type code",
+"params": {
+"Index": "field number"
+}
+},
+"TSymbolResource.CreateFor": {
+"text": "Wraps a symbol definition as an entry of the sheet's symbol table.",
+"params": {
+"AOpts": "the sheet options",
+"ASymbol": "the symbol; the entry owns it"
+}
+},
+"TSymbolResource.Destroy": {
+"text": "Frees the symbol it owns."
+},
+"TSymbolResource.Compare": {
+"text": "Whether another table entry is the same symbol (unnamed symbols never match, as in TinyCAD).",
+"returns": "True if equal",
+"params": {
+"Other": "the entry to compare with"
+}
+},
+"TSymbolResource.WriteItem": {
+"text": "Writes the symbol with its reference points.",
+"params": {
+"W": "the XML writer"
+}
+},
+"TSymbolResource.ReadItem": {
+"text": "Reads a symbol definition.",
+"params": {
+"R": "the XML reader on the entry"
+}
+},
+"TSymbolList.CreateFor": {
+"text": "Creates the symbol table of a sheet; entry 0 is the \"no symbol\" stand-in.",
+"params": {
+"AOpts": "the sheet options"
+}
+},
+"TSymbolList.CreateItem": {
+"text": "Makes an empty symbol entry for the loader.",
+"returns": "a new symbol resource"
+},
+"TSymbolList.Symbol": {
+"text": "The symbol with a given number (the stand-in if there is none).",
+"returns": "the symbol",
+"params": {
+"Id": "symbol number"
+}
+},
+"TLibraryRecord.Create": {
+"text": "Creates an empty record (one named part of a symbol set)."
+},
+"TLibrarySymbolSet.Create": {
+"text": "Creates an empty set (a symbol and the records that name it)."
+},
+"TLibrarySymbolSet.Destroy": {
+"text": "Frees the records."
+},
+"TLibrarySymbolSet.AddRecord": {
+"text": "Adds an empty record to the set.",
+"returns": "the new record"
+},
+"TLibrarySymbolSet.RecordCount": {
+"text": "Number of records in the set.",
+"returns": "the count"
+},
+"TLibrarySymbolSet.GetRecord": {
+"text": "One record of the set.",
+"returns": "the record",
+"params": {
+"Index": "position"
+}
+},
+"EnsureSqlite": {
+"text": "Loads the SQLite library the first time it is needed; raises a clear error when it is not installed."
+},
+"TSymbolLibrary.Create": {
+"text": "Creates a library object with nothing open."
+},
+"TSymbolLibrary.Destroy": {
+"text": "Closes the database and frees the sets."
+},
+"TSymbolLibrary.Fail": {
+"text": "Raises an error that includes SQLite's own message.",
+"params": {
+"What": "what was being attempted"
+}
+},
+"TSymbolLibrary.GetSet": {
+"text": "One symbol set of the open library.",
+"returns": "the set",
+"params": {
+"Index": "position"
+}
+},
+"TSymbolLibrary.SetCount": {
+"text": "Number of symbol sets.",
+"returns": "the count"
+},
+"TSymbolLibrary.FindSet": {
+"text": "Finds a set by its database id.",
+"returns": "the set, or nil",
+"params": {
+"SymbolID": "the id in the Symbol table"
+}
+},
+"TSymbolLibrary.Prepare": {
+"text": "Compiles an SQL statement; a failure raises an error.",
+"returns": "the statement handle (finalise when done)",
+"params": {
+"SQL": "the statement text"
+}
+},
+"TSymbolLibrary.ExecSQL": {
+"text": "Runs an SQL statement that returns no rows.",
+"params": {
+"SQL": "the statement text"
+}
+},
+"ColText": {
+"text": "Reads a result column as text.",
+"returns": "the column text (empty for NULL)",
+"params": {
+"St": "the statement",
+"Col": "column number"
+}
+},
+"TSymbolLibrary.Close": {
+"text": "Closes the database and forgets the loaded sets."
+},
+"TSymbolLibrary.Open": {
+"text": "Opens a .TCLib (an SQLite file) and reads its sets, records and attributes. The raw symbol text is kept untouched so it can be written back unchanged.",
+"params": {
+"AFileName": "path of the library"
+}
+},
+"CompareSets": {
+"text": "Ordering function for sets: by the name of their first record, as TinyCAD lists them.",
+"returns": "negative, zero or positive as A sorts before, with or after B",
+"params": {
+"A": "first set",
+"B": "second set"
+}
+},
+"TSymbolLibrary.Reread": {
+"text": "Reads the sets and records from the open database again (after a change)."
+},
+"TSymbolLibrary.LoadFields": {
+"text": "Loads the extra field values of a record from the Attribute table.",
+"params": {
+"Rec": "the record to fill in"
+}
+},
+"TSymbolLibrary.GetSymbolBlob": {
+"text": "Reads a set's symbol drawing as stored text.",
+"returns": "the stored text",
+"params": {
+"ASet": "the set"
+}
+},
+"TSymbolLibrary.GetDesignSymbol": {
+"text": "Builds a symbol definition for placing on a sheet from a set's stored drawing and one record's name and fields.",
+"returns": "the symbol, or nil if it cannot be read",
+"params": {
+"Target": "the sheet the symbol will be used on",
+"ASet": "the set",
+"RecIndex": "which record of the set (which part name)"
+}
+},
+"TSymbolLibrary.CreateNew": {
+"text": "Creates a new empty library file with the TinyCAD tables.",
+"params": {
+"AFileName": "path of the new file"
+}
+},
+"BindText": {
+"text": "Binds a text value to a statement parameter.",
+"params": {
+"St": "the statement",
+"Idx": "1-based parameter number",
+"S": "the text"
+}
+},
+"TSymbolLibrary.StoreSet": {
+"text": "Writes a symbol set (its drawing and records) to the library inside a transaction and returns its database id. A superseded drawing row is deleted, unlike TinyCAD which leaves it behind.",
+"returns": "the database id of the set",
+"params": {
+"ASet": "the set (new, or an edited existing one)",
+"Doc": "the symbol document holding the drawing"
+}
+},
+"TSymbolLibrary.DeleteSet": {
+"text": "Deletes a set and its records and attributes from the library.",
+"params": {
+"SymbolID": "the set's database id"
+}
+},
+"TSymbolLibrary.Cleanup": {
+"text": "Compacts the library file (SQLite VACUUM), as TinyCAD's Cleanup does; the symbols are not changed."
+}
+}

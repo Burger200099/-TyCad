@@ -1,0 +1,23 @@
+{
+"TDocOptionsBase.GetFontWidth": {
+"text": "The width of a font's characters in design units, or 0 when the font uses its natural width.",
+"returns": "the width",
+"params": {
+"FontNumber": "a font of the design"
+}
+},
+"TDrawText.PrepareResize": {
+"text": "Called when this text becomes the one selected object: notes the length of its box and the width of its font (SetScalingWidths), which is what resizing it with its handles works from."
+},
+"TDrawText.CanResize": {
+"text": "Yes: a text has the eight handles of the tracker when it is the one selected object (a label has none on its middle).",
+"returns": "True"
+},
+"TDrawLabel.PrepareResize": {
+"text": "Called when this label becomes the one selected object: notes the length of its box and the width of its font (SetScalingWidths), which is what resizing it with its handles works from."
+},
+"TDrawLabel.CanResize": {
+"text": "Yes: a label has the eight handles of the tracker when it is the one selected object (a label has none on its middle).",
+"returns": "True"
+}
+}

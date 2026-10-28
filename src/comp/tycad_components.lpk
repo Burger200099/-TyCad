@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="5">
+    <PathDelim Value="\"/>
+    <Name Value="TyCad_Components"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Files>
+      <Item>
+        <Filename Value="CSplitButton.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="CSplitButton"/>
+      </Item>
+      <Item>
+        <Filename Value="CFontNameCombo.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="CFontNameCombo"/>
+      </Item>
+      <Item>
+        <Filename Value="CSplitButton.lrs"/>
+        <Type Value="LRS"/>
+      </Item>
+    </Files>
+    <RequiredPkgs>
+      <Item>
+        <PackageName Value="LCL"/>
+      </Item>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

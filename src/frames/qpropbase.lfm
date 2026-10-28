@@ -1,0 +1,21 @@
+object fmPropertyBase: TfmPropertyBase
+  Left = 0
+  Height = 88
+  Top = 0
+  Width = 320
+  ClientHeight = 88
+  ClientWidth = 320
+  LCLVersion = '4.8.0.0'
+  TabOrder = 0
+  DesignLeft = 350
+  DesignTop = 27
+  object lbCaption: TLabel
+    Left = 0
+    Height = 15
+    Top = 73
+    Width = 320
+    Align = alBottom
+    Alignment = taCenter
+    Caption = 'lbCaption'
+  end
+end

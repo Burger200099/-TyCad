@@ -1,0 +1,143 @@
+inherited frmRatingEdit: TfrmRatingEdit
+  Left = 700
+  Height = 330
+  Top = 300
+  Width = 560
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'Add Requirement'
+  ClientHeight = 330
+  ClientWidth = 560
+  OnCloseQuery = FormCloseQuery
+  Position = poOwnerFormCenter
+  inherited pnlButtons: TPanel
+    Top = 272
+    Width = 560
+    ClientWidth = 556
+    inherited btnOK: TButton
+      Left = 300
+    end
+    inherited btnCancel: TButton
+      Left = 430
+    end
+    inherited btnApply: TButton
+      Visible = False
+    end
+  end
+  object lblObject: TLabel[1]
+    Left = 12
+    Height = 15
+    Top = 14
+    Width = 100
+    Caption = '&Applies to:'
+    FocusControl = cbObject
+  end
+  object cbObject: TComboBox[2]
+    Left = 120
+    Height = 23
+    Hint = 'The whole part, or one of its terminals, channels or poles'
+    Top = 10
+    Width = 420
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 0
+  end
+  object lblQuantity: TLabel[3]
+    Left = 12
+    Height = 15
+    Top = 50
+    Width = 100
+    Caption = '&Quantity:'
+    FocusControl = cbQuantity
+  end
+  object cbQuantity: TComboBox[4]
+    Left = 120
+    Height = 23
+    Hint = 'What is rated; each quantity has one unit'
+    Top = 46
+    Width = 250
+    ItemHeight = 15
+    OnChange = QuantityChange
+    Style = csDropDownList
+    TabOrder = 1
+  end
+  object lblUnit: TLabel[5]
+    Left = 380
+    Height = 15
+    Top = 50
+    Width = 160
+    Caption = ' '
+  end
+  object lblMin: TLabel[6]
+    Left = 12
+    Height = 15
+    Top = 90
+    Width = 100
+    Caption = 'M&inimum:'
+    FocusControl = edMin
+  end
+  object edMin: TEdit[7]
+    Left = 120
+    Height = 23
+    Hint = 'The lowest value (leave empty for none)'
+    Top = 86
+    Width = 100
+    TabOrder = 2
+  end
+  object lblTyp: TLabel[8]
+    Left = 236
+    Height = 15
+    Top = 90
+    Width = 60
+    Caption = '&Typical:'
+    FocusControl = edTyp
+  end
+  object edTyp: TEdit[9]
+    Left = 300
+    Height = 23
+    Hint = 'The typical value (leave empty for none)'
+    Top = 86
+    Width = 100
+    TabOrder = 3
+  end
+  object lblMax: TLabel[10]
+    Left = 416
+    Height = 15
+    Top = 90
+    Width = 50
+    Caption = 'Ma&ximum:'
+    FocusControl = edMax
+  end
+  object edMax: TEdit[11]
+    Left = 470
+    Height = 23
+    Hint = 'The highest value (leave empty for none)'
+    Top = 86
+    Width = 70
+    TabOrder = 4
+  end
+  object lblCondition: TLabel[12]
+    Left = 12
+    Height = 15
+    Top = 130
+    Width = 100
+    Caption = '&Condition:'
+    FocusControl = edCondition
+  end
+  object edCondition: TEdit[13]
+    Left = 120
+    Height = 23
+    Hint = 'When the value holds, for example AC-15 230 V (a product is compared on the same condition)'
+    Top = 126
+    Width = 420
+    TabOrder = 5
+  end
+  object lblSense: TLabel[14]
+    Left = 12
+    Height = 15
+    Top = 170
+    Width = 530
+    Caption = ' '
+    WordWrap = True
+  end
+end

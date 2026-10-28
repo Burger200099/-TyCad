@@ -1,0 +1,1171 @@
+object frPartsEditor: TfrPartsEditor
+  Left = 0
+  Height = 480
+  Top = 0
+  Width = 800
+  ClientHeight = 480
+  ClientWidth = 800
+  TabOrder = 0
+  object pnlInfo: TPanel
+    Left = 0
+    Height = 96
+    Top = 0
+    Width = 800
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 96
+    ClientWidth = 800
+    TabOrder = 0
+    object lblLibName: TLabel
+      Left = 8
+      Height = 15
+      Top = 10
+      Width = 80
+      Caption = 'Library name:'
+    end
+    object edLibName: TEdit
+      Left = 100
+      Height = 23
+      Hint = 'The name of this parts library'
+      Top = 6
+      Width = 300
+      TabOrder = 0
+    end
+    object lblLibAuthor: TLabel
+      Left = 420
+      Height = 15
+      Top = 10
+      Width = 50
+      Caption = 'Author:'
+    end
+    object edLibAuthor: TEdit
+      Left = 480
+      Height = 23
+      Hint = 'Who made this library'
+      Top = 6
+      Width = 220
+      TabOrder = 1
+    end
+    object lblLibDesc: TLabel
+      Left = 8
+      Height = 15
+      Top = 40
+      Width = 80
+      Caption = 'Description:'
+    end
+    object edLibDesc: TEdit
+      Left = 100
+      Height = 23
+      Hint = 'What this library holds'
+      Top = 36
+      Width = 600
+      TabOrder = 2
+    end
+    object btnLibApply: TButton
+      Left = 710
+      Height = 25
+      Hint = 'Write the library name, description and author to the file'
+      Top = 5
+      Width = 80
+      Caption = 'Apply'
+      TabOrder = 3
+      OnClick = LibApplyClick
+    end
+    object lblLibFile: TLabel
+      Left = 8
+      Height = 15
+      Top = 70
+      Width = 780
+      Caption = ' '
+    end
+  end
+  object pcEditor: TPageControl
+    Left = 0
+    Height = 384
+    Top = 96
+    Width = 800
+    ActivePage = tsParts
+    Align = alClient
+    TabIndex = 0
+    TabOrder = 1
+    OnChange = PageChange
+    object tsParts: TTabSheet
+      Caption = 'Parts'
+      ClientHeight = 356
+      ClientWidth = 792
+      object pnlTools: TPanel
+        Left = 0
+        Height = 36
+        Top = 0
+        Width = 800
+        Align = alTop
+        BevelOuter = bvNone
+        ClientHeight = 36
+        ClientWidth = 800
+        TabOrder = 1
+        object btnAdd: TButton
+          Left = 8
+          Height = 26
+          Hint = 'Add a generic part to the library'
+          Top = 5
+          Width = 110
+          Caption = '&Add Part...'
+          TabOrder = 0
+          OnClick = AddClick
+        end
+        object btnEdit: TButton
+          Left = 126
+          Height = 26
+          Hint = 'Change the name, reference letters, status and description of the chosen part'
+          Top = 5
+          Width = 110
+          Caption = '&Properties...'
+          TabOrder = 1
+          OnClick = EditClick
+        end
+        object btnDuplicate: TButton
+          Left = 244
+          Height = 26
+          Hint = 'Make a copy of the chosen part with everything it has'
+          Top = 5
+          Width = 110
+          Caption = '&Duplicate'
+          TabOrder = 2
+          OnClick = DuplicateClick
+        end
+        object btnDelete: TButton
+          Left = 362
+          Height = 26
+          Hint = 'Delete the chosen part from the library'
+          Top = 5
+          Width = 110
+          Caption = 'D&elete'
+          TabOrder = 3
+          OnClick = DeleteClick
+        end
+      end
+      object lvParts: TListView
+        Left = 0
+        Height = 320
+        Hint = 'The generic parts of this library (double click to change one)'
+        Top = 36
+        Width = 800
+        Align = alClient
+        Columns = <    
+          item
+            Caption = 'Name'
+            Width = 220
+          end    
+          item
+            Caption = 'Class'
+            Width = 140
+          end    
+          item
+            Caption = 'Ref'
+            Width = 50
+          end    
+          item
+            Caption = 'Status'
+            Width = 70
+          end    
+          item
+            Caption = 'Rev'
+            Width = 40
+          end    
+          item
+            Caption = 'Modified (UTC)'
+            Width = 130
+          end    
+          item
+            Caption = 'Description'
+            Width = 300
+          end>
+        PopupMenu = pmParts
+        ReadOnly = True
+        RowSelect = True
+        TabOrder = 2
+        ViewStyle = vsReport
+        OnDblClick = PartsDblClick
+        OnSelectItem = PartsSelectItem
+      end
+    end
+    object tsClasses: TTabSheet
+      Caption = 'Classes'
+      ClientHeight = 356
+      ClientWidth = 792
+      object pnlClassTools: TPanel
+        Left = 0
+        Height = 36
+        Top = 0
+        Width = 792
+        Align = alTop
+        BevelOuter = bvNone
+        ClientHeight = 36
+        ClientWidth = 792
+        TabOrder = 0
+        object btnClassAdd: TButton
+          Left = 8
+          Height = 26
+          Hint = 'Add a class under the chosen one'
+          Top = 5
+          Width = 110
+          Caption = 'Add &Class...'
+          TabOrder = 0
+          OnClick = ClassAddClick
+        end
+        object btnClassProps: TButton
+          Left = 126
+          Height = 26
+          Hint = 'Change the name, parent, abstract flag and description of the chosen class'
+          Top = 5
+          Width = 110
+          Caption = 'Class &Properties...'
+          TabOrder = 1
+          OnClick = ClassPropsClick
+        end
+        object btnClassDelete: TButton
+          Left = 244
+          Height = 26
+          Hint = 'Delete the chosen class (it must have no subclasses, parts or products)'
+          Top = 5
+          Width = 110
+          Caption = 'Delete C&lass'
+          TabOrder = 2
+          OnClick = ClassDeleteClick
+        end
+        object btnFieldAdd: TButton
+          Left = 400
+          Height = 26
+          Hint = 'Declare a field on the chosen class (its subclasses inherit it)'
+          Top = 5
+          Width = 110
+          Caption = 'Add &Field...'
+          TabOrder = 3
+          OnClick = FieldAddClick
+        end
+        object btnFieldEdit: TButton
+          Left = 518
+          Height = 26
+          Hint = 'Change the chosen field (only the fields the class declares itself)'
+          Top = 5
+          Width = 110
+          Caption = 'F&ield Properties...'
+          TabOrder = 4
+          OnClick = FieldEditClick
+        end
+        object btnFieldDelete: TButton
+          Left = 636
+          Height = 26
+          Hint = 'Delete the chosen field (no part may have a value for it)'
+          Top = 5
+          Width = 110
+          Caption = 'Delete Fi&eld'
+          TabOrder = 5
+          OnClick = FieldDeleteClick
+        end
+      end
+      object tvClasses: TTreeView
+        Left = 0
+        Height = 320
+        Hint = 'The classes of parts; a class inherits the fields and child kinds of its parents'
+        Top = 36
+        Width = 300
+        Align = alLeft
+        PopupMenu = pmClasses
+        ReadOnly = True
+        TabOrder = 1
+        OnChange = ClassTreeChange
+        OnDblClick = ClassTreeDblClick
+        Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips]
+      end
+      object splClasses: TSplitter
+        Left = 300
+        Height = 320
+        Top = 36
+        Width = 5
+      end
+      object pnlClassRight: TPanel
+        Left = 305
+        Height = 320
+        Top = 36
+        Width = 487
+        Align = alClient
+        BevelOuter = bvNone
+        ClientHeight = 320
+        ClientWidth = 487
+        TabOrder = 2
+        object pnlClassInfo: TPanel
+          Left = 0
+          Height = 28
+          Top = 0
+          Width = 487
+          Align = alTop
+          BevelOuter = bvNone
+          ClientHeight = 28
+          ClientWidth = 487
+          TabOrder = 1
+          object lblClassInfo: TLabel
+            Left = 8
+            Height = 15
+            Top = 6
+            Width = 470
+            Caption = ' '
+          end
+        end
+        object lvFields: TListView
+          Left = 0
+          Height = 292
+          Hint = 'The fields of the chosen class: the ones it inherits (grey, read-only) and its own'
+          Top = 30
+          Width = 487
+          Align = alClient
+          Columns = <            
+            item
+              Caption = 'Field'
+              Width = 150
+            end            
+            item
+              Caption = 'Type'
+              Width = 60
+            end            
+            item
+              Caption = 'Unit'
+              Width = 50
+            end            
+            item
+              Caption = 'Req'
+              Width = 40
+            end            
+            item
+              Caption = 'Declared by'
+              Width = 130
+            end            
+            item
+              Caption = 'Values / description'
+              Width = 250
+            end>
+          PopupMenu = pmFields
+          ReadOnly = True
+          RowSelect = True
+          TabOrder = 0
+          ViewStyle = vsReport
+          OnCustomDrawItem = FieldCustomDraw
+          OnDblClick = FieldDblClick
+          OnSelectItem = FieldSelectItem
+        end
+      end
+    end
+    object tsObjects: TTabSheet
+      Caption = 'Objects'
+      ClientHeight = 356
+      ClientWidth = 792
+      object pnlObjTools: TPanel
+        Left = 0
+        Height = 36
+        Top = 0
+        Width = 792
+        Align = alTop
+        BevelOuter = bvNone
+        ClientHeight = 36
+        ClientWidth = 792
+        TabOrder = 0
+        object lblObjPart: TLabel
+          Left = 8
+          Height = 15
+          Top = 10
+          Width = 30
+          Caption = '&Part:'
+          FocusControl = cbObjPart
+        end
+        object cbObjPart: TComboBox
+          Left = 44
+          Height = 23
+          Hint = 'The part whose child objects are shown (follows the part chosen on the Parts page)'
+          Top = 6
+          Width = 250
+          ItemHeight = 15
+          OnChange = ObjPartChange
+          Style = csDropDownList
+          TabOrder = 0
+        end
+        object btnObjAdd: TButton
+          Left = 304
+          Height = 26
+          Hint = 'Add a terminal, pole, channel ... to the part, inside the chosen object'
+          Top = 5
+          Width = 110
+          Caption = 'Add &Object...'
+          TabOrder = 1
+          OnClick = ObjAddClick
+        end
+        object btnObjEdit: TButton
+          Left = 422
+          Height = 26
+          Hint = 'Change the chosen object'
+          Top = 5
+          Width = 130
+          Caption = 'Ob&ject Properties...'
+          TabOrder = 2
+          OnClick = ObjEditClick
+        end
+        object btnObjDelete: TButton
+          Left = 560
+          Height = 26
+          Hint = 'Delete the chosen object and what is inside it'
+          Top = 5
+          Width = 110
+          Caption = 'D&elete Object'
+          TabOrder = 3
+          OnClick = ObjDeleteClick
+        end
+      end
+      object tvObjects: TTreeView
+        Left = 0
+        Height = 320
+        Hint = 'The terminals, poles, channels ... of the part; an object inside another hangs below it (double click to change one)'
+        Top = 36
+        Width = 792
+        Align = alClient
+        PopupMenu = pmObjects
+        ReadOnly = True
+        TabOrder = 1
+        OnChange = ObjChange
+        OnDblClick = ObjDblClick
+        Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw]
+      end
+    end
+    object tsRatings: TTabSheet
+      Caption = 'Requirements'
+      ClientHeight = 356
+      ClientWidth = 792
+      object pnlRatTools: TPanel
+        Left = 0
+        Height = 36
+        Top = 0
+        Width = 792
+        Align = alTop
+        BevelOuter = bvNone
+        ClientHeight = 36
+        ClientWidth = 792
+        TabOrder = 0
+        object lblRatPart: TLabel
+          Left = 8
+          Height = 15
+          Top = 10
+          Width = 30
+          Caption = '&Part:'
+          FocusControl = cbRatPart
+        end
+        object cbRatPart: TComboBox
+          Left = 44
+          Height = 23
+          Hint = 'The part whose requirements are shown (follows the part chosen on the Parts page)'
+          Top = 6
+          Width = 250
+          ItemHeight = 15
+          OnChange = RatPartChange
+          Style = csDropDownList
+          TabOrder = 0
+        end
+        object btnRatAdd: TButton
+          Left = 304
+          Height = 26
+          Hint = 'Add a requirement: a rating the part must have'
+          Top = 5
+          Width = 130
+          Caption = 'Add &Requirement...'
+          TabOrder = 1
+          OnClick = RatAddClick
+        end
+        object btnRatEdit: TButton
+          Left = 442
+          Height = 26
+          Hint = 'Change the chosen requirement'
+          Top = 5
+          Width = 130
+          Caption = 'Re&quirement Properties...'
+          TabOrder = 2
+          OnClick = RatEditClick
+        end
+        object btnRatDelete: TButton
+          Left = 580
+          Height = 26
+          Hint = 'Delete the chosen requirement'
+          Top = 5
+          Width = 130
+          Caption = 'Delete Req&uirement'
+          TabOrder = 3
+          OnClick = RatDeleteClick
+        end
+      end
+      object lvRatings: TListView
+        Left = 0
+        Height = 320
+        Hint = 'What the part requires: the rating of the whole part or of one of its terminals, channels or poles (double click to change one)'
+        Top = 36
+        Width = 792
+        Align = alClient
+        Columns = <        
+          item
+            Caption = 'Applies to'
+            Width = 160
+          end        
+          item
+            Caption = 'Quantity'
+            Width = 200
+          end        
+          item
+            Caption = 'Min'
+            Width = 80
+          end        
+          item
+            Caption = 'Typ'
+            Width = 80
+          end        
+          item
+            Caption = 'Max'
+            Width = 80
+          end        
+          item
+            Caption = 'Unit'
+            Width = 60
+          end        
+          item
+            Caption = 'Condition'
+            Width = 200
+          end>
+        PopupMenu = pmRatings
+        ReadOnly = True
+        RowSelect = True
+        TabOrder = 1
+        ViewStyle = vsReport
+        OnDblClick = RatDblClick
+        OnSelectItem = RatSelectItem
+      end
+    end
+    object tsValues: TTabSheet
+      Caption = 'Values'
+      ClientHeight = 356
+      ClientWidth = 792
+      object pnlValTools: TPanel
+        Left = 0
+        Height = 36
+        Top = 0
+        Width = 792
+        Align = alTop
+        BevelOuter = bvNone
+        ClientHeight = 36
+        ClientWidth = 792
+        TabOrder = 0
+        object lblValPart: TLabel
+          Left = 8
+          Height = 15
+          Top = 10
+          Width = 30
+          Caption = '&Part:'
+          FocusControl = cbValPart
+        end
+        object cbValPart: TComboBox
+          Left = 44
+          Height = 23
+          Hint = 'The part whose field values are shown (follows the part chosen on the Parts page)'
+          Top = 6
+          Width = 250
+          ItemHeight = 15
+          OnChange = ValPartChange
+          Style = csDropDownList
+          TabOrder = 0
+        end
+        object btnValEdit: TButton
+          Left = 304
+          Height = 26
+          Hint = 'Enter or change the value of the chosen field'
+          Top = 5
+          Width = 130
+          Caption = 'Set &Value...'
+          TabOrder = 1
+          OnClick = ValEditClick
+        end
+        object btnValClear: TButton
+          Left = 442
+          Height = 26
+          Hint = 'Remove the stored value of the chosen field'
+          Top = 5
+          Width = 130
+          Caption = 'C&lear Value'
+          TabOrder = 2
+          OnClick = ValClearClick
+        end
+      end
+      object lvValues: TListView
+        Left = 0
+        Height = 320
+        Hint = 'The fields the part can hold: those of its class, then those of each child object''s kind (double click to set a value)'
+        Top = 36
+        Width = 792
+        Align = alClient
+        Columns = <        
+          item
+            Caption = 'Applies to'
+            Width = 140
+          end        
+          item
+            Caption = 'Field'
+            Width = 150
+          end        
+          item
+            Caption = 'Type'
+            Width = 55
+          end        
+          item
+            Caption = 'Unit'
+            Width = 50
+          end        
+          item
+            Caption = 'Value'
+            Width = 170
+          end        
+          item
+            Caption = 'Required'
+            Width = 110
+          end        
+          item
+            Caption = 'Declared by'
+            Width = 110
+          end>
+        PopupMenu = pmValues
+        ReadOnly = True
+        RowSelect = True
+        TabOrder = 1
+        ViewStyle = vsReport
+        OnDblClick = ValEditClick
+        OnSelectItem = ValSelectItem
+      end
+    end
+    object tsSymbols: TTabSheet
+      Caption = 'Symbols'
+      ClientHeight = 356
+      ClientWidth = 792
+      object pnlSymTools: TPanel
+        Left = 0
+        Height = 36
+        Top = 0
+        Width = 792
+        Align = alTop
+        BevelOuter = bvNone
+        ClientHeight = 36
+        ClientWidth = 792
+        TabOrder = 0
+        object lblSymPart: TLabel
+          Left = 8
+          Height = 15
+          Top = 10
+          Width = 30
+          Caption = '&Part:'
+          FocusControl = cbSymPart
+        end
+        object cbSymPart: TComboBox
+          Left = 44
+          Height = 23
+          Hint = 'The part whose symbols are shown'
+          Top = 6
+          Width = 200
+          ItemHeight = 15
+          OnChange = SymPartChange
+          Style = csDropDownList
+          TabOrder = 0
+        end
+        object btnSymNew: TButton
+          Left = 250
+          Height = 26
+          Hint = 'Draw a new symbol for the part in the symbol editor'
+          Top = 5
+          Width = 70
+          Caption = '&New...'
+          TabOrder = 1
+          OnClick = SymNewClick
+        end
+        object btnSymEdit: TButton
+          Left = 324
+          Height = 26
+          Hint = 'Edit the chosen symbol in the symbol editor; Store puts it back into the parts file'
+          Top = 5
+          Width = 70
+          Caption = '&Edit...'
+          TabOrder = 2
+          OnClick = SymEditClick
+        end
+        object btnSymImport: TButton
+          Left = 398
+          Height = 26
+          Hint = 'Take the symbol chosen in the library panel as a new symbol of the part'
+          Top = 5
+          Width = 70
+          Caption = '&Import'
+          TabOrder = 3
+          OnClick = SymImportClick
+        end
+        object btnSymProps: TButton
+          Left = 472
+          Height = 26
+          Hint = 'Standard, purpose and name of the chosen symbol'
+          Top = 5
+          Width = 90
+          Caption = 'Pr&operties...'
+          TabOrder = 4
+          OnClick = SymPropsClick
+        end
+        object btnSymDefault: TButton
+          Left = 566
+          Height = 26
+          Hint = 'Place this symbol by default'
+          Top = 5
+          Width = 100
+          Caption = 'Make &Default'
+          TabOrder = 5
+          OnClick = SymDefaultClick
+        end
+        object btnSymDelete: TButton
+          Left = 670
+          Height = 26
+          Hint = 'Delete the chosen symbol'
+          Top = 5
+          Width = 70
+          Caption = 'De&lete'
+          TabOrder = 6
+          OnClick = SymDeleteClick
+        end
+      end
+      object lvSymbols: TListView
+        Left = 0
+        Height = 320
+        Hint = 'The symbols of the part (double click to edit)'
+        Top = 36
+        Width = 792
+        Align = alClient
+        Columns = <
+          item
+            Caption = 'Name'
+            Width = 220
+          end
+          item
+            Caption = 'Standard'
+            Width = 90
+          end
+          item
+            Caption = 'Purpose'
+            Width = 90
+          end
+          item
+            Caption = 'Default'
+            Width = 70
+          end
+          item
+            Caption = 'Size (bytes)'
+            Width = 100
+          end>
+        HideSelection = False
+        ReadOnly = True
+        RowSelect = True
+        TabOrder = 1
+        ViewStyle = vsReport
+        OnDblClick = SymEditClick
+        OnSelectItem = SymSelectItem
+      end
+    end
+    object tsProducts: TTabSheet
+      Caption = 'Products'
+      ClientHeight = 356
+      ClientWidth = 792
+      object pnlProdTools: TPanel
+        Left = 0
+        Height = 70
+        Top = 0
+        Width = 792
+        Align = alTop
+        BevelOuter = bvNone
+        ClientHeight = 70
+        ClientWidth = 792
+        TabOrder = 0
+        object lblProdPart: TLabel
+          Left = 8
+          Height = 15
+          Top = 10
+          Width = 70
+          Caption = '&Fit for part:'
+          FocusControl = cbProdPart
+        end
+        object cbProdPart: TComboBox
+          Left = 84
+          Height = 23
+          Hint = 'The part the products are judged against (the Fit and Suggested columns); follows the part chosen on the Parts page'
+          Top = 6
+          Width = 290
+          ItemHeight = 15
+          OnChange = ProdPartChange
+          Style = csDropDownList
+          TabOrder = 0
+        end
+        object btnProdSuggest: TButton
+          Left = 390
+          Height = 26
+          Hint = 'Add the chosen product to the short list of products suggested for the part (or remove it)'
+          Top = 5
+          Width = 150
+          Caption = '&Suggest for Part'
+          TabOrder = 1
+          OnClick = ProdSuggestClick
+        end
+        object btnProdPreferred: TButton
+          Left = 548
+          Height = 26
+          Hint = 'Make the chosen product the one the part prefers'
+          Top = 5
+          Width = 150
+          Caption = '&Preferred for Part'
+          TabOrder = 2
+          OnClick = ProdPreferredClick
+        end
+        object btnProdAdd: TButton
+          Left = 8
+          Height = 26
+          Hint = 'Add a catalog product'
+          Top = 38
+          Width = 120
+          Caption = 'Add Pro&duct...'
+          TabOrder = 3
+          OnClick = ProdAddClick
+        end
+        object btnProdEdit: TButton
+          Left = 136
+          Height = 26
+          Hint = 'Change the chosen product'
+          Top = 38
+          Width = 150
+          Caption = 'Pro&duct Properties...'
+          TabOrder = 4
+          OnClick = ProdEditClick
+        end
+        object btnProdDelete: TButton
+          Left = 294
+          Height = 26
+          Hint = 'Delete the chosen product with its ratings'
+          Top = 38
+          Width = 120
+          Caption = 'Delete Prod&uct'
+          TabOrder = 5
+          OnClick = ProdDeleteClick
+        end
+      end
+      object pnlProdRat: TPanel
+        Left = 0
+        Height = 150
+        Top = 206
+        Width = 792
+        Align = alBottom
+        BevelOuter = bvNone
+        ClientHeight = 150
+        ClientWidth = 792
+        TabOrder = 1
+        object pnlProdRatTools: TPanel
+          Left = 0
+          Height = 36
+          Top = 0
+          Width = 792
+          Align = alTop
+          BevelOuter = bvNone
+          ClientHeight = 36
+          ClientWidth = 792
+          TabOrder = 0
+        object btnProdRatAdd: TButton
+          Left = 8
+          Height = 26
+          Hint = 'Add a rating of the chosen product'
+          Top = 5
+          Width = 150
+          Caption = 'Add &Rating...'
+          TabOrder = 0
+          OnClick = ProdRatAddClick
+        end
+        object btnProdRatEdit: TButton
+          Left = 166
+          Height = 26
+          Hint = 'Change the chosen rating'
+          Top = 5
+          Width = 170
+          Caption = 'R&ating Properties...'
+          TabOrder = 1
+          OnClick = ProdRatEditClick
+        end
+        object btnProdRatDelete: TButton
+          Left = 344
+          Height = 26
+          Hint = 'Delete the chosen rating'
+          Top = 5
+          Width = 130
+          Caption = 'Delete Ra&ting'
+          TabOrder = 2
+          OnClick = ProdRatDeleteClick
+        end
+        end
+        object lvProdRatings: TListView
+          Left = 0
+          Height = 114
+          Hint = 'What the chosen product is rated for; a requirement of a part is compared with it by quantity, condition and object'
+          Top = 36
+          Width = 792
+          Align = alClient
+        Columns = <        
+          item
+            Caption = 'Applies to'
+            Width = 160
+          end        
+          item
+            Caption = 'Quantity'
+            Width = 200
+          end        
+          item
+            Caption = 'Min'
+            Width = 80
+          end        
+          item
+            Caption = 'Typ'
+            Width = 80
+          end        
+          item
+            Caption = 'Max'
+            Width = 80
+          end        
+          item
+            Caption = 'Unit'
+            Width = 60
+          end        
+          item
+            Caption = 'Condition'
+            Width = 200
+          end>
+          PopupMenu = pmProdRatings
+          ReadOnly = True
+          RowSelect = True
+          TabOrder = 1
+          ViewStyle = vsReport
+          OnDblClick = ProdRatEditClick
+          OnSelectItem = ProdRatSelectItem
+        end
+      end
+      object splProducts: TSplitter
+        Cursor = crVSplit
+        Left = 0
+        Height = 5
+        Top = 201
+        Width = 792
+        Align = alBottom
+        ResizeAnchor = akBottom
+      end
+      object lvProducts: TListView
+        Left = 0
+        Height = 131
+        Hint = 'The products of the library (double click to change one)'
+        Top = 70
+        Width = 792
+        Align = alClient
+        Columns = <        
+          item
+            Caption = 'Manufacturer'
+            Width = 120
+          end        
+          item
+            Caption = 'Model number'
+            Width = 130
+          end        
+          item
+            Caption = 'Series'
+            Width = 90
+          end        
+          item
+            Caption = 'Class'
+            Width = 150
+          end        
+          item
+            Caption = 'Status'
+            Width = 60
+          end        
+          item
+            Caption = 'Rev'
+            Width = 40
+          end        
+          item
+            Caption = 'Fit'
+            Width = 170
+          end        
+          item
+            Caption = 'Suggested'
+            Width = 80
+          end        
+          item
+            Caption = 'Description'
+            Width = 250
+          end>
+        PopupMenu = pmProducts
+        ReadOnly = True
+        RowSelect = True
+        TabOrder = 2
+        ViewStyle = vsReport
+        OnDblClick = ProdEditClick
+        OnSelectItem = ProdSelectItem
+      end
+    end
+  end
+  object pmParts: TPopupMenu
+    Left = 560
+    Top = 220
+    object miPartAdd: TMenuItem
+      Caption = 'Add Part...'
+      Hint = 'Add a generic part to the library'
+      OnClick = AddClick
+    end
+    object miPartEdit: TMenuItem
+      Caption = 'Properties...'
+      Hint = 'Change the chosen part'
+      OnClick = EditClick
+    end
+    object miPartDuplicate: TMenuItem
+      Caption = 'Duplicate'
+      Hint = 'Make a copy of the chosen part'
+      OnClick = DuplicateClick
+    end
+    object miPartDelete: TMenuItem
+      Caption = 'Delete'
+      Hint = 'Delete the chosen part'
+      OnClick = DeleteClick
+    end
+  end
+  object pmClasses: TPopupMenu
+    Left = 560
+    Top = 300
+    object miClassAdd: TMenuItem
+      Caption = 'Add Class...'
+      Hint = 'Add a class under the chosen one'
+      OnClick = ClassAddClick
+    end
+    object miClassProps: TMenuItem
+      Caption = 'Class Properties...'
+      Hint = 'Change the chosen class'
+      OnClick = ClassPropsClick
+    end
+    object miClassDelete: TMenuItem
+      Caption = 'Delete Class'
+      Hint = 'Delete the chosen class'
+      OnClick = ClassDeleteClick
+    end
+  end
+  object pmFields: TPopupMenu
+    Left = 600
+    Top = 300
+    object miFieldAdd: TMenuItem
+      Caption = 'Add Field...'
+      Hint = 'Declare a field on the chosen class'
+      OnClick = FieldAddClick
+    end
+    object miFieldEdit: TMenuItem
+      Caption = 'Field Properties...'
+      Hint = 'Change the chosen field'
+      OnClick = FieldEditClick
+    end
+    object miFieldDelete: TMenuItem
+      Caption = 'Delete Field'
+      Hint = 'Delete the chosen field'
+      OnClick = FieldDeleteClick
+    end
+  end
+  object pmObjects: TPopupMenu
+    Left = 680
+    Top = 300
+    object miObjAdd: TMenuItem
+      Caption = 'Add Object...'
+      Hint = 'Add a child object'
+      OnClick = ObjAddClick
+    end
+    object miObjEdit: TMenuItem
+      Caption = 'Object Properties...'
+      Hint = 'Change the chosen object'
+      OnClick = ObjEditClick
+    end
+    object miObjDelete: TMenuItem
+      Caption = 'Delete Object'
+      Hint = 'Delete the chosen object'
+      OnClick = ObjDeleteClick
+    end
+  end
+  object pmRatings: TPopupMenu
+    Left = 640
+    Top = 300
+    object miRatAdd: TMenuItem
+      Caption = 'Add Requirement...'
+      Hint = 'Add a requirement'
+      OnClick = RatAddClick
+    end
+    object miRatEdit: TMenuItem
+      Caption = 'Requirement Properties...'
+      Hint = 'Change the chosen requirement'
+      OnClick = RatEditClick
+    end
+    object miRatDelete: TMenuItem
+      Caption = 'Delete Requirement'
+      Hint = 'Delete the chosen requirement'
+      OnClick = RatDeleteClick
+    end
+  end
+  object pmProducts: TPopupMenu
+    Left = 720
+    Top = 340
+    object miProdAdd: TMenuItem
+      Caption = 'Add Product...'
+      Hint = 'Add a product'
+      OnClick = ProdAddClick
+    end
+    object miProdEdit: TMenuItem
+      Caption = 'Product Properties...'
+      Hint = 'Change the chosen product'
+      OnClick = ProdEditClick
+    end
+    object miProdDelete: TMenuItem
+      Caption = 'Delete Product'
+      Hint = 'Delete the chosen product'
+      OnClick = ProdDeleteClick
+    end
+  end
+  object pmProdRatings: TPopupMenu
+    Left = 760
+    Top = 340
+    object miProdRatAdd: TMenuItem
+      Caption = 'Add Product Rating...'
+      Hint = 'Add a rating'
+      OnClick = ProdRatAddClick
+    end
+    object miProdRatEdit: TMenuItem
+      Caption = 'Product Rating Properties...'
+      Hint = 'Change the chosen rating'
+      OnClick = ProdRatEditClick
+    end
+    object miProdRatDelete: TMenuItem
+      Caption = 'Delete Product Rating'
+      Hint = 'Delete the chosen rating'
+      OnClick = ProdRatDeleteClick
+    end
+  end
+  object pmValues: TPopupMenu
+    Left = 700
+    Top = 340
+    object miValEdit: TMenuItem
+      Caption = 'Set Field Value...'
+      Hint = 'Enter or change the value'
+      OnClick = ValEditClick
+    end
+    object miValClear: TMenuItem
+      Caption = 'Clear Field Value'
+      Hint = 'Remove the stored value'
+      OnClick = ValClearClick
+    end
+  end
+end

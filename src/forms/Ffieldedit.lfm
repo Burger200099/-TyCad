@@ -1,0 +1,127 @@
+inherited frmFieldEdit: TfrmFieldEdit
+  Left = 700
+  Height = 330
+  Top = 300
+  Width = 560
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'Add Field'
+  ClientHeight = 330
+  ClientWidth = 560
+  OnCloseQuery = FormCloseQuery
+  Position = poOwnerFormCenter
+  inherited pnlButtons: TPanel
+    Top = 272
+    Width = 560
+    ClientWidth = 556
+    inherited btnOK: TButton
+      Left = 300
+    end
+    inherited btnCancel: TButton
+      Left = 430
+    end
+    inherited btnApply: TButton
+      Visible = False
+    end
+  end
+  object lblName: TLabel[1]
+    Left = 12
+    Height = 15
+    Top = 14
+    Width = 100
+    Caption = '&Name:'
+    FocusControl = edName
+  end
+  object edName: TEdit[2]
+    Left = 120
+    Height = 23
+    Hint = 'The name of the field (unique along the class and its parents and subclasses)'
+    Top = 10
+    Width = 420
+    TabOrder = 0
+  end
+  object lblType: TLabel[3]
+    Left = 12
+    Height = 15
+    Top = 50
+    Width = 100
+    Caption = '&Type:'
+    FocusControl = cbType
+  end
+  object cbType: TComboBox[4]
+    Left = 120
+    Height = 23
+    Hint = 'text, int, real, bool, enum (one of a list of values) or ref'
+    Top = 46
+    Width = 160
+    ItemHeight = 15
+    Items.Strings = (
+      'text'
+      'int'
+      'real'
+      'bool'
+      'enum'
+      'ref'
+    )
+    Style = csDropDownList
+    TabOrder = 1
+    OnChange = TypeChange
+  end
+  object lblUnit: TLabel[5]
+    Left = 300
+    Height = 15
+    Top = 50
+    Width = 40
+    Caption = '&Unit:'
+    FocusControl = edUnit
+  end
+  object edUnit: TEdit[6]
+    Left = 350
+    Height = 23
+    Hint = 'The unit of a number (mm, W, A ...)'
+    Top = 46
+    Width = 190
+    TabOrder = 2
+  end
+  object lblEnum: TLabel[7]
+    Left = 12
+    Height = 15
+    Top = 86
+    Width = 100
+    Caption = '&Values:'
+    FocusControl = edEnum
+  end
+  object edEnum: TEdit[8]
+    Left = 120
+    Height = 23
+    Hint = 'For an enum: the allowed values, separated by commas'
+    Top = 82
+    Width = 420
+    TabOrder = 3
+  end
+  object chRequired: TCheckBox[9]
+    Left = 120
+    Height = 19
+    Hint = 'Parts of the class must have a value for this field'
+    Top = 118
+    Width = 200
+    Caption = '&Required'
+    TabOrder = 4
+  end
+  object lblDescription: TLabel[10]
+    Left = 12
+    Height = 15
+    Top = 154
+    Width = 100
+    Caption = '&Description:'
+    FocusControl = edDescription
+  end
+  object edDescription: TEdit[11]
+    Left = 120
+    Height = 23
+    Hint = 'What the field is'
+    Top = 150
+    Width = 420
+    TabOrder = 5
+  end
+end

@@ -1,0 +1,469 @@
+{
+"DPoint": {
+"text": "Makes a point from two coordinates.",
+"returns": "the point",
+"params": {
+"AX": "x coordinate",
+"AY": "y coordinate"
+}
+},
+"DPointInvalid": {
+"text": "The \"no point\" value (both coordinates NaN) that stands for CDPoint() having no value, e.g. for hidden power pins.",
+"returns": "an invalid point"
+},
+"DPointHasValue": {
+"text": "Tests for the \"no point\" value.",
+"returns": "False when either coordinate is NaN",
+"params": {
+"P": "the point"
+}
+},
+"MakeXMLUnits": {
+"text": "Converts internal units (0.2 mm) to the millimetres written in XML files.",
+"returns": "millimetres",
+"params": {
+"A": "value in internal units"
+}
+},
+"UnmakeXMLUnits": {
+"text": "Converts millimetres read from an XML file to internal units.",
+"returns": "internal units",
+"params": {
+"A": "value in millimetres"
+}
+},
+"RGB": {
+"text": "Builds a Windows color value (0x00BBGGRR) from red, green and blue.",
+"returns": "the color",
+"params": {
+"R": "red 0-255",
+"G": "green 0-255",
+"B": "blue 0-255"
+}
+},
+"EXMLException.CreateXML": {
+"text": "Builds the error with the same wording as TinyCAD's CXMLException: the message, then \"Error first detected on line #n\".",
+"params": {
+"AName": "the message",
+"ALine": "the line number where it was detected"
+}
+},
+"UUEnc": {
+"text": "UU-encodes one 6-bit value as a printable character (the ENC macro of uuencode).",
+"returns": "the character",
+"params": {
+"C": "value 0-63"
+}
+},
+"UUEncodeLine": {
+"text": "UU-encodes up to 45 bytes as one text line: a length character then groups of four characters for each three bytes.",
+"returns": "the encoded line",
+"params": {
+"P": "pointer to the bytes",
+"Count": "number of bytes (limited to 45)"
+}
+},
+"UUDec": {
+"text": "Decodes one UU character to its 6-bit value (the DEC macro).",
+"returns": "value 0-63",
+"params": {
+"C": "the character code"
+}
+},
+"TUUDecoder.Feed": {
+"text": "Feeds one character of UU-encoded text to the decoder, which collects the decoded bytes; handles the length character and the groups of four.",
+"params": {
+"Ch": "the next character"
+}
+},
+"TUUDecoder.Data": {
+"text": "The bytes decoded so far.",
+"returns": "the decoded bytes"
+},
+"IsWS": {
+"text": "Whether a character is C white space (space, tab, newline, vertical tab, form feed, return).",
+"returns": "True for white space",
+"params": {
+"C": "the character"
+}
+},
+"ScanDouble": {
+"text": "Scans a C-style decimal floating point number from a string, as strtod would for ordinary input, and moves the position past it.",
+"returns": "True if a number was found",
+"params": {
+"S": "the text",
+"Pos": "1-based position to start at; moved past the number on success",
+"V": "set to the number"
+}
+},
+"CAtoI": {
+"text": "Converts text to an integer the way C's atoi does: skips white space, accepts a sign, stops at the first non-digit.",
+"returns": "the value (0 if there are no digits)",
+"params": {
+"S": "the text"
+}
+},
+"CAtoF": {
+"text": "Converts text to a number the way C's atof does (0 when there is no number).",
+"returns": "the value",
+"params": {
+"S": "the text"
+}
+},
+"CHexToInt": {
+"text": "Converts hexadecimal text (as used for colors in XML) to a number like C's strtoul with base 16.",
+"returns": "the value",
+"params": {
+"S": "hex digits"
+}
+},
+"CScanPoint": {
+"text": "Reads \"x,y\" in millimetres as sscanf would and stores it in internal units; a field that does not parse leaves that coordinate untouched.",
+"returns": "True if both numbers were read",
+"params": {
+"S": "the text",
+"P": "the point to fill in (in/out)"
+}
+},
+"FormatFixed5": {
+"text": "Formats a number exactly like C's printf(\"%.5f\") whatever the locale: the double is split into mantissa and exponent and rounded exactly (ties to even), unlike Free Pascal's Str which can round the wrong way near a boundary.",
+"returns": "the text with five decimals",
+"params": {
+"V": "the number"
+}
+},
+"FormatPoint": {
+"text": "Formats a point as \"x,y\" in millimetres with five decimals, as it is written in XML.",
+"returns": "the text",
+"params": {
+"P": "the point in internal units"
+}
+},
+"TXMLReader.Create": {
+"text": "Parses an XML stream into a document and positions the reader on the first top-level element. Parse errors become EXMLException.",
+"params": {
+"AInput": "the stream to read"
+}
+},
+"TXMLReader.Destroy": {
+"text": "Frees the parsed document."
+},
+"TXMLReader.Top": {
+"text": "Index of the innermost nesting frame.",
+"returns": "the frame index"
+},
+"TXMLReader.CurrentElement": {
+"text": "The element the reader is on; raises an error if it is not on an element.",
+"returns": "the element"
+},
+"TXMLReader.NextTag": {
+"text": "Moves to the next element at the current level (the first one on the first call after IntoTag) and gives its name, like CXMLReader::nextTag.",
+"returns": "False when there are no more elements at this level",
+"params": {
+"Name": "set to the tag name"
+}
+},
+"TXMLReader.IntoTag": {
+"text": "Steps inside the current element so NextTag walks its children."
+},
+"TXMLReader.OutOfTag": {
+"text": "Steps back out to the parent level; an error if already at the top."
+},
+"TXMLReader.RawAttr": {
+"text": "Looks up an attribute of the current element as text.",
+"returns": "True if the attribute exists",
+"params": {
+"Name": "attribute name",
+"Value": "set to its text"
+}
+},
+"TXMLReader.RawChildData": {
+"text": "The text content of the current element.",
+"returns": "the text"
+},
+"TXMLReader.GetAttribute@string": {
+"text": "Reads a text attribute; V is unchanged when the attribute is missing.",
+"returns": "True if the attribute exists",
+"params": {
+"Name": "attribute name",
+"V": "receives the text"
+}
+},
+"TXMLReader.GetAttribute@integer": {
+"text": "Reads an integer attribute (C atoi rules); V is unchanged when it is missing.",
+"returns": "True if the attribute exists",
+"params": {
+"Name": "attribute name",
+"V": "receives the number"
+}
+},
+"TXMLReader.GetAttribute@double": {
+"text": "Reads a number attribute (C atof rules); V is unchanged when it is missing.",
+"returns": "True if the attribute exists",
+"params": {
+"Name": "attribute name",
+"V": "receives the number"
+}
+},
+"TXMLReader.GetAttribute@boolean": {
+"text": "Reads a Boolean attribute stored as 0 or 1; V is unchanged when it is missing.",
+"returns": "True if the attribute exists",
+"params": {
+"Name": "attribute name",
+"V": "receives the value"
+}
+},
+"TXMLReader.GetAttribute@tdpoint": {
+"text": "Reads a point attribute written as \"x,y\" in millimetres, converting to internal units; V is unchanged when it is missing.",
+"returns": "True if the attribute exists",
+"params": {
+"Name": "attribute name",
+"V": "receives the point"
+}
+},
+"TXMLReader.GetAttributeUInt": {
+"text": "Reads an unsigned integer attribute.",
+"returns": "True if the attribute exists",
+"params": {
+"Name": "attribute name",
+"V": "receives the value"
+}
+},
+"TXMLReader.GetAttributeColor": {
+"text": "Reads a color attribute written as hexadecimal.",
+"returns": "True if the attribute exists",
+"params": {
+"Name": "attribute name",
+"V": "receives the color"
+}
+},
+"TXMLReader.GetChildData@string": {
+"text": "Reads the current element's text content into V.",
+"params": {
+"V": "receives the text"
+}
+},
+"TXMLReader.GetChildData@integer": {
+"text": "Reads the current element's text content as an integer.",
+"params": {
+"V": "receives the number"
+}
+},
+"TXMLReader.GetChildData@double": {
+"text": "Reads the current element's text content as a number.",
+"params": {
+"V": "receives the number"
+}
+},
+"TXMLReader.GetChildData@boolean": {
+"text": "Reads the current element's text content as a Boolean (0 or 1).",
+"params": {
+"V": "receives the value"
+}
+},
+"TXMLReader.GetChildData@tdpoint": {
+"text": "Reads the current element's text content as an \"x,y\" point in millimetres, converting to internal units.",
+"params": {
+"V": "receives the point"
+}
+},
+"TXMLReader.GetChildDataColor": {
+"text": "Reads the current element's text content as a hexadecimal color.",
+"params": {
+"V": "receives the color"
+}
+},
+"TXMLReader.GetChildDataUUDecode": {
+"text": "Reads UU-encoded binary data from the element: a size line followed by encoded lines, as used for the symbol blobs inside .dsn files.",
+"params": {
+"Data": "receives the decoded bytes"
+}
+},
+"TXMLWriter.Create": {
+"text": "Creates a writer that sends XML to a stream; tags are tracked so closing and indentation come out as in TinyCAD.",
+"params": {
+"AOutput": "the stream to write to; not owned"
+}
+},
+"TXMLWriter.Destroy": {
+"text": "Frees the tag stack. The output stream is not closed."
+},
+"TXMLWriter.SendString": {
+"text": "Writes text to the output and counts the lines written (used in error messages).",
+"params": {
+"S": "the text"
+}
+},
+"TXMLWriter.Escape": {
+"text": "Escapes text for XML (& < > and quotes) so it can go in an attribute or element.",
+"returns": "the escaped text",
+"params": {
+"S": "the text"
+}
+},
+"TXMLWriter.AddComment": {
+"text": "Writes an XML comment on its own line.",
+"params": {
+"Comment": "the comment text"
+}
+},
+"TXMLWriter.CloseOpenTag": {
+"text": "Finishes the start tag that is still open by writing \">\"."
+},
+"TXMLWriter.AddTag#1": {
+"text": "Starts an element: closes the previous start tag if needed, indents, and writes \"<name\"; attributes may follow until content is added or the tag is closed.",
+"params": {
+"TagName": "the element name"
+}
+},
+"TXMLWriter.CloseTag": {
+"text": "Ends the innermost open element, as \"/>\" when it has no content or with a closing tag otherwise."
+},
+"TXMLWriter.InternalAddTag": {
+"text": "Writes a complete element with text content in one step (open, content, close).",
+"params": {
+"TagName": "element name",
+"Data": "already formatted text content"
+}
+},
+"TXMLWriter.InternalAddAttribute": {
+"text": "Adds an attribute to the open start tag; an error if the tag already has content or none is open.",
+"params": {
+"Name": "attribute name",
+"Value": "already formatted value (escaped here)"
+}
+},
+"TXMLWriter.InternalAddChildData": {
+"text": "Adds text content to the open element (closing its start tag first); an error if no element is open.",
+"params": {
+"Data": "already formatted text"
+}
+},
+"TXMLWriter.AddTag#2": {
+"text": "Writes a complete element whose text content is a string.",
+"params": {
+"TagName": "element name",
+"Value": "the text"
+}
+},
+"TXMLWriter.AddTag@integer": {
+"text": "Writes a complete element whose content is an integer.",
+"params": {
+"TagName": "element name",
+"Value": "the number"
+}
+},
+"TXMLWriter.AddTag@double": {
+"text": "Writes a complete element whose content is a number formatted like C \"%.5f\".",
+"params": {
+"TagName": "element name",
+"Value": "the number"
+}
+},
+"TXMLWriter.AddTag@tdpoint": {
+"text": "Writes a complete element whose content is a point as \"x,y\" in millimetres.",
+"params": {
+"TagName": "element name",
+"Value": "the point in internal units"
+}
+},
+"TXMLWriter.AddTagUInt": {
+"text": "Writes a complete element whose content is an unsigned integer.",
+"params": {
+"TagName": "element name",
+"Value": "the number"
+}
+},
+"TXMLWriter.AddTagColor": {
+"text": "Writes a complete element whose content is a color as hexadecimal.",
+"params": {
+"TagName": "element name",
+"Value": "the color"
+}
+},
+"TXMLWriter.AddAttribute#2": {
+"text": "Adds a text attribute to the open element.",
+"params": {
+"Name": "attribute name",
+"Value": "the text"
+}
+},
+"TXMLWriter.AddAttribute@integer": {
+"text": "Adds an integer attribute to the open element.",
+"params": {
+"Name": "attribute name",
+"Value": "the number"
+}
+},
+"TXMLWriter.AddAttribute@double": {
+"text": "Adds a number attribute (C \"%.5f\" formatting) to the open element.",
+"params": {
+"Name": "attribute name",
+"Value": "the number"
+}
+},
+"TXMLWriter.AddAttribute@tdpoint": {
+"text": "Adds a point attribute written \"x,y\" in millimetres to the open element.",
+"params": {
+"Name": "attribute name",
+"Value": "the point in internal units"
+}
+},
+"TXMLWriter.AddAttributeUInt": {
+"text": "Adds an unsigned integer attribute to the open element.",
+"params": {
+"Name": "attribute name",
+"Value": "the number"
+}
+},
+"TXMLWriter.AddAttributeColor": {
+"text": "Adds a color attribute (hexadecimal) to the open element.",
+"params": {
+"Name": "attribute name",
+"Value": "the color"
+}
+},
+"TXMLWriter.AddChildData@string": {
+"text": "Adds text content to the open element (escaped).",
+"params": {
+"Value": "the text"
+}
+},
+"TXMLWriter.AddChildData@integer": {
+"text": "Adds an integer as the open element's content.",
+"params": {
+"Value": "the number"
+}
+},
+"TXMLWriter.AddChildData@double": {
+"text": "Adds a number (C \"%.5f\") as the open element's content.",
+"params": {
+"Value": "the number"
+}
+},
+"TXMLWriter.AddChildData@tdpoint": {
+"text": "Adds a point \"x,y\" in millimetres as the open element's content.",
+"params": {
+"Value": "the point in internal units"
+}
+},
+"TXMLWriter.AddChildDataUInt": {
+"text": "Adds an unsigned integer as the open element's content.",
+"params": {
+"Value": "the number"
+}
+},
+"TXMLWriter.AddChildDataColor": {
+"text": "Adds a color (hexadecimal) as the open element's content.",
+"params": {
+"Value": "the color"
+}
+},
+"TXMLWriter.AddChildDataUUEncode": {
+"text": "Adds binary data as UU-encoded text: the size, then lines of up to 45 bytes each, as TinyCAD writes symbol blobs.",
+"params": {
+"Data": "pointer to the bytes",
+"Size": "number of bytes"
+}
+}
+}

@@ -1,0 +1,80 @@
+inherited fmPolygon: TfmPolygon
+  Height = 111
+  Width = 295
+  ClientHeight = 111
+  ClientWidth = 295
+  OnClick = FrameClick
+  DesignLeft = 499
+  DesignTop = 578
+  inherited lbCaption: TLabel
+    Top = 96
+    Width = 295
+    Caption = 'Polygon'
+  end
+  object cbWireColor: TColorButton[1]
+    Left = 5
+    Height = 32
+    Top = 5
+    Width = 75
+    BorderWidth = 2
+    ButtonColorSize = 16
+    ButtonColor = clBlack
+    ColorDialog = frmSharedControls.DlgColor
+  end
+  object cbWireType: TComboBox[2]
+    Left = 88
+    Height = 34
+    Top = 5
+    Width = 138
+    AutoSelect = False
+    AutoSize = False
+    ItemHeight = 28
+    Items.Strings = (
+      '1'
+      '2'
+      '3'
+      '4'
+      '5'
+    )
+    Style = csOwnerDrawFixed
+    TabOrder = 0
+    OnDrawItem = DrawWireTypeItems
+  end
+  object lbWidth: TLabel[3]
+    Left = 5
+    Height = 15
+    Top = 53
+    Width = 32
+    Caption = 'Width'
+  end
+  object seWidth: TSpinEdit[4]
+    Left = 52
+    Height = 23
+    Top = 49
+    Width = 50
+    Alignment = taCenter
+    MaxValue = 9
+    MinValue = 1
+    TabOrder = 1
+    Value = 1
+  end
+  object cbClosed: TCheckBox[5]
+    Left = 112
+    Height = 19
+    Hint = 'Close the polygon: the last point joins the first'
+    Top = 51
+    Width = 54
+    Caption = 'Closed'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 2
+  end
+  object bbFill: TSpeedButton[6]
+    Left = 236
+    Height = 72
+    Top = 5
+    Width = 52
+    Caption = 'Fill'
+    Layout = blGlyphTop
+  end
+end

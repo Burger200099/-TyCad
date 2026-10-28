@@ -1,0 +1,247 @@
+inherited fmRungs: TfmRungs
+  Height = 117
+  Width = 420
+  ClientHeight = 117
+  ClientWidth = 420
+  DesignLeft = 462
+  DesignTop = 157
+  inherited lbCaption: TLabel
+    Top = 102
+    Width = 420
+  end
+  object plFont: TPanel[1]
+    Left = 0
+    Height = 102
+    Top = 0
+    Width = 206
+    Align = alLeft
+    BevelOuter = bvNone
+    ClientHeight = 102
+    ClientWidth = 206
+    TabOrder = 0
+    object lbFont: TLabel
+      Left = 0
+      Height = 15
+      Top = 87
+      Width = 206
+      Align = alBottom
+      Alignment = taCenter
+      Caption = 'Font'
+    end
+    object cbFont: TFontNameCombo
+      Left = 12
+      Height = 32
+      Hint = 'Font'
+      Top = 8
+      Width = 188
+      ItemHeight = 26
+      ParentShowHint = False
+      ShowHint = True
+      Style = csOwnerDrawFixed
+      TabOrder = 0
+    end
+    object cbFontSize: TComboBox
+      Left = 12
+      Height = 23
+      Hint = 'Font size (points)'
+      Top = 49
+      Width = 52
+      ItemHeight = 15
+      ItemIndex = 4
+      Items.Strings = (
+        '8'
+        '9'
+        '10'
+        '11'
+        '12'
+        '14'
+        '16'
+        '18'
+        '20'
+        '22'
+        '24'
+        '26'
+        '28'
+        '32'
+        '38'
+        '48'
+        '72'
+      )
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+      Text = '12'
+    end
+    object sbBold: TSpeedButton
+      Left = 72
+      Height = 32
+      Hint = 'Bold'
+      Top = 45
+      Width = 32
+      GroupIndex = 1
+      Images = frmSharedControls.ilFontGlyphs
+      ImageIndex = 2
+      ImageWidth = 24
+      ShowHint = True
+      ParentShowHint = False
+    end
+    object sbItalic: TSpeedButton
+      Left = 112
+      Height = 32
+      Hint = 'Italic'
+      Top = 45
+      Width = 32
+      GroupIndex = 2
+      Images = frmSharedControls.ilFontGlyphs
+      ImageIndex = 3
+      ImageWidth = 24
+      ShowHint = True
+      ParentShowHint = False
+    end
+    object cbFontColor: TColorButton
+      Left = 152
+      Height = 32
+      Hint = 'Text colour'
+      Top = 45
+      Width = 48
+      BorderWidth = 2
+      ButtonColorSize = 16
+      ButtonColor = clBlack
+      ColorDialog = frmSharedControls.DlgColor
+      ShowHint = True
+      ParentShowHint = False
+    end
+  end
+  object plSep1: TPanel[2]
+    Left = 206
+    Height = 102
+    Top = 0
+    Width = 2
+    Align = alLeft
+    TabOrder = 1
+  end
+  object plRungs: TPanel[3]
+    Left = 208
+    Height = 102
+    Top = 0
+    Width = 208
+    Align = alLeft
+    BevelOuter = bvNone
+    ClientHeight = 102
+    ClientWidth = 208
+    TabOrder = 2
+    object lbRungs: TLabel
+      Left = 0
+      Height = 15
+      Top = 87
+      Width = 208
+      Align = alBottom
+      Alignment = taCenter
+      Caption = 'Rung numbers'
+    end
+    object lbRows: TLabel
+      Left = 8
+      Height = 15
+      Top = 8
+      Width = 59
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Rows '
+    end
+    object seRows: TSpinEdit
+      Left = 72
+      Height = 23
+      Hint = 'Number of rungs (rows) on a page'
+      Top = 4
+      Width = 56
+      MaxValue = 200
+      MinValue = 1
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
+      Value = 20
+    end
+    object lbStart: TLabel
+      Left = 8
+      Height = 15
+      Top = 35
+      Width = 59
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'First '
+    end
+    object seStart: TSpinEdit
+      Left = 72
+      Height = 23
+      Hint = 'Number of the first rung'
+      Top = 31
+      Width = 56
+      MaxValue = 99999
+      MinValue = -9999
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+      Value = 1
+    end
+    object lbMargin: TLabel
+      Left = 8
+      Height = 15
+      Top = 62
+      Width = 59
+      Alignment = taRightJustify
+      Caption = 'Indent mm'
+    end
+    object fseMargin: TFloatSpinEdit
+      Left = 72
+      Height = 23
+      Hint = 'Indent from the sheet edge in mm (the border margin is added when the border is shown)'
+      Top = 58
+      Width = 56
+      DecimalPlaces = 1
+      MaxValue = 100
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+    end
+    object cbPages: TComboBox
+      Left = 136
+      Height = 23
+      Hint = 'Pages of rungs on the sheet: 1, or 2 side by side'
+      Top = 4
+      Width = 70
+      ItemHeight = 15
+      ItemIndex = 0
+      Items.Strings = (
+        '1 page'
+        '2 pages'
+      )
+      ParentShowHint = False
+      ShowHint = True
+      Style = csDropDownList
+      TabOrder = 3
+      Text = '1 page'
+    end
+    object cbContinue: TCheckBox
+      Left = 136
+      Height = 19
+      Hint = 'The second page goes on counting where the first stopped'
+      Top = 29
+      Width = 67
+      Caption = 'Continue'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 4
+    end
+    object cbShowHeight: TCheckBox
+      Left = 136
+      Height = 19
+      Hint = 'Print the row height in mm above the number column'
+      Top = 52
+      Width = 66
+      Caption = 'Row mm'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 5
+    end
+  end
+end

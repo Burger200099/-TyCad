@@ -1,0 +1,33 @@
+inherited fmBus: TfmBus
+  Height = 111
+  Width = 320
+  ClientHeight = 111
+  ClientWidth = 320
+  DesignLeft = 614
+  inherited lbCaption: TLabel
+    Top = 96
+    Width = 320
+    Caption = 'Bus'
+  end
+  inherited cbWireColor: TColorButton
+    Height = 30
+  end
+  inherited seWireSize: TSpinEdit
+    Top = 52
+  end
+  inherited lbSize: TLabel
+    Top = 56
+  end
+  inherited cbAngle: TComboBox
+    Top = 52
+  end
+  object bbPhase: TSpeedButton[6]
+    Left = 236
+    Height = 68
+    Hint = 'Draw a 3-phase bus: three parallel wires, kept together'
+    Top = 9
+    Width = 76
+    Caption = 'Phases'
+    Layout = blGlyphTop
+  end
+end

@@ -1,0 +1,54 @@
+inherited fmPower: TfmPower
+  Height = 105
+  Width = 179
+  ClientHeight = 105
+  ClientWidth = 179
+  inherited lbCaption: TLabel
+    Top = 90
+    Width = 179
+    Caption = 'Power'
+  end
+  object lbType: TLabel[1]
+    Left = 8
+    Height = 15
+    Top = 52
+    Width = 28
+    Caption = 'Type:'
+  end
+  object cbTextDirection: TComboBox[2]
+    Left = 40
+    Height = 38
+    Top = 41
+    Width = 64
+    AutoSize = False
+    ItemHeight = 32
+    Items.Strings = (
+      'Bar'
+      'Circle'
+      'Wave'
+      'Arrow'
+      'Earth'
+    )
+    ItemWidth = 32
+    Style = csOwnerDrawFixed
+    TabOrder = 0
+    OnDrawItem = DrawType
+  end
+  object edText: TEdit[3]
+    Left = 5
+    Height = 23
+    Top = 9
+    Width = 166
+    TabOrder = 1
+    Text = 'edText'
+  end
+  object sbOrientation: TSpeedButton[4]
+    Left = 136
+    Height = 32
+    Top = 45
+    Width = 32
+    Images = frmSharedControls.ilPowerGlyph
+    ImageIndex = 5
+    OnClick = ChangeOrientation
+  end
+end

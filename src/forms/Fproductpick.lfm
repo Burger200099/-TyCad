@@ -1,0 +1,71 @@
+inherited frmProductPick: TfrmProductPick
+  Left = 600
+  Height = 360
+  Top = 300
+  Width = 560
+  BorderStyle = bsDialog
+  Caption = 'Choose Product'
+  ClientHeight = 360
+  ClientWidth = 560
+  Position = poOwnerFormCenter
+  inherited pnlButtons: TPanel
+    Top = 302
+    Width = 560
+    ClientHeight = 54
+    ClientWidth = 556
+    TabOrder = 2
+    inherited btnOK: TButton
+      Left = 330
+      Default = True
+      Hint = 'Use the selected product'
+      ShowHint = True
+    end
+    inherited btnCancel: TButton
+      Left = 440
+      Cancel = True
+      Hint = 'Keep the product as it is'
+      ShowHint = True
+    end
+    inherited btnApply: TButton
+      Left = 220
+    end
+  end
+  object lbProductsFor: TLabel[1]
+    Left = 8
+    Height = 15
+    Top = 8
+    Width = 544
+    Align = alTop
+    BorderSpacing.Around = 8
+    Caption = 'Products for %s'
+    ParentColor = False
+  end
+  object lvProducts: TListView[2]
+    Left = 0
+    Height = 271
+    Hint = 'The products of the part''s class and how well each fits'
+    Top = 31
+    Width = 560
+    Align = alClient
+    Columns = <    
+      item
+        Caption = 'Manufacturer'
+        Width = 140
+      end    
+      item
+        Caption = 'Model number'
+        Width = 140
+      end    
+      item
+        Caption = 'Fit'
+        Width = 260
+      end>
+    HideSelection = False
+    ReadOnly = True
+    RowSelect = True
+    ShowHint = True
+    TabOrder = 1
+    ViewStyle = vsReport
+    OnDblClick = ListDblClick
+  end
+end

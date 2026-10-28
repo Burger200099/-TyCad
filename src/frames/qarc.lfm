@@ -1,0 +1,100 @@
+inherited fmArc: TfmArc
+  Height = 94
+  Width = 296
+  ClientHeight = 94
+  ClientWidth = 296
+  OnClick = FrameClick
+  DesignLeft = 772
+  DesignTop = 500
+  inherited lbCaption: TLabel
+    Top = 79
+    Width = 296
+    Caption = 'Arc'
+  end
+  object lbWidth: TLabel[1]
+    Left = 5
+    Height = 15
+    Top = 45
+    Width = 32
+    Caption = 'Width'
+  end
+  object seWidth: TSpinEdit[2]
+    Left = 48
+    Height = 23
+    Top = 41
+    Width = 50
+    Alignment = taCenter
+    MaxValue = 9
+    MinValue = 1
+    TabOrder = 0
+    Value = 1
+  end
+  object cbWireColor: TColorButton[3]
+    Left = 4
+    Height = 30
+    Top = 4
+    Width = 75
+    BorderWidth = 2
+    ButtonColorSize = 16
+    ButtonColor = clBlack
+    ColorDialog = frmSharedControls.DlgColor
+  end
+  object cbWireType: TComboBox[4]
+    Left = 88
+    Height = 30
+    Top = 5
+    Width = 138
+    AutoSelect = False
+    AutoSize = False
+    ItemHeight = 24
+    Items.Strings = (
+      '1'
+      '2'
+      '3'
+      '4'
+      '5'
+    )
+    Style = csOwnerDrawFixed
+    TabOrder = 1
+    OnDrawItem = DrawWireTypeItems
+  end
+  object bbFill: TSpeedButton[5]
+    Left = 236
+    Height = 59
+    Top = 5
+    Width = 52
+    Caption = 'Fill'
+    Layout = blGlyphTop
+  end
+  object lbArcType: TLabel[6]
+    Left = 112
+    Height = 15
+    Top = 45
+    Width = 18
+    Caption = 'Arc'
+  end
+  object rbArcIn: TRadioButton[7]
+    Left = 143
+    Height = 19
+    Hint = 'Arc in: the arc bulges to the inside of the turn'
+    Top = 43
+    Width = 28
+    Caption = 'in'
+    Checked = True
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 3
+    TabStop = True
+  end
+  object rbArcOut: TRadioButton[8]
+    Left = 178
+    Height = 19
+    Hint = 'Arc out: the arc bulges to the outside of the turn'
+    Top = 43
+    Width = 36
+    Caption = 'out'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 2
+  end
+end

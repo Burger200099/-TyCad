@@ -1,0 +1,229 @@
+object frLibraryPanel: TfrLibraryPanel
+  Left = 0
+  Height = 645
+  Top = 0
+  Width = 625
+  ClientHeight = 645
+  ClientWidth = 625
+  LCLVersion = '4.8.0.0'
+  ParentFont = False
+  TabOrder = 0
+  DesignLeft = 1010
+  DesignTop = 401
+  object pbPreview: TPaintBox
+    Left = 0
+    Height = 136
+    Hint = 'The chosen symbol (double click to place it)'
+    Top = 509
+    Width = 625
+    Align = alBottom
+    OnDblClick = ListDblClick
+    OnPaint = PreviewPaint
+  end
+  object Splitter1: TSplitter
+    Cursor = crVSplit
+    Left = 0
+    Height = 5
+    Hint = 'Drag to change the size of the preview'
+    Top = 504
+    Width = 625
+    Align = alBottom
+    ResizeAnchor = akBottom
+  end
+  object pcLibrary: TPageControl
+    Left = 0
+    Height = 504
+    Top = 0
+    Width = 625
+    ActivePage = tsSymbols
+    Align = alClient
+    Hint = 'Symbol libraries and parts libraries'
+    TabOrder = 1
+    object tsSymbols: TTabSheet
+      Caption = 'Symbols'
+      ClientHeight = 476
+      ClientWidth = 617
+      object edFilter: TEdit
+        Left = 0
+        Height = 23
+        Hint = 'Type part of a symbol name to list only the matching symbols'
+        Top = 15
+        Width = 617
+        Align = alTop
+        TabOrder = 0
+        TextHint = 'Filter by name or description'
+        OnChange = FilterChange
+      end
+      object lbCaption: TLabel
+        Left = 0
+        Height = 15
+        Top = 0
+        Width = 617
+        Align = alTop
+        Caption = 'Symbol Library: (none open)'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object tvLib: TTreeView
+        Left = 0
+        Height = 438
+        Hint = 'The libraries and their symbols'
+        Top = 38
+        Width = 617
+        Align = alClient
+        HideSelection = False
+        PopupMenu = pmLibView
+        ReadOnly = True
+        TabOrder = 1
+        Options = [tvoAutoItemHeight, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw]
+        OnChange = TreeChange
+        OnDblClick = ListDblClick
+        OnMouseDown = TreeMouseDown
+      end
+    end
+    object tsParts: TTabSheet
+      Caption = 'Parts'
+      ClientHeight = 476
+      ClientWidth = 617
+      object lbPartsCaption: TLabel
+        Left = 0
+        Height = 15
+        Top = 0
+        Width = 617
+        Align = alTop
+        Caption = 'Parts Library: (none open)'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object btnPartsOpen: TButton
+        Left = 0
+        Height = 25
+        Hint = 'Open a parts library (a TCParts file)'
+        Top = 15
+        Width = 617
+        Align = alTop
+        Caption = 'Open parts library...'
+        TabOrder = 0
+        OnClick = PartsOpenClick
+      end
+      object lvParts: TListView
+        Left = 0
+        Height = 436
+        Hint = 'The parts of the open parts library (generic parts: the manufacturer is chosen later, in the details)'
+        Top = 40
+        Width = 617
+        Align = alClient
+        Columns = <        item
+            Caption = 'Part'
+            Width = 320
+          end        item
+            Caption = 'Class'
+            Width = 140
+          end>
+        HideSelection = False
+        ReadOnly = True
+        RowSelect = True
+        SmallImages = ilParts
+        TabOrder = 1
+        ViewStyle = vsReport
+        OnDblClick = PartsDblClick
+        OnSelectItem = PartsSelectItem
+      end
+    end
+  end
+  object pmLibView: TPopupMenu
+    OnPopup = PopupOpen
+    Left = 32
+    Top = 64
+    object miNew: TMenuItem
+      Caption = 'New symbol...'
+      Hint = 'Draw a new symbol and store it in this library'
+      OnClick = PopupCommand
+    end
+    object miEdit: TMenuItem
+      Tag = 1
+      Caption = 'Edit symbol'
+      Hint = 'Open the selected symbol for drawing'
+      OnClick = PopupCommand
+    end
+    object miDelete: TMenuItem
+      Tag = 2
+      Caption = 'Delete symbol'
+      Hint = 'Delete the selected symbol from its library'
+      OnClick = PopupCommand
+    end
+    object miDuplicate: TMenuItem
+      Tag = 3
+      Caption = 'Duplicate symbol'
+      Hint = 'Store a copy of the selected symbol in the same library'
+      OnClick = PopupCommand
+    end
+    object miProperties: TMenuItem
+      Tag = 4
+      Caption = 'Symbol properties...'
+      Hint = 'Change the names, description and fields of the selected symbol'
+      OnClick = PopupCommand
+    end
+    object miExportSym: TMenuItem
+      Tag = 5
+      Caption = 'Export symbol...'
+      Hint = 'Write the selected symbol to an XML file'
+      OnClick = PopupCommand
+    end
+    object miExportLib: TMenuItem
+      Tag = 6
+      Caption = 'Export all symbols...'
+      Hint = 'Write every symbol of the library to an XML file'
+      OnClick = PopupCommand
+    end
+    object miImport: TMenuItem
+      Tag = 7
+      Caption = 'Import symbols...'
+      Hint = 'Add the symbols of an XML file to the library'
+      OnClick = PopupCommand
+    end
+    object miCopyTo: TMenuItem
+      Tag = 8
+      Caption = 'Copy to'
+      Hint = 'Store a copy of the selected symbol in another library'
+    end
+    object miSep: TMenuItem
+      Caption = '-'
+    end
+    object miLibraries: TMenuItem
+      Caption = '&Libraries...'
+      Hint = 'Choose the symbol libraries that are open'
+      OnClick = PopupLibraries
+    end
+    object miCloseLib: TMenuItem
+      Caption = 'Close library'
+      Hint = 'Close library'
+      OnClick = PopupClose
+    end
+    object miCloseAllLibs: TMenuItem
+      Caption = 'Close all libraries'
+      Hint = 'Close all libraries'
+      OnClick = PopupCloseAll
+    end
+  end
+  object ilParts: TImageList
+    Height = 24
+    Width = 24
+    Left = 96
+    Top = 64
+  end
+  object dlgPartsNew: TSaveDialog
+    Title = 'New parts library'
+    DefaultExt = '.TCParts'
+    Filter = 'Parts libraries (*.TCParts)|*.TCParts|All files|*.*'
+    Options = [ofOverwritePrompt, ofPathMustExist, ofEnableSizing, ofViewDetail]
+    Left = 160
+    Top = 112
+  end
+  object dlgPartsOpen: TOpenDialog
+    Title = 'Open a parts library'
+    Filter = 'Parts libraries (*.TCParts)|*.TCParts|All files|*.*'
+    Left = 160
+    Top = 64
+  end
+end

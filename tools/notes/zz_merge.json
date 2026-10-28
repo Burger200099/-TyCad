@@ -1,0 +1,262 @@
+{
+"GetVer": {
+"text": "The program's version as text: \"v major.minor\", plus a letter when the revision is not 0 (1 = a, 2 = b ...).",
+"returns": "for example \"v 26.10\" or \"v 26.10d\"",
+"params": {
+"lVerMajor": "major version (the year)",
+"lVerMinor": "minor version (the month)",
+"lVerRev": "revision (the day)"
+}
+},
+"GetVerEx": {
+"text": "The program's version as \"v major.minor.revision\".",
+"returns": "for example \"v 26.10.4\"",
+"params": {
+"lVerMajor": "major version (the year)",
+"lVerMinor": "minor version (the month)",
+"lVerRev": "revision (the day)"
+}
+},
+"GetOsVer": {
+"text": "Describes the operating system: on Windows \"Microsoft Windows\" and the release name that matches the build number (from the W_VER table); on Linux the values read from /etc/os-release (pretty name, version, and so on) with their quotation marks removed. Other systems give an empty string.",
+"returns": "the operating system description"
+},
+"TfrmBase.FormActivate": {
+"text": "OnActivate handler: shows the OK and Cancel buttons by default; forms that inherit from this one change that by calling SetButtons themselves.",
+"params": {
+"Sender": "the form"
+}
+},
+"TfrmBase.FormCreate": {
+"text": "OnCreate handler of the base dialog; nothing to do here, inheriting forms add their own set-up.",
+"params": {
+"Sender": "the form"
+}
+},
+"TfrmBase.SetButtons": {
+"text": "Shows only the chosen buttons (OK, Cancel, Apply) at the bottom of the dialog and slides the visible ones to the right so no gap is left.",
+"params": {
+"Buttons": "the set of buttons to show"
+}
+},
+"TfrmAbout.FormCreate": {
+"text": "OnCreate handler: fills in the copyright text, the application name with its target (x86 or x64), the version and the operating system description.",
+"params": {
+"Sender": "the form"
+}
+},
+"TfrmMain.pnlLeftClick": {
+"text": "Click handler of the left panel; nothing to do.",
+"params": {
+"Sender": "the panel"
+}
+},
+"TfrmMain.DoTheme": {
+"text": "Menu handler: switches between the light and dark ribbon theme and changes the menu item's caption to offer the other one.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.RibbonTabRect": {
+"text": "The rectangle of one ribbon tab in the painted tab strip: tabs sit side by side, each as wide as its caption plus padding, starting a little in from the left.",
+"returns": "the tab's rectangle, or an empty one if the index is out of range",
+"params": {
+"Index": "the ribbon page, 0-based"
+}
+},
+"TfrmMain.RibbonTabAt": {
+"text": "Which painted ribbon tab is under a point.",
+"returns": "the page index, or -1 if the point is on no tab",
+"params": {
+"X": "x in the tab strip",
+"Y": "y in the tab strip"
+}
+},
+"TfrmMain.RibbonTabsPaint": {
+"text": "Paints the ribbon tab strip: the header color as background, each page caption as a tab, the active tab highlighted and the one under the mouse in the hover color, all from the current theme.",
+"params": {
+"Sender": "the paint box"
+}
+},
+"TfrmMain.RibbonTabsMouseMove": {
+"text": "Remembers which tab the mouse is over and repaints the strip when that changes.",
+"params": {
+"Sender": "the paint box",
+"Shift": "modifier keys",
+"X": "x in the strip",
+"Y": "y in the strip"
+}
+},
+"TfrmMain.RibbonTabsMouseLeave": {
+"text": "The mouse left the tab strip: no tab is hot any more.",
+"params": {
+"Sender": "the paint box"
+}
+},
+"TfrmMain.RibbonTabsMouseDown": {
+"text": "A left click on a tab makes that ribbon page the active one.",
+"params": {
+"Sender": "the paint box",
+"Button": "which button",
+"Shift": "modifier keys",
+"X": "x in the strip",
+"Y": "y in the strip"
+}
+},
+"TfrmMain.RibbonPageChange": {
+"text": "The active ribbon page changed, so repaint the tab strip to highlight it.",
+"params": {
+"Sender": "the page control"
+}
+},
+"TLibEntry.Destroy": {
+"text": "Frees the library this entry holds."
+},
+"TfrLibraryPanel.FilterChange": {
+"text": "Event handler: the filter text changed, so rebuild the tree.",
+"params": {
+"Sender": "the filter box"
+}
+},
+"TfrLibraryPanel.TreeChange": {
+"text": "Event handler: the selection in the tree changed, so show the preview of the selected symbol (nothing is shown for a library node). Ignored while the tree is being rebuilt.",
+"params": {
+"Sender": "the tree",
+"Node": "the node now selected"
+}
+},
+"TfrLibraryPanel.ListDblClick": {
+"text": "Event handler: a double click on the tree or a click on the preview asks the owner to place the selected symbol. On a library node it does nothing, so the tree's own double-click opens or closes it.",
+"params": {
+"Sender": "the tree or the preview"
+}
+},
+"TfrLibraryPanel.PreviewPaint": {
+"text": "Draws the selected symbol, scaled to fit, in the preview area.",
+"params": {
+"Sender": "the paint box"
+}
+},
+"TfrLibraryPanel.SelectedRef": {
+"text": "What the selected symbol node stands for.",
+"returns": "the symbol's library, set and record, or nil when a library node or nothing is selected"
+},
+"TfrLibraryPanel.SelectedEntry": {
+"text": "The library the selected node belongs to, whether the node is the library itself or one of its symbols.",
+"returns": "the library entry, or nil when nothing is selected"
+},
+"TfrLibraryPanel.FindEntry": {
+"text": "Finds an open library by its file name (ignoring case on systems where that is how files are named).",
+"returns": "its position in the list of open libraries, or -1",
+"params": {
+"FileName": "full path of the library file"
+}
+},
+"TfrLibraryPanel.UpdateCaption": {
+"text": "Sets the caption above the tree: none open, the name of the one open library, or how many are open."
+},
+"TfrLibraryPanel.Rebuild": {
+"text": "Rebuilds the tree from the open libraries: a node per library (with the number of symbols shown) and a child per symbol, keeping only the symbols whose name or description contains the filter text. While filtering, libraries without a match disappear and the others are opened; otherwise each library stays open or closed as it was. The selected symbol stays selected if it is still listed."
+},
+"TfrLibraryPanel.BuildPreview": {
+"text": "Builds the one-symbol design that the preview draws from the selected symbol, or clears the preview when no symbol is selected."
+},
+"TfrLibraryPanel.ClearPreview": {
+"text": "Throws away the preview design."
+},
+"TfrLibraryPanel.TreeMouseDown": {
+"text": "A right click selects the node under the pointer, so the pop-up menu acts on it.",
+"params": {
+"Sender": "the tree",
+"Button": "which button",
+"Shift": "modifier keys",
+"X": "x in the tree",
+"Y": "y in the tree"
+}
+},
+"TfrLibraryPanel.PopupClose": {
+"text": "Pop-up menu handler: closes the library the selected node belongs to.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrLibraryPanel.PopupCloseAll": {
+"text": "Pop-up menu handler: closes every library.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrLibraryPanel.Create": {
+"text": "Creates the panel: the lists of open libraries and of symbol references, and the pop-up menu (Close library, Close all libraries) of the tree.",
+"params": {
+"AOwner": "owner of the frame"
+}
+},
+"TfrLibraryPanel.Destroy": {
+"text": "Drops the preview and the tree, then frees the references and the open libraries."
+},
+"TfrLibraryPanel.OpenLibrary": {
+"text": "Opens a symbol library and adds it to the tree, opened and selected. A library that is already open is read again instead of being listed twice. If the file cannot be read the error is raised and the tree is unchanged. The filter is cleared so the new library is visible.",
+"params": {
+"FileName": "path of the .TCLib file"
+}
+},
+"TfrLibraryPanel.CloseLibrary": {
+"text": "Closes one library and removes it from the tree.",
+"params": {
+"Index": "position in the list of open libraries (out of range is ignored)"
+}
+},
+"TfrLibraryPanel.CloseAll": {
+"text": "Closes every library and empties the tree."
+},
+"TfrLibraryPanel.LibCount": {
+"text": "How many libraries are open.",
+"returns": "the count"
+},
+"TfrLibraryPanel.LibFileName": {
+"text": "The file an open library was read from.",
+"returns": "the full path",
+"params": {
+"Index": "position in the list of open libraries"
+}
+},
+"TfrLibraryPanel.LibAt": {
+"text": "An open library.",
+"returns": "the library (owned by the panel)",
+"params": {
+"Index": "position in the list of open libraries"
+}
+},
+"TfrLibraryPanel.Lib": {
+"text": "The library of the selected node, otherwise the first open library.",
+"returns": "the library, or nil when none is open"
+},
+"TfrLibraryPanel.RecordNode": {
+"text": "The node of the n-th symbol in tree order (across all libraries, whether or not its library is open).",
+"returns": "the node, or nil",
+"params": {
+"Index": "symbol position, 0-based"
+}
+},
+"TfrLibraryPanel.SelectRow": {
+"text": "Selects the n-th symbol in tree order, opening its library, and shows its preview. An index out of range is ignored.",
+"params": {
+"Index": "symbol position, 0-based"
+}
+},
+"TfrLibraryPanel.PlaceSelected": {
+"text": "Asks the owner to place the selected symbol (OnPlace); a library node or no selection does nothing."
+},
+"TfrLibraryPanel.RowCount": {
+"text": "How many symbols the tree lists (those matching the filter), across all libraries.",
+"returns": "the count"
+},
+"TfrLibraryPanel.RowText": {
+"text": "The text of the n-th symbol in tree order: its name and description.",
+"returns": "the text, or empty when out of range",
+"params": {
+"Index": "symbol position, 0-based"
+}
+}
+}

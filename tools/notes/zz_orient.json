@@ -1,0 +1,84 @@
+{
+"OrientIdentity": {
+"text": "The upright picture: the identity matrix.",
+"returns": "the identity orientation"
+},
+"OrientOfOp": {
+"text": "The matrix of Rotate left, Rotate right or Flip: the same movement RotatePointAbout gives a point about the origin. Any other operation gives the identity.",
+"returns": "the matrix",
+"params": {
+"Op": "OP_LEFT, OP_RIGHT or OP_FLIP"
+}
+},
+"OrientMul": {
+"text": "Two orientations one after the other: the matrix of doing First and then Second.",
+"returns": "the combined orientation",
+"params": {
+"Second": "the operation done last",
+"First": "the operation done first"
+}
+},
+"OrientInverse": {
+"text": "The way back from an orientation (its transpose: these matrices turn and flip without stretching).",
+"returns": "the inverse",
+"params": {
+"O": "an orientation"
+}
+},
+"OrientSame": {
+"text": "Whether two orientations are the same.",
+"returns": "True if they are",
+"params": {
+"P": "an orientation",
+"Q": "another"
+}
+},
+"OrientIsIdentity": {
+"text": "Whether an orientation is the upright one.",
+"returns": "True if it is",
+"params": {
+"O": "an orientation"
+}
+},
+"OrientSwapsAxes": {
+"text": "Whether the orientation turns the picture a quarter, so that its width and height change places.",
+"returns": "True if it does",
+"params": {
+"O": "an orientation"
+}
+},
+"OrientFromTurns": {
+"text": "The orientation that is a flip left to right (or none) followed by some quarter turns to the right.",
+"returns": "the orientation",
+"params": {
+"Turns": "how many quarter turns to the right (taken round to 0 to 3)",
+"Mirror": "flipped before turning"
+}
+},
+"OrientToTurns": {
+"text": "Takes an orientation apart into the flip (or none) and the quarter turns to the right that make it, which is how the file keeps it.",
+"returns": "False if the matrix is none of the eight orientations",
+"params": {
+"O": "an orientation",
+"Turns": "receives the quarter turns to the right, 0 to 3",
+"Mirror": "receives whether it is flipped first"
+}
+},
+"OrientIndex": {
+"text": "The orientation as a number 0 to 7 (the quarter turns, plus 4 if flipped), for keeping a picture drawn in each of them.",
+"returns": "the number, or -1 if the matrix is none of the eight",
+"params": {
+"O": "an orientation"
+}
+},
+"OrientedSize": {
+"text": "The size of a picture once it is in an orientation: the same, or width and height changed places.",
+"params": {
+"O": "the orientation",
+"W": "the width of the picture as it is",
+"H": "its height",
+"OutW": "receives the width in the orientation",
+"OutH": "receives the height in the orientation"
+}
+}
+}

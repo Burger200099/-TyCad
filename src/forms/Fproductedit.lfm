@@ -1,0 +1,133 @@
+inherited frmProductEdit: TfrmProductEdit
+  Left = 700
+  Height = 330
+  Top = 300
+  Width = 560
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'Add Product'
+  ClientHeight = 330
+  ClientWidth = 560
+  OnCloseQuery = FormCloseQuery
+  Position = poOwnerFormCenter
+  inherited pnlButtons: TPanel
+    Top = 272
+    Width = 560
+    ClientWidth = 556
+    inherited btnOK: TButton
+      Left = 300
+    end
+    inherited btnCancel: TButton
+      Left = 430
+    end
+    inherited btnApply: TButton
+      Visible = False
+    end
+  end
+  object lblManufacturer: TLabel[1]
+    Left = 12
+    Height = 15
+    Top = 14
+    Width = 100
+    Caption = '&Manufacturer:'
+    FocusControl = edManufacturer
+  end
+  object edManufacturer: TEdit[2]
+    Left = 120
+    Height = 23
+    Hint = 'The maker of the product'
+    Top = 10
+    Width = 420
+    TabOrder = 0
+  end
+  object lblMPN: TLabel[3]
+    Left = 12
+    Height = 15
+    Top = 50
+    Width = 100
+    Caption = 'Model &number:'
+    FocusControl = edMPN
+  end
+  object edMPN: TEdit[4]
+    Left = 120
+    Height = 23
+    Hint = 'The maker''s order code; together with the manufacturer it is unique in the library'
+    Top = 46
+    Width = 420
+    TabOrder = 1
+  end
+  object lblSeries: TLabel[5]
+    Left = 12
+    Height = 15
+    Top = 86
+    Width = 100
+    Caption = '&Series:'
+    FocusControl = edSeries
+  end
+  object edSeries: TEdit[6]
+    Left = 120
+    Height = 23
+    Hint = 'The product family (optional)'
+    Top = 82
+    Width = 420
+    TabOrder = 2
+  end
+  object lblClass: TLabel[7]
+    Left = 12
+    Height = 15
+    Top = 122
+    Width = 100
+    Caption = '&Class:'
+    FocusControl = cbClass
+  end
+  object cbClass: TComboBox[8]
+    Left = 120
+    Height = 23
+    Hint = 'The class of parts the product can be chosen for'
+    Top = 118
+    Width = 420
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 3
+  end
+  object lblStatus: TLabel[9]
+    Left = 12
+    Height = 15
+    Top = 158
+    Width = 100
+    Caption = 'S&tatus:'
+    FocusControl = cbStatus
+  end
+  object cbStatus: TComboBox[10]
+    Left = 120
+    Height = 23
+    Hint = 'active, obsolete (no longer made), preview or custom (made for one customer)'
+    Top = 154
+    Width = 200
+    ItemHeight = 15
+    Items.Strings = (
+      'active'
+      'obsolete'
+      'preview'
+      'custom'
+    )
+    Style = csDropDownList
+    TabOrder = 4
+  end
+  object lblDescription: TLabel[11]
+    Left = 12
+    Height = 15
+    Top = 194
+    Width = 100
+    Caption = '&Description:'
+    FocusControl = edDescription
+  end
+  object edDescription: TEdit[12]
+    Left = 120
+    Height = 23
+    Hint = 'What the product is'
+    Top = 190
+    Width = 420
+    TabOrder = 5
+  end
+end

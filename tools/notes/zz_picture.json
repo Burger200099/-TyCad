@@ -1,0 +1,45 @@
+{
+"TDocOptionsBase.AddImage": {
+"text": "Keeps a picture in the design and returns its number. A picture that is already there (the same type and exactly the same bytes) is not added again, so inserting or pasting the same picture twice does not make the file bigger.",
+"returns": "the number of the picture in the design",
+"params": {
+"AType": "the kind of picture (PNG, JPEG)",
+"AData": "the bytes of the picture"
+}
+},
+"TImageResource.Destroy": {
+"text": "Frees the decoded picture kept for drawing (Cache) with the resource."
+},
+"TImageResourceList.CreateItem": {
+"text": "Makes an empty picture to be read from a file.",
+"returns": "the new item"
+},
+"ReadFileBytes": {
+"text": "Reads a whole file into memory; False (and empty data) if it cannot be read.",
+"returns": "True if it was read",
+"params": {
+"FileName": "the file",
+"Data": "receives the bytes"
+}
+},
+"TfrmMain.DoInsertPicture": {
+"text": "Handler: Insert picture. Asks for a PNG, JPEG or BMP file (the Open dialog's settings are put back afterwards) and inserts it as a picture that follows the mouse until it is placed.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TfrmMain.InsertPicture": {
+"text": "Insert picture without the dialog: puts any drawing tool away and clears the selection, then inserts the file as a picture that follows the mouse. A file that cannot be inserted (not a picture, missing, damaged, a Windows metafile) is reported and changes nothing.",
+"returns": "True if the picture was inserted",
+"params": {
+"AFileName": "the picture file"
+}
+},
+"ReadAll": {
+"text": "Reads a whole file into memory (test driver).",
+"returns": "its bytes",
+"params": {
+"FileName": "the file"
+}
+}
+}

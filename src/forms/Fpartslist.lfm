@@ -1,0 +1,110 @@
+object frmPartsList: TfrmPartsList
+  Left = 1047
+  Height = 450
+  Top = 380
+  Width = 640
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'Save a parts list'
+  ClientHeight = 450
+  ClientWidth = 640
+  DesignTimePPI = 120
+  OnCreate = FormCreate
+  Position = poOwnerFormCenter
+  LCLVersion = '3.0.0.3'
+  object lblTitle: TLabel
+    Left = 16
+    Height = 20
+    Top = 14
+    Width = 260
+    Caption = 'Create a parts list for this design'
+  end
+  object lblFormat: TLabel
+    Left = 24
+    Height = 20
+    Top = 58
+    Width = 140
+    Caption = 'Output file format:'
+  end
+  object cbType: TComboBox
+    Hint = 'The kind of parts list file to make'
+    Left = 180
+    Height = 28
+    Top = 54
+    Width = 330
+    ItemHeight = 20
+    Style = csDropDownList
+    OnChange = TypeChange
+    TabOrder = 0
+  end
+  object lblFile: TLabel
+    Left = 24
+    Height = 20
+    Top = 102
+    Width = 140
+    Caption = 'Output file:'
+  end
+  object edFile: TEdit
+    Hint = 'The file the parts list is written to'
+    Left = 180
+    Height = 28
+    Top = 98
+    Width = 330
+    TabOrder = 1
+  end
+  object btnBrowse: TButton
+    Hint = 'Choose the file to write'
+    Left = 522
+    Height = 32
+    Top = 96
+    Width = 100
+    Caption = '&Browse...'
+    OnClick = BrowseClick
+    TabOrder = 2
+  end
+  object cbAllSheets: TCheckBox
+    Hint = 'Include every sheet of the design'
+    Left = 24
+    Height = 24
+    Top = 152
+    Width = 560
+    Caption = 'Include all sheets'
+    TabOrder = 3
+  end
+  object cbHier: TCheckBox
+    Hint = 'Include the sheets linked from this one'
+    Left = 24
+    Height = 24
+    Top = 184
+    Width = 560
+    Caption = 'Include all hierarchical links'
+    TabOrder = 4
+  end
+  object cbAttrs: TCheckBox
+    Hint = 'Include every attribute of each symbol'
+    Left = 24
+    Height = 24
+    Top = 216
+    Width = 560
+    Caption = 'Include all attribute information'
+    TabOrder = 5
+  end
+  object cbPrefix: TCheckBox
+    Hint = 'Put the sheet number in front of each symbol reference'
+    Left = 24
+    Height = 24
+    Top = 248
+    Width = 560
+    Caption = 'Prefix symbol references with sheet number'
+    TabOrder = 6
+  end
+  object lblNote: TLabel
+    Left = 24
+    Height = 70
+    Top = 288
+    Width = 596
+    AutoSize = False
+    Caption = 'As in TinyCAD, the sheet-number prefix does not change the list. Hierarchical symbols are not loaded by this program yet, so the hierarchical option changes nothing here either; both choices are kept.'
+    WordWrap = True
+  end
+end

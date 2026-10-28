@@ -1,0 +1,543 @@
+{
+"Finite": {
+"text": "Whether a point has real coordinates (neither NaN nor infinite); used when probing geometry for impossible values.",
+"returns": "True if both coordinates are finite numbers",
+"params": {
+"P": "the point"
+}
+},
+"ProbeObject": {
+"text": "Test helper: exercises an object's geometry (bounding box, hit tests on its own points, rotation invariants) and counts anything impossible or unexplained into Stats.",
+"params": {
+"Obj": "the object to probe",
+"Stats": "running counts, updated",
+"Where": "description of where the object came from, for messages"
+}
+},
+"CRound": {
+"text": "Rounds to nearest, halves away from zero, as C does (used to compare with the C++ pin layout).",
+"returns": "the rounded value",
+"params": {
+"D": "the number"
+}
+},
+"Near": {
+"text": "Whether two points differ by no more than a tolerance on each axis.",
+"returns": "True if close enough",
+"params": {
+"A": "first point",
+"B": "second point",
+"Tol": "allowed difference per axis"
+}
+},
+"Note": {
+"text": "Counts a finding and prints the first 40 of them.",
+"params": {
+"Count": "running count (updated)",
+"Kind": "the kind of finding",
+"Where": "where it was found",
+"Detail": "extra description"
+}
+},
+"ProbePlaced": {
+"text": "Test helper: checks a placed symbol against the C++ rules (draw path versus netlist path agree on every pin, rotation moves pins rigidly, pins are hit, pins lie in the box, replacing a symbol with itself moves nothing) and updates the statistics.",
+"params": {
+"M": "the placed symbol",
+"St": "running statistics (updated)",
+"Where": "where the symbol came from, for messages"
+}
+},
+"TResourceItem.Create": {
+"text": "Creates a resource entry that is not yet numbered, not in use, and not merged."
+},
+"TResourceList.Create": {
+"text": "Creates a list of resources (fonts, line styles or fill styles) whose first entry is the default one.",
+"params": {
+"AHead": "the default entry, always present"
+}
+},
+"TResourceList.Destroy": {
+"text": "Frees the list and its entries."
+},
+"TResourceList.Count": {
+"text": "Number of entries.",
+"returns": "the count"
+},
+"TResourceList.Item": {
+"text": "The entry at a position.",
+"returns": "the entry",
+"params": {
+"Index": "position (0 is the default)"
+}
+},
+"TResourceList.Add": {
+"text": "Adds a resource, reusing an equal entry that has not been merged yet (CDocResource::Add); otherwise appends it with the next free number.",
+"returns": "the number of the entry that now represents it",
+"params": {
+"NewItem": "the resource to add (the list takes it or frees it if a duplicate)",
+"NewMerge": "merge number for resources loaded from a file, -1 for new ones"
+}
+},
+"TResourceList.ConvertOld": {
+"text": "Converts a number read from a file to this sheet's number for the same resource; unknown numbers give the default entry (0).",
+"returns": "the sheet's resource number",
+"params": {
+"OldId": "the number as written in the file"
+}
+},
+"TResourceList.Get": {
+"text": "The entry with a given number, or the default entry if there is none.",
+"returns": "the entry",
+"params": {
+"Id": "resource number"
+}
+},
+"TResourceList.Tag": {
+"text": "Marks the entry with that number as in use so it is saved.",
+"params": {
+"Id": "resource number"
+}
+},
+"TResourceList.UnTag": {
+"text": "Marks every entry as not in use (done before tagging what an object uses, so unused ones are not saved)."
+},
+"TResourceList.ResetMerge": {
+"text": "Forgets which file entries have been matched, ready for loading another file."
+},
+"TResourceList.SaveXML": {
+"text": "Writes every in-use entry as an element named TagName, each with its number.",
+"params": {
+"TagName": "the element name, e.g. FONT",
+"W": "the XML writer"
+}
+},
+"TResourceList.LoadItemXML": {
+"text": "Reads one saved entry and adds it to the list, remembering its file number so objects can refer to it.",
+"params": {
+"R": "the XML reader on the entry"
+}
+},
+"TFontResource.Create": {
+"text": "Creates a font entry with the standard text height and default face."
+},
+"TFontResource.CreateSized": {
+"text": "Creates a font entry with a given height and optionally italic.",
+"params": {
+"AHeight": "height in design units",
+"AItalic": "True for italic"
+}
+},
+"TFontResource.Compare": {
+"text": "Whether another font entry is identical (height, width, weight, italic, underline, strike-out, character set, face name).",
+"returns": "True if equal",
+"params": {
+"Other": "the entry to compare with"
+}
+},
+"TFontResource.WriteItem": {
+"text": "Writes the font's fields as child elements.",
+"params": {
+"W": "the XML writer"
+}
+},
+"TFontResource.ReadItem": {
+"text": "Reads the font's fields from its child elements.",
+"params": {
+"R": "the XML reader on the entry"
+}
+},
+"TLineStyleResource.Create": {
+"text": "Creates a line style entry: solid, thickness 1, black."
+},
+"TLineStyleResource.CreateWith": {
+"text": "Creates a line style entry with the given dash style, thickness and color.",
+"params": {
+"AStyle": "Windows pen style (0 solid ... 4 dash-dot-dot)",
+"AThickness": "thickness in design units",
+"AColor": "color"
+}
+},
+"TLineStyleResource.Compare": {
+"text": "Whether another line style is identical.",
+"returns": "True if equal",
+"params": {
+"Other": "the entry to compare with"
+}
+},
+"TLineStyleResource.WriteItem": {
+"text": "Writes style, thickness and color as child elements.",
+"params": {
+"W": "the XML writer"
+}
+},
+"TLineStyleResource.ReadItem": {
+"text": "Reads style, thickness and color from child elements.",
+"params": {
+"R": "the XML reader on the entry"
+}
+},
+"TFillStyleResource.Create": {
+"text": "Creates a fill entry with no fill (index -1)."
+},
+"TFillStyleResource.CreateWith": {
+"text": "Creates a fill entry with a hatch index and color.",
+"params": {
+"AIndex": "-1 none, 0 solid, 1 and up the hatch patterns",
+"AColor": "fill color"
+}
+},
+"TFillStyleResource.Compare": {
+"text": "Whether another fill style is identical.",
+"returns": "True if equal",
+"params": {
+"Other": "the entry to compare with"
+}
+},
+"TFillStyleResource.WriteItem": {
+"text": "Writes index and color as child elements.",
+"params": {
+"W": "the XML writer"
+}
+},
+"TFillStyleResource.ReadItem": {
+"text": "Reads index and color from child elements.",
+"params": {
+"R": "the XML reader on the entry"
+}
+},
+"TFontList.CreateItem": {
+"text": "Makes an empty font entry for the loader.",
+"returns": "a new font resource"
+},
+"TLineStyleList.CreateItem": {
+"text": "Makes an empty line style entry for the loader.",
+"returns": "a new line style resource"
+},
+"TFillStyleList.CreateItem": {
+"text": "Makes an empty fill style entry for the loader.",
+"returns": "a new fill style resource"
+},
+"TUserColors.Create": {
+"text": "Creates the set of sheet colors with TinyCAD's defaults."
+},
+"TUserColors.Init": {
+"text": "Resets every user color to its default (wire blue, bus red, junction, pin, power, and so on)."
+},
+"TUserColors.Get": {
+"text": "The color for a purpose.",
+"returns": "the color",
+"params": {
+"Id": "color id such as UC_WIRE"
+}
+},
+"TUserColors.SetColor": {
+"text": "Changes the color for a purpose.",
+"params": {
+"Id": "color id",
+"C": "the new color"
+}
+},
+"TUserColors.TagNameOf": {
+"text": "The XML element name used to save a color id.",
+"returns": "for example COLOR_WIRE",
+"params": {
+"Id": "color id"
+}
+},
+"TUserColors.ReadXML": {
+"text": "Reads one color element if its name is a known color tag.",
+"returns": "True if the tag was a color and was read",
+"params": {
+"R": "the XML reader",
+"TagName": "the element name just read"
+}
+},
+"TUserColors.WriteXML": {
+"text": "Writes every user color, in id order.",
+"params": {
+"W": "the XML writer"
+}
+},
+"TDetails.Create": {
+"text": "Creates the page details with TinyCAD's defaults (A4 landscape page, title block fields empty, sheets \"1 of 1\") and no border, history or auto numbering."
+},
+"NormalizeNewlines": {
+"text": "Turns CRLF and CR into LF, because XML readers do, so notes round-trip exactly.",
+"returns": "the text with LF line ends",
+"params": {
+"S": "the text"
+}
+},
+"TDetails.AddRevision": {
+"text": "Appends a revision (label, date, author, approver, notes) to the sheet's history.",
+"returns": "its position in the history",
+"params": {
+"ARev": "revision label, e.g. A",
+"ADate": "date text",
+"AAuthor": "who made it",
+"AApproved": "who approved it",
+"ANotes": "what changed (may span several lines)"
+}
+},
+"TDetails.EffectiveRevision": {
+"text": "The current revision: the last history entry's label, or the old single Revision field when there is no history.",
+"returns": "the label"
+},
+"TDetails.EffectiveRevisionDate": {
+"text": "The date of the current revision (last history entry), or the last-change date when there is no history.",
+"returns": "the date text"
+},
+"TDetails.BorderRectangle": {
+"text": "The border rectangle for this sheet's page size and margin.",
+"returns": "the rectangle in internal units"
+},
+"TDetails.ReadXML": {
+"text": "Reads the DETAILS element: page size, title block fields, shown flags, date, and the additions (automatic sheet numbers, border, revision history). The grid element is passed on to Snap.",
+"params": {
+"R": "the XML reader on DETAILS",
+"Snap": "receives the grid settings"
+}
+},
+"TDetails.WriteXML": {
+"text": "Writes the DETAILS element. Automatic sheet numbers, border and revision history are only written when they are used, so ordinary files stay unchanged.",
+"params": {
+"W": "the XML writer"
+}
+},
+"TDocOptions.Create": {
+"text": "Creates a sheet's options, including its symbol table."
+},
+"TDocOptions.Destroy": {
+"text": "Frees the symbol table and the options."
+},
+"TDocOptions.UnTagAll": {
+"text": "Marks fonts, styles, fills and symbols as unused before a save."
+},
+"TDocOptions.ResetMerge": {
+"text": "Forgets merge matching of fonts, styles, fills and symbols before loading another file."
+},
+"TDocOptions.AddSymbol": {
+"text": "Adds a symbol to the sheet's symbol table (sharing an identical one already there).",
+"returns": "the symbol number to use in placed symbols",
+"params": {
+"Sym": "the symbol"
+}
+},
+"TDocOptions.SymbolInfo": {
+"text": "The symbol data for a symbol number.",
+"returns": "the symbol information",
+"params": {
+"Id": "symbol number"
+}
+},
+"TDocOptions.NewSymbolNumber": {
+"text": "Converts a symbol number from a file to this sheet's number.",
+"returns": "the sheet's symbol number",
+"params": {
+"OldId": "the number as written in the file"
+}
+},
+"TDocOptions.TagSymbol": {
+"text": "Marks a symbol as in use so it is saved.",
+"params": {
+"Id": "symbol number"
+}
+},
+"TDocOptions.TagSymbolContents": {
+"text": "Marks the fonts, styles and fills used inside a symbol's drawing for a part, so they are saved with it.",
+"params": {
+"Id": "symbol number",
+"Part": "part number",
+"IncludePower": "whether power pins are shown"
+}
+},
+"TDocOptions.HasOrigin": {
+"text": "Whether the sheet has a user-set origin.",
+"returns": "True if an origin is set"
+},
+"TDocOptions.WriteXML": {
+"text": "Writes the OPTIONS element: grid settings, origin and colors.",
+"params": {
+"W": "the XML writer"
+}
+},
+"TDocOptions.ReadXML": {
+"text": "Reads the OPTIONS element, starting from default colors.",
+"params": {
+"R": "the XML reader on OPTIONS"
+}
+},
+"TDesignSheet.Create": {
+"text": "Creates an empty sheet with its own options, details and drawing list."
+},
+"TDesignSheet.Destroy": {
+"text": "Frees the drawing and the options."
+},
+"TDesignSheet.LoadXML": {
+"text": "Reads a whole sheet (details, options, resources, objects) from its TinyCAD element.",
+"returns": "True if the sheet has any objects",
+"params": {
+"R": "the XML reader on the element"
+}
+},
+"TDesignSheet.LoadXMLInto": {
+"text": "Reads a sheet's content into a given list, optionally with the details block and in library-editing mode; unknown elements are skipped.",
+"returns": "True if any object was read",
+"params": {
+"R": "the XML reader",
+"List": "where objects go",
+"WithDetails": "read the DETAILS block",
+"EditLibrary": "True when reading a library symbol"
+}
+},
+"TDesignSheet.Snap": {
+"text": "The sheet's grid and snap settings.",
+"returns": "the settings"
+},
+"TDesignSheet.UpdateLayout": {
+"text": "Recalculates the layout of every object on the sheet (text boxes, pin text)."
+},
+"TDesignSheet.SaveXML": {
+"text": "Writes the sheet as a TinyCAD element with details and resources.",
+"params": {
+"W": "the XML writer"
+}
+},
+"TDesignSheet.SaveXMLEx": {
+"text": "Writes the sheet with choices: details block, fonts/styles/fills, and the origin object. Only the resources the objects use are written.",
+"params": {
+"W": "the XML writer",
+"WithDetails": "write the DETAILS block",
+"SaveResources": "write the fonts, styles and fills",
+"SaveOriginObject": "write the origin as an object (library symbols)"
+}
+},
+"TSymbolDocument.Create": {
+"text": "Creates an empty symbol document (one sheet per part)."
+},
+"TSymbolDocument.Destroy": {
+"text": "Frees the part sheets."
+},
+"TSymbolDocument.Clear": {
+"text": "Removes every part sheet."
+},
+"TSymbolDocument.SheetCount": {
+"text": "Number of part sheets.",
+"returns": "the count"
+},
+"TSymbolDocument.GetSheet": {
+"text": "One part's sheet.",
+"returns": "the sheet",
+"params": {
+"Index": "part number, 0-based"
+}
+},
+"TSymbolDocument.AddSheet": {
+"text": "Adds a part sheet in library-editing mode (pins of other parts hidden).",
+"returns": "the new sheet"
+},
+"TSymbolDocument.LoadXML": {
+"text": "Reads a symbol (all its parts) from XML.",
+"params": {
+"R": "the XML reader",
+"Hetero": "whether the parts have different drawings"
+}
+},
+"TSymbolDocument.SaveXML": {
+"text": "Writes a symbol (all its parts) as XML, writing only the resources it uses.",
+"params": {
+"W": "the XML writer"
+}
+},
+"TSymbolDocument.LoadFromBlob": {
+"text": "Reads a symbol from the text stored in a library record.",
+"params": {
+"Blob": "the symbol text from the .TCLib"
+}
+},
+"TSymbolDocument.SaveToBlob": {
+"text": "Writes the symbol as the text stored in a library record.",
+"returns": "the symbol text"
+},
+"LoadLibrarySymbolBlob": {
+"text": "Loads a library symbol's drawing into a sheet's symbol data, merging its fonts, styles and fills.",
+"returns": "True if the blob was read",
+"params": {
+"Target": "the sheet it is loaded into",
+"Sym": "the symbol to fill in",
+"Blob": "the symbol text from the library"
+}
+},
+"TDesignFile.Create": {
+"text": "Creates an empty design (no sheets)."
+},
+"TDesignFile.Destroy": {
+"text": "Frees all sheets."
+},
+"TDesignFile.Clear": {
+"text": "Removes every sheet."
+},
+"TDesignFile.SheetCount": {
+"text": "Number of sheets.",
+"returns": "the count"
+},
+"TDesignFile.AddSheet": {
+"text": "Adds an empty sheet at the end.",
+"returns": "the new sheet"
+},
+"TDesignFile.GetSheet": {
+"text": "A sheet by position.",
+"returns": "the sheet",
+"params": {
+"Index": "zero-based sheet number"
+}
+},
+"TDesignFile.LoadFromStream": {
+"text": "Loads a design from a stream: a single sheet file, or a multi-sheet file (TinyCADSheets). A single sheet with no objects is rejected unless AllowEmptySheets is set.",
+"params": {
+"S": "the stream"
+}
+},
+"TDesignFile.MaxObjectId": {
+"text": "The highest object id on any sheet (0 when none have one).",
+"returns": "the id"
+},
+"TDesignFile.NextObjectId": {
+"text": "A new object id that is higher than any in use and higher than any given out this session, so deleted objects' ids are never reused.",
+"returns": "the new id"
+},
+"TDesignFile.AssignIds": {
+"text": "Gives an id to every object that has none.",
+"returns": "how many were assigned"
+},
+"TDesignFile.FixDuplicateIds": {
+"text": "After the first, objects sharing an id (e.g. pasted copies) are given fresh ones.",
+"returns": "how many were changed"
+},
+"TDesignFile.FindObject": {
+"text": "Finds an object by its id on any sheet.",
+"returns": "the object, or nil",
+"params": {
+"AId": "the object id",
+"SheetIndex": "set to the sheet it is on (-1 if not found)"
+}
+},
+"TDesignFile.LoadFromFile": {
+"text": "Loads a design from a file and remembers its name.",
+"params": {
+"AFileName": "path of the .dsn"
+}
+},
+"TDesignFile.SaveToStream": {
+"text": "Writes the design as XML: a single sheet as TinyCAD, several as TinyCADSheets; resources are re-tagged first so only used ones are written.",
+"params": {
+"S": "the stream"
+}
+},
+"TDesignFile.SaveToFile": {
+"text": "Writes the design to a file and remembers its name.",
+"params": {
+"AFileName": "path to write"
+}
+}
+}

@@ -1,0 +1,190 @@
+{
+"LibraryName": {
+"text": "What the Libraries list shows for a library (TinyCAD shows the path without the extension; the name alone keeps the list short and the folder is in the hint).",
+"returns": "the name",
+"params": {
+"const FileName": "path of the library"
+}
+},
+"LibraryHasExtension": {
+"text": "Tells a symbol library from another file by its extension.",
+"returns": "True for .TCLib in any case",
+"params": {
+"const FileName": "a file name"
+}
+},
+"LibraryNewFileName": {
+"text": "A name without .TCLib gets it (an other extension is replaced), as TinyCAD's New does. A .tclib typed in lower case is kept as typed.",
+"returns": "the file to make",
+"params": {
+"const Chosen": "the name typed in the New dialog"
+}
+},
+"LibraryCheck": {
+"text": "TinyCAD's Attach: the file is opened and its symbols read. A file with another extension is refused (the old .mdb and .idx libraries are not read by this port).",
+"returns": "True when it opens as a symbol library",
+"params": {
+"const FileName": "path of the file",
+"out Err": "why it is not a library ('' when it is)"
+}
+},
+"LibraryCreate": {
+"text": "Makes an empty library with TinyCAD's tables. A file that is already there is left alone (TinyCAD's CREATE TABLE fails on it) and the message is TinyCAD's \"Cannot create library\".",
+"returns": "True when the file was made",
+"params": {
+"const FileName": "path of the new file",
+"out Err": "why it could not be made ('' when it was)"
+}
+},
+"LibraryCleanup": {
+"text": "TinyCAD's Cleanup: runs VACUUM on the library's database.",
+"returns": "True when the file was compacted",
+"params": {
+"ALib": "the open library",
+"out Err": "why it failed ('' when it worked)"
+}
+},
+"TfrmLibraries.FormCreate": {
+"text": "The window only has OK (TinyCAD's has no Cancel: its changes are made as they are asked for), and Edit and Upgrade are dimmed with the reason in their hints.",
+"params": {
+"Sender": "the component that raised the event"
+}
+},
+"TfrmLibraries.LibrariesActivate": {
+"text": "Shows OK alone (the base form's handler would show OK and Cancel).",
+"params": {
+"Sender": "the component that raised the event"
+}
+},
+"TfrmLibraries.Problem": {
+"text": "Passes a problem to the owner, or shows it when there is no owner handler.",
+"params": {
+"const Msg": "the message"
+}
+},
+"TfrmLibraries.Attach": {
+"text": "Takes the panel whose libraries are edited and lists them.",
+"params": {
+"APanel": "the library panel"
+}
+},
+"TfrmLibraries.RefreshList": {
+"text": "Fills the list with the names of the libraries in use, sorted by name (TinyCAD's list is sorted). Each item remembers its library's place in the panel. Nothing is selected afterwards, so Remove and Cleanup are dimmed."
+},
+"TfrmLibraries.UpdateButtons": {
+"text": "Remove and Cleanup need a selected library (TinyCAD's RefreshComponents); Edit and Upgrade stay dimmed."
+},
+"TfrmLibraries.SelectedIndex": {
+"text": "Which panel library the selected item stands for.",
+"returns": "the library's position in the panel, -1 when nothing is selected"
+},
+"TfrmLibraries.SelectedFile": {
+"text": "The file of the selected library.",
+"returns": "the path, or '' for none"
+},
+"TfrmLibraries.ItemCount": {
+"text": "How many libraries the list shows.",
+"returns": "the count"
+},
+"TfrmLibraries.ItemText": {
+"text": "A line of the list.",
+"returns": "the name, '' when out of range",
+"params": {
+"Index": "position in the list"
+}
+},
+"TfrmLibraries.SelectByName": {
+"text": "Selects the first library of that name, as clicking it does.",
+"returns": "True when there was one",
+"params": {
+"const AName": "a name in the list"
+}
+},
+"TfrmLibraries.ListSelect": {
+"text": "A click on the list: the buttons are dimmed or not.",
+"params": {
+"Sender": "the list",
+"User": "True when the person chose"
+}
+},
+"TfrmLibraries.AddFiles": {
+"text": "TinyCAD's OnAdd: each file is checked and, if it is a library not in use already, added to the libraries in use. A file that is not a library gives a message and the others go on. A library that is already in use is left as it is.",
+"params": {
+"Files": "paths of the files chosen"
+}
+},
+"TfrmLibraries.AddClick": {
+"text": "Add: asks for one or more .TCLib files and adds them.",
+"params": {
+"Sender": "the button"
+}
+},
+"TfrmLibraries.NewLibrary": {
+"text": "TinyCAD's OnNew: an empty library file (.TCLib) is made and added to the libraries in use. A file that is there already is not touched and a message says so.",
+"returns": "True when the library was made and added",
+"params": {
+"const Chosen": "the file name chosen"
+}
+},
+"TfrmLibraries.NewClick": {
+"text": "New: asks for the name of the library file and makes it.",
+"params": {
+"Sender": "the button"
+}
+},
+"TfrmLibraries.RemoveSelected": {
+"text": "TinyCAD's OnRemove: takes the selected library out of the libraries in use (the file is not deleted), unless it is in use, which gives IDS_NODELETE and changes nothing."
+},
+"TfrmLibraries.RemoveClick": {
+"text": "Remove.",
+"params": {
+"Sender": "the button"
+}
+},
+"TfrmLibraries.CleanupSelected": {
+"text": "TinyCAD's OnCleanup: compacts the selected library's file, unless it is in use, which gives IDS_NOCLEANUP. The selection stays."
+},
+"TfrmLibraries.CleanupClick": {
+"text": "Cleanup.",
+"params": {
+"Sender": "the button"
+}
+},
+"TfrmMain.LibrariesChanged": {
+"text": "A library was opened or closed: the libraries in use are kept in the settings, in the order they were added, for the next run.",
+"params": {
+"Sender": "the library panel"
+}
+},
+"TfrmMain.LibraryIsInUse": {
+"text": "TinyCAD's IsLibInUse: a library cannot be removed or cleaned up while an editing window has it. There is no symbol editor yet, so only the files a test lists count.",
+"returns": "True when it is being edited",
+"params": {
+"const FileName": "path of a library"
+}
+},
+"TfrmMain.RestoreLibraries": {
+"text": "Opens the libraries that were in use when the program was last closed (TinyCAD loads its \"Libraries\" at start). A file that is gone or cannot be read is left out, and drops off the saved list the next time the list changes.",
+"returns": "how many libraries are open afterwards"
+},
+"TfrmMain.BeginLibraries": {
+"text": "The start of Library > Libraries...: any drawing tool is put away. Problems the dialog reports are shown as the program shows its others (the status bar when run from a script).",
+"returns": "the dialog, listing the libraries in use; the caller shows it and frees it"
+},
+"TfrmMain.DoLibraries": {
+"text": "Menu handler (Library > Libraries...): shows the Library Setup dialog. Its changes are made as they are asked for, as in TinyCAD.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrLibraryPanel.Changed": {
+"text": "Tells the owner (OnChanged) that the libraries in use are not the same any more."
+},
+"TfrLibraryPanel.IndexOfFile": {
+"text": "Finds the open library read from a file (the same file under another spelling of its path counts as the same).",
+"returns": "the position among the open libraries, or -1",
+"params": {
+"const FileName": "path of a library file"
+}
+}
+}

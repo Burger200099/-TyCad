@@ -1,0 +1,71 @@
+inherited frmValueEdit: TfrmValueEdit
+  Left = 700
+  Height = 210
+  Top = 300
+  Width = 560
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'Field Value'
+  ClientHeight = 210
+  ClientWidth = 560
+  Position = poOwnerFormCenter
+  inherited pnlButtons: TPanel
+    Top = 152
+    Width = 560
+    ClientWidth = 556
+    inherited btnOK: TButton
+      Left = 300
+    end
+    inherited btnCancel: TButton
+      Left = 430
+    end
+    inherited btnApply: TButton
+      Visible = False
+    end
+  end
+  object lblInfo: TLabel[1]
+    Left = 12
+    Height = 15
+    Top = 14
+    Width = 530
+    AutoSize = False
+    Caption = 'Field'
+    WordWrap = True
+  end
+  object lblValue: TLabel[2]
+    Left = 12
+    Height = 15
+    Top = 62
+    Width = 100
+    Caption = '&Value:'
+    FocusControl = edValue
+  end
+  object edValue: TEdit[3]
+    Left = 120
+    Height = 23
+    Hint = 'The value; leave it empty to remove the stored value'
+    Top = 58
+    Width = 420
+    TabOrder = 0
+  end
+  object cbValue: TComboBox[4]
+    Left = 120
+    Height = 23
+    Hint = 'Choose the value; (none) removes the stored value'
+    Top = 58
+    Width = 250
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 1
+    Visible = False
+  end
+  object lblHint: TLabel[5]
+    Left = 120
+    Height = 15
+    Top = 92
+    Width = 420
+    AutoSize = False
+    Caption = ' '
+    WordWrap = True
+  end
+end

@@ -1,0 +1,115 @@
+{
+"SlotText": {
+"text": "One of the searchable texts of an object, as it is stored (variables such as $(TITLE) are not expanded).",
+"returns": "the text, empty if the object has no such text",
+"params": {
+"Obj": "the object",
+"Slot": "which of its texts"
+}
+},
+"SlotName": {
+"text": "What to call one of an object's texts: Label, Text, Note, Power, Pin, or, for a placed symbol, the description of the field (Ref, Name ...).",
+"returns": "the name",
+"params": {
+"Obj": "the object",
+"Slot": "which of its texts"
+}
+},
+"IsWordChar": {
+"text": "Whether a character counts as part of a word for \"whole word\" searches: a letter, digit, underscore, or any non-ASCII byte.",
+"returns": "True if it does",
+"params": {
+"C": "the character"
+}
+},
+"CollectHits": {
+"text": "Every occurrence of a text in the whole design, sheet by sheet, the objects of a sheet in drawing order, the texts of an object in order, left to right. Occurrences do not overlap.",
+"returns": "the occurrences, in that order",
+"params": {
+"Design": "the design to search",
+"Needle": "what to look for",
+"Opts": "match case and whole word"
+}
+},
+"TFindSession.Reset": {
+"text": "Forgets where the last occurrence was found (for a new document, or when the search starts afresh)."
+},
+"findtest.pas::Flags": {
+"text": "Reads the option letters of the driver's command line: c for match case, w for whole word.",
+"returns": "the options",
+"params": {
+"S": "the letters, or - for none"
+}
+},
+"findtest.pas::Fix": {
+"text": "Makes a text safe to print on one line (line ends shown as \\n).",
+"params": {
+"S": "the text, changed in place"
+}
+},
+"TfrmMain.FindStep": {
+"text": "Finds the next (or previous) occurrence of the text in the Find and Replace dialog, shows it (its sheet, selected and in sight) and reports in the status bar where it is, that the search wrapped round, or that the text cannot be found. A drawing tool is put away first, as TinyCAD does.",
+"returns": "True if something was found",
+"params": {
+"Down": "True to search forwards, False for backwards"
+}
+},
+"TfrmMain.ReplaceDlgClose": {
+"text": "Event handler: the Find and Replace dialog was closed.",
+"params": {
+"Sender": "the dialog"
+}
+},
+"TfrmMain.DoFindReplace": {
+"text": "Handler (Ctrl+F, Ctrl+H): opens the Find and Replace dialog (the ReplaceDlg component). The dialog's \"Search entire file\" box is hidden: a search always covers every sheet and wraps round.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TfrmMain.DoFindNext": {
+"text": "Handler (F3): finds the next occurrence of the text last put in the dialog; if there is none yet the dialog is opened.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TfrmMain.DoFindPrevious": {
+"text": "Handler (Shift+F3): finds the previous occurrence of the text last put in the dialog; if there is none yet the dialog is opened.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TfrmMain.FindInfoText": {
+"text": "Where the last search stands, as text: the sheet shown, how many objects are selected, the place found (sheet, object, text, offset, length), whether the search wrapped, the selected object's class and the text found, and the status bar message (for tests).",
+"returns": "the text"
+},
+"TfrmMain.ReplaceDlgFind": {
+"text": "Event handler of the dialog's Find Next button: takes what the dialog holds and finds the next occurrence in the direction it says.",
+"params": {
+"Sender": "the dialog"
+}
+},
+"TfrmMain.ReplaceDlgReplace": {
+"text": "Event handler of the dialog's Replace and Replace All buttons. Replace All changes every occurrence in the whole design as one undo step (Replace all) and says how many. Replace changes the occurrence found last, if there is one and it is still there, as one undo step (Replace), then finds the next.",
+"params": {
+"Sender": "the dialog"
+}
+},
+"TfrmMain.SyncFindFromDialog": {
+"text": "Takes what the dialog holds as what to look for: the text, the replacement, and the Match case and Whole words options."
+},
+"TfrmMain.ShowFound": {
+"text": "Shows the occurrence that was found: switches to its sheet as clicking that sheet's tab would, selects the object and scrolls it into sight."
+},
+"TfrmMain.FindMessage": {
+"text": "Puts a message in the status bar.",
+"params": {
+"Msg": "the message"
+}
+},
+"TSchematicView.ShowObject": {
+"text": "Makes sure an object can be seen, as Find does for what it has found: if any part of it is off screen the sheet is scrolled so that it is in the middle; the zoom is not changed.",
+"params": {
+"Obj": "an object of the sheet being shown"
+}
+}
+}

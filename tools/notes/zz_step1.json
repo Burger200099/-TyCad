@@ -1,0 +1,111 @@
+{
+"TDesignFile.RemoveSheet": {
+"text": "Removes a sheet and everything on it. A design always keeps at least one sheet, so nothing is removed from a one-sheet design.",
+"returns": "True if the sheet was removed",
+"params": {
+"Index": "zero-based sheet number"
+}
+},
+"TDesignFile.MoveSheet": {
+"text": "Moves a sheet to another place in the order of the sheets. An index out of range is ignored.",
+"params": {
+"FromIndex": "where the sheet is now",
+"ToIndex": "where it should be"
+}
+},
+"TSchematicView.RotateSelection": {
+"text": "Rotates or flips the selected objects about the centre of their extent (CDrawEditItem::ChangeDir): the centre is the middle of the selection's bounding box snapped to the grid, with TinyCAD's correction when snapping moved it off the middle. Construction objects such as rulers are left alone. Junctions are re-checked afterwards but wires attached to the objects do not follow. One undo step.",
+"params": {
+"NewDir": "2 = rotate left, 3 = rotate right, 4 = flip left to right"
+}
+},
+"TSchematicView.BringToFront": {
+"text": "Moves the selected objects to the end of the drawing, so they are drawn on top, keeping their order among themselves (CTinyCadDoc::BringToFront). One undo step."
+},
+"TSchematicView.SendToBack": {
+"text": "Moves the selected objects to the start of the drawing, so they are drawn underneath, keeping their order among themselves (CTinyCadDoc::SendToBack). One undo step."
+},
+"TfrmMain.DoRotateLeft": {
+"text": "Handler: rotates the selection left.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TfrmMain.DoRotateRight": {
+"text": "Handler: rotates the selection right.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TfrmMain.DoFlip": {
+"text": "Handler: flips the selection left to right.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TfrmMain.DoBringToFront": {
+"text": "Handler: draws the selection on top of everything else.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TfrmMain.DoSendToBack": {
+"text": "Handler: draws the selection underneath everything else.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TfrmMain.DoRemoveSheet": {
+"text": "Menu handler: removes the current sheet after asking, with an undo available.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TfrmMain.DoRenameSheet": {
+"text": "Handler (also a double click on a sheet tab): asks for a new name for the current sheet.",
+"params": {
+"Sender": "the button, menu item or tab"
+}
+},
+"TfrmMain.DoMoveSheetLeft": {
+"text": "Handler: moves the current sheet one place to the left.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TfrmMain.DoMoveSheetRight": {
+"text": "Handler: moves the current sheet one place to the right.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TfrmMain.RemoveCurrentSheet": {
+"text": "Removes the sheet being shown, with everything on it, as one undo step, and shows the sheet that took its place. A design keeps at least one sheet.",
+"returns": "True if a sheet was removed",
+"params": {
+"Confirm": "True to ask first (and to explain when it cannot be done)"
+}
+},
+"TfrmMain.RenameCurrentSheet": {
+"text": "Gives the sheet being shown a name (an empty name goes back to \"Sheet N\") as one undo step.",
+"params": {
+"NewName": "the new name"
+}
+},
+"TfrmMain.MoveCurrentSheet": {
+"text": "Moves the sheet being shown among the others, keeping it shown, as one undo step. Moving past either end does nothing.",
+"params": {
+"Delta": "-1 for one place left, 1 for one place right"
+}
+},
+"TfrmMain.SheetTabsMatch": {
+"text": "Whether the sheet tabs show exactly the design's sheets (count, names and the one being shown).",
+"returns": "True if they agree"
+},
+"TfrmMain.ViewUndoChanged": {
+"text": "View event: undo state changed. An undo or redo can add, remove or reorder sheets, so the sheet tabs are rebuilt when they no longer match, and the undo and redo buttons are refreshed.",
+"params": {
+"Sender": "the view"
+}
+}
+}

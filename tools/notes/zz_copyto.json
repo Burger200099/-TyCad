@@ -1,0 +1,15 @@
+{
+"TfrmMain.DoCopyTo": {
+"text": "Handler (Ctrl+E): Copy to. Asks for a file name (the Design files filter, .dsn added if left off, asking before an existing file is replaced) and saves the selected objects there as a design file of their own. Nothing happens with nothing selected. The Save dialog's settings are put back afterwards, so Save As is not affected.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TfrmMain.CopySelectionTo": {
+"text": "Copy to without the dialog: saves the selected objects of the current sheet as a design file and says in the status bar how many were written. If nothing is selected, or the file cannot be written, nothing is written (an existing file is left as it was); an error is reported rather than raised.",
+"returns": "how many objects were written, 0 if none",
+"params": {
+"AFileName": "the file to write"
+}
+}
+}

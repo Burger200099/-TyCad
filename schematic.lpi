@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="12"/>
+    <General>
+      <Flags>
+        <MainUnitHasCreateFormStatements Value="False"/>
+        <MainUnitHasTitleStatement Value="False"/>
+      </Flags>
+      <SessionStorage Value="InProjectDir"/>
+      <AutoCreateForms Value="False"/>
+      <Title Value="Schematic"/>
+      <Scaled Value="True"/>
+      <UseAppBundle Value="False"/>
+      <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+      <XPManifest>
+        <DpiAware Value="True/PM_V2"/>
+      </XPManifest>
+      <Icon Value="0"/>
+    </General>
+    <BuildModes>
+      <Item Name="Default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+    </RunParams>
+    <RequiredPackages>
+      <Item>
+        <PackageName Value="TyCad_Components"/>
+      </Item>
+      <Item>
+        <PackageName Value="LCL"/>
+      </Item>
+      <Item>
+        <PackageName Value="Printer4Lazarus"/>
+      </Item>
+    </RequiredPackages>
+    <Units>
+      <Unit>
+        <Filename Value="schematic.lpr"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/mainform.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmMain"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="MainForm"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/consts.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/osver.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fnewdoc.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmNewDoc"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fproductpick.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmProductPick"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fbase.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmBase"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fabout.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmAbout"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/QLibPanel.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frLibraryPanel"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Foptions.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Foptions.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmOptions"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fdetails.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fdetails.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmDetails"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fannotate.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fannotate.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmAnnotate"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fercopts.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fercopts.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmErcOptions"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fercwin.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fercwin.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmErcList"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Finput.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Finput.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmNumInput"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fnetlist.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fnetlist.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmNetlist"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fpagesetup.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fpagesetup.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmPageSetup"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fpartslist.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fpartslist.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmPartsList"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fpreview.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fpreview.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmPreview"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fprint.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fprint.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmPrint"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fexport.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fexport.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmExportImage"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Flibraries.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Flibraries.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmLibraries"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fsymprops.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fsymprops.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmSymbolProps"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fsymparts.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/Fsymparts.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmSymbolParts"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/qpropbase.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmPropertyBase"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="QPropBase"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/qpropwire.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmPropRibbonWire"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="QPropWire"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/fproptester.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmPropertyTester"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="FPropTester"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/qproptext.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmPropText"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="QPropText"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/qpowersym.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmPower"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="QPowerSym"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/qrectcircle.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmRectCircle"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="QRectCircle"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/qpropnote.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmPropNote"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="QPropNote"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/qcloudnote.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmCloudRect"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="QCloudNote"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/qmeasure.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmMeasure"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="QMeasure"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/fsharedctls.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmSharedControls"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="FSharedCtls"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/ffilldropdown.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmFillDropDown"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="FFillDropDown"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/QPolygon.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmPolygon"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/qarc.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmArc"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="QArc"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/qbus.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmBus"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="QBus"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/fbusdropdown.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmBusDropDown"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="FBusDropDown"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/fbusdropdown.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/FDetailsDropDown.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmDesignDetailsDropDown"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/mainform.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/fsharedctls.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/qsymbols.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmSymbols"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/QPin.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmPin"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/forms/FSymDDD.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmSymbolPropList"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/qrungs.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/qrungs.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmRungs"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="QRungs"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/QFindPanel.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/QFindPanel.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frFindPanel"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/qladder.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmLadder"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="QLadder"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/frames/qladder.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target>
+      <Filename Value="bin/schematic"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="src;src/forms;src/frames"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf3"/>
+      </Debugging>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
+    <Other>
+      <Verbosity>
+        <ShowLineNum Value="True"/>
+      </Verbosity>
+    </Other>
+  </CompilerOptions>
+</CONFIG>

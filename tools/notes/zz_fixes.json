@@ -1,0 +1,45 @@
+{
+"xmltest.pas::DoSample": {
+"text": "Test mode \"sample\": reads a few known values from a .dsn file with the reader and prints them.",
+"params": {
+"FileName": "the .dsn file"
+}
+},
+"DoUU": {
+"text": "Test mode \"uu\": UU-encodes each line of hex from the file (45-byte lines), decodes it again and checks it matches.",
+"params": {
+"FileName": "file with one hex string per line"
+}
+},
+"xmltest.pas::DoRoundTrip": {
+"text": "Test mode \"roundtrip\": writes a document with the writer, reads it back and checks the values.",
+"params": {
+"OutName": "the file to write"
+}
+},
+"DoSymbols": {
+"text": "Test mode \"symbols\": loads every named symbol of a library as a design symbol and places them all in one design, which it saves.",
+"params": {
+"LibName": "the library",
+"OutName": "the design file to write"
+}
+},
+"DoRestore": {
+"text": "Test mode \"restore\": stores every set of a library back onto itself (an update), to test the write path in place.",
+"params": {
+"LibName": "the library (a copy)"
+}
+},
+"designtest.pas::DoGeom": {
+"text": "Test mode \"geom\": updates layout, then probes the geometry of every object (including the objects inside symbols) and prints the totals.",
+"params": {
+"FileName": "the .dsn file"
+}
+},
+"DoStats": {
+"text": "Test mode \"stats\": prints the number of sheets, objects and resources in a design.",
+"params": {
+"FileName": "the .dsn file"
+}
+}
+}

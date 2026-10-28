@@ -1,0 +1,699 @@
+{
+"Def": {
+"text": "Builds one property description (name, caption, kind and, for choices, the allowed values).",
+"returns": "the filled-in description",
+"params": {
+"AName": "the property's internal name, e.g. font.height",
+"ACaption": "the label shown on the ribbon",
+"AKind": "the kind of editor to use",
+"AChoices": "for a choice, the options separated by |"
+}
+},
+"Add": {
+"text": "Appends a property description to a list.",
+"params": {
+"L": "the list to extend",
+"D": "the description to add"
+}
+},
+"ChoiceIndex": {
+"text": "Position of a value in a |-separated list of choices (case-sensitive).",
+"returns": "the 0-based index, or -1 if it is not there",
+"params": {
+"Choices": "the options separated by |",
+"Value": "the option to find"
+}
+},
+"ChoiceText": {
+"text": "The option at a position in a |-separated list; position 0 is used when the index is out of range.",
+"returns": "the option text",
+"params": {
+"Choices": "the options separated by |",
+"Index": "0-based position"
+}
+},
+"ColorToHex": {
+"text": "Converts a Windows color (0x00BBGGRR) to the RRGGBB text used for properties.",
+"returns": "six hex digits, e.g. FF0000 for red",
+"params": {
+"C": "the color"
+}
+},
+"HexToColor": {
+"text": "Converts RRGGBB text (with or without a leading #) to a Windows color; bad text gives the default.",
+"returns": "the color",
+"params": {
+"S": "the text",
+"Default": "color to return when the text is not valid"
+}
+},
+"FloatText": {
+"text": "Formats a number for a property editor: up to three decimals, a dot as the decimal separator whatever the locale.",
+"returns": "the text",
+"params": {
+"V": "the number"
+}
+},
+"ParseFloat": {
+"text": "Reads a number typed by the user (a comma is accepted as the decimal separator).",
+"returns": "the value, or Default when the text is not a number",
+"params": {
+"S": "the text",
+"Default": "value to return on failure"
+}
+},
+"FontNumberOf": {
+"text": "The font resource number of an object that has a font (text, label, note, ladder, linked text, measure).",
+"returns": "the font number, or -1 for objects without a font",
+"params": {
+"Obj": "the object"
+}
+},
+"SetFontNumber": {
+"text": "Stores a font resource number in an object that has a font; other objects are ignored.",
+"params": {
+"Obj": "the object",
+"N": "the font resource number"
+}
+},
+"FontColorOf": {
+"text": "Reads the text color of an object that has one.",
+"returns": "False when the object has no text color",
+"params": {
+"Obj": "the object",
+"C": "set to the color"
+}
+},
+"SetFontColor": {
+"text": "Sets the text color of an object that has one; other objects are ignored.",
+"params": {
+"Obj": "the object",
+"C": "the new color"
+}
+},
+"LineStyleNumber": {
+"text": "The line-style resource number of a wire, line, polygon, rectangle/circle, cloud or note.",
+"returns": "False for objects without a line style",
+"params": {
+"Obj": "the object",
+"N": "set to the style number"
+}
+},
+"SetLineStyleNumber": {
+"text": "Stores a line-style number in an object (a wire or line stops using the default style).",
+"params": {
+"Obj": "the object",
+"N": "the line style number"
+}
+},
+"HasLine": {
+"text": "Whether the object has a line whose color, width or style can be edited.",
+"returns": "True for lines, wires, shapes, clouds, notes and measures",
+"params": {
+"Obj": "the object"
+}
+},
+"ChangeLine": {
+"text": "Changes one aspect of an object's line (color, width or dash style) by finding or adding a matching line-style resource, keeping the other two aspects.",
+"params": {
+"Obj": "the object",
+"What": "color, width or style",
+"Value": "the new value as text"
+}
+},
+"FillNumber": {
+"text": "The fill-style resource number of a polygon, rectangle/circle or note.",
+"returns": "False for objects without a fill",
+"params": {
+"Obj": "the object",
+"N": "set to the fill number"
+}
+},
+"SetFillNumber": {
+"text": "Stores a fill-style number in an object that can be filled.",
+"params": {
+"Obj": "the object",
+"N": "the fill style number"
+}
+},
+"ChangeFill": {
+"text": "Changes the fill type (none, solid or a hatch) or the fill color of an object by finding or adding a matching fill-style resource.",
+"params": {
+"Obj": "the object",
+"What": "type or color",
+"Value": "the new value as text"
+}
+},
+"ObjectProps": {
+"text": "Lists the properties that can be edited on one object, in ribbon order. Names are shared between kinds (text, font.height, line.color ...) so selections of mixed objects can be edited together.",
+"returns": "the list of property descriptions",
+"params": {
+"Obj": "the object"
+}
+},
+"CommonProps": {
+"text": "The properties that every object in a selection has (same name and kind), in the first object's order. These are what the ribbon offers for a multiple selection.",
+"returns": "the shared property descriptions; empty if the list is empty",
+"params": {
+"Objs": "the selected objects"
+}
+},
+"BoolText": {
+"text": "Property text for a Boolean.",
+"returns": "\"1\" for True, \"0\" for False",
+"params": {
+"B": "the value"
+}
+},
+"GetProp": {
+"text": "Reads one property of an object as text.",
+"returns": "False if the object does not have that property",
+"params": {
+"Obj": "the object",
+"Name": "the property name",
+"Value": "set to the property's value"
+}
+},
+"SetProp": {
+"text": "Sets one property of an object from text, refreshing its layout afterwards. Unknown properties are ignored and unusable text (such as letters for a number) leaves the value unchanged.",
+"returns": "True if the object has the property",
+"params": {
+"Obj": "the object",
+"Name": "the property name",
+"Value": "the new value as text"
+}
+},
+"CommonValue": {
+"text": "The value of a property across a selection; Mixed shows that the objects disagree (the first value is returned then).",
+"returns": "the shared value as text",
+"params": {
+"Objs": "the selected objects",
+"Name": "the property name",
+"Mixed": "set True when the values differ"
+}
+},
+"SetPropAll": {
+"text": "The mass change: sets one property on every object in the list that has it and skips the rest.",
+"returns": "how many objects were changed",
+"params": {
+"Objs": "the selected objects",
+"Name": "the property name",
+"Value": "the new value as text"
+}
+},
+"NewNode": {
+"text": "Creates a netlist node with no label, reference or pin and no net yet.",
+"returns": "the node",
+"params": {
+"AFileIndex": "0 for the root design (hierarchy is not supported)",
+"ASheet": "1-based sheet number",
+"AParent": "the object that produced it",
+"AA": "where it is on the sheet; an invalid point for hidden power pins"
+}
+},
+"NodeLabel": {
+"text": "The net name a node contributes: its label, made unique per hierarchical instance when the file index is not 0.",
+"returns": "the name, or empty when the node has no label",
+"params": {
+"N": "the node"
+}
+},
+"NodePreferredLabel": {
+"text": "The net's preferred name once linking has chosen one; falls back to the node's own label.",
+"returns": "the preferred name",
+"params": {
+"N": "the node"
+}
+},
+"TNetCollection.IndexOf": {
+"text": "Binary search for a net number among the sorted keys.",
+"returns": "position, or -1 if the net is absent",
+"params": {
+"ANet": "the net number"
+}
+},
+"TNetCollection.Count": {
+"text": "How many nets there are.",
+"returns": "the number of nets"
+},
+"TNetCollection.Key": {
+"text": "The net number at a position (nets are kept in ascending order).",
+"returns": "the net number",
+"params": {
+"Index": "position"
+}
+},
+"TNetCollection.Vec": {
+"text": "The nodes of the net at a position.",
+"returns": "the nodes in the order they were added",
+"params": {
+"Index": "position"
+}
+},
+"TNetCollection.SetNode": {
+"text": "Replaces one node of a net in place (used when linking changes a node's net, label or number).",
+"params": {
+"Index": "position of the net",
+"NodeIndex": "position of the node inside it",
+"Node": "the new node value"
+}
+},
+"TNetCollection.Has": {
+"text": "Whether a net number exists.",
+"returns": "True if present",
+"params": {
+"ANet": "the net number"
+}
+},
+"TNetCollection.Push": {
+"text": "Appends a node to a net, creating the net (in sorted position) if it does not exist yet; the same as m_nets[net].push_back(node) in TinyCAD.",
+"params": {
+"ANet": "the net number",
+"Node": "the node to add"
+}
+},
+"TNetCollection.Erase": {
+"text": "Removes a net and all its nodes (after merging it into another net).",
+"params": {
+"ANet": "the net number"
+}
+},
+"TNetCollection.Clear": {
+"text": "Removes every net."
+},
+"PointLessThan": {
+"text": "TinyCAD's tolerant point ordering (CDPoint::operator<): points within 0.001 compare equal, otherwise ordered by x then y. Used to keep the point-to-net map ordered.",
+"returns": "True if A sorts before B",
+"params": {
+"A": "first point",
+"B": "second point"
+}
+},
+"TPointNetMap.LowerBound": {
+"text": "Binary search for the first entry that is not before P.",
+"returns": "the position where P is or would be inserted",
+"params": {
+"P": "the point"
+}
+},
+"TPointNetMap.Get": {
+"text": "Net number stored at a point; like std::map operator[], an absent point is added with net 0.",
+"returns": "the net number (0 if none)",
+"params": {
+"P": "the point"
+}
+},
+"TPointNetMap.SetValue": {
+"text": "Stores a net number at a point, adding the point if needed.",
+"params": {
+"P": "the point",
+"Net": "the net number"
+}
+},
+"TPointNetMap.Clear": {
+"text": "Removes every point."
+},
+"TNetList.Create": {
+"text": "Creates an empty netlist; net numbers start at 1."
+},
+"TNetList.Destroy": {
+"text": "Frees the point map and the net collection."
+},
+"TNetList.GetPowerLabel": {
+"text": "The net name a power symbol gives: its text if it has one, otherwise a fixed name for its shape (TCPOWERBAR, TCPOWERCIRCLE ...).",
+"returns": "the name",
+"params": {
+"Power": "the power symbol"
+}
+},
+"TNetList.MakeNetForSheet": {
+"text": "Builds the nets of one sheet: a node for every pin end, power symbol, wire end, junction, no-connect and label; wires join their two ends, junctions join the wires they sit on, labels join the wire they are on and each other; hidden power pins and power symbols join by name. A port of CNetList::MakeNetForSheet for flat designs.",
+"params": {
+"Sheet": "the sheet",
+"SheetOneIndexed": "its 1-based number"
+}
+},
+"TNetList.MakeNet": {
+"text": "Builds the netlist of a whole design: nets per sheet, linked across sheets by label, preferred names chosen, numbers stabilised from the symbols' hints (which are stored back into them), and wires told which net they are on.",
+"params": {
+"Design": "the design"
+}
+},
+"PutText": {
+"text": "Writes text to a stream the way TinyCAD's text-mode output does: every line feed becomes a carriage return plus line feed.",
+"params": {
+"Dest": "where to write",
+"S": "the text"
+}
+},
+"TNetList.WriteProtel": {
+"text": "Writes the design's netlist in Protel format: a [ ] block for each distinct reference (reference, package, name) in drawing order, then a ( ) block for each net with two or more pins, named by its label or N followed by the net number. Builds the netlist first.",
+"params": {
+"Design": "the design",
+"Dest": "the stream to write to"
+}
+},
+"TNetList.DumpText": {
+"text": "A plain-text listing for testing: one line per net with its number, preferred name and its pins as reference-pin.",
+"returns": "the listing"
+},
+"TSchematicView.Create": {
+"text": "Creates the drawing area: transform, selection list, default zoom, double buffering, select tool.",
+"params": {
+"AOwner": "the owning component"
+}
+},
+"TSchematicView.Destroy": {
+"text": "Drops any active tool, then frees the placement symbol, the undo manager, the selection list and the transform."
+},
+"TSchematicView.GetSheet": {
+"text": "The sheet being shown (design plus sheet index).",
+"returns": "the sheet, or nil when no document is open"
+},
+"TSchematicView.Status": {
+"text": "Passes a message to the status-bar handler, if there is one.",
+"params": {
+"Msg": "the message"
+}
+},
+"TSchematicView.SelectionChanged": {
+"text": "Tells the owner the selection changed (so the ribbon can rebuild its property editors) and repaints."
+},
+"TSchematicView.ApplyTransform": {
+"text": "Loads the current zoom and origin into the screen transform and hands the zoom to the sheet options (hit tests use it)."
+},
+"TSchematicView.ScreenToDesign": {
+"text": "Converts a pixel position to design units using the current zoom and origin.",
+"returns": "the design point",
+"params": {
+"P": "pixel position inside the control"
+}
+},
+"TSchematicView.DesignToScreen": {
+"text": "Converts a design point to a pixel position.",
+"returns": "the pixel position",
+"params": {
+"P": "design point"
+}
+},
+"TSchematicView.SnapPoint": {
+"text": "Snaps a point to the sheet's grid (unchanged when grid snapping is off).",
+"returns": "the snapped point",
+"params": {
+"P": "design point"
+}
+},
+"TSchematicView.GetSnapEnabled": {
+"text": "Whether snapping to the grid is on for the current sheet.",
+"returns": "True when on"
+},
+"TSchematicView.SetSnapEnabled": {
+"text": "Turns snapping to the grid on or off for the current sheet.",
+"params": {
+"Value": "True to snap"
+}
+},
+"TSchematicView.GetGridMm": {
+"text": "The grid spacing of the current sheet in millimetres.",
+"returns": "the spacing in mm (2 when there is no sheet)"
+},
+"TSchematicView.SetGridMm": {
+"text": "Sets the grid spacing of the current sheet; zero or negative sizes are ignored.",
+"params": {
+"Value": "spacing in mm"
+}
+},
+"TSchematicView.RelayoutAll": {
+"text": "Recalculates layout of every object on the sheet and repaints."
+},
+"TSchematicView.AfterEdit": {
+"text": "Everything that must follow a change: object layout, linked text, repaint, and the modified and undo-state notifications."
+},
+"TSchematicView.SelectedIds": {
+"text": "The object ids of the selection, kept in undo snapshots because object pointers do not survive an undo.",
+"returns": "the ids"
+},
+"TSchematicView.RestoreSelection": {
+"text": "Re-selects objects by id after an undo, redo or reload; ids that no longer exist or are on another sheet are skipped.",
+"params": {
+"Ids": "the ids to select"
+}
+},
+"TSchematicView.BeginChange": {
+"text": "Starts an undoable action: takes the pending snapshot. Pair with CommitChange.",
+"params": {
+"ACaption": "name of the action for Undo"
+}
+},
+"TSchematicView.CommitChange": {
+"text": "Ends an undoable action: keeps the snapshot as an undo step and refreshes everything when something changed, otherwise discards it.",
+"params": {
+"DidChange": "True if the design changed"
+}
+},
+"TSchematicView.DoUndo": {
+"text": "Undoes the last action: cancels any tool, restores the previous design, re-selects what was selected and refreshes.",
+"returns": "True if something was undone"
+},
+"TSchematicView.DoRedo": {
+"text": "Redoes the last undone action, in the same way as DoUndo.",
+"returns": "True if something was redone"
+},
+"TSchematicView.ApplyProperty": {
+"text": "The mass change from the ribbon: sets one property on every selected object as a single undo step.",
+"returns": "how many objects changed",
+"params": {
+"PropName": "the property name",
+"Value": "the new value as text"
+}
+},
+"TSchematicView.SetDesign": {
+"text": "Shows a design (or none): drops tools and selection, creates a fresh undo manager, updates links, fits the page.",
+"params": {
+"ADesign": "the design, or nil",
+"ASheetIndex": "the sheet to show"
+}
+},
+"TSchematicView.SetSheetIndex": {
+"text": "Switches to another sheet of the same design: drops tools and selection and fits the page.",
+"params": {
+"AIndex": "zero-based sheet number"
+}
+},
+"TSchematicView.ZoomFit": {
+"text": "Zooms and centres so the whole page fits in the control."
+},
+"TSchematicView.SetZoomAt": {
+"text": "Sets the zoom (limited to 5% to 800%) keeping the design point under Focus where it is on screen.",
+"params": {
+"NewZoom": "the requested zoom factor",
+"Focus": "pixel position that must not move"
+}
+},
+"TSchematicView.ZoomBy": {
+"text": "Multiplies the zoom by a factor about the centre of the control.",
+"params": {
+"Factor": "e.g. 1.25 to zoom in"
+}
+},
+"TSchematicView.ZoomActual": {
+"text": "Sets 100% zoom about the centre of the control."
+},
+"TSchematicView.Resize": {
+"text": "Repaints when the control changes size."
+},
+"TSchematicView.PaintPreview": {
+"text": "Draws what the active tool is showing on top of the drawing: the wire rubber band with its sticking ring and junction dot, the polygon in progress, the shape outline, the link target, or the symbol being placed.",
+"params": {
+"C": "the canvas to draw on"
+}
+},
+"TSchematicView.RenderTo": {
+"text": "Draws everything (page, border, objects, tool preview, selection box) into a bitmap; used both for painting and for saving screenshots.",
+"params": {
+"ABitmap": "the bitmap, resized to the control"
+}
+},
+"TSchematicView.Paint": {
+"text": "Paints the control: renders into an off-screen bitmap and copies it, so there is no flicker."
+},
+"TSchematicView.SaveSnapshot": {
+"text": "Saves what the control currently shows as a bitmap file (used by the self-test script).",
+"params": {
+"FileName": "where to save it"
+}
+},
+"TSchematicView.HitTest": {
+"text": "Finds the object under a point, topmost first, using each object's own DistanceFromPoint within a 4 pixel tolerance (so ladder rails only hit on a rail or text).",
+"returns": "the object, or nil",
+"params": {
+"P": "design point"
+}
+},
+"TSchematicView.ClearSelection": {
+"text": "Deselects everything (and notifies only if something was selected)."
+},
+"TSchematicView.SelectObject": {
+"text": "Selects an object, or toggles it when adding to the selection.",
+"params": {
+"Obj": "the object (nil just clears when not adding)",
+"Add": "True to add to / toggle in the current selection, False to replace it"
+}
+},
+"TSchematicView.SelectAll": {
+"text": "Selects every object on the sheet."
+},
+"TSchematicView.SelectedCount": {
+"text": "How many objects are selected.",
+"returns": "the count"
+},
+"TSchematicView.SelectedObject": {
+"text": "One of the selected objects.",
+"returns": "the object",
+"params": {
+"Index": "position in the selection"
+}
+},
+"TSchematicView.SelectedList": {
+"text": "The selection itself, for the property editors.",
+"returns": "the list (owned by the view; do not free or keep)"
+},
+"TSchematicView.DeleteSelection": {
+"text": "Deletes the selected objects as one undo step and re-checks junctions where wires were removed."
+},
+"TSchematicView.FreeTool": {
+"text": "Drops everything the active tool holds: finishes a wire in progress, frees the wire tool, engine and placement symbol, clears polygon points and stages."
+},
+"TSchematicView.BeginTool": {
+"text": "Makes a drawing tool the active one (cursor, status hint, wire tool and engine for wires and lines).",
+"params": {
+"ATool": "which tool"
+}
+},
+"TSchematicView.BeginLadderTool": {
+"text": "Compatibility name for BeginTool(vtLadder), used by forms written for the first version of this view."
+},
+"TSchematicView.BeginPlace": {
+"text": "Starts placing a symbol: it follows the mouse until clicked.",
+"params": {
+"Meth": "the symbol to place; the view takes ownership"
+}
+},
+"TSchematicView.CancelTool": {
+"text": "Returns to the select tool."
+},
+"TSchematicView.ToolIsTwoCorner": {
+"text": "Whether the active tool draws by two corner points (rectangle, circle, arc, note, cloud, measure, ladder).",
+"returns": "True for those tools"
+},
+"TSchematicView.AddNew": {
+"text": "Adds a newly created object to the sheet with a new id.",
+"params": {
+"Obj": "the object"
+}
+},
+"TSchematicView.FinishPolygon": {
+"text": "Turns the points clicked so far into a polygon object as one undo step and selects it; fewer than two points just cancels.",
+"params": {
+"Closed": "True when the shape was closed"
+}
+},
+"TSchematicView.CommitShape": {
+"text": "Creates the object for the active two-corner tool (rectangle, circle, note, cloud, measure, arc or ladder) from the two corner points, as one undo step, and selects it. Degenerate shapes are dropped.",
+"params": {
+"A": "first corner",
+"B": "second corner"
+}
+},
+"TSchematicView.PlaceLabel": {
+"text": "Places a wire label (default text LABEL) at the point on a wire nearest the click, and selects it so its text can be edited on the ribbon.",
+"params": {
+"NoSnap": "the raw click position"
+}
+},
+"TSchematicView.PlaceSimple": {
+"text": "Places a junction (sticking to pins and wires) or a horizontal / vertical ruler guide at the click.",
+"params": {
+"NoSnap": "the raw click position"
+}
+},
+"TSchematicView.XRefClick": {
+"text": "Two-step link tool: the first click picks the object to follow, the second click places the linked text.",
+"params": {
+"P": "click position"
+}
+},
+"TSchematicView.WireDown": {
+"text": "Passes a left click to the wire tool inside an undoable action, which is kept only if something was stored.",
+"params": {
+"P": "click position",
+"Shift": "modifier keys (a double click finishes the wire)"
+}
+},
+"TSchematicView.WireUp": {
+"text": "Passes the mouse release to the wire tool, which places a dragged wire.",
+"params": {
+"P": "release position"
+}
+},
+"TSchematicView.SimMouse": {
+"text": "Sends a mouse event through the control's real handlers; used by the self-test script.",
+"params": {
+"Kind": "0 = press, 1 = move, 2 = release",
+"X": "pixel x",
+"Y": "pixel y",
+"Shift": "modifier keys",
+"Button": "mouse button"
+}
+},
+"TSchematicView.ClickAt": {
+"text": "A press and release at a pixel position through the real handlers.",
+"params": {
+"X": "pixel x",
+"Y": "pixel y",
+"Shift": "modifier keys"
+}
+},
+"TSchematicView.MouseDown": {
+"text": "Handles a mouse press for the active tool: pans on the middle or (in select) right button; right click finishes or cancels a tool; a left click draws, places, selects or starts a drag depending on the tool.",
+"params": {
+"Button": "which button",
+"Shift": "modifier keys",
+"X": "pixel x",
+"Y": "pixel y"
+}
+},
+"TSchematicView.MouseMove": {
+"text": "Handles mouse movement: shows the position, pans, moves the selection (as one undo step, grid snapped), grows the rubber band, and updates the wire tool and shape previews.",
+"params": {
+"Shift": "modifier keys",
+"X": "pixel x",
+"Y": "pixel y"
+}
+},
+"TSchematicView.MouseUp": {
+"text": "Handles the release: finishes a pan, a move or a rubber-band selection, lets the wire tool place a dragged wire, or finishes a two-corner shape that was press-dragged.",
+"params": {
+"Button": "which button",
+"Shift": "modifier keys",
+"X": "pixel x",
+"Y": "pixel y"
+}
+},
+"TSchematicView.DoMouseWheel": {
+"text": "Zooms in or out about the mouse position.",
+"returns": "True (the event was handled)",
+"params": {
+"Shift": "modifier keys",
+"WheelDelta": "scroll direction",
+"MousePos": "mouse position in screen coordinates"
+}
+},
+"TSchematicView.KeyDown": {
+"text": "Keyboard commands: Esc finishes or cancels what is being drawn, Delete deletes the selection, Ctrl+Z and Ctrl+Y undo and redo, R and X rotate and mirror a symbol being placed.",
+"params": {
+"Key": "the key code (var)",
+"Shift": "modifier keys"
+}
+}
+}

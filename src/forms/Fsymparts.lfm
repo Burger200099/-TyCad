@@ -1,0 +1,49 @@
+object frmSymbolParts: TfrmSymbolParts
+  Left = 700
+  Height = 300
+  Top = 300
+  Width = 580
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'Parts per Package'
+  ClientHeight = 300
+  ClientWidth = 580
+  Position = poOwnerFormCenter
+  object lblParts: TLabel
+    Left = 16
+    Height = 20
+    Top = 24
+    Width = 270
+    Caption = 'Number of parts per package:'
+  end
+  object seParts: TSpinEdit
+    Left = 320
+    Height = 28
+    Hint = 'How many parts the package has, 1 to 26'
+    Top = 20
+    Width = 80
+    MaxValue = 26
+    MinValue = 1
+    OnChange = PartsChange
+    TabOrder = 0
+    Value = 1
+  end
+  object cbHetero: TCheckBox
+    Left = 16
+    Height = 24
+    Hint = 'Every part has a drawing of its own; otherwise all parts share one drawing'
+    Top = 68
+    Width = 540
+    Caption = 'A separate drawing for each part (heterogeneous)'
+    TabOrder = 1
+  end
+  object lblNote: TLabel
+    Left = 16
+    Height = 60
+    Top = 108
+    Width = 540
+    AutoSize = False
+    Caption = 'The kind of symbol can only be changed while the package has one part. Making a package smaller removes the pins of the parts that are gone.'
+    WordWrap = True
+  end
+end

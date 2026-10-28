@@ -1,0 +1,43 @@
+inherited fmCloudRect: TfmCloudRect
+  Height = 111
+  Width = 247
+  ClientHeight = 111
+  ClientWidth = 247
+  inherited cbAngle: TComboBox[0]
+    TabOrder = 3
+    Visible = False
+  end
+  inherited lbCaption: TLabel[1]
+    Top = 96
+    Width = 247
+    Caption = 'Cloud'
+  end
+  inherited cbWireColor: TColorButton[2]
+  end
+  inherited seWireSize: TSpinEdit[3]
+  end
+  inherited cbWireType: TComboBox[4]
+    Left = 96
+  end
+  inherited lbSize: TLabel[5]
+  end
+  object fseScallop: TFloatSpinEdit[6]
+    Left = 148
+    Height = 32
+    Top = 48
+    Width = 86
+    Alignment = taCenter
+    AutoSize = False
+    DecimalPlaces = 3
+    Font.Height = -17
+    ParentFont = False
+    TabOrder = 2
+  end
+  object lbScallop: TLabel[7]
+    Left = 96
+    Height = 15
+    Top = 56
+    Width = 41
+    Caption = 'Scallop:'
+  end
+end

@@ -1,0 +1,826 @@
+{
+"TSchematicPainter.Create": {
+"text": "Creates a painter that draws onto a canvas through a screen transform (zoom and origin).",
+"params": {
+"ACanvas": "the canvas to draw on",
+"ATransform": "converts design units to pixels; the painter does not own it"
+}
+},
+"TSchematicPainter.Px": {
+"text": "Converts a design point to a pixel position with the current transform.",
+"returns": "the pixel position",
+"params": {
+"D": "design point"
+}
+},
+"TSchematicPainter.Dist": {
+"text": "Converts a length in design units to pixels at the current zoom.",
+"returns": "the length in pixels",
+"params": {
+"D": "length in design units"
+}
+},
+"TSchematicPainter.Col": {
+"text": "The color to draw with: the given color, or the orange selection color while drawing a selected object.",
+"returns": "the canvas color",
+"params": {
+"C": "the object's own color (Windows 0x00BBGGRR)"
+}
+},
+"TSchematicPainter.SetPen": {
+"text": "Sets the canvas pen from a color, thickness in design units and Windows dash style. The pen is at least 1 pixel wide; dashed styles only show on 1 pixel pens, as on Windows.",
+"params": {
+"Color": "pen color",
+"Thickness": "thickness in design units",
+"PenStyle": "0 solid, 1 dash, 2 dot, 3 dash-dot, 4 dash-dot-dot"
+}
+},
+"TSchematicPainter.Ln": {
+"text": "Draws a line between two design points, including its last pixel (which LineTo leaves out).",
+"params": {
+"A": "start",
+"B": "end"
+}
+},
+"TSchematicPainter.Poly": {
+"text": "Draws a polyline, or a closed polygon with the current brush.",
+"params": {
+"Pts": "the points in pixels",
+"Closed": "True for a closed polygon"
+}
+},
+"TSchematicPainter.SetFont": {
+"text": "Selects a font resource on the canvas, scaled to the zoom (name, bold, italic, underline) in the given color with a transparent background.",
+"params": {
+"FontNumber": "font resource number",
+"Color": "text color",
+"ScreenHeight": "set to the font height in pixels"
+}
+},
+"TSchematicPainter.TextAt": {
+"text": "Draws text anchored at a point: normal text sits above the anchor, rotated text reads upwards beside it. A backquote in the text (TinyCAD's overbar mark) is dropped.",
+"params": {
+"Str": "the text",
+"Anchor": "the anchor point",
+"Rotated": "True to read upwards",
+"FontNumber": "font resource number",
+"Color": "text color"
+}
+},
+"TSchematicPainter.PaintLine": {
+"text": "Draws a wire, bus or line. Objects using the default style take the sheet's wire or bus color.",
+"params": {
+"O": "the line object"
+}
+},
+"TSchematicPainter.PaintJunction": {
+"text": "Draws the junction dot in the junction color.",
+"params": {
+"O": "the junction"
+}
+},
+"TSchematicPainter.PaintNoConnect": {
+"text": "Draws the no-connect cross.",
+"params": {
+"O": "the no-connect"
+}
+},
+"TSchematicPainter.PaintSquare": {
+"text": "Draws a rectangle or ellipse with its line style and fill.",
+"params": {
+"O": "the shape"
+}
+},
+"TSchematicPainter.PaintPolygon": {
+"text": "Draws a polygon or arc from its flattened outline, filled when it has a fill, closed when marked closed.",
+"params": {
+"O": "the polygon"
+}
+},
+"TSchematicPainter.PaintText": {
+"text": "Draws a text object in its box, upright or rotated.",
+"params": {
+"O": "the text object"
+}
+},
+"TSchematicPainter.PaintLabel": {
+"text": "Draws a wire label: its text, plus an outline for input and output labels.",
+"params": {
+"O": "the label"
+}
+},
+"TSchematicPainter.PaintPower": {
+"text": "Draws a power symbol: the stem, the symbol (bar, circle, wave, arrow or earth) and its text.",
+"params": {
+"O": "the power symbol"
+}
+},
+"TSchematicPainter.PaintPin": {
+"text": "Draws a pin of a symbol: the line (with a dot or a clock triangle when set), a cross for a not-connected pin, and the pin name and number according to what is shown. Hidden pins are not drawn.",
+"params": {
+"O": "the pin"
+}
+},
+"TSchematicPainter.PaintNote": {
+"text": "Draws a note: its rectangle (square, rounded or none), fill and text one line per line break. Word wrapping is not done yet.",
+"params": {
+"O": "the note"
+}
+},
+"TSchematicPainter.PaintBusSlash": {
+"text": "Draws a bus slash as a thick bus-colored line.",
+"params": {
+"O": "the bus slash"
+}
+},
+"TSchematicPainter.PaintMethod": {
+"text": "Draws a placed symbol: its drawing through a transform that applies its position, rotation, mirror and scale, then its reference, name and other field texts.",
+"params": {
+"O": "the placed symbol"
+}
+},
+"TSchematicPainter.PaintLadder": {
+"text": "Draws ladder rails: the two rails, the bus labels above them and the line numbers beside them (thinned out when the lines are closer than the text height). When selected, outlines the rails' rectangle.",
+"params": {
+"O": "the ladder"
+}
+},
+"TSchematicPainter.PaintRuler": {
+"text": "Draws a guide ruler as a dotted line across the sheet with its position in millimetres.",
+"params": {
+"O": "the ruler"
+}
+},
+"TSchematicPainter.PaintMeasure": {
+"text": "Draws a measuring ruler: the line, end stops, graduations at a spacing that suits the zoom, and the distance beside the middle.",
+"params": {
+"O": "the measure"
+}
+},
+"TSchematicPainter.PaintCloud": {
+"text": "Draws a revision cloud: each edge of the rectangle as a row of outward semicircular scallops.",
+"params": {
+"O": "the cloud"
+}
+},
+"TSchematicPainter.PaintRefText": {
+"text": "Draws linked text (prefix, resolved value, suffix), with a frame when selected.",
+"params": {
+"O": "the linked text"
+}
+},
+"TSchematicPainter.PaintObject": {
+"text": "Draws any drawing object by finding its class, in the selection color when selected. Used for sheets, the placement ghost and previews.",
+"params": {
+"Obj": "the object",
+"Selected": "True to draw it highlighted"
+}
+},
+"TSchematicPainter.PaintSheet": {
+"text": "Draws every object of a sheet in order, highlighting those in the selection.",
+"params": {
+"Sheet": "the sheet",
+"Selected": "the selected objects (may be nil)"
+}
+},
+"TSchematicPainter.PaintPage": {
+"text": "Draws the paper with its shadow, the grid dots (only when they are at least 6 pixels apart), and the border rectangle if the sheet has one.",
+"params": {
+"Sheet": "the sheet",
+"ShowGrid": "True to draw grid dots",
+"Viewport": "the visible pixel area, to skip dots outside it"
+}
+},
+"MakeLabel": {
+"text": "Creates a label on a parent control at a position.",
+"returns": "the label",
+"params": {
+"AParent": "where it goes",
+"ACaption": "its text",
+"ALeft": "x position",
+"ATop": "y position"
+}
+},
+"MakeEdit": {
+"text": "Creates a single-line edit box.",
+"returns": "the edit box",
+"params": {
+"AParent": "where it goes",
+"ALeft": "x",
+"ATop": "y",
+"AWidth": "width",
+"AText": "initial text"
+}
+},
+"MakeButton": {
+"text": "Creates a button that closes a dialog with the given result.",
+"returns": "the button",
+"params": {
+"AParent": "where it goes",
+"ACaption": "its text",
+"ALeft": "x",
+"ATop": "y",
+"AResult": "modal result such as mrOK or mrCancel"
+}
+},
+"TNewDocForm.CreateNew": {
+"text": "Builds the New Document dialog in code: paper family and size lists, orientation, border and automatic sheet numbering options, and title-block fields. Starts with ISO A4 landscape selected.",
+"params": {
+"AOwner": "owner of the dialog",
+"Num": "unused (form number)"
+}
+},
+"TNewDocForm.FillPapers": {
+"text": "Fills the size list with the papers of the chosen family (or all sizes) and selects the first."
+},
+"TNewDocForm.FamilyChange": {
+"text": "Event handler: the family changed, so refill the size list.",
+"params": {
+"Sender": "the family combo box"
+}
+},
+"TNewDocForm.PaperIndex": {
+"text": "The paper table index of the selected size (ISO A4 when nothing is selected).",
+"returns": "index in the paper table"
+},
+"TNewDocForm.Landscape": {
+"text": "Whether landscape is chosen.",
+"returns": "True for landscape, False for portrait"
+},
+"TNewDocForm.PaperChange": {
+"text": "Event handler: shows the selected paper's name and page size in internal units.",
+"params": {
+"Sender": "the list or orientation control"
+}
+},
+"TNewDocForm.SelectPaper": {
+"text": "Selects a paper and orientation in the dialog (used for defaults and by scripts).",
+"params": {
+"AName": "paper name",
+"ALandscape": "True for landscape"
+}
+},
+"TNewDocForm.BuildDesign": {
+"text": "Creates the new design from the dialog's choices: one sheet with the paper size and orientation, title-block text, automatic sheet numbers, border with margin, and a first revision \"A - Initial issue\".",
+"returns": "the new design; the caller owns it"
+},
+"TLadderForm.CreateFor": {
+"text": "Builds the ladder properties dialog (kept for forms that still use a dialog; the ribbon now edits these properties).",
+"params": {
+"AOwner": "owner",
+"ALadder": "the ladder to edit"
+}
+},
+"TLadderForm.NumField": {
+"text": "Reads a whole number from an edit box.",
+"returns": "the number, or Default if the text is not a number",
+"params": {
+"E": "the edit box",
+"Default": "value to use on bad text"
+}
+},
+"TLadderForm.MmField": {
+"text": "Reads a number of millimetres from an edit box (comma accepted as decimal point).",
+"returns": "the number, or Default on bad text",
+"params": {
+"E": "the edit box",
+"Default": "value to use on bad text"
+}
+},
+"TLadderForm.ValuesChange": {
+"text": "Event handler: shows how many lines, the spacing in mm and the numbering from the current entries.",
+"params": {
+"Sender": "the edit box that changed"
+}
+},
+"TLadderForm.Apply": {
+"text": "Copies the dialog's values into the ladder: wire numbers, first / last line, line count (at least 1), number side, rail width and rectangle.",
+"returns": "False if the line numbers are not whole numbers"
+},
+"EditLadder": {
+"text": "Shows the ladder properties dialog modally and applies it on OK.",
+"returns": "True if the ladder was changed",
+"params": {
+"AOwner": "owner of the dialog",
+"ALadder": "the ladder to edit"
+}
+},
+"TLibraryPanel.Create": {
+"text": "Builds the panel: caption, filter box, symbol list and a preview area.",
+"params": {
+"AOwner": "owner"
+}
+},
+"TLibraryPanel.Destroy": {
+"text": "Frees the preview and the open library."
+},
+"TLibraryPanel.ClearPreview": {
+"text": "Throws away the preview design."
+},
+"TLibraryPanel.OpenLibrary": {
+"text": "Opens a .TCLib library (replacing any open one) and lists its symbols. If the file cannot be opened the previous library stays and the error is raised.",
+"params": {
+"FileName": "path of the library"
+}
+},
+"TLibraryPanel.Rebuild": {
+"text": "Refills the list with the symbols whose name or description contains the filter text."
+},
+"TLibraryPanel.RowCount": {
+"text": "Number of rows in the list.",
+"returns": "the count"
+},
+"TLibraryPanel.RowText": {
+"text": "Text of one row (name and description).",
+"returns": "the text",
+"params": {
+"Index": "row number"
+}
+},
+"TLibraryPanel.FilterChange": {
+"text": "Event handler: the filter text changed, so refill the list.",
+"params": {
+"Sender": "the filter box"
+}
+},
+"TLibraryPanel.SelectRow": {
+"text": "Selects a row and shows its preview.",
+"params": {
+"Index": "row number; out-of-range values are ignored"
+}
+},
+"TLibraryPanel.ListClick": {
+"text": "Event handler: a row was clicked, so show its preview.",
+"params": {
+"Sender": "the list"
+}
+},
+"TLibraryPanel.ListDblClick": {
+"text": "Event handler: a row was double-clicked, so start placing that symbol.",
+"params": {
+"Sender": "the list"
+}
+},
+"TLibraryPanel.PlaceSelected": {
+"text": "Asks the owner to start placing the selected symbol (OnPlace)."
+},
+"TLibraryPanel.PreviewPaint": {
+"text": "Event handler: draws the selected symbol, scaled to fit, in the preview area.",
+"params": {
+"Sender": "the paint box"
+}
+},
+"Tokenize": {
+"text": "Splits a script line into words on spaces; a double-quoted run counts as one word.",
+"params": {
+"Line": "the script line",
+"Dest": "receives the words"
+}
+},
+"Num": {
+"text": "Converts script text to a number using a dot as the decimal separator.",
+"returns": "the number",
+"params": {
+"S": "the text"
+}
+},
+"SaveForm": {
+"text": "Saves a picture of a whole form as a bitmap file.",
+"params": {
+"AForm": "the form",
+"FileName": "where to save it"
+}
+},
+"Settle": {
+"text": "Lets the program process pending events (painting, timers) so the next script step sees a settled window."
+},
+"RunScript": {
+"text": "Runs a self-test script against the real window: each line is a command (open, tool, mouse, ribbon, setprop, undo, shot ...) that goes through the same handlers as a person's actions; results are written to standard output.",
+"params": {
+"Form": "the main window",
+"FileName": "path of the script file"
+}
+},
+"TMainForm.Create": {
+"text": "Creates the main window: loads the designed form (menus, file dialogs) from mainform.lfm, makes sure it is big enough for the ribbon, and builds the layout and ribbon in code.",
+"params": {
+"TheOwner": "owner (the application)"
+}
+},
+"TMainForm.Destroy": {
+"text": "Frees the property editors, detaches the view from the design and frees the design. Safe if construction failed part way."
+},
+"TMainForm.BuildLayout": {
+"text": "Creates the run-time controls: ribbon page control, status bar, sheet tabs, symbol library panel, splitter and the drawing view, and connects their events."
+},
+"TMainForm.AddButton": {
+"text": "Adds a ribbon button to a tab at the position X and moves X along for the next one.",
+"returns": "the button",
+"params": {
+"ATab": "the ribbon tab",
+"X": "left position (advanced past the button)",
+"ACaption": "button text",
+"AHint": "tooltip",
+"AHandler": "click handler",
+"AWidth": "button width"
+}
+},
+"TMainForm.AddToolButton": {
+"text": "Adds a ribbon button that selects a drawing tool; it joins the group of tool buttons so one stays pressed, and its Tag holds the tool number.",
+"returns": "the button",
+"params": {
+"ATab": "the ribbon tab",
+"X": "left position (advanced)",
+"ATool": "the tool it starts",
+"ACaption": "button text"
+}
+},
+"TMainForm.Gap": {
+"text": "Leaves a small gap between groups of ribbon buttons.",
+"params": {
+"X": "left position (advanced)"
+}
+},
+"TMainForm.BuildRibbon": {
+"text": "Fills the ribbon: Home (undo, redo, snap, grid size, select, delete), Draw, Ladder, Library and View buttons, the grid-size menu, and the Properties tab's scrolling editor area."
+},
+"TMainForm.UpdateRibbonState": {
+"text": "Brings ribbon buttons in line with the program: undo / redo enabled and their hints, snap toggle, grid size caption, and which tool button is pressed."
+},
+"TMainForm.ClearPropEditors": {
+"text": "Removes all property editors from the Properties tab."
+},
+"HexOfColor": {
+"text": "Converts a Lazarus color to RRGGBB text for properties.",
+"returns": "six hex digits",
+"params": {
+"C": "the color"
+}
+},
+"ColorOfHex": {
+"text": "Converts RRGGBB text to a Lazarus color.",
+"returns": "the color",
+"params": {
+"S": "six hex digits"
+}
+},
+"TMainForm.RebuildProps": {
+"text": "Rebuilds the Properties tab for the current selection: one editor per property the selected objects share (text box, drop-down, check box or color swatch), two per column, then fills in their values."
+},
+"TMainForm.CommitProp": {
+"text": "Applies a value typed or chosen in a property editor to all selected objects as one undo step, then refreshes the editors and the status line.",
+"params": {
+"Index": "which editor",
+"Value": "the new value"
+}
+},
+"TMainForm.PropEditDone": {
+"text": "Event handler: a text editor lost focus or Enter was pressed, so apply its text (an untouched \"mixed\" field is left alone).",
+"params": {
+"Sender": "the edit box"
+}
+},
+"TMainForm.PropChoiceChange": {
+"text": "Event handler: a drop-down choice changed, so apply it.",
+"params": {
+"Sender": "the combo box"
+}
+},
+"TMainForm.PropBoolClick": {
+"text": "Event handler: a check box was clicked, so apply 1 or 0.",
+"params": {
+"Sender": "the check box"
+}
+},
+"TMainForm.PropColorClick": {
+"text": "Event handler: a color swatch was clicked, so ask for a color and apply it.",
+"params": {
+"Sender": "the swatch"
+}
+},
+"TMainForm.SetPropertyText": {
+"text": "Sets a property through the same path as typing it into its editor (used by the self-test script).",
+"returns": "False if the selection has no such property",
+"params": {
+"PropName": "the property name",
+"Value": "the new value"
+}
+},
+"TMainForm.PropertyDump": {
+"text": "Lists the properties on the ribbon with their values, \"(mixed)\" where selected objects differ; for tests.",
+"returns": "text like name=value; name=value"
+},
+"TMainForm.ShowRibbonTab": {
+"text": "Brings a ribbon tab forward by its caption.",
+"params": {
+"ATitle": "tab caption, e.g. Properties"
+}
+},
+"TMainForm.RibbonTabTitle": {
+"text": "Caption of the ribbon tab showing now.",
+"returns": "the caption"
+},
+"TMainForm.PressRibbon": {
+"text": "Presses a ribbon button found by its caption, as if clicked (used by the self-test script).",
+"returns": "False if no button has that caption",
+"params": {
+"ACaption": "the button text"
+}
+},
+"TMainForm.SetGridMmFromScript": {
+"text": "Sets the grid size and updates the ribbon (used by the self-test script).",
+"params": {
+"Mm": "grid spacing in millimetres"
+}
+},
+"TMainForm.SetDesign": {
+"text": "Makes a design the current document: detaches the old one, shows the new in the view, and refreshes sheet tabs, caption, paper status, ribbon and properties.",
+"params": {
+"ADesign": "the new design or nil",
+"AFileName": "its file (\"\" when untitled)"
+}
+},
+"TMainForm.RebuildSheetTabs": {
+"text": "Rebuilds the sheet tabs from the sheet names (or \"Sheet N\")."
+},
+"TMainForm.UpdateCaption": {
+"text": "Sets the window title from the file name, a * when modified, and the application name."
+},
+"TMainForm.UpdatePaperStatus": {
+"text": "Shows the current sheet's paper size in the status bar."
+},
+"TMainForm.ConfirmDiscard": {
+"text": "Asks whether to save changes before discarding the document.",
+"returns": "False if the user cancelled"
+},
+"TMainForm.OpenDesignFile": {
+"text": "Loads a .dsn file, gives every object an id, and makes it the current document. Errors are raised.",
+"params": {
+"FileName": "path of the design"
+}
+},
+"TMainForm.NewDesignWith": {
+"text": "Creates a new document with a paper size without showing the dialog (used by scripts).",
+"params": {
+"PaperName": "name from the paper table",
+"Landscape": "orientation"
+}
+},
+"TMainForm.OpenLibraryFile": {
+"text": "Opens a symbol library in the library panel.",
+"params": {
+"FileName": "path of the .TCLib"
+}
+},
+"TMainForm.InsertLadderMm": {
+"text": "Adds a ladder to the current sheet from a rectangle given in millimetres, as one undo step.",
+"returns": "the new ladder, or nil if no document is open",
+"params": {
+"X1": "left, mm",
+"Y1": "top, mm",
+"X2": "right, mm",
+"Y2": "bottom, mm"
+}
+},
+"TMainForm.PlaceLibraryRow": {
+"text": "Selects a library row and places the symbol with a click at a position (used by scripts).",
+"params": {
+"Row": "row in the library list",
+"Xmm": "x position, mm",
+"Ymm": "y position, mm"
+}
+},
+"TMainForm.DoNew": {
+"text": "Menu handler: asks to save changes, shows the New Document dialog and opens a new document from it.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TMainForm.DoOpen": {
+"text": "Menu handler: asks to save changes, then lets the user pick a .dsn file and opens it.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TMainForm.DoSave": {
+"text": "Menu handler: saves to the current file, or asks for a name if untitled.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TMainForm.DoSaveAs": {
+"text": "Menu handler: asks for a file name and saves there.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TMainForm.DoOpenLibrary": {
+"text": "Menu handler: lets the user pick a .TCLib library and opens it in the library panel.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TMainForm.DoFileExit": {
+"text": "Menu handler: closes the window (asking about unsaved changes).",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TMainForm.DoDelete": {
+"text": "Menu handler: deletes the selected objects.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TMainForm.DoSelectAll": {
+"text": "Menu handler: selects everything on the sheet.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TMainForm.DoUndo": {
+"text": "Handler: undoes the last action.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TMainForm.DoRedo": {
+"text": "Handler: redoes the last undone action.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TMainForm.DoToolButton": {
+"text": "Ribbon handler: starts the drawing tool whose number is in the button's Tag (or returns to select).",
+"params": {
+"Sender": "the tool button"
+}
+},
+"TMainForm.DoPlaceSymbol": {
+"text": "Handler: starts placing the symbol selected in the library panel, opening a library first if none is open.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TMainForm.DoAddSheet": {
+"text": "Handler: adds a sheet with the same paper, border, title block and grid as the current one, as one undo step, and shows it.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TMainForm.DoProperties": {
+"text": "Menu handler: properties are on the ribbon now, so bring the Properties tab forward.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TMainForm.DoInsertLadder": {
+"text": "Menu handler: starts the ladder rails tool.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TMainForm.DoRemoveSheet": {
+"text": "Menu handler: removing a sheet is not implemented yet, so it says so.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TMainForm.mAboutClick": {
+"text": "Menu handler: same as DoAbout.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TMainForm.DoZoomIn": {
+"text": "Handler: zooms in by 25%.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TMainForm.DoZoomOut": {
+"text": "Handler: zooms out by 20%.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TMainForm.DoZoomFit": {
+"text": "Handler: shows the whole page.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TMainForm.DoZoom100": {
+"text": "Handler: actual size.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TMainForm.DoToggleGrid": {
+"text": "Handler: shows or hides the grid dots and ticks the menu item.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TMainForm.DoToggleSnap": {
+"text": "Ribbon handler: turns snapping to the grid on or off.",
+"params": {
+"Sender": "the snap button"
+}
+},
+"TMainForm.DoGridButton": {
+"text": "Ribbon handler: pops up the grid-size menu under the button with the current size ticked.",
+"params": {
+"Sender": "the grid button"
+}
+},
+"TMainForm.DoGridSize": {
+"text": "Grid-size menu handler: applies the size held in the menu item's Tag (hundredths of a millimetre).",
+"params": {
+"Sender": "the chosen menu item"
+}
+},
+"TMainForm.DoGridCustom": {
+"text": "Grid-size menu handler: asks for a custom grid size in millimetres (0.05 to 100).",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TMainForm.DoAbout": {
+"text": "Handler: shows the About message.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TMainForm.DescribeSelection": {
+"text": "A short description of the selection for the status bar and ribbon (the kind of object, or \"N objects\").",
+"returns": "the description, empty when nothing is selected"
+},
+"TMainForm.ViewSelection": {
+"text": "View event: the selection changed. Updates the status bar, rebuilds the property editors, and brings the Properties tab forward when the select tool is active.",
+"params": {
+"Sender": "the view"
+}
+},
+"TMainForm.ViewStatus": {
+"text": "View event: shows a message in the first status panel.",
+"params": {
+"Sender": "the view",
+"Msg": "the message"
+}
+},
+"TMainForm.ViewModified": {
+"text": "View event: the design changed. Marks it modified, updates the caption, and refreshes the property values.",
+"params": {
+"Sender": "the view"
+}
+},
+"TMainForm.ViewToolChanged": {
+"text": "View event: the active tool changed, so refresh the pressed tool button.",
+"params": {
+"Sender": "the view"
+}
+},
+"TMainForm.ViewUndoChanged": {
+"text": "View event: undo state changed, so refresh the undo / redo buttons.",
+"params": {
+"Sender": "the view"
+}
+},
+"TMainForm.ViewPlaced": {
+"text": "View event: an object was created. One-shot tools return to select; a new label brings the Properties tab forward and focuses its text box.",
+"params": {
+"Sender": "the view",
+"Obj": "the new object"
+}
+},
+"TMainForm.SheetTabChange": {
+"text": "Event handler: another sheet tab was chosen, so show that sheet.",
+"params": {
+"Sender": "the tab control"
+}
+},
+"TMainForm.LibPlace": {
+"text": "Library panel event: starts placing the chosen symbol on the current sheet.",
+"params": {
+"Sender": "the panel",
+"Lib": "the library",
+"SetIndex": "which set in it",
+"RecIndex": "which record in the set"
+}
+},
+"TMainForm.FormCloseQuery": {
+"text": "Event handler: allows closing only after unsaved changes have been dealt with.",
+"params": {
+"Sender": "the form",
+"CanClose": "set False to cancel the close"
+}
+},
+"TScriptCatcher.Handle": {
+"text": "In script mode: prints an unhandled exception and its backtrace to the error output and ends the program, instead of showing a dialog nothing can click.",
+"params": {
+"Sender": "where it was raised",
+"E": "the exception"
+}
+}
+}

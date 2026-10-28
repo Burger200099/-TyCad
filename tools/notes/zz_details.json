@@ -1,0 +1,291 @@
+{
+"Fdetails.pas::Dot": {
+"text": "Number formatting that always uses a full stop as the decimal separator, whatever the system language, so margins read and write the same everywhere.",
+"returns": "the format settings"
+},
+"TfrmDetails.FormCreate": {
+"text": "OnCreate handler: makes the dialog show Apply as well as OK and Cancel (the base dialog resets to two buttons each time it is activated), connects the Apply button, and starts on the first page.",
+"params": {
+"Sender": "the form"
+}
+},
+"TfrmDetails.DetailsActivate": {
+"text": "OnActivate handler: shows the OK, Cancel and Apply buttons.",
+"params": {
+"Sender": "the form"
+}
+},
+"TfrmDetails.ApplyClicked": {
+"text": "Apply button: checks the values and, if they are acceptable, asks the owner to apply them to the sheet now (OnApplyRequest), leaving the dialog open.",
+"params": {
+"Sender": "the Apply button"
+}
+},
+"TfrmDetails.ReadMm": {
+"text": "Reads a number of millimetres typed in an edit box (a comma is accepted as the decimal point).",
+"returns": "True if the text is a number",
+"params": {
+"S": "the text",
+"V": "receives the number"
+}
+},
+"TfrmDetails.UpdateEnables": {
+"text": "Enables only the entries that apply: the ruler counts only when the rulers are on, the margin only when there is a border, the Sheets text only when the sheets are not numbered automatically, and the single Revision field only while there is no revision history."
+},
+"TfrmDetails.StateChange": {
+"text": "Event handler for the check boxes. Turning automatic sheet numbers on shows \"N of M\" in place of the typed text (which is kept and comes back when it is turned off); the dependent entries are enabled or disabled.",
+"params": {
+"Sender": "the check box that changed"
+}
+},
+"TfrmDetails.FillRevisionList": {
+"text": "Fills the revision list: each line shows the label, date, author and the first line of the notes (with \"...\" when there are more)."
+},
+"TfrmDetails.LoadFromSheet": {
+"text": "Fills every entry of the dialog from a sheet's details and takes a copy of its revision history, so nothing changes until the values are saved back.",
+"params": {
+"Sheet": "the sheet",
+"Design": "the design (to work out \"N of M\" for the sheet)",
+"SheetIndex": "zero-based number of the sheet"
+}
+},
+"TfrmDetails.RevisionFromEntries": {
+"text": "The revision described by the entries below the revision list (notes stored with LF line ends, as in the file).",
+"returns": "the revision"
+},
+"TfrmDetails.RevSelect": {
+"text": "Event handler: a revision was chosen in the list, so show it in the entries.",
+"params": {
+"Sender": "the list"
+}
+},
+"TfrmDetails.AddRevisionEntry": {
+"text": "Adds a revision to the dialog's copy of the history and to the list.",
+"params": {
+"ALabel": "revision label, e.g. A or 2.1",
+"ADate": "date",
+"AAuthor": "author",
+"AApproved": "who approved it",
+"ANotes": "what changed"
+}
+},
+"TfrmDetails.RevAdd": {
+"text": "Add button: appends the revision in the entries to the history; it needs a label.",
+"params": {
+"Sender": "the button"
+}
+},
+"TfrmDetails.RevChange": {
+"text": "Change button: replaces the selected revision with what is in the entries.",
+"params": {
+"Sender": "the button"
+}
+},
+"TfrmDetails.RevRemove": {
+"text": "Remove button: deletes the selected revision from the history.",
+"params": {
+"Sender": "the button"
+}
+},
+"TfrmDetails.RevisionCount": {
+"text": "How many revisions the dialog's history holds.",
+"returns": "the count"
+},
+"TfrmDetails.ValidationError": {
+"text": "Checks the entries: with a border, the margin must be 0 or more millimetres and small enough for the page.",
+"returns": "the message to show, empty when all is well"
+},
+"Fdetails.pas::SameRevisions": {
+"text": "Whether two revision histories are identical (every field of every revision).",
+"returns": "True if they are the same",
+"params": {
+"A": "first history",
+"B": "second history"
+}
+},
+"TfrmDetails.SaveToSheet": {
+"text": "Writes the dialog's values into a sheet's details, field by field, and says whether anything differed. The single Revision field is only changed while there is no history. As in TinyCAD, a ruler count outside 1 to 26 and a row letter outside A to Z are ignored (the old value stays).",
+"returns": "True if the sheet changed",
+"params": {
+"Sheet": "the sheet to change"
+}
+},
+"TfrmDetails.FormCloseQuery": {
+"text": "Event handler: pressing OK checks the entries first and keeps the dialog open with a message if they are not acceptable.",
+"params": {
+"Sender": "the form",
+"CanClose": "set False to keep the dialog open"
+}
+},
+"Fpagesetup.pas::Dot": {
+"text": "Number formatting that always uses a full stop as the decimal separator, whatever the system language.",
+"returns": "the format settings"
+},
+"TfrmPageSetup.MmText": {
+"text": "A number of millimetres as text, up to two decimals and no trailing zeros.",
+"returns": "the text",
+"params": {
+"V": "the number"
+}
+},
+"TfrmPageSetup.ReadMm": {
+"text": "Reads a number of millimetres from an edit box (a comma is accepted as the decimal point); it must be above zero.",
+"returns": "True if the text is a valid size",
+"params": {
+"Ed": "the edit box",
+"V": "receives the number"
+}
+},
+"TfrmPageSetup.MmToUnits": {
+"text": "Converts millimetres to internal units (0.2 mm each), halves rounding up as the paper table does, with a side limited to 2500 mm as in TinyCAD.",
+"returns": "whole units",
+"params": {
+"V": "millimetres"
+}
+},
+"TfrmPageSetup.FormCreate": {
+"text": "OnCreate handler: fills the family list (\"All sizes\" first, then each paper family) and the paper list.",
+"params": {
+"Sender": "the form"
+}
+},
+"TfrmPageSetup.FormShow": {
+"text": "OnShow handler: arranges for the chosen paper to be scrolled into view once the dialog is on screen.",
+"params": {
+"Sender": "the form"
+}
+},
+"TfrmPageSetup.ShowChosenPaper": {
+"text": "Scrolls the paper list so the chosen paper is visible (queued from FormShow, because a list can only scroll once it is displayed).",
+"params": {
+"Data": "unused"
+}
+},
+"TfrmPageSetup.Destroy": {
+"text": "Cancels any queued scroll and frees the dialog."
+},
+"TfrmPageSetup.FillPapers": {
+"text": "Fills the paper list with the papers of the chosen family (all of them for \"All sizes\")."
+},
+"TfrmPageSetup.FamilyChange": {
+"text": "Event handler: the family changed, so list its papers and choose the first.",
+"params": {
+"Sender": "the family combo box"
+}
+},
+"TfrmPageSetup.PaperSelect": {
+"text": "Event handler: a paper was chosen, so show its width and height in millimetres for the current orientation.",
+"params": {
+"Sender": "the paper list",
+"User": "True when the user chose it"
+}
+},
+"TfrmPageSetup.OrientChange": {
+"text": "Event handler: the orientation changed. As TinyCAD's Make Landscape and Make Portrait, the width and height are swapped only if they are the wrong way round.",
+"params": {
+"Sender": "the orientation group"
+}
+},
+"TfrmPageSetup.SizeEdited": {
+"text": "Event handler: a width or height was typed. The orientation follows (taller than wide is portrait) and the paper that has that size is chosen in the list, or none for a custom size.",
+"params": {
+"Sender": "the width or height box"
+}
+},
+"TfrmPageSetup.ShowInfo": {
+"text": "Shows what the entries amount to: the page described as a paper or \"Custom\", and its size in internal units."
+},
+"TfrmPageSetup.LoadFromSheet": {
+"text": "Fills the dialog from a sheet's page size: millimetres, orientation, and the paper if the size is a standard one.",
+"params": {
+"Sheet": "the sheet"
+}
+},
+"TfrmPageSetup.SelectPaper": {
+"text": "Chooses a paper and orientation in the dialog (used for scripts), listing all families so the paper can be found.",
+"params": {
+"AName": "paper name from the paper table",
+"ALandscape": "True for landscape, False for portrait"
+}
+},
+"TfrmPageSetup.PageWidthUnits": {
+"text": "The page width the entries give, in internal units.",
+"returns": "units, or 0 if the entry is not a number"
+},
+"TfrmPageSetup.PageHeightUnits": {
+"text": "The page height the entries give, in internal units.",
+"returns": "units, or 0 if the entry is not a number"
+},
+"TfrmPageSetup.ApplyToAllSheets": {
+"text": "Whether \"Use for all sheets\" is ticked (TinyCAD changes only the current sheet).",
+"returns": "True if ticked"
+},
+"TfrmPageSetup.ValidationError": {
+"text": "Checks the entries: both must be numbers of millimetres and each side at least 10 units (2 mm), as TinyCAD requires.",
+"returns": "the message to show, empty when all is well"
+},
+"TfrmPageSetup.FormCloseQuery": {
+"text": "Event handler: pressing OK checks the entries first and keeps the dialog open with a message if they are not acceptable.",
+"params": {
+"Sender": "the form",
+"CanClose": "set False to keep the dialog open"
+}
+},
+"TSchematicPainter.DetailsText": {
+"text": "Draws one piece of title block or ruler text with TinyCAD's alignment: the bottom of the text at Y (TA_BOTTOM), left aligned or centred on X, or standing upright and reading upwards. Text longer than MaxWidth is cut to fit.",
+"params": {
+"Sheet": "the sheet (its fonts and text sizes)",
+"Str": "the text",
+"X": "x of the anchor, design units",
+"Y": "y of the anchor, design units",
+"Centre": "True to centre the text on the anchor",
+"Vertical": "True to draw it reading upwards",
+"FontNumber": "font resource number",
+"MaxWidth": "widest the text may be, 0 for no limit"
+}
+},
+"TfrmMain.DetailsApplyRequest": {
+"text": "Event handler for the Apply button of the Design Details dialog: applies its values to the sheet while the dialog stays open.",
+"params": {
+"Sender": "the dialog"
+}
+},
+"TfrmMain.ApplyDesignDetails": {
+"text": "Applies what a Design Details dialog holds to the current sheet as one undo step named \"Design details\", then re-lays out the sheet (text can show title block variables) and updates the paper status. Nothing is recorded if no value changed.",
+"returns": "True if something changed",
+"params": {
+"F": "the dialog"
+}
+},
+"TfrmMain.DoPageSetup": {
+"text": "Handler: shows the Page Setup dialog for the current sheet and applies it on OK.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TfrmMain.ApplyPageSetup": {
+"text": "Applies the dialog's page size to the current sheet, or to every sheet when \"Use for all sheets\" is ticked, as one undo step named \"Page setup\"; the page is then fitted to the window again. Refused (nothing changes) when the size is not valid.",
+"returns": "True if a page size changed",
+"params": {
+"F": "the dialog"
+}
+},
+"TfrmMain.FormKeyDown": {
+"text": "Key handler for the whole window: Ctrl+D opens Design Details, as in TinyCAD.",
+"params": {
+"Sender": "the form",
+"Key": "the key code (set to 0 when handled)",
+"Shift": "modifier keys"
+}
+},
+"TfrmMain.DetailsInfoText": {
+"text": "The current sheet's details on one line (title, author, organisation, document number, revision, date, sheets, automatic numbering, title block shown, rulers and their counts, border and margin, revision count, page size), for tests.",
+"returns": "the text, or \"no document\""
+},
+"TfrmMain.DoDesignDetails": {
+"text": "Handler (button, Ctrl+D): shows the Design Details dialog for the current sheet. OK applies it; Apply applies it and leaves the dialog open.",
+"params": {
+"Sender": "the button or menu item"
+}
+}
+}

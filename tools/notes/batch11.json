@@ -1,0 +1,461 @@
+{
+"TfrmMain.Create": {
+"text": "Creates the main window by loading the designed form (menus, status bar, file dialogs) from mainform.lfm; the run-time setup is done in FormCreate.",
+"params": {
+"TheOwner": "owner (the application)"
+}
+},
+"TfrmMain.Destroy": {
+"text": "Frees the property editors, detaches the view from the design and frees the design. Safe if construction failed part way."
+},
+"TfrmMain.BuildLayout": {
+"text": "Creates the run-time controls: ribbon page control, status bar, sheet tabs, symbol library panel, splitter and the drawing view, and connects their events."
+},
+"TfrmMain.AddButton": {
+"text": "Adds a ribbon button to a tab at the position X and moves X along for the next one.",
+"returns": "the button",
+"params": {
+"ATab": "the ribbon tab",
+"X": "left position (advanced past the button)",
+"ACaption": "button text",
+"AHint": "tooltip",
+"AHandler": "click handler",
+"AWidth": "button width"
+}
+},
+"TfrmMain.AddToolButton": {
+"text": "Adds a ribbon button that selects a drawing tool; it joins the group of tool buttons so one stays pressed, and its Tag holds the tool number.",
+"returns": "the button",
+"params": {
+"ATab": "the ribbon tab",
+"X": "left position (advanced)",
+"ATool": "the tool it starts",
+"ACaption": "button text"
+}
+},
+"TfrmMain.Gap": {
+"text": "Leaves a small gap between groups of ribbon buttons.",
+"params": {
+"X": "left position (advanced)"
+}
+},
+"TfrmMain.BuildRibbon": {
+"text": "Fills the ribbon: Home (undo, redo, snap, grid size, select, delete), Draw, Ladder, Library and View buttons, the grid-size menu, and the Properties tab's scrolling editor area."
+},
+"TfrmMain.UpdateRibbonState": {
+"text": "Brings ribbon buttons in line with the program: undo / redo enabled and their hints, snap toggle, grid size caption, and which tool button is pressed."
+},
+"TfrmMain.ClearPropEditors": {
+"text": "Removes all property editors from the Properties tab."
+},
+"TfrmMain.RebuildProps": {
+"text": "Rebuilds the Properties tab for the current selection: one editor per property the selected objects share (text box, drop-down, check box or color swatch), two per column, then fills in their values."
+},
+"TfrmMain.CommitProp": {
+"text": "Applies a value typed or chosen in a property editor to all selected objects as one undo step, then refreshes the editors and the status line.",
+"params": {
+"Index": "which editor",
+"Value": "the new value"
+}
+},
+"TfrmMain.PropEditDone": {
+"text": "Event handler: a text editor lost focus or Enter was pressed, so apply its text (an untouched \"mixed\" field is left alone).",
+"params": {
+"Sender": "the edit box"
+}
+},
+"TfrmMain.PropChoiceChange": {
+"text": "Event handler: a drop-down choice changed, so apply it.",
+"params": {
+"Sender": "the combo box"
+}
+},
+"TfrmMain.PropBoolClick": {
+"text": "Event handler: a check box was clicked, so apply 1 or 0.",
+"params": {
+"Sender": "the check box"
+}
+},
+"TfrmMain.PropColorClick": {
+"text": "Event handler: a color swatch was clicked, so ask for a color and apply it.",
+"params": {
+"Sender": "the swatch"
+}
+},
+"TfrmMain.SetPropertyText": {
+"text": "Sets a property through the same path as typing it into its editor (used by the self-test script).",
+"returns": "False if the selection has no such property",
+"params": {
+"PropName": "the property name",
+"Value": "the new value"
+}
+},
+"TfrmMain.PropertyDump": {
+"text": "Lists the properties on the ribbon with their values, \"(mixed)\" where selected objects differ; for tests.",
+"returns": "text like name=value; name=value"
+},
+"TfrmMain.ShowRibbonTab": {
+"text": "Brings a ribbon tab forward by its caption.",
+"params": {
+"ATitle": "tab caption, e.g. Properties"
+}
+},
+"TfrmMain.RibbonTabTitle": {
+"text": "Caption of the ribbon tab showing now.",
+"returns": "the caption"
+},
+"TfrmMain.PressRibbon": {
+"text": "Presses a ribbon button found by its caption, as if clicked (used by the self-test script).",
+"returns": "False if no button has that caption",
+"params": {
+"ACaption": "the button text"
+}
+},
+"TfrmMain.SetGridMmFromScript": {
+"text": "Sets the grid size and updates the ribbon (used by the self-test script).",
+"params": {
+"Mm": "grid spacing in millimetres"
+}
+},
+"TfrmMain.SetDesign": {
+"text": "Makes a design the current document: detaches the old one, shows the new in the view, and refreshes sheet tabs, caption, paper status, ribbon and properties.",
+"params": {
+"ADesign": "the new design or nil",
+"AFileName": "its file (\"\" when untitled)"
+}
+},
+"TfrmMain.RebuildSheetTabs": {
+"text": "Rebuilds the sheet tabs from the sheet names (or \"Sheet N\")."
+},
+"TfrmMain.UpdateCaption": {
+"text": "Sets the window title from the file name, a * when modified, and the application name."
+},
+"TfrmMain.UpdatePaperStatus": {
+"text": "Shows the current sheet's paper size in the status bar."
+},
+"TfrmMain.ConfirmDiscard": {
+"text": "Asks whether to save changes before discarding the document.",
+"returns": "False if the user cancelled"
+},
+"TfrmMain.OpenDesignFile": {
+"text": "Loads a .dsn file, gives every object an id, and makes it the current document. Errors are raised.",
+"params": {
+"FileName": "path of the design"
+}
+},
+"TfrmMain.NewDesignWith": {
+"text": "Creates a new document with a paper size without showing the dialog (used by scripts).",
+"params": {
+"PaperName": "name from the paper table",
+"Landscape": "orientation"
+}
+},
+"TfrmMain.OpenLibraryFile": {
+"text": "Opens a symbol library in the library panel.",
+"params": {
+"FileName": "path of the .TCLib"
+}
+},
+"TfrmMain.InsertLadderMm": {
+"text": "Adds a ladder to the current sheet from a rectangle given in millimetres, as one undo step.",
+"returns": "the new ladder, or nil if no document is open",
+"params": {
+"X1": "left, mm",
+"Y1": "top, mm",
+"X2": "right, mm",
+"Y2": "bottom, mm"
+}
+},
+"TfrmMain.PlaceLibraryRow": {
+"text": "Selects a library row and places the symbol with a click at a position (used by scripts).",
+"params": {
+"Row": "row in the library list",
+"Xmm": "x position, mm",
+"Ymm": "y position, mm"
+}
+},
+"TfrmMain.DoNew": {
+"text": "Menu handler: asks to save changes, shows the New Document dialog and opens a new document from it.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.DoOpen": {
+"text": "Menu handler: asks to save changes, then lets the user pick a .dsn file and opens it.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.DoSave": {
+"text": "Menu handler: saves to the current file, or asks for a name if untitled.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.DoSaveAs": {
+"text": "Menu handler: asks for a file name and saves there.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.DoOpenLibrary": {
+"text": "Menu handler: lets the user pick a .TCLib library and opens it in the library panel.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.DoFileExit": {
+"text": "Menu handler: closes the window (asking about unsaved changes).",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.DoDelete": {
+"text": "Menu handler: deletes the selected objects.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TfrmMain.DoSelectAll": {
+"text": "Menu handler: selects everything on the sheet.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TfrmMain.DoUndo": {
+"text": "Handler: undoes the last action.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TfrmMain.DoRedo": {
+"text": "Handler: redoes the last undone action.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TfrmMain.DoToolButton": {
+"text": "Ribbon handler: starts the drawing tool whose number is in the button's Tag (or returns to select).",
+"params": {
+"Sender": "the tool button"
+}
+},
+"TfrmMain.DoPlaceSymbol": {
+"text": "Handler: starts placing the symbol selected in the library panel, opening a library first if none is open.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TfrmMain.DoAddSheet": {
+"text": "Handler: adds a sheet with the same paper, border, title block and grid as the current one, as one undo step, and shows it.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TfrmMain.DoProperties": {
+"text": "Menu handler: properties are on the ribbon now, so bring the Properties tab forward.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.DoInsertLadder": {
+"text": "Menu handler: starts the ladder rails tool.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.DoRemoveSheet": {
+"text": "Menu handler: removing a sheet is not implemented yet, so it says so.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.mAboutClick": {
+"text": "Menu handler: same as DoAbout.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.DoZoomIn": {
+"text": "Handler: zooms in by 25%.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TfrmMain.DoZoomOut": {
+"text": "Handler: zooms out by 20%.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TfrmMain.DoZoomFit": {
+"text": "Handler: shows the whole page.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TfrmMain.DoZoom100": {
+"text": "Handler: actual size.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TfrmMain.DoToggleGrid": {
+"text": "Handler: shows or hides the grid dots and ticks the menu item.",
+"params": {
+"Sender": "the menu item or button"
+}
+},
+"TfrmMain.DoToggleSnap": {
+"text": "Ribbon handler: turns snapping to the grid on or off.",
+"params": {
+"Sender": "the snap button"
+}
+},
+"TfrmMain.DoGridButton": {
+"text": "Ribbon handler: pops up the grid-size menu under the button with the current size ticked.",
+"params": {
+"Sender": "the grid button"
+}
+},
+"TfrmMain.DoGridSize": {
+"text": "Grid-size menu handler: applies the size held in the menu item's Tag (hundredths of a millimetre).",
+"params": {
+"Sender": "the chosen menu item"
+}
+},
+"TfrmMain.DoGridCustom": {
+"text": "Grid-size menu handler: asks for a custom grid size in millimetres (0.05 to 100).",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.DoAbout": {
+"text": "Handler: shows the About message.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.DescribeSelection": {
+"text": "A short description of the selection for the status bar and ribbon (the kind of object, or \"N objects\").",
+"returns": "the description, empty when nothing is selected"
+},
+"TfrmMain.ViewSelection": {
+"text": "View event: the selection changed. Updates the status bar, rebuilds the property editors, and brings the Properties tab forward when the select tool is active.",
+"params": {
+"Sender": "the view"
+}
+},
+"TfrmMain.ViewStatus": {
+"text": "View event: shows a message in the first status panel.",
+"params": {
+"Sender": "the view",
+"Msg": "the message"
+}
+},
+"TfrmMain.ViewModified": {
+"text": "View event: the design changed. Marks it modified, updates the caption, and refreshes the property values.",
+"params": {
+"Sender": "the view"
+}
+},
+"TfrmMain.ViewToolChanged": {
+"text": "View event: the active tool changed, so refresh the pressed tool button.",
+"params": {
+"Sender": "the view"
+}
+},
+"TfrmMain.ViewUndoChanged": {
+"text": "View event: undo state changed, so refresh the undo / redo buttons.",
+"params": {
+"Sender": "the view"
+}
+},
+"TfrmMain.ViewPlaced": {
+"text": "View event: an object was created. One-shot tools return to select; a new label brings the Properties tab forward and focuses its text box.",
+"params": {
+"Sender": "the view",
+"Obj": "the new object"
+}
+},
+"TfrmMain.SheetTabChange": {
+"text": "Event handler: another sheet tab was chosen, so show that sheet.",
+"params": {
+"Sender": "the tab control"
+}
+},
+"TfrmMain.LibPlace": {
+"text": "Library panel event: starts placing the chosen symbol on the current sheet.",
+"params": {
+"Sender": "the panel",
+"Lib": "the library",
+"SetIndex": "which set in it",
+"RecIndex": "which record in the set"
+}
+},
+"TfrmMain.FormCloseQuery": {
+"text": "Event handler: allows closing only after unsaved changes have been dealt with.",
+"params": {
+"Sender": "the form",
+"CanClose": "set False to cancel the close"
+}
+},
+"TfrmMain.UpdateFormTitle": {
+"text": "Sets the window title: \"Schematic - [file name]\" (Untitled for an unsaved document, a * when modified), or just the application name when no document is open. A non-empty NewTitle is shown as given.",
+"params": {
+"NewTitle": "text to show instead of the file name; empty to work it out from the document"
+}
+},
+"TfrmMain.FormCreate": {
+"text": "OnCreate handler: sets the caption, makes the window big enough for the ribbon if the designed size is smaller, then builds the run-time controls (layout and ribbon) and starts with no document.",
+"params": {
+"Sender": "the form"
+}
+},
+"TfrmMain.FormResize": {
+"text": "OnResize handler: gives the three status-bar panels their share of the window width (StatusBarScale in consts).",
+"params": {
+"Sender": "the form"
+}
+},
+"TfrmNewDoc.FormCreate": {
+"text": "OnCreate handler: fills the family list (\"All sizes\" first, then each paper family), resets the title-block fields and the 6.35 mm border margin, lists the papers and selects ISO A4 landscape.",
+"params": {
+"Sender": "the form"
+}
+},
+"TfrmNewDoc.PaperChange": {
+"text": "Event handler: shows the selected paper's name and its page size in internal units (0.2 mm each).",
+"params": {
+"Sender": "the paper list or the orientation group"
+}
+},
+"TfrmNewDoc.FillPapers": {
+"text": "Fills the size list with the papers of the chosen family (\"All sizes\" shows every paper) and selects the first."
+},
+"TfrmNewDoc.SelectPaper": {
+"text": "Selects a paper and orientation in the dialog (used for defaults and by scripts); the family is reset to \"All sizes\" so every paper can be found.",
+"params": {
+"AName": "paper name from the paper table",
+"ALandscape": "True for landscape, False for portrait"
+}
+},
+"TfrmNewDoc.BuildDesign": {
+"text": "Creates the new design from the dialog's choices: one sheet with the chosen paper size and orientation, the title-block text, automatic sheet numbers and border (with its margin) as ticked, and a first revision \"A - Initial issue\".",
+"returns": "the new design; the caller owns it"
+},
+"TfrmNewDoc.PaperIndex": {
+"text": "The paper table index of the selected size (ISO A4 when nothing is selected).",
+"returns": "index in the paper table"
+},
+"TfrmNewDoc.Landscape": {
+"text": "Whether landscape is chosen.",
+"returns": "True for landscape, False for portrait"
+},
+"TfrmNewDoc.FamilyChange": {
+"text": "Event handler: the paper family changed, so refill the size list.",
+"params": {
+"Sender": "the family combo box"
+}
+}
+}

@@ -1,0 +1,160 @@
+object frmAnnotate: TfrmAnnotate
+  Left = 1047
+  Height = 700
+  Top = 200
+  Width = 520
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'Generate Symbol References'
+  ClientHeight = 700
+  ClientWidth = 520
+  DesignTimePPI = 120
+  OnCreate = FormCreate
+  Position = poOwnerFormCenter
+  LCLVersion = '3.0.0.3'
+  object gbAction: TGroupBox
+    Left = 16
+    Height = 100
+    Top = 8
+    Width = 488
+    Caption = 'Action'
+    ClientHeight = 75
+    ClientWidth = 484
+    TabOrder = 0
+    object rbAdd: TRadioButton
+      Hint = 'Give symbol references numbers'
+      Left = 16
+      Height = 24
+      Top = 6
+      Width = 300
+      Caption = 'Add References'
+      Checked = True
+      TabOrder = 0
+      TabStop = True
+    end
+    object rbRemove: TRadioButton
+      Hint = 'Take the numbers away from symbol references'
+      Left = 16
+      Height = 24
+      Top = 38
+      Width = 300
+      Caption = 'Remove References'
+      TabOrder = 1
+    end
+  end
+  object gbRefs: TGroupBox
+    Left = 16
+    Height = 190
+    Top = 116
+    Width = 488
+    Caption = 'References'
+    ClientHeight = 165
+    ClientWidth = 484
+    TabOrder = 1
+    object rbAll: TRadioButton
+      Hint = 'Use every symbol reference'
+      Left = 16
+      Height = 24
+      Top = 6
+      Width = 300
+      Caption = 'All References'
+      TabOrder = 0
+    end
+    object rbUnnum: TRadioButton
+      Hint = 'Use only the references that do not have a number yet'
+      Left = 16
+      Height = 24
+      Top = 38
+      Width = 300
+      Caption = 'Un-numbered References'
+      Checked = True
+      TabOrder = 1
+      TabStop = True
+    end
+    object rbMatch: TRadioButton
+      Hint = 'Use only the references that match the text in the box'
+      Left = 16
+      Height = 24
+      Top = 70
+      Width = 240
+      Caption = 'References matching:'
+      TabOrder = 2
+    end
+    object edMatch: TEdit
+      Hint = 'The reference prefix to look for, for example U?'
+      Left = 264
+      Height = 28
+      Top = 66
+      Width = 100
+      TabOrder = 3
+    end
+    object cbAllSheets: TCheckBox
+      Hint = 'Include every sheet of the design, not only this one'
+      Left = 16
+      Height = 24
+      Top = 108
+      Width = 300
+      Caption = 'All Sheets'
+      TabOrder = 4
+    end
+  end
+  object gbValue: TGroupBox
+    Left = 16
+    Height = 130
+    Top = 314
+    Width = 488
+    Caption = 'Value'
+    ClientHeight = 105
+    ClientWidth = 484
+    TabOrder = 2
+    object rbDefault: TRadioButton
+      Hint = 'Start numbering from the default value'
+      Left = 16
+      Height = 24
+      Top = 6
+      Width = 300
+      Caption = 'Default start value'
+      Checked = True
+      TabOrder = 0
+      TabStop = True
+    end
+    object rbStart: TRadioButton
+      Hint = 'Start numbering from the value in the box'
+      Left = 16
+      Height = 24
+      Top = 44
+      Width = 200
+      Caption = 'Start at value:'
+      TabOrder = 1
+    end
+    object edStart: TEdit
+      Hint = 'The first number to give'
+      Left = 224
+      Height = 28
+      Top = 40
+      Width = 100
+      TabOrder = 2
+      OnChange = edStartChange
+    end
+  end
+  object gbPainter: TGroupBox
+    Left = 16
+    Height = 100
+    Top = 452
+    Width = 488
+    Caption = 'Reference painter'
+    ClientHeight = 75
+    ClientWidth = 484
+    TabOrder = 3
+    object btnPainter: TButton
+      Hint = 'Close this window and click on symbols to number them one at a time'
+      Left = 16
+      Height = 39
+      Top = 14
+      Width = 440
+      Caption = 'Use reference painter'
+      ModalResult = 6
+      TabOrder = 0
+    end
+  end
+end

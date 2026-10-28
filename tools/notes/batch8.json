@@ -1,0 +1,551 @@
+{
+"UDrawingObjects.pas::ToByte": {
+"text": "Truncates a number to the low 8 bits, as C stores a BYTE read from a file.",
+"returns": "a value 0-255",
+"params": {
+"V": "the number"
+}
+},
+"UDrawingObjects.pas::ToWord": {
+"text": "Truncates a number to the low 16 bits, as C stores a WORD.",
+"returns": "a value 0-65535",
+"params": {
+"V": "the number"
+}
+},
+"UDrawingObjects.pas::ToInt16": {
+"text": "Truncates a number to a signed 16 bit value, as C stores a short.",
+"returns": "a value -32768 to 32767",
+"params": {
+"V": "the number"
+}
+},
+"TDocOptionsBase.Create": {
+"text": "Creates the options every sheet carries: fonts, line styles, fill styles, user colors, snap grid, default text metrics, zoom and the editing settings (auto junction on, auto snap on, snap range 15)."
+},
+"TDocOptionsBase.TextExtent": {
+"text": "Measures text in a font resource with the sheet's text metrics.",
+"returns": "width and height in design units",
+"params": {
+"Str": "the text",
+"FontNumber": "font resource number"
+}
+},
+"TDocOptionsBase.LineThickness": {
+"text": "Thickness of a line style.",
+"returns": "thickness in design units",
+"params": {
+"StyleNumber": "line style resource number"
+}
+},
+"TDocOptionsBase.Destroy": {
+"text": "Frees the resource tables, snap settings and text metrics."
+},
+"TDocOptionsBase.UnTagAll": {
+"text": "Marks all fonts, line styles and fill styles as unused before a save."
+},
+"TDocOptionsBase.AddStyle": {
+"text": "Finds or adds a line style (dash style, thickness, color).",
+"returns": "the style number to store in an object",
+"params": {
+"AStyle": "Windows pen style 0-4",
+"AThickness": "thickness in design units",
+"AColor": "color"
+}
+},
+"TDocOptionsBase.AddFillStyle": {
+"text": "Finds or adds a fill style.",
+"returns": "the fill number to store in an object",
+"params": {
+"AIndex": "-1 none, 0 solid, 1 and up hatches",
+"AColor": "fill color"
+}
+},
+"RemapAndReAddStyle": {
+"text": "Converts a style number from a file and re-adds that style as a new entry, as TinyCAD does so a loaded object gets its own style number.",
+"returns": "the new style number",
+"params": {
+"Opts": "the sheet options",
+"FileStyle": "the style number as written in the file"
+}
+},
+"TDrawingList.Create": {
+"text": "Creates a list that owns the objects in it."
+},
+"TDrawingList.GetItem": {
+"text": "One object of the list.",
+"returns": "the object",
+"params": {
+"Index": "position"
+}
+},
+"TDrawingObject.BeginTag": {
+"text": "Starts an object's XML element and writes its stable id (oid) when it has one. Every object's SaveXML starts with this.",
+"params": {
+"W": "the XML writer",
+"TagName": "the element name"
+}
+},
+"ObjectXMLText": {
+"text": "An object's XML as text, used to compare objects.",
+"returns": "the XML text",
+"params": {
+"Obj": "the object"
+}
+},
+"TDrawingObject.SameAs": {
+"text": "Whether another object is the same: identical XML.",
+"returns": "True if identical",
+"params": {
+"Other": "the object to compare with"
+}
+},
+"TDrawLine.XMLTagFor": {
+"text": "The XML element name for a kind of line: BUS, WIRE, or LINE.",
+"returns": "the element name",
+"params": {
+"T": "the line kind"
+}
+},
+"AddPolyBezier": {
+"text": "Adds the flattened points of one curved polygon segment (a Bezier approximating an elliptical arc) to a point buffer, as TinyCAD flattens arcs.",
+"params": {
+"CP": "the point buffer",
+"Count": "number of points in the buffer (updated)",
+"P1": "the arc start handle",
+"P2": "the arc end handle"
+}
+},
+"TDrawPolygon.FlattenPath": {
+"text": "Converts the polygon's handles (corners and arcs) into the plain list of points used to draw and hit-test it."
+},
+"TDrawPolygon.CalcBoundingRect": {
+"text": "Flattens the path, makes the first handle the origin, and sets the object's bounding rectangle (PointA, PointB)."
+},
+"TDrawSquare.IsSquare": {
+"text": "Whether this is a rectangle (True) or an ellipse (False).",
+"returns": "True for a rectangle"
+},
+"TDrawPin.IsPower": {
+"text": "Whether this is a hidden power pin (Which = 4).",
+"returns": "True for a power pin"
+},
+"CopyPoints": {
+"text": "Copies the two defining points from one object to another (used by Clone).",
+"params": {
+"Src": "the object to copy from",
+"Dst": "the object to copy to"
+}
+},
+"TDrawingObject.Shift": {
+"text": "Moves the object by a vector (both points).",
+"params": {
+"R": "how far to move in x and y"
+}
+},
+"TDrawingObject.IsCompletelyInside": {
+"text": "Whether the object's bounding box lies entirely inside a rectangle.",
+"returns": "True if it is completely inside",
+"params": {
+"Left": "left edge",
+"Right": "right edge",
+"Top": "top edge",
+"Bottom": "bottom edge"
+}
+},
+"TDrawPolygon.IsInsidePolygon": {
+"text": "Point-in-polygon test using the flattened outline and a horizontal ray (even-odd rule).",
+"returns": "True if the point is inside",
+"params": {
+"P": "the point"
+}
+},
+"TDrawPolygon.IsInsideLine": {
+"text": "Whether any edge of the flattened outline touches a rectangle.",
+"returns": "True if the outline touches it",
+"params": {
+"Left": "left edge",
+"Right": "right edge",
+"Top": "top edge",
+"Bottom": "bottom edge"
+}
+},
+"TDrawPolygon.FindNearestSegment": {
+"text": "Finds which flattened line, and which handle, are nearest a point (used to insert a handle or pick a segment).",
+"params": {
+"P": "the point",
+"Line": "set to the nearest flattened line",
+"Handle": "set to the handle that line belongs to"
+}
+},
+"PointInRect": {
+"text": "Whether a point is inside or on the edge of a rectangle given by its edges.",
+"returns": "True if inside",
+"params": {
+"P": "the point",
+"Left": "left edge",
+"Right": "right edge",
+"Top": "top edge",
+"Bottom": "bottom edge"
+}
+},
+"TDrawSquare.EllipseDistanceFromPoint": {
+"text": "Distance from a point to the edge of the ellipse, found by mapping the ellipse onto a unit circle.",
+"returns": "the distance to the edge",
+"params": {
+"P": "the point",
+"Inside": "set True when the point is inside the ellipse"
+}
+},
+"PowerStemEnd": {
+"text": "Where a power symbol's stem ends (a fixed length from its connection point in its direction).",
+"returns": "the end of the stem",
+"params": {
+"Obj": "the power symbol"
+}
+},
+"TDrawPin.IsInvisible": {
+"text": "Whether the pin is hidden: when editing a library symbol, pins of other parts; on a drawing, power pins.",
+"returns": "True if not shown"
+},
+"TDrawPin.DetermineLayout": {
+"text": "Works out where the pin's line, dot, clock mark, name and number go for a rotation / mirror state (a transcription of TinyCAD's pin layout code).",
+"returns": "the layout",
+"params": {
+"RotMir": "rotation / mirror state 0-7"
+}
+},
+"TDrawPin.DetermineSize": {
+"text": "Sets the pin's second point so its box covers the line and the text; hidden pins and zero-length pins have no size."
+},
+"TDrawPin.ConvertPowerToNormal": {
+"text": "Turns a hidden power pin into a normal pin and remembers it was converted (used when a symbol shows its power pins)."
+},
+"TSnapSettings.Create": {
+"text": "Creates grid settings with TinyCAD's defaults."
+},
+"TSnapSettings.SaveXML": {
+"text": "Writes the GRID element (spacing times ten, and the snap flag).",
+"params": {
+"W": "the XML writer"
+}
+},
+"TSnapSettings.LoadXML": {
+"text": "Reads the GRID element (spacing divided by ten, as TinyCAD does even when it is absent).",
+"params": {
+"R": "the XML reader on GRID"
+}
+},
+"TSnapSettings.Snap@double": {
+"text": "Snaps one coordinate to the grid (unchanged when snapping is off).",
+"returns": "the snapped value",
+"params": {
+"D": "the coordinate"
+}
+},
+"TSnapSettings.Snap@tdpoint": {
+"text": "Snaps a point to the grid.",
+"returns": "the snapped point",
+"params": {
+"P": "the point"
+}
+},
+"TSymbolView.Create": {
+"text": "Creates an empty view: no objects and invalid reference point, size and origin."
+},
+"TSymbolView.Destroy": {
+"text": "Frees the view's objects."
+},
+"PointLess": {
+"text": "Tolerant point ordering (like CDPoint::operator<) used to sort points.",
+"returns": "True if A sorts before B",
+"params": {
+"A": "first point",
+"B": "second point"
+}
+},
+"SwapD": {
+"text": "Exchanges two numbers.",
+"params": {
+"A": "first value (in/out)",
+"B": "second value (in/out)"
+}
+},
+"TDrawMethod.GetSymbolData": {
+"text": "The symbol definition this placed symbol uses (from the sheet's symbol table).",
+"returns": "the symbol information"
+},
+"TDrawMethod.GetTr": {
+"text": "The symbol's size for this placement: its definition's size times the placement's scaling.",
+"returns": "the size point"
+},
+"TDrawMethod.ExtractSymbol": {
+"text": "Gets the drawing to paint or connect for this symbol (the cached view for its part and power setting) and its size, and updates this object's bounding box.",
+"returns": "False if there is no drawing",
+"params": {
+"Tr": "set to the symbol's size",
+"Objects": "set to the view's objects (owned by the symbol)"
+}
+},
+"TDrawMethod.ScalePoint": {
+"text": "Applies this placement's x and y scaling to a point.",
+"params": {
+"P": "the point (in/out)"
+}
+},
+"TDrawMethod.TranslatePointToDesign": {
+"text": "Converts a point in the symbol's own coordinates to a position on the sheet, applying scaling, rotation, mirror and the placement position. Pin connection points use this.",
+"returns": "the sheet position",
+"params": {
+"P": "a point in the symbol's coordinates"
+}
+},
+"TDrawMethod.ActivePoints": {
+"text": "The sheet positions of the symbol's visible pins (its connection points).",
+"returns": "the points, one per visible pin"
+},
+"TDrawMethod.NewRotation": {
+"text": "Recalculates where the reference, name and other field texts go after the symbol is placed or rotated: hidden fields are stacked beside the symbol (NewRotation in TinyCAD)."
+},
+"TDrawMethod.GetFirstStaticPoint": {
+"text": "The position of the symbol's first pin on the sheet, the point that stays put when a symbol is replaced by another.",
+"returns": "that position"
+},
+"TDrawMethod.ReplaceSymbol": {
+"text": "Swaps the placed symbol for another definition, keeping its first pin where it was and (optionally) its field values.",
+"params": {
+"OldSymbol": "current symbol number",
+"NewSymbol": "new symbol number",
+"KeepOldFields": "True to keep field values with matching names"
+}
+},
+"TDrawMethod.GetField": {
+"text": "The text of a field (reference, name, others); the reference gets a part letter for multi-part symbols.",
+"returns": "the text",
+"params": {
+"Which": "field number (0 reference, 1 name, then others)"
+}
+},
+"TDrawMethod.GetDecoratedField": {
+"text": "The text to show for a field, following its display type: hidden fields give empty text, others may include the field name or be shown only when not empty.",
+"returns": "the text to draw, empty if not shown",
+"params": {
+"Which": "field number"
+}
+},
+"TDrawMethod.IsFieldVisible": {
+"text": "Whether a field of a given display type is shown for a value (hidden types never; \"if not empty\" types only when there is a value).",
+"returns": "True if shown",
+"params": {
+"FieldType": "the field display type",
+"FieldValue": "the field's value"
+}
+},
+"TDrawMethod.CreateFromSymbol": {
+"text": "Creates a placed symbol from a symbol definition: its part, fields (from the definition's defaults) and rotation.",
+"params": {
+"AOpts": "the sheet options",
+"ASymbolId": "symbol number in the sheet's table",
+"NewRot": "initial rotation / mirror state 0-7"
+}
+},
+"TDrawPin.GetActivePoint": {
+"text": "The pin's connection point on the sheet, given the symbol that holds it.",
+"returns": "the sheet position",
+"params": {
+"Parent": "the placed symbol (TDrawMethod)"
+}
+},
+"TDrawPin.GetPinName": {
+"text": "The pin's name text.",
+"returns": "the name"
+},
+"TDrawPin.GetNumber": {
+"text": "The pin's number text.",
+"returns": "the number"
+},
+"TDrawLabel.GetLabelPoint": {
+"text": "The label's connection point.",
+"returns": "the point"
+},
+"TDrawLabel.GetValue": {
+"text": "The label's text.",
+"returns": "the text"
+},
+"TDrawPower.GetValue": {
+"text": "The power symbol's text (its net name when set).",
+"returns": "the text"
+},
+"TDrawMethod.GetRef": {
+"text": "The reference field's raw value (e.g. R1) with no part letter; the netlist uses it.",
+"returns": "the reference"
+},
+"TDrawMethod.GetName": {
+"text": "The name field's value.",
+"returns": "the name"
+},
+"TDrawMethod.GetFieldCount": {
+"text": "Number of fields (reference, name and the extras).",
+"returns": "the count"
+},
+"TDrawMethod.GetFieldName": {
+"text": "The description (label) of a field.",
+"returns": "the field's name",
+"params": {
+"Which": "field number"
+}
+},
+"TDrawMethod.GetNetlistHint": {
+"text": "The net number remembered for a pin (0 if none). As in TinyCAD, asking about a new pin adds it to the hint list with 0.",
+"returns": "the net number",
+"params": {
+"Pin": "the pin number text"
+}
+},
+"TDrawMethod.SetNetlistHint": {
+"text": "Remembers the net number of a pin so net numbers stay stable between netlist runs; saved with the design as HINT.",
+"params": {
+"Pin": "the pin number text",
+"Net": "the net number"
+}
+},
+"TDrawLadder.RailLeft": {
+"text": "x of the left rail.",
+"returns": "x in design units"
+},
+"TDrawLadder.RailRight": {
+"text": "x of the right rail.",
+"returns": "x in design units"
+},
+"TDrawLadder.RailTop": {
+"text": "y of the top of the rails.",
+"returns": "y in design units"
+},
+"TDrawLadder.RailBottom": {
+"text": "y of the bottom of the rails.",
+"returns": "y in design units"
+},
+"TDrawLadder.Pitch": {
+"text": "Spacing between lines: the rails' height divided by the number of lines.",
+"returns": "spacing in design units"
+},
+"TDrawLadder.RungY": {
+"text": "The y of the middle of a line (each line owns an equal band of the height).",
+"returns": "y in design units",
+"params": {
+"Index": "line number, 0-based"
+}
+},
+"TDrawLadder.NumberAt": {
+"text": "The line number shown for a line: the first line is the start number, the last is the stop number and the rest are spread evenly between them, rounded.",
+"returns": "the number",
+"params": {
+"Index": "line position, 0-based"
+}
+},
+"TDrawLadder.RungAtY": {
+"text": "Which line a height falls in.",
+"returns": "the 0-based line, or -1 when outside the rails",
+"params": {
+"Y": "height in design units"
+}
+},
+"TDrawLadder.LineNumberAtY": {
+"text": "The line number at a height: the basis of line number awareness.",
+"returns": "False when the height is outside the rails",
+"params": {
+"Y": "height in design units",
+"Number": "set to the line number (0 outside)"
+}
+},
+"TDrawLadder.ShowsLeftNumbers": {
+"text": "Whether numbers are drawn left of the left rail (side 0 or both).",
+"returns": "True if shown there"
+},
+"TDrawLadder.ShowsRightNumbers": {
+"text": "Whether numbers are drawn right of the right rail (side 1 or both).",
+"returns": "True if shown there"
+},
+"TDrawLadder.NumberBox": {
+"text": "The box a line number occupies (needs the text metrics): right-aligned against the left rail or left-aligned against the right rail, centred on the line.",
+"returns": "the box in design units",
+"params": {
+"Index": "line position, 0-based",
+"RightSide": "True for the right rail's number"
+}
+},
+"TDrawLadder.LeftLabelBox": {
+"text": "The box of the left bus wire number, centred above the left rail.",
+"returns": "the box"
+},
+"TDrawLadder.RightLabelBox": {
+"text": "The box of the right bus wire number, centred above the right rail.",
+"returns": "the box"
+},
+"BoxContains": {
+"text": "Whether a point is inside a box (edges included).",
+"returns": "True if inside",
+"params": {
+"B": "the box",
+"P": "the point"
+}
+},
+"BoxesOverlap": {
+"text": "Whether a box overlaps a rectangle given by its edges.",
+"returns": "True if they overlap",
+"params": {
+"B": "the box",
+"Left": "left edge",
+"Right": "right edge",
+"Top": "top edge",
+"Bottom": "bottom edge"
+}
+},
+"TDrawMeasure.LengthInUnits": {
+"text": "The distance between the two points in the object's units (millimetres or inches).",
+"returns": "the length"
+},
+"TDrawMeasure.DisplayText": {
+"text": "The distance as text with its unit, e.g. \"125.4 mm\" or \"4.937 in\".",
+"returns": "the text"
+},
+"TDrawRefText.DisplayText": {
+"text": "The text shown: prefix, resolved value and suffix.",
+"returns": "the text"
+},
+"CreateObjectForTag": {
+"text": "Makes an empty object for an XML element name (WIRE, JUNCTION, SYMBOL, LADDER ...).",
+"returns": "the object, or nil for an unknown tag",
+"params": {
+"Tag": "the element name",
+"Opts": "the sheet options the object belongs to"
+}
+},
+"IsKnownUnsupportedObjectTag": {
+"text": "Whether a tag belongs to a TinyCAD object this port does not load (TAG, METAFILE, hierarchical symbols); such elements are skipped rather than reported as errors.",
+"returns": "True if the tag is known but unsupported",
+"params": {
+"Tag": "the element name"
+}
+},
+"LoadObjectTag": {
+"text": "Reads one object element into a list: makes the object, reads its id and properties, and drops it if it turns out empty. Only the first ORIGIN is accepted.",
+"returns": "True normally; False if the element could not be read",
+"params": {
+"R": "the XML reader on the element",
+"Tag": "the element name",
+"Opts": "the sheet options",
+"List": "receives the object",
+"Origin": "the origin found so far (in/out)"
+}
+},
+"SaveObjects": {
+"text": "Writes the objects of a list as XML; construction objects only in the details form and errors never; the origin object only when asked.",
+"params": {
+"W": "the XML writer",
+"List": "the objects",
+"Details": "True when saving a sheet (including construction objects), False for a symbol",
+"SaveOriginObject": "True to write the origin object"
+}
+}
+}

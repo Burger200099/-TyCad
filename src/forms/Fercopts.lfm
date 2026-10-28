@@ -1,0 +1,134 @@
+object frmErcOptions: TfrmErcOptions
+  Left = 1047
+  Height = 560
+  Top = 300
+  Width = 520
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'Check Design Rules'
+  ClientHeight = 560
+  ClientWidth = 520
+  DesignTimePPI = 120
+  OnCreate = FormCreate
+  Position = poOwnerFormCenter
+  LCLVersion = '3.0.0.3'
+  object gbErrors: TGroupBox
+    Left = 16
+    Height = 170
+    Top = 12
+    Width = 488
+    Caption = 'Design errors to check'
+    ClientHeight = 145
+    ClientWidth = 484
+    TabOrder = 0
+    object cbDupRef: TCheckBox
+      Hint = 'Report symbols that share a reference'
+      Left = 16
+      Height = 24
+      Top = 10
+      Width = 440
+      Caption = 'Duplicated references'
+      TabOrder = 0
+    end
+    object cbUnConnect: TCheckBox
+      Hint = 'Report pins and wires that are not connected'
+      Left = 16
+      Height = 24
+      Top = 44
+      Width = 440
+      Caption = 'Unconnected items'
+      TabOrder = 1
+    end
+    object cbNoConnect: TCheckBox
+      Hint = 'Report no-connect marks with more than one item on the net'
+      Left = 16
+      Height = 24
+      Top = 78
+      Width = 440
+      Caption = 'More than one item on a no-connect net'
+      TabOrder = 2
+    end
+    object cbUnassigned: TCheckBox
+      Hint = 'Report symbols whose reference has no number'
+      Left = 16
+      Height = 24
+      Top = 112
+      Width = 440
+      Caption = 'Unassigned reference designators'
+      TabOrder = 3
+    end
+  end
+  object gbWarnings: TGroupBox
+    Left = 16
+    Height = 290
+    Top = 192
+    Width = 488
+    Caption = 'Design warnings to check'
+    ClientHeight = 265
+    ClientWidth = 484
+    TabOrder = 1
+    object cbPower: TCheckBox
+      Hint = 'Warn when two power pins are connected'
+      Left = 16
+      Height = 24
+      Top = 10
+      Width = 440
+      Caption = 'Power connected to Power'
+      TabOrder = 0
+    end
+    object cbOutputPwr: TCheckBox
+      Hint = 'Warn when a power pin is connected to an output'
+      Left = 16
+      Height = 24
+      Top = 44
+      Width = 440
+      Caption = 'Power connected to an output'
+      TabOrder = 1
+    end
+    object cbOutput: TCheckBox
+      Hint = 'Warn when two outputs are connected'
+      Left = 16
+      Height = 24
+      Top = 78
+      Width = 440
+      Caption = 'Output connected to an output'
+      TabOrder = 2
+    end
+    object cbNoOutput: TCheckBox
+      Hint = 'Warn when nothing drives the inputs of a net'
+      Left = 16
+      Height = 24
+      Top = 112
+      Width = 440
+      Caption = 'No output driving input(s)'
+      TabOrder = 3
+    end
+    object cbUnConnected: TCheckBox
+      Hint = 'Warn about nets with only one connection'
+      Left = 16
+      Height = 24
+      Top = 146
+      Width = 440
+      Caption = 'Unconnected nets'
+      TabOrder = 4
+    end
+    object cbMultiple: TCheckBox
+      Hint = 'Warn when a net has more than one name'
+      Left = 16
+      Height = 24
+      Top = 180
+      Width = 440
+      Caption = 'Multiple net names on same net'
+      TabOrder = 5
+    end
+    object cbNonCase: TCheckBox
+      Hint = 'Warn about net names that differ only by upper and lower case'
+      Left = 16
+      Height = 24
+      Top = 214
+      Width = 440
+      Caption = 'Non-case distinct net names'
+      TabOrder = 6
+    end
+  end
+end

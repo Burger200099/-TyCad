@@ -1,0 +1,599 @@
+{
+"UPrint.pas::PrintDevice": {
+"text": "Builds the description of a printer's page.",
+"returns": "the three numbers together",
+"params": {
+"HorzMm": "printable width of the page, mm",
+"VertMm": "printable height of the page, mm",
+"Dpi": "printer resolution"
+}
+},
+"UPrint.pas::PrintFitScale": {
+"text": "The largest scale at which the whole sheet fits on one page (the longer printer side against the longer side of a landscape sheet, or against the height of a portrait one), as DoPreparePrinting works out m_FitScale. 100 when a size is nought.",
+"returns": "the scale, per cent",
+"params": {
+"Dev": "the printer page",
+"PageW": "sheet width, internal units",
+"PageH": "sheet height, internal units"
+}
+},
+"UPrint.pas::PrintZoom": {
+"text": "The zoom OnBeginPrinting gives the transform: dpi * 1000 / (5 * 254) as an integer division (the pixels of a unit at 100 per cent, times 100), times the scale over 100, over 100.",
+"returns": "printer pixels for each internal unit",
+"params": {
+"Dpi": "printer resolution",
+"Scale": "print scale, per cent"
+}
+},
+"UPrint.pas::PrintLayoutFor": {
+"text": "OnBeginPrinting: the sheet's size at the scale, over the printer's page (its long side along the sheet's long side, whichever way the sheet is turned), gives the pages across and down; a part of a page left over counts as a page unless it is 0.01 of one or less. A scale so small that nothing is left still takes one page (TinyCAD would then print no pages and fail).",
+"returns": "columns, rows, pages and zoom",
+"params": {
+"Dev": "the printer page",
+"PageW": "sheet width, internal units",
+"PageH": "sheet height, internal units",
+"Scale": "print scale, per cent",
+"AllSheets": "True to print every sheet",
+"SheetCount": "number of sheets in the design"
+}
+},
+"UPrint.pas::PrintPageAt": {
+"text": "OnPrepareDC. Printing all sheets, the sheets go round fastest (page 1 is the first part of sheet 1, page 2 the first part of sheet 2, ...); the parts of a sheet go down a column and then across. The part's corner is its column or row times the printer's page (whole mm times 5 units) over the scale, as whole units.",
+"returns": "which sheet and part of it the page shows",
+"params": {
+"L": "the layout",
+"Dev": "the printer page",
+"PageNo": "page number, from 1"
+}
+},
+"UPrint.pas::FormatCG": {
+"text": "printf(\"%*.*g\"): the number to Prec significant digits, in plain form when its exponent is from -4 up to Prec - 1 and in the e+XX form otherwise, with trailing zeros dropped.",
+"returns": "the text",
+"params": {
+"V": "the number",
+"Prec": "significant digits",
+"Width": "least number of characters (padded with spaces on the left)"
+}
+},
+"UPrint.pas::PrintScaleText": {
+"text": "The Print dialog's _stprintf(\"%3.3lg\"): three significant digits, at least three characters wide, so 5 reads \"  5\" and 97.34 reads \"97.3\".",
+"returns": "the text of the Scale box",
+"params": {
+"V": "the scale"
+}
+},
+"UPrint.pas::CAtof": {
+"text": "atof: leading spaces, an optional sign, digits with an optional point, and an optional exponent; anything after that is ignored.",
+"returns": "the number at the start of the text, 0 if there is none",
+"params": {
+"S": "the text"
+}
+},
+"UPrint.pas::PrintScaleValue": {
+"text": "The Print dialog's _tstof of the box.",
+"returns": "the scale",
+"params": {
+"S": "the text of the Scale box"
+}
+},
+"UPrint.pas::PrintRangePages": {
+"text": "A page range cut down to the pages that exist; a range turned the wrong way round is turned back; no range prints every page.",
+"returns": "True if there is anything to print",
+"params": {
+"Pages": "the number of pages in the print",
+"FromPage": "first page asked for, 0 for no range",
+"ToPage": "last page asked for",
+"First": "the first page to print",
+"Last": "the last page to print"
+}
+},
+"UPrintRun.pas::TPrintSink.RendersCopies": {
+"text": "By default a sink does not, and the print job sends the pages again for each copy.",
+"returns": "True if the printer makes the copies itself"
+},
+"UPrintRun.pas::TPrintSink.SetCopies": {
+"text": "Asks the printer for that many copies; only used when it makes them itself.",
+"params": {
+"N": "number of copies"
+}
+},
+"UPrintRun.pas::TPrinterSink.Create": {
+"text": "The installed printer, turned to the sheet's orientation as TinyCAD does before it makes its device context.",
+"params": {
+"Portrait": "True to print the tall way"
+}
+},
+"UPrintRun.pas::TPrinterSink.Available": {
+"text": "Whether there is a printer to print on.",
+"returns": "True if a printer is installed"
+},
+"UPrintRun.pas::TPrinterSink.Device": {
+"text": "The width and height of the printable page in whole millimetres, and the resolution, as GetDeviceCaps gives them.",
+"returns": "the printer's page"
+},
+"UPrintRun.pas::TPrinterSink.PageWidth": {
+"text": "The printable width of the page in printer pixels.",
+"returns": "width in pixels"
+},
+"UPrintRun.pas::TPrinterSink.PageHeight": {
+"text": "The printable height of the page in printer pixels.",
+"returns": "height in pixels"
+},
+"UPrintRun.pas::TPrinterSink.Name": {
+"text": "The name of the printer in use.",
+"returns": "the printer's name"
+},
+"UPrintRun.pas::TPrinterSink.RendersCopies": {
+"text": "Whether the printer makes the copies itself.",
+"returns": "True if the driver can make several copies"
+},
+"UPrintRun.pas::TPrinterSink.SetCopies": {
+"text": "Tells the printer how many copies to make.",
+"params": {
+"N": "number of copies"
+}
+},
+"UPrintRun.pas::TPrinterSink.BeginDoc": {
+"text": "Starts the print job.",
+"params": {
+"Title": "the name of the print job"
+}
+},
+"UPrintRun.pas::TPrinterSink.Canvas": {
+"text": "The canvas of the page being printed.",
+"returns": "the page's canvas"
+},
+"UPrintRun.pas::TPrinterSink.NewPage": {
+"text": "Ends the page and starts the next."
+},
+"UPrintRun.pas::TPrinterSink.EndDoc": {
+"text": "Ends the print job, which sends it to the printer."
+},
+"UPrintRun.pas::TPrinterSink.Abort": {
+"text": "Stops a print job that failed part way."
+},
+"UPrintRun.pas::TVirtualSink.Create": {
+"text": "A page of A4 paper that only exists as bitmaps.",
+"params": {
+"Portrait": "True for an A4 page the tall way",
+"ADpi": "resolution of the page's bitmap",
+"AOutDir": "a folder to write each page to as a PNG file at the end ('' for none)"
+}
+},
+"UPrintRun.pas::TVirtualSink.Destroy": {
+"text": "Frees the page bitmaps."
+},
+"UPrintRun.pas::TVirtualSink.ClearPages": {
+"text": "Frees every page bitmap."
+},
+"UPrintRun.pas::TVirtualSink.Device": {
+"text": "The page's size in millimetres and its resolution.",
+"returns": "the page"
+},
+"UPrintRun.pas::TVirtualSink.PageWidth": {
+"text": "The page's width at its resolution.",
+"returns": "width in pixels"
+},
+"UPrintRun.pas::TVirtualSink.PageHeight": {
+"text": "The page's height at its resolution.",
+"returns": "height in pixels"
+},
+"UPrintRun.pas::TVirtualSink.Name": {
+"text": "What this page is called.",
+"returns": "the name"
+},
+"UPrintRun.pas::TVirtualSink.Available": {
+"text": "A bitmap can always be drawn on.",
+"returns": "always True"
+},
+"UPrintRun.pas::TVirtualSink.BeginDoc": {
+"text": "Starts a job: any pages of an earlier job are dropped and the first page is made.",
+"params": {
+"Title": "not used"
+}
+},
+"UPrintRun.pas::TVirtualSink.NewPage": {
+"text": "Adds a white page and draws on that."
+},
+"UPrintRun.pas::TVirtualSink.Canvas": {
+"text": "The canvas to draw the current page on.",
+"returns": "the canvas of the latest page"
+},
+"UPrintRun.pas::TVirtualSink.EndDoc": {
+"text": "Ends the job; the pages are written to the output folder if there is one."
+},
+"UPrintRun.pas::TVirtualSink.Abort": {
+"text": "Drops the pages of a job that failed."
+},
+"UPrintRun.pas::TVirtualSink.PageCount": {
+"text": "How many pages the last job made.",
+"returns": "the number of pages drawn"
+},
+"UPrintRun.pas::TVirtualSink.Page": {
+"text": "One of the pages the last job made.",
+"returns": "the page's bitmap (owned by the sink)",
+"params": {
+"Index": "page number from 0"
+}
+},
+"UPrintRun.pas::SheetIsPortrait": {
+"text": "CDetails::IsPortrait: the page is turned the tall way when its width is less than its height.",
+"returns": "True if the sheet is taller than it is wide",
+"params": {
+"Sheet": "the sheet"
+}
+},
+"UPrintRun.pas::DefaultPrintOptions": {
+"text": "The options of a print that asks nothing: every page, the sheet shown or all the sheets as asked.",
+"returns": "one copy of everything, at the scale in the settings"
+},
+"UPrintRun.pas::PrintLayoutOf": {
+"text": "OnBeginPrinting: the size of the sheet showing (not of the others) against the printer's page, at the scale chosen.",
+"returns": "the pages",
+"params": {
+"Design": "the design",
+"ActiveSheet": "the sheet showing",
+"Sink": "where it will print",
+"Opt": "the options"
+}
+},
+"UPrintRun.pas::RenderPrintPage": {
+"text": "Draws a printed page: the sheet's border, title block and rulers and then its objects, with the transform OnPrepareDC sets (the corner of the part of the sheet this page shows, and the print zoom). Nothing is drawn outside the page. The canvas is not cleared.",
+"params": {
+"Design": "the design",
+"ActiveSheet": "the sheet showing (the one printed when not all are)",
+"L": "the layout",
+"Dev": "the printer's page",
+"PageNo": "page number, from 1",
+"ACanvas": "where to draw",
+"PxW": "width of the canvas in pixels",
+"PxH": "height of the canvas in pixels",
+"Black": "True to draw everything black",
+"Factor": "1 on the printer; a smaller number draws the whole page smaller (a preview)"
+}
+},
+"UPrintRun.pas::RunPrintJob": {
+"text": "The print: the pages of the range, once for each copy. When the printer makes the copies itself it is asked for them; otherwise a collated print sends the whole range again for each copy, and an uncollated one sends each page as many times as there are copies. A job that fails part way is aborted and the error passes on.",
+"returns": "the number of pages sent to the sink for one copy; 0 when the range asks for no page that exists",
+"params": {
+"Design": "the design",
+"ActiveSheet": "the sheet showing",
+"Opt": "what the Print dialog decided",
+"Sink": "where to print",
+"Title": "the name of the job"
+}
+},
+"Fprint.pas::TfrmPrint.FormCreate": {
+"text": "Hooks up the check made when OK is pressed.",
+"params": {
+"Sender": "the component that raised the event"
+}
+},
+"Fprint.pas::TfrmPrint.SetPrint": {
+"text": "Fills the dialog as it starts: the scale as text, black and white, the current sheet chosen (TinyCAD's radio buttons start at the first), no Fit.",
+"params": {
+"ADev": "the printer's page",
+"ASheetW": "width of the sheet showing, internal units",
+"ASheetH": "height of the sheet showing",
+"ASheetCount": "the number of sheets in the design",
+"APrinterName": "the name of the printer",
+"AAvailable": "True if there is a printer to print on",
+"AScale": "the scale kept in the settings",
+"BW": "the black and white choice kept in the settings"
+}
+},
+"Fprint.pas::TfrmPrint.SetRange": {
+"text": "Sets the pages and copies (what the Printer button's dialog decided) and shows them.",
+"params": {
+"AFrom": "first page, 0 for all pages",
+"ATo": "last page",
+"ACopies": "number of copies",
+"ACollate": "True to collate them"
+}
+},
+"Fprint.pas::TfrmPrint.SetDevice": {
+"text": "The printer was changed in the system's Print dialog: the pages are laid out again on its page.",
+"params": {
+"ADev": "the printer's page",
+"APrinterName": "its name"
+}
+},
+"Fprint.pas::TfrmPrint.RangeText": {
+"text": "\"Pages: all\" or \"Pages: 2-3\", then the copies, and \"collated\" when they are.",
+"returns": "the pages and copies as the dialog shows them"
+},
+"Fprint.pas::TfrmPrint.GetOptions": {
+"text": "The scale is read from its box as _tstof does (0 when it is no number); the other choices come from the boxes and from the Printer button's dialog.",
+"returns": "what the dialog says to print"
+},
+"Fprint.pas::TfrmPrint.PageCount": {
+"text": "How many pages the whole print is at the scale in the box.",
+"returns": "the number of pages the print takes (0 when the scale is no use)"
+},
+"Fprint.pas::TfrmPrint.PagesText": {
+"text": "\"4 pages: 2 across and 2 down\" for each sheet, with \"on each of 3 sheets\" when all the sheets are printed, or the reason the scale is no use.",
+"returns": "the line that says how many pages the print takes"
+},
+"Fprint.pas::TfrmPrint.UpdateTexts": {
+"text": "Shows the printer, the pages and copies, and the number of pages."
+},
+"Fprint.pas::TfrmPrint.ValidationError": {
+"text": "The scale must be above 0 and at most 10000 per cent (TinyCAD takes any number; a scale of 0 stops it, and a huge one makes it try for millions of pages).",
+"returns": "the message, empty when the scale will do"
+},
+"Fprint.pas::TfrmPrint.OptionChanged": {
+"text": "Updates the number of pages after the scale or the sheets chosen change.",
+"params": {
+"Sender": "the component that raised the event"
+}
+},
+"Fprint.pas::TfrmPrint.cbBWClick": {
+"text": "CSpecialPrintDlg::OnBandw: the choice is kept in the settings at once.",
+"params": {
+"Sender": "the check box"
+}
+},
+"Fprint.pas::TfrmPrint.cbFitClick": {
+"text": "CSpecialPrintDlg::OnFit: ticked, the box shows the scale that fits the sheet on one page and cannot be typed in; unticked, it can be and shows the scale the dialog started with.",
+"params": {
+"Sender": "the check box"
+}
+},
+"Fprint.pas::TfrmPrint.btnPrinterClick": {
+"text": "Shows the system's Print dialog for the printer, pages and copies (the handler does that).",
+"params": {
+"Sender": "the button"
+}
+},
+"Fprint.pas::TfrmPrint.CloseQuery": {
+"text": "Pressing OK checks the scale first and keeps the dialog open with a message if it is no use.",
+"params": {
+"Sender": "the form",
+"CanClose": "set False to keep the dialog open"
+}
+},
+"Fprint.pas::TfrmPrint.KeepInSettings": {
+"text": "CSpecialPrintDlg::OnOK: the scale in the box is kept in the settings (with the black and white choice, which was kept when it was clicked)."
+},
+"Fpreview.pas::TfrmPreview.FormCreate": {
+"text": "Starts with the first page, one page at a time, the whole page showing.",
+"params": {
+"Sender": "the form"
+}
+},
+"Fpreview.pas::TfrmPreview.Destroy": {
+"text": "Frees the page bitmaps and the printer's page."
+},
+"Fpreview.pas::TfrmPreview.ClearCache": {
+"text": "Drops every page that was drawn, so they are drawn again at the new size."
+},
+"Fpreview.pas::TfrmPreview.SetPreview": {
+"text": "Lays the pages out (OnBeginPrinting) and shows the first.",
+"params": {
+"ADesign": "the design",
+"AActive": "the sheet showing",
+"ASink": "the printer's page (the window keeps it)",
+"AOpt": "scale, black and white and sheets"
+}
+},
+"Fpreview.pas::TfrmPreview.Shown": {
+"text": "One, or two in two-page mode when there is a page after the current.",
+"returns": "how many pages are showing"
+},
+"Fpreview.pas::TfrmPreview.FitFactor": {
+"text": "The largest pages (one, or two side by side) that fit the window with a margin round them.",
+"returns": "the size of a page that fits the window, over the printer's page"
+},
+"Fpreview.pas::TfrmPreview.Relayout": {
+"text": "Works out the size of the pages from the zoom and the window, sizes the paint box to hold them (the window scrolls when they are larger) and redraws."
+},
+"Fpreview.pas::TfrmPreview.UpdateButtons": {
+"text": "Dims what cannot be done (no next page after the last, no more zoom) and says which page is showing."
+},
+"Fpreview.pas::TfrmPreview.BitmapOf": {
+"text": "Draws the page on first use and keeps it until the size changes.",
+"returns": "the page, drawn on white paper at the size of the shown pages",
+"params": {
+"PageNo": "page number from 1"
+}
+},
+"Fpreview.pas::TfrmPreview.PageBitmap": {
+"text": "For tests.",
+"returns": "the page as the preview draws it, nil if there is no such page",
+"params": {
+"PageNo": "page number from 1"
+}
+},
+"Fpreview.pas::TfrmPreview.pbPagePaint": {
+"text": "Draws the shown page or pages with a shadow, on the grey background.",
+"params": {
+"Sender": "the paint box"
+}
+},
+"Fpreview.pas::TfrmPreview.NextPage": {
+"text": "The Next Page button: the pages after the ones showing (nothing at the end)."
+},
+"Fpreview.pas::TfrmPreview.PrevPage": {
+"text": "The Prev Page button: the pages before the ones showing (nothing at the start)."
+},
+"Fpreview.pas::TfrmPreview.ToggleTwoPage": {
+"text": "The One Page / Two Page button. The page showing stays the first of those shown."
+},
+"Fpreview.pas::TfrmPreview.ZoomIn": {
+"text": "The Zoom In button: the pages one step larger (up to three steps over the whole page)."
+},
+"Fpreview.pas::TfrmPreview.ZoomOut": {
+"text": "The Zoom Out button: the pages one step smaller (down to the whole page)."
+},
+"Fpreview.pas::TfrmPreview.btnNextClick": {
+"text": "Next Page.",
+"params": {
+"Sender": "the button"
+}
+},
+"Fpreview.pas::TfrmPreview.btnPrevClick": {
+"text": "Prev Page.",
+"params": {
+"Sender": "the button"
+}
+},
+"Fpreview.pas::TfrmPreview.btnTwoClick": {
+"text": "One Page / Two Page.",
+"params": {
+"Sender": "the button"
+}
+},
+"Fpreview.pas::TfrmPreview.btnZoomInClick": {
+"text": "Zoom In.",
+"params": {
+"Sender": "the button"
+}
+},
+"Fpreview.pas::TfrmPreview.btnZoomOutClick": {
+"text": "Zoom Out.",
+"params": {
+"Sender": "the button"
+}
+},
+"Fpreview.pas::TfrmPreview.pbPageMouseUp": {
+"text": "A click on the pages zooms in a step, and from the largest size goes back to the whole page (MFC's preview does the same).",
+"params": {
+"Sender": "the paint box",
+"Button": "the button",
+"Shift": "modifier keys",
+"X": "position",
+"Y": "position"
+}
+},
+"Fpreview.pas::TfrmPreview.FormResize": {
+"text": "The pages are made to fit the new window size.",
+"params": {
+"Sender": "the form"
+}
+},
+"Fpreview.pas::TfrmPreview.FormKeyDown": {
+"text": "Page Down / Page Up change pages, Escape closes the window.",
+"params": {
+"Sender": "the form",
+"Key": "the key",
+"Shift": "modifier keys"
+}
+},
+"Fpreview.pas::TfrmPreview.FormCloseQuery": {
+"text": "The window can always be closed.",
+"params": {
+"Sender": "the form",
+"CanClose": "set False to keep the window open"
+}
+},
+"Fpreview.pas::TfrmPreview.InfoText": {
+"text": "For tests: \"page=3 shown=2 pages=8 two=1 zoom=0 next=1 prev=1 zoomin=1 zoomout=0 twocaption=... status=...\".",
+"returns": "the window's state"
+},
+"mainform.pas::TfrmMain.DoPageSetup": {
+"text": "Handler: shows the Page Setup dialog for the current sheet and applies it on OK.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"mainform.pas::TfrmMain.ReportProblem": {
+"text": "Tells the person something went wrong: a warning box, or, when the program is run from a script (quiet), the status bar's first panel, so that scripts and tests can read it.",
+"params": {
+"Msg": "the message"
+}
+},
+"mainform.pas::TfrmMain.PrinterInstalled": {
+"text": "Whether there is a printer to print on.",
+"returns": "True if the system has a printer"
+},
+"mainform.pas::TfrmMain.MakePrintSink": {
+"text": "The installed printer turned to the orientation, or an A4 page that is only a bitmap when there is no printer (or when a test has asked for bitmap pages).",
+"returns": "where the pages go; the caller frees it",
+"params": {
+"Portrait": "True for the tall way (the sheet's orientation)"
+}
+},
+"mainform.pas::TfrmMain.BeginPrintDialog": {
+"text": "The start of File > Print (CTinyCadView::OnPreparePrinting and DoPreparePrinting): any drawing tool is put away, the printer's page is found for the way the sheet is turned, and the dialog gets the sheet's size, the scale and black and white of the settings, the current sheet, and every page once.",
+"returns": "the dialog, filled as it starts; the caller shows it and frees it"
+},
+"mainform.pas::TfrmMain.ChoosePrinter": {
+"text": "The Printer button: the system's Print dialog (a TPrintDialog) for the printer, the pages and the copies, started with what the dialog has now. The pages the print takes are shown for choosing a range. The page the printer now has is the one the dialog lays pages out on. With no printer installed it says so.",
+"returns": "True if the system's Print dialog was accepted",
+"params": {
+"F": "the Print dialog"
+}
+},
+"mainform.pas::TfrmMain.FinishPrintDialog": {
+"text": "OK (when it is not dimmed) keeps the scale in the settings and prints the pages asked for on the printer (the printer is turned the way the sheet showing is; the layout is made from that sheet, as TinyCAD does). A print that fails says why. Cancel prints nothing.",
+"returns": "the pages sent to the printer for one copy, or -1 when nothing was printed",
+"params": {
+"F": "the dialog, after a button was pressed",
+"Res": "the button"
+}
+},
+"mainform.pas::TfrmMain.DoPrint": {
+"text": "Handler (File > Print...): shows the Print dialog and prints what it asks for.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"mainform.pas::TfrmMain.PrintScriptRun": {
+"text": "For tests: File > Print answered the way a person does, without showing the dialog.",
+"returns": "what the dialog showed when it started, the choices when the button was pressed, and what happened",
+"params": {
+"Opts": "name=value answers: scale (text typed in the Scale box), bw (0 or 1), sheets (current, all), fit (0 or 1), from, to, copies, collate (the pages and copies the system's Print dialog would give) and press (ok, cancel)"
+}
+},
+"mainform.pas::TfrmMain.BeginPreview": {
+"text": "The start of File > Print Preview: any drawing tool is put away (OnPreparePrinting), and the pages are those of every sheet at the scale and black and white of the settings, on the printer's page (an A4 page with no printer).",
+"returns": "the window, with its pages laid out; the caller shows it and frees it"
+},
+"mainform.pas::TfrmMain.DoPrintPreview": {
+"text": "Handler (File > Print Preview): shows the preview; its Print button goes on to the Print dialog.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"mainform.pas::TfrmMain.PreviewScriptRun": {
+"text": "For tests: File > Print Preview worked like a person, without showing the window.",
+"returns": "the window's state when it opened and after each action",
+"params": {
+"Ops": "what is done, in order: next, prev, two, zoomin, zoomout, page=<n> (the page is drawn and kept as page_<n>.png in PrintSinkDir), info (nothing) and last press=close or press=print"
+}
+},
+"mainform.pas::TfrmMain.DoPrintSetup": {
+"text": "Handler (File > Print Setup...): the system's dialog for the printer and its settings (a TPrinterSetupDialog). With no printer it says so.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"mainform.pas::TfrmMain.PrinterPageFor": {
+"text": "What the Printer Paper and Printer Setup buttons of the Page Setup dialog ask for (CDlgPageSizeBox::SetPrinter). With no printer it says so and returns False; a cancelled dialog also returns False.",
+"returns": "True if there is a printer page to use",
+"params": {
+"Choose": "True to show the printer's page setup dialog (a TPageSetupDialog) first",
+"HorzMm": "the printer's page width in whole millimetres",
+"VertMm": "and its height"
+}
+},
+"Fpagesetup.pas::TfrmPageSetup.UsePrinterPage": {
+"text": "The printer's page (CDlgPageSizeBox: the larger side against the smaller, in whole millimetres) becomes the sheet's size, the larger side being the width for landscape and the height for portrait. Does nothing when there is no printer or the setup is cancelled.",
+"returns": "True if the boxes were filled from the printer",
+"params": {
+"Choose": "True to show the printer's setup dialog first"
+}
+},
+"Fpagesetup.pas::TfrmPageSetup.btnPrinterPaperClick": {
+"text": "The Printer Paper button: the size of the printer's page, with no dialog.",
+"params": {
+"Sender": "the button"
+}
+},
+"Fpagesetup.pas::TfrmPageSetup.btnPrinterSetupClick": {
+"text": "The Printer Setup button: the printer's own page setup dialog, then the size of its page.",
+"params": {
+"Sender": "the button"
+}
+}
+}

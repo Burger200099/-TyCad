@@ -1,0 +1,8 @@
+{
+"bomtest.pas::DoNames": {
+"text": "Test mode: runs the file name helpers of the parts list on the lines of a file and prints each answer as \"R <result>\". A line is the kind (default, ext, change or escape), the text and a third value (the format number, or the separator for escape), separated by tabs.",
+"params": {
+"FileName": "the file of test lines"
+}
+}
+}

@@ -1,0 +1,327 @@
+object frmColors: TfrmColors
+  Left = 1047
+  Height = 520
+  Top = 380
+  Width = 520
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'Colors'
+  ClientHeight = 520
+  ClientWidth = 520
+  DesignTimePPI = 120
+  OnCreate = FormCreate
+  Position = poOwnerFormCenter
+  LCLVersion = '3.0.0.3'
+  object pnlColors: TPanel
+    Left = 0
+    Height = 380
+    Top = 0
+    Width = 520
+    Align = alClient
+    BevelOuter = bvNone
+    TabOrder = 0
+    object lblBackground: TLabel
+      Left = 24
+      Height = 20
+      Top = 20
+      Width = 90
+      Caption = 'Background'
+      ParentColor = False
+    end
+    object pnlBackground: TPanel
+      Left = 240
+      Height = 28
+      Top = 16
+      Width = 90
+      BevelOuter = bvLowered
+      Tag = 9
+      TabOrder = 0
+    end
+    object btnBackground: TButton
+      Left = 350
+      Height = 28
+      Top = 16
+      Width = 120
+      Caption = 'Change...'
+      OnClick = ChangeClick
+      Tag = 9
+      TabOrder = 1
+    end
+    object lblWires: TLabel
+      Left = 24
+      Height = 20
+      Top = 56
+      Width = 90
+      Caption = 'Wires'
+      ParentColor = False
+    end
+    object pnlWires: TPanel
+      Left = 240
+      Height = 28
+      Top = 52
+      Width = 90
+      BevelOuter = bvLowered
+      Tag = 1
+      TabOrder = 2
+    end
+    object btnWires: TButton
+      Left = 350
+      Height = 28
+      Top = 52
+      Width = 120
+      Caption = 'Change...'
+      OnClick = ChangeClick
+      Tag = 1
+      TabOrder = 3
+    end
+    object lblBuses: TLabel
+      Left = 24
+      Height = 20
+      Top = 92
+      Width = 90
+      Caption = 'Buses'
+      ParentColor = False
+    end
+    object pnlBuses: TPanel
+      Left = 240
+      Height = 28
+      Top = 88
+      Width = 90
+      BevelOuter = bvLowered
+      Tag = 2
+      TabOrder = 4
+    end
+    object btnBuses: TButton
+      Left = 350
+      Height = 28
+      Top = 88
+      Width = 120
+      Caption = 'Change...'
+      OnClick = ChangeClick
+      Tag = 2
+      TabOrder = 5
+    end
+    object lblJunctions: TLabel
+      Left = 24
+      Height = 20
+      Top = 128
+      Width = 90
+      Caption = 'Junctions'
+      ParentColor = False
+    end
+    object pnlJunctions: TPanel
+      Left = 240
+      Height = 28
+      Top = 124
+      Width = 90
+      BevelOuter = bvLowered
+      Tag = 3
+      TabOrder = 6
+    end
+    object btnJunctions: TButton
+      Left = 350
+      Height = 28
+      Top = 124
+      Width = 120
+      Caption = 'Change...'
+      OnClick = ChangeClick
+      Tag = 3
+      TabOrder = 7
+    end
+    object lblNoConnect: TLabel
+      Left = 24
+      Height = 20
+      Top = 164
+      Width = 90
+      Caption = 'No-connect marks'
+      ParentColor = False
+    end
+    object pnlNoConnect: TPanel
+      Left = 240
+      Height = 28
+      Top = 160
+      Width = 90
+      BevelOuter = bvLowered
+      Tag = 4
+      TabOrder = 8
+    end
+    object btnNoConnect: TButton
+      Left = 350
+      Height = 28
+      Top = 160
+      Width = 120
+      Caption = 'Change...'
+      OnClick = ChangeClick
+      Tag = 4
+      TabOrder = 9
+    end
+    object lblPins: TLabel
+      Left = 24
+      Height = 20
+      Top = 200
+      Width = 90
+      Caption = 'Pins'
+      ParentColor = False
+    end
+    object pnlPins: TPanel
+      Left = 240
+      Height = 28
+      Top = 196
+      Width = 90
+      BevelOuter = bvLowered
+      Tag = 7
+      TabOrder = 10
+    end
+    object btnPins: TButton
+      Left = 350
+      Height = 28
+      Top = 196
+      Width = 120
+      Caption = 'Change...'
+      OnClick = ChangeClick
+      Tag = 7
+      TabOrder = 11
+    end
+    object lblPower: TLabel
+      Left = 24
+      Height = 20
+      Top = 236
+      Width = 90
+      Caption = 'Power symbols'
+      ParentColor = False
+    end
+    object pnlPower: TPanel
+      Left = 240
+      Height = 28
+      Top = 232
+      Width = 90
+      BevelOuter = bvLowered
+      Tag = 6
+      TabOrder = 12
+    end
+    object btnPower: TButton
+      Left = 350
+      Height = 28
+      Top = 232
+      Width = 120
+      Caption = 'Change...'
+      OnClick = ChangeClick
+      Tag = 6
+      TabOrder = 13
+    end
+    object lblNoteFill: TLabel
+      Left = 24
+      Height = 20
+      Top = 272
+      Width = 90
+      Caption = 'Note background'
+      ParentColor = False
+    end
+    object pnlNoteFill: TPanel
+      Left = 240
+      Height = 28
+      Top = 268
+      Width = 90
+      BevelOuter = bvLowered
+      Tag = 10
+      TabOrder = 14
+    end
+    object btnNoteFill: TButton
+      Left = 350
+      Height = 28
+      Top = 268
+      Width = 120
+      Caption = 'Change...'
+      OnClick = ChangeClick
+      Tag = 10
+      TabOrder = 15
+    end
+    object lblNoteLine: TLabel
+      Left = 24
+      Height = 20
+      Top = 308
+      Width = 90
+      Caption = 'Note border'
+      ParentColor = False
+    end
+    object pnlNoteLine: TPanel
+      Left = 240
+      Height = 28
+      Top = 304
+      Width = 90
+      BevelOuter = bvLowered
+      Tag = 11
+      TabOrder = 16
+    end
+    object btnNoteLine: TButton
+      Left = 350
+      Height = 28
+      Top = 304
+      Width = 120
+      Caption = 'Change...'
+      OnClick = ChangeClick
+      Tag = 11
+      TabOrder = 17
+    end
+    object lblNoteText: TLabel
+      Left = 24
+      Height = 20
+      Top = 344
+      Width = 90
+      Caption = 'Note text'
+      ParentColor = False
+    end
+    object pnlNoteText: TPanel
+      Left = 240
+      Height = 28
+      Top = 340
+      Width = 90
+      BevelOuter = bvLowered
+      Tag = 12
+      TabOrder = 18
+    end
+    object btnNoteText: TButton
+      Left = 350
+      Height = 28
+      Top = 340
+      Width = 120
+      Caption = 'Change...'
+      OnClick = ChangeClick
+      Tag = 12
+      TabOrder = 19
+    end
+  end
+  object btnReset: TButton
+    Left = 24
+    Height = 32
+    Top = 392
+    Width = 120
+    Anchors = [akLeft, akBottom]
+    Caption = 'Defaults'
+    OnClick = ResetClick
+    TabOrder = 1
+  end
+  object ColorDlg: TColorDialog
+    Color = clBlack
+    CustomColors.Strings = (
+      'ColorA=000000'
+      'ColorB=000080'
+      'ColorC=008000'
+      'ColorD=008080'
+      'ColorE=800000'
+      'ColorF=800080'
+      'ColorG=808000'
+      'ColorH=808080'
+      'ColorI=C0C0C0'
+      'ColorJ=0000FF'
+      'ColorK=00FF00'
+      'ColorL=00FFFF'
+      'ColorM=FF0000'
+      'ColorN=FF00FF'
+      'ColorO=FFFF00'
+      'ColorP=FFFFFF'
+    )
+    Left = 456
+    Top = 392
+  end
+end

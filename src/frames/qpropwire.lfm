@@ -1,0 +1,70 @@
+inherited fmPropRibbonWire: TfmPropRibbonWire
+  Height = 101
+  Width = 236
+  ClientHeight = 101
+  ClientWidth = 236
+  DesignLeft = 581
+  DesignTop = 336
+  inherited lbCaption: TLabel
+    Top = 86
+    Width = 236
+    Caption = 'Wire'
+  end
+  object cbWireColor: TColorButton[1]
+    Left = 5
+    Height = 28
+    Top = 5
+    Width = 75
+    BorderWidth = 2
+    ButtonColorSize = 16
+    ButtonColor = clBlack
+    ColorDialog = frmSharedControls.DlgColor
+  end
+  object seWireSize: TSpinEdit[2]
+    Left = 34
+    Height = 23
+    Top = 48
+    Width = 48
+    Alignment = taCenter
+    MinValue = 20
+    ParentFont = False
+    ParentShowHint = False
+    TabOrder = 0
+  end
+  object cbWireType: TComboBox[3]
+    Left = 88
+    Height = 34
+    Top = 5
+    Width = 138
+    AutoSelect = False
+    AutoSize = False
+    ItemHeight = 28
+    Items.Strings = (
+      '1'
+      '2'
+      '3'
+      '4'
+      '5'
+    )
+    Style = csOwnerDrawFixed
+    TabOrder = 1
+    OnChange = DrawWireChange
+    OnDrawItem = DrawWireTypeItems
+  end
+  object lbSize: TLabel[4]
+    Left = 5
+    Height = 15
+    Top = 52
+    Width = 23
+    Caption = 'Size:'
+  end
+  object cbAngle: TComboBox[5]
+    Left = 96
+    Height = 23
+    Top = 48
+    Width = 109
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 2
+  end
+end

@@ -1,0 +1,18 @@
+{
+"TDrawingObject.CanResize": {
+"text": "Whether the object has resize handles. False for most objects.",
+"returns": "False"
+},
+"TDrawMetaFile.CanResize": {
+"text": "Yes: a picture has the eight handles of TinyCAD's rectangle tracker when it is the one selected object.",
+"returns": "True"
+},
+"TDrawSquare.CanResize": {
+"text": "Yes: a rectangle or ellipse has the eight handles of TinyCAD's rectangle tracker when it is the one selected object.",
+"returns": "True"
+},
+"TDrawNoteText.CanResize": {
+"text": "Yes: a note has the eight handles of TinyCAD's rectangle tracker when it is the one selected object.",
+"returns": "True"
+}
+}

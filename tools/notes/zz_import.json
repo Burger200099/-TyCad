@@ -1,0 +1,15 @@
+{
+"TfrmMain.DoImport": {
+"text": "Handler (Ctrl+I): Import. Asks for a design file (the Design files filter) and brings its first sheet into this sheet as a block that follows the mouse until it is placed. The Open dialog's settings are put back afterwards, so Open is not affected.",
+"params": {
+"Sender": "the button or menu item"
+}
+},
+"TfrmMain.ImportDesign": {
+"text": "Import without the dialog: puts any drawing tool away and clears the selection (as TinyCAD does), then reads the design into this sheet as a block that follows the mouse. A file that cannot be opened is reported; one that is not a TinyCAD design that can be imported (not XML, empty) is reported and changes nothing.",
+"returns": "how many objects were read, 0 if none",
+"params": {
+"AFileName": "the design file"
+}
+}
+}

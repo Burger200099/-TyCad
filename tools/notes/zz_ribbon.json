@@ -1,0 +1,61 @@
+{
+"TfrmNumInput.ValidInput": {
+"text": "Checks what was typed: a number (a comma is accepted as the decimal point) within the range given to the dialog, ends included. When it is valid the text is kept in FInput with a decimal point, so StrToFloat with a point reads it whatever the system language.",
+"returns": "True if the entry is acceptable"
+},
+"TfrmNumInput.ErrorText": {
+"text": "The message for an entry that is not acceptable, naming the range that is allowed.",
+"returns": "the message"
+},
+"TfrmNumInput.Create": {
+"text": "Creates the number input dialog: which of OK, Cancel and Apply to show, the range a number must lie in, and the prompt above the entry.",
+"params": {
+"AOwner": "owner of the dialog",
+"Buttons": "the buttons to show",
+"RangeLow": "lowest number allowed",
+"RangeHigh": "highest number allowed",
+"InputText": "the prompt"
+}
+},
+"TfrmNumInput.Destroy": {
+"text": "Frees the dialog."
+},
+"TfrmNumInput.FormCloseQuery": {
+"text": "Event handler: Cancel always closes. OK closes only if the entry is a number in range; otherwise a message names the range and the dialog stays open.",
+"params": {
+"Sender": "the form",
+"CanClose": "set False to keep the dialog open"
+}
+},
+"TfrmMain.AddSheetFromTab": {
+"text": "Adds a sheet (queued from the sheet tabs' change event, because the tabs are rebuilt by adding one) when the + tab was chosen.",
+"params": {
+"Data": "unused"
+}
+},
+"TfrmMain.DoGridSizeUp": {
+"text": "Handler (grid size up button): sets the grid to the next larger of the preset sizes than it has now, going back to the smallest after the largest. It works from the grid actually in use, so it also works from a custom size and after changing document.",
+"params": {
+"Sender": "the button"
+}
+},
+"TfrmMain.SheetTabChange": {
+"text": "Event handler: another sheet tab was chosen, so show that sheet. The last tab, \"+\", instead keeps the current sheet shown and adds a new one. Nothing is done when the tab chosen is the sheet already shown (the tabs were only rebuilt).",
+"params": {
+"Sender": "the tab control"
+}
+},
+"TfrmMain.RebuildSheetTabs": {
+"text": "Rebuilds the sheet tabs from the sheets of the current document (a name, or \"Sheet N\"), followed by the + tab that adds a sheet, and selects the tab of the sheet being shown. The tabs are hidden while no document is open."
+},
+"TfrmMain.SheetTabsMatch": {
+"text": "Whether the sheet tabs show exactly the document's sheets followed by the + tab (names, order, and the one being shown).",
+"returns": "True if they agree"
+},
+"TfrmMain.DoRenameSheet": {
+"text": "Handler (also a double click on a sheet tab): asks for a new name for the current sheet. The + tab cannot be renamed.",
+"params": {
+"Sender": "the button, menu item or tab"
+}
+}
+}

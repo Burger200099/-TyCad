@@ -1,0 +1,92 @@
+object frmLibraries: TfrmLibraries
+  Left = 600
+  Height = 480
+  Top = 300
+  Width = 820
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'Library Setup'
+  ClientHeight = 480
+  ClientWidth = 820
+  DesignTimePPI = 120
+  OnCreate = FormCreate
+  Position = poOwnerFormCenter
+  LCLVersion = '3.0.0.3'
+  object lblLibs: TLabel
+    Left = 12
+    Height = 20
+    Top = 8
+    Width = 200
+    Caption = 'Libraries in Use:'
+  end
+  object lbLibs: TListBox
+    Left = 12
+    Height = 360
+    Hint = 'The symbol libraries in use'
+    Top = 32
+    Width = 640
+    ItemHeight = 0
+    OnSelectionChange = ListSelect
+    ScrollWidth = 636
+    Sorted = True
+    TabOrder = 0
+  end
+  object btnAdd: TButton
+    Left = 668
+    Height = 36
+    Hint = 'Add symbol library files (.TCLib) to the libraries in use'
+    Top = 32
+    Width = 140
+    Caption = '&Add...'
+    OnClick = AddClick
+    TabOrder = 1
+  end
+  object btnRemove: TButton
+    Left = 668
+    Height = 36
+    Hint = 'Take the selected library out of the libraries in use (the file is kept)'
+    Top = 76
+    Width = 140
+    Caption = '&Remove'
+    OnClick = RemoveClick
+    TabOrder = 2
+  end
+  object btnNew: TButton
+    Left = 668
+    Height = 36
+    Hint = 'Make a new empty symbol library and add it'
+    Top = 120
+    Width = 140
+    Caption = '&New...'
+    OnClick = NewClick
+    TabOrder = 3
+  end
+  object btnEdit: TButton
+    Left = 668
+    Height = 36
+    Hint = 'Dimmed: symbols are edited from the library list (right-click a symbol: Edit symbol, New symbol)'
+    Top = 164
+    Width = 140
+    Caption = '&Edit'
+    TabOrder = 4
+  end
+  object btnCleanup: TButton
+    Left = 668
+    Height = 36
+    Hint = 'Compact the file of the selected library'
+    Top = 300
+    Width = 140
+    Caption = '&Cleanup'
+    OnClick = CleanupClick
+    TabOrder = 5
+  end
+  object btnUpgrade: TButton
+    Left = 668
+    Height = 36
+    Hint = 'Convert a library in an old format (the old .mdb and .idx libraries cannot be read by this program yet)'
+    Top = 344
+    Width = 140
+    Caption = '&Upgrade'
+    TabOrder = 6
+  end
+end

@@ -1,0 +1,102 @@
+object frmErcList: TfrmErcList
+  Left = 300
+  Height = 350
+  Top = 120
+  Width = 900
+  BorderIcons = [biSystemMenu]
+  Caption = 'Design Markers'
+  ClientHeight = 350
+  ClientWidth = 900
+  OnClose = FormClose
+  OnCreate = FormCreate
+  Position = poDesigned
+  ShowInTaskBar = stNever
+  LCLVersion = '4.8.0.0'
+  object lbErrors: TListBox
+    Left = 0
+    Height = 200
+    Hint = 'The problems found; click one to see where it is'
+    Top = 0
+    Width = 900
+    Align = alTop
+    Anchors = [akTop, akLeft, akRight]
+    ItemHeight = 0
+    OnSelectionChange = ErrorsSelectionChange
+    ScrollWidth = 898
+    TabOrder = 0
+  end
+  object gbConvenience: TGroupBox
+    Left = 8
+    Height = 80
+    Top = 208
+    Width = 640
+    Caption = 'Convenience Functionality'
+    ClientHeight = 55
+    ClientWidth = 636
+    TabOrder = 1
+    object btnSpice: TButton
+      Left = 8
+      Height = 36
+      Hint = 'Create a SPICE net list'
+      Top = 6
+      Width = 190
+      Caption = 'Generate SPICE Netlist'
+      OnClick = SpiceClick
+      TabOrder = 0
+    end
+    object btnPcb: TButton
+      Left = 206
+      Height = 36
+      Hint = 'Create a PCB net list'
+      Top = 6
+      Width = 170
+      Caption = 'Generate PCB Netlist'
+      OnClick = PcbClick
+      TabOrder = 1
+    end
+    object btnAnnotate: TButton
+      Left = 384
+      Height = 36
+      Hint = 'Give the symbols reference numbers'
+      Top = 6
+      Width = 244
+      Caption = 'Generate Symbol References'
+      OnClick = AnnotateClick
+      TabOrder = 2
+    end
+  end
+  object pnlButtons: TPanel
+    Left = 0
+    Height = 58
+    Top = 292
+    Width = 900
+    Align = alBottom
+    BevelOuter = bvNone
+    BorderStyle = bsSingle
+    ClientHeight = 54
+    ClientWidth = 896
+    TabOrder = 2
+    object btnClose: TButton
+      Left = 768
+      Height = 30
+      Hint = 'Close this window'
+      Top = 11
+      Width = 102
+      Anchors = [akTop, akRight]
+      Caption = '&Close'
+      OnClick = CloseClick
+      TabOrder = 0
+    end
+    object btnRecheck: TButton
+      Left = 640
+      Height = 30
+      Hint = 'Check the design again'
+      Top = 11
+      Width = 102
+      Anchors = [akTop, akRight]
+      Caption = '&Re-check'
+      OnClick = RecheckClick
+      TabOrder = 1
+    end
+  end
+end

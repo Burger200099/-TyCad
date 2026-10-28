@@ -1,0 +1,71 @@
+{
+"TfrmAbout.Image2Click": {
+"text": "Click handler of the second picture on the About box; nothing to do.",
+"params": {
+"Sender": "the picture"
+}
+},
+"TfrmAbout.imgAppIconClick": {
+"text": "Click handler of the application icon on the About box; nothing to do.",
+"params": {
+"Sender": "the picture"
+}
+},
+"TfrmAbout.pcAboutChange": {
+"text": "Handler for a change of page on the About box; nothing to do.",
+"params": {
+"Sender": "the page control"
+}
+},
+"TfrmMain.DetailFor": {
+"text": "Which setting of the details panel a control stands for (the Show rulers box, the columns, rows or margin entry, or the Border box).",
+"returns": "the setting",
+"params": {
+"Sender": "the control"
+}
+},
+"TfrmMain.ApplySheetDetail": {
+"text": "Writes one setting of the details panel (Show rulers, columns, rows, Border or margin) to the current sheet as one undo step, by the same rules as the Page frame page of the Design Details dialog: a column count must be 1 to 26, the last row a letter A to Z, the margin a number of millimetres that fits the page. An entry that is refused leaves a message in the status bar and is put back as the sheet has it.",
+"params": {
+"What": "which setting to apply"
+}
+},
+"TfrmMain.DetailsFieldExit": {
+"text": "Event handler: leaving a box of the details panel applies what was typed in it.",
+"params": {
+"Sender": "the box"
+}
+},
+"TfrmMain.DetailsFieldKeyPress": {
+"text": "Event handler for the entries of the details panel: Enter applies what was typed; Esc puts back what the sheet has.",
+"params": {
+"Sender": "the entry",
+"Key": "the key typed (set to 0 when handled)"
+}
+},
+"TfrmMain.RibbonPaintCount": {
+"text": "How many times the ribbon's tab strip has been painted (for tests, to check it is repainted when a tab is chosen from code).",
+"returns": "the count"
+},
+"TfrmMain.UpdateRibbonFromView": {
+"text": "Shows the current sheet's settings in the details panel of the ribbon: Show rulers, the number of columns, the last row letter, Border and its margin (the counts only enabled with rulers on, the margin only with a border), and the Snap button. With no document open the panel is empty and disabled. Setting a control here does not write back to the sheet."
+},
+"TfrmMain.DoDesignDetailsRuler": {
+"text": "Handler of the Show rulers box on the ribbon: enables or disables the counts and writes the setting to the current sheet.",
+"params": {
+"Sender": "the check box"
+}
+},
+"TfrmMain.DoDesignDetailsBorder": {
+"text": "Handler of the Border box on the ribbon: enables or disables the margin and writes the setting to the current sheet.",
+"params": {
+"Sender": "the check box"
+}
+},
+"TfrmMain.ShowRibbonTab": {
+"text": "Brings a ribbon page forward by its caption and repaints the tab strip, which is not done by itself when the page is chosen from code.",
+"params": {
+"ATitle": "the page caption, e.g. Properties"
+}
+}
+}

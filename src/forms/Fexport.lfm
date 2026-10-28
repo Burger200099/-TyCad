@@ -1,0 +1,100 @@
+object frmExportImage: TfrmExportImage
+  Left = 1047
+  Height = 350
+  Top = 380
+  Width = 640
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'Export Image'
+  ClientHeight = 350
+  ClientWidth = 640
+  DesignTimePPI = 120
+  OnCloseQuery = CloseQuery
+  OnCreate = FormCreate
+  Position = poOwnerFormCenter
+  LCLVersion = '3.0.0.3'
+  object lblWhat: TLabel
+    Left = 16
+    Height = 20
+    Top = 14
+    Width = 600
+    AutoSize = False
+    Caption = 'lblWhat'
+  end
+  object lblType: TLabel
+    Left = 24
+    Height = 20
+    Top = 58
+    Width = 140
+    Caption = 'File type:'
+  end
+  object cbType: TComboBox
+    Left = 180
+    Height = 28
+    Hint = 'The kind of picture to make: a colour or black and white PNG bitmap, or an SVG drawing'
+    Top = 54
+    Width = 330
+    ItemHeight = 20
+    OnChange = TypeChange
+    Style = csDropDownList
+    TabOrder = 0
+  end
+  object lblFile: TLabel
+    Left = 24
+    Height = 20
+    Top = 102
+    Width = 140
+    Caption = 'Output file:'
+  end
+  object edFile: TEdit
+    Left = 180
+    Height = 28
+    Hint = 'The file the picture is written to'
+    Top = 98
+    Width = 330
+    TabOrder = 1
+  end
+  object btnBrowse: TButton
+    Left = 522
+    Height = 32
+    Hint = 'Choose the file to write'
+    Top = 96
+    Width = 100
+    Caption = '&Browse...'
+    OnClick = BrowseClick
+    TabOrder = 2
+  end
+  object lblScale: TLabel
+    Left = 24
+    Height = 20
+    Top = 146
+    Width = 140
+    Caption = 'Scale (%):'
+  end
+  object edScale: TEdit
+    Left = 180
+    Height = 28
+    Hint = 'How large the PNG is, from 1 to 1000 per cent (100 is one pixel for each 0.2 mm)'
+    Top = 142
+    Width = 100
+    TabOrder = 3
+  end
+  object cbRotate: TCheckBox
+    Left = 24
+    Height = 24
+    Hint = 'Turn the PNG a quarter turn clockwise'
+    Top = 188
+    Width = 400
+    Caption = 'Rotate the picture a quarter turn clockwise'
+    TabOrder = 4
+  end
+  object lblNote: TLabel
+    Left = 24
+    Height = 44
+    Top = 226
+    Width = 596
+    AutoSize = False
+    Caption = 'An SVG is always at its real size, so the scale and the turn only apply to a PNG.'
+    WordWrap = True
+  end
+end

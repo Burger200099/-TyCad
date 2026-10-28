@@ -1,0 +1,108 @@
+{
+"TSchematicView.SelectedPolygon": {
+"text": "The selected polygon, when exactly one object is selected and it is a polygon.",
+"returns": "the polygon, or nil"
+},
+"TSchematicView.PolygonTolerance": {
+"text": "How close to a handle a click has to be to pick it: 2 design units, but never less than 4 pixels, so a handle can still be picked when the sheet is zoomed out.",
+"returns": "the distance in design units"
+},
+"TSchematicView.PolygonAction": {
+"text": "Does one of the polygon menu's actions (Add handle, Delete handle, Free line, Arc in, Arc out, Curve) on the selected polygon, at the clicked point, as one undo step. Nothing is recorded if it changed nothing.",
+"returns": "True if the polygon changed",
+"params": {
+"PolyAct": "what to do",
+"P": "the point that was clicked"
+}
+},
+"TSchematicView.SetDrawArcType": {
+"text": "Chooses the kind of segment (straight, arc in, arc out) given to the points of a polygon that is drawn from now on.",
+"params": {
+"Arc": "Arc_none, Arc_in or Arc_out"
+}
+},
+"TSchematicView.ShowPolygonMenu": {
+"text": "Opens the menu for a selected polygon at the mouse: Add handle, Delete handle, Free line, Arc in, Arc out, Curve, then Undo and Redo, as TinyCAD's polygon edit menu.",
+"params": {
+"X": "mouse x in the view",
+"Y": "mouse y in the view",
+"P": "the point clicked, on the sheet"
+}
+},
+"TSchematicView.PolyMenuClick": {
+"text": "Handler for the items of the polygon menu: Undo and Redo, or one of the polygon actions at the point where the menu was opened.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TSchematicView.ShowDrawMenu": {
+"text": "Opens the menu for a polygon that is being drawn: Finish polygon, Cancel drawing, and the kind of segment for the points still to come (Free line, Arc in, Arc out, the current one marked).",
+"params": {
+"X": "mouse x in the view",
+"Y": "mouse y in the view"
+}
+},
+"TSchematicView.DrawMenuClick": {
+"text": "Handler for the items of the drawing menu: finish the polygon, cancel it, or choose the kind of segment.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"polytest.pas::RI": {
+"text": "A random whole number from Lo to Hi.",
+"returns": "the number",
+"params": {
+"Lo": "lowest",
+"Hi": "highest"
+}
+},
+"polytest.pas::Absolute": {
+"text": "The positions of a polygon's handles on the sheet (their stored positions are relative to its origin).",
+"returns": "one point per handle",
+"params": {
+"Pg": "the polygon"
+}
+},
+"polytest.pas::Same": {
+"text": "Whether two points are the same to within a millionth.",
+"returns": "True if they are",
+"params": {
+"A": "first point",
+"B": "second point"
+}
+},
+"polytest.pas::Snap10": {
+"text": "Snaps a coordinate to the 10 unit grid (halves round up).",
+"returns": "the snapped value",
+"params": {
+"V": "the coordinate"
+}
+},
+"polytest.pas::MakePolygon": {
+"text": "Makes a random polygon: three to eight handles on the grid, each (but the first) straight, an arc in, an arc out or a curve with a control point, open or closed.",
+"returns": "the polygon",
+"params": {
+"Opts": "the sheet options"
+}
+},
+"polytest.pas::CheckSound": {
+"text": "Checks that a polygon is in a sound state: two handles at least, its origin the top left of its bounding box, and every handle and flattened point inside the box.",
+"params": {
+"Pg": "the polygon",
+"Where": "what has just been done, for messages"
+}
+},
+"polytest.pas::RoundTrip": {
+"text": "Saves a polygon as XML, loads it again and checks the same handles, arc types and control points come back.",
+"params": {
+"Pg": "the polygon",
+"Opts": "the sheet options"
+}
+},
+"polytest.pas::OneRun": {
+"text": "One random polygon put through 25 random steps (a handle drag, or a menu action at a random click), with every rule of the file header checked after each step.",
+"params": {
+"Opts": "the sheet options"
+}
+}
+}

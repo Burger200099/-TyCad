@@ -1,0 +1,516 @@
+{
+"TTransform.SetOriginX": {
+"text": "Sets the design x that is at the left edge of the view.",
+"params": {
+"NewX": "the x"
+}
+},
+"TTransform.SetOriginY": {
+"text": "Sets the design y that is at the top edge of the view.",
+"params": {
+"NewY": "the y"
+}
+},
+"TTransform.SetOrigin": {
+"text": "Sets the design point at the top left of the view.",
+"params": {
+"P": "the point"
+}
+},
+"TTransform.SetYIsUp": {
+"text": "Makes y point upwards (used while drawing inside a symbol view).",
+"params": {
+"NewBoundY": "the symbol's height in pixels"
+}
+},
+"TTransform.SetPixelOffset": {
+"text": "Adds a fixed pixel offset to every converted position.",
+"params": {
+"P": "the offset in pixels"
+}
+},
+"TTransform.GetPixelOffset": {
+"text": "The fixed pixel offset.",
+"returns": "the offset in pixels"
+},
+"designtest.pas::DoStats": {
+"text": "Test mode: loads a design and prints counts of objects by type and of resources.",
+"params": {
+"FileName": "the .dsn file"
+}
+},
+"designtest.pas::DoGeom": {
+"text": "Test mode: probes the geometry of every non-symbol object in a design and prints the totals.",
+"params": {
+"FileName": "the .dsn file"
+}
+},
+"designtest.pas::DoRefs": {
+"text": "Test mode: recomputes every reference point TinyCAD saved in a design from scratch and prints saved versus computed, so the program's result can be compared with the C++ program's.",
+"params": {
+"FileName": "the .dsn file",
+"EmptyHeight": "measure empty text as height 0",
+"GridOverride": "grid to use instead of the file's (0 = the file's)",
+"SnapOverride": "snap flag to use instead of the file's (-1 = the file's)"
+}
+},
+"designtest.pas::DoPlaced": {
+"text": "Test mode: runs the placed-symbol checks (draw path versus netlist path, rotation, hit test, box, replace) over every placed symbol of a design and prints the totals.",
+"params": {
+"FileName": "the .dsn file",
+"GridOverride": "grid to use instead of the file's",
+"SnapOverride": "snap flag to use instead of the file's"
+}
+},
+"designtest.pas::DoFields": {
+"text": "Test mode: recomputes the field label positions of every placed symbol and compares them with the saved ones.",
+"params": {
+"FileName": "the .dsn file"
+}
+},
+"designtest.pas::DoRoundTrip": {
+"text": "Test mode: loads a design and writes it again (the round-trip test input).",
+"params": {
+"InName": "the file to read",
+"OutName": "the file to write"
+}
+},
+"doctest.pas::Esc": {
+"text": "Escapes backslash, line feed and | so values can be printed on one line.",
+"returns": "the escaped text",
+"params": {
+"S": "the text"
+}
+},
+"doctest.pas::F2": {
+"text": "Formats a number for the test output.",
+"returns": "the text",
+"params": {
+"V": "the number"
+}
+},
+"AddObjects": {
+"text": "Adds a few wires and junctions to a sheet so a test design has content.",
+"params": {
+"Sh": "the sheet",
+"N": "how many wire-and-junction pairs"
+}
+},
+"DoMk": {
+"text": "Test mode: builds a three-sheet design that uses every document-model feature (11x17, A4, portrait; automatic numbering, border, revision history with multi-line notes) and saves it.",
+"params": {
+"OutName": "the file to write"
+}
+},
+"doctest.pas::DoDump": {
+"text": "Test mode: prints each sheet's page size, flags, border rectangle and revisions of a design.",
+"params": {
+"InName": "the .dsn file"
+}
+},
+"DoExpand": {
+"text": "Test mode: expands $(...) variables in a text for one sheet and prints the result.",
+"params": {
+"InName": "the .dsn file",
+"Idx": "zero-based sheet number",
+"Text": "the text to expand"
+}
+},
+"DoIds": {
+"text": "Test mode: assigns ids to a design, saves it and checks the ids survive a reload and a second save, that Clone gives no id and duplicates are repaired; prints a summary.",
+"params": {
+"InName": "the file to read",
+"OutName": "where to save"
+}
+},
+"DoPaper": {
+"text": "Test mode: prints the paper table, the 11 x 17 border and a few matching cases."
+},
+"edittest.pas::FV": {
+"text": "Reads token k of the command as a number.",
+"returns": "the number",
+"params": {
+"k": "token position"
+}
+},
+"edittest.pas::Fmt": {
+"text": "Formats a number for the test output.",
+"returns": "the text",
+"params": {
+"V": "the number"
+}
+},
+"edittest.pas::Split": {
+"text": "Splits a command line into tokens.",
+"params": {
+"Line": "the line"
+}
+},
+"NewWorld": {
+"text": "Starts a fresh design, sheet and wire engine for the next test scenario."
+},
+"DoPoly": {
+"text": "Draws a wire (or line) through the given points with the real tool: click, then move and click for each next point, then finish (right click or double click).",
+"params": {
+"Kind": "xWire or xLineEx2",
+"Dbl": "True to finish with a double click"
+}
+},
+"DoDrag": {
+"text": "Draws a wire by press, drag and release."
+},
+"DoSym": {
+"text": "Places a library symbol (given library, row, position and rotation) on the test sheet."
+},
+"DoPins": {
+"text": "Prints the connection points of every placed symbol."
+},
+"edittest.pas::DoDump": {
+"text": "Prints the segments as the tool stored them (RAW), the wires and junctions that resulted, then END."
+},
+"geomtest.pas::FV": {
+"text": "Reads token k of the command as a number.",
+"returns": "the number",
+"params": {
+"k": "token position"
+}
+},
+"geomtest.pas::IV": {
+"text": "Reads token k of the command as an integer.",
+"returns": "the integer",
+"params": {
+"k": "token position"
+}
+},
+"geomtest.pas::Fmt@double": {
+"text": "Formats a number for the test output (\"nan\" for not-a-number).",
+"returns": "the text",
+"params": {
+"V": "the number"
+}
+},
+"geomtest.pas::Fmt@tdpoint": {
+"text": "Formats a point as two numbers.",
+"returns": "the text",
+"params": {
+"P": "the point"
+}
+},
+"geomtest.pas::Split": {
+"text": "Splits a command line into tokens.",
+"params": {
+"Line": "the line"
+}
+},
+"Repeated": {
+"text": "A string of N letters x, used to give text objects a known length.",
+"returns": "the string",
+"params": {
+"N": "length"
+}
+},
+"MakeStyle": {
+"text": "Adds a line style of a given thickness to the test options.",
+"returns": "the style number",
+"params": {
+"Thick": "thickness"
+}
+},
+"CmdLD": {
+"text": "Command LD: line distance from a point, printed with the nearest point."
+},
+"CmdLI": {
+"text": "Command LI: whether a line touches a rectangle."
+},
+"CmdSN": {
+"text": "Command SN: snaps a value to a grid."
+},
+"CmdTF": {
+"text": "Command TF: converts a point through the screen transform and back."
+},
+"CmdPL": {
+"text": "Command PL: lays out a pin (line, text positions) for given rotation, using fixed text metrics."
+},
+"MakeSquare": {
+"text": "Builds a rectangle or ellipse from the command's arguments.",
+"returns": "the shape"
+},
+"CmdSQ": {
+"text": "Command SQ: distance from a point to a rectangle or ellipse."
+},
+"CmdSR": {
+"text": "Command SR: whether a rectangle or ellipse overlaps a selection rectangle."
+},
+"CmdPG": {
+"text": "Command PG: polygon fill, distance and bounding box tests."
+},
+"Rnd": {
+"text": "A small deterministic random number generator, so tests repeat exactly.",
+"returns": "a number from 0 up to but not including 1"
+},
+"RInt": {
+"text": "A random integer in a range.",
+"returns": "the integer",
+"params": {
+"Lo": "lowest",
+"Hi": "highest"
+}
+},
+"Check": {
+"text": "Counts a check and a failure when the condition is False, printing the first failures.",
+"params": {
+"Cond": "the condition that should hold",
+"What": "description for the failure message"
+}
+},
+"InvPoints": {
+"text": "Checks invariants of an object's geometry: rotating by 90 degrees four times returns to the start, mirroring twice does, and shifting then rotating matches rotating then shifting.",
+"params": {
+"Obj": "the object",
+"Name": "its name for messages",
+"CheckB": "also check the second point"
+}
+},
+"InvDirections": {
+"text": "Checks the direction and symbol rotation tables: four turns return to the start, a mirror twice does, and left then right cancel."
+},
+"CmdINV": {
+"text": "Command INV: runs the invariant checks over randomly generated objects of every kind."
+},
+"laddertest.pas::FV": {
+"text": "Reads token k of the command as a number.",
+"returns": "the number",
+"params": {
+"k": "token position"
+}
+},
+"laddertest.pas::IV": {
+"text": "Reads token k of the command as an integer.",
+"returns": "the integer",
+"params": {
+"k": "token position"
+}
+},
+"laddertest.pas::Fmt": {
+"text": "Formats a number for the test output.",
+"returns": "the text",
+"params": {
+"V": "the number"
+}
+},
+"laddertest.pas::Split": {
+"text": "Splits a command line into tokens.",
+"params": {
+"Line": "the line"
+}
+},
+"MakeLadder": {
+"text": "Builds a ladder from the command's corner points, first and last line number and line count.",
+"returns": "the ladder",
+"params": {
+"Base": "position of the first argument"
+}
+},
+"CmdGEOM": {
+"text": "Command GEOM: prints the y and number of a line, the line a height falls in and the pitch."
+},
+"CmdHIT": {
+"text": "Command HIT: prints the click distance and \"selected\" result at a point."
+},
+"CmdBOX": {
+"text": "Command BOX: whether a selection rectangle touches the ladder."
+},
+"CmdXML": {
+"text": "Command XML: saves a design containing a ladder, reloads it and prints every property."
+},
+"libtest.pas::Esc": {
+"text": "Escapes backslash, line feed and | so values can be printed on one line.",
+"returns": "the escaped text",
+"params": {
+"S": "the text"
+}
+},
+"SaveBytes": {
+"text": "Writes text bytes to a file unchanged.",
+"params": {
+"FileName": "the file",
+"Data": "the bytes"
+}
+},
+"libtest.pas::DoDump": {
+"text": "Test mode: prints every set, record and attribute of a library.",
+"params": {
+"LibName": "the .TCLib file"
+}
+},
+"DoBlobs": {
+"text": "Test mode: writes each set's stored drawing to a file.",
+"params": {
+"LibName": "the library",
+"OutDir": "folder for the files"
+}
+},
+"DoSymbols": {
+"text": "Test mode: loads every symbol of a library as a design symbol and prints its details.",
+"params": {
+"LibName": "the library",
+"OutName": "where to write the listing"
+}
+},
+"DoBlobRT": {
+"text": "Test mode: reads each stored drawing as a symbol document and writes it back, to test the round trip.",
+"params": {
+"LibName": "the library",
+"OutDir": "folder for the files"
+}
+},
+"DoCopyLib": {
+"text": "Test mode: copies a library by storing every set into a new file, to test the write path.",
+"params": {
+"SrcName": "library to copy",
+"DstName": "the new file"
+}
+},
+"DoRestore": {
+"text": "Test mode: deletes sets from a library and stores them back, then checks nothing was lost.",
+"params": {
+"LibName": "the library (a copy)"
+}
+},
+"libtest.pas::DoGeom": {
+"text": "Test mode: probes the geometry of every object in every symbol of a library.",
+"params": {
+"LibName": "the library"
+}
+},
+"libtest.pas::DoPlaced": {
+"text": "Test mode: places every library symbol in all rotations with power pins on and off and runs the placed-symbol checks.",
+"params": {
+"LibName": "the library"
+}
+},
+"DoDelete": {
+"text": "Test mode: deletes one set from a library.",
+"params": {
+"LibName": "the library (a copy)",
+"SymbolID": "database id of the set"
+}
+},
+"modeltest.pas::Fmt": {
+"text": "Formats a number for the test output.",
+"returns": "the text",
+"params": {
+"V": "the number"
+}
+},
+"PropLine": {
+"text": "Lists the properties a selection shares, as a line of text.",
+"returns": "title and property names",
+"params": {
+"Title": "label for the line",
+"Objs": "the selected objects"
+}
+},
+"DoProps": {
+"text": "Test mode: builds objects of several kinds, checks which properties mixed selections share, does mass changes and saves the result."
+},
+"modeltest.pas::DoLinks": {
+"text": "Test mode: builds ladders and symbols on two sheets, adds linked texts and prints what they say as objects move, are renumbered and are deleted.",
+"params": {
+"LibName": "a library with at least one symbol"
+}
+},
+"SaveState": {
+"text": "Saves the design to a file so a state can be compared later.",
+"params": {
+"D": "the design",
+"Path": "file to write"
+}
+},
+"Ids": {
+"text": "The ids of a run of objects on a sheet.",
+"returns": "the ids",
+"params": {
+"Sh": "the sheet",
+"From": "first object position",
+"Count": "how many"
+}
+},
+"modeltest.pas::DoUndo": {
+"text": "Test mode: makes four edits (draw, delete, mass change, move) saving each state, then undoes and redoes them one at a time saving each state reached.",
+"params": {
+"InName": "design to edit",
+"OutDir": "folder for the state files"
+}
+},
+"DoProtel": {
+"text": "Test mode: writes the design's Protel netlist to a file.",
+"params": {
+"InName": "the .dsn file",
+"OutName": "the netlist file"
+}
+},
+"nettest.pas::DoDump": {
+"text": "Test mode: prints every net with its number, name and pins.",
+"params": {
+"InName": "the .dsn file"
+}
+},
+"DoTwice": {
+"text": "Test mode: builds the netlist twice and reports whether the numbering stays the same (it reads the hints the first run stored).",
+"params": {
+"InName": "the .dsn file"
+}
+},
+"DoPersist": {
+"text": "Test mode: builds the netlist, saves the design, reloads it and builds again, reporting whether the numbering survived.",
+"params": {
+"InName": "the .dsn file",
+"TmpName": "temporary file to save to"
+}
+},
+"Walk": {
+"text": "Walks an XML document recursively and counts the tags by name.",
+"params": {
+"R": "the reader",
+"Counts": "receives tag names with counts"
+}
+},
+"DoCorpus": {
+"text": "Test mode: reads an XML file and prints its tag counts (to compare with an independent parser).",
+"params": {
+"FileName": "the XML file"
+}
+},
+"DoSample": {
+"text": "Test mode: reads a small XML sample and prints what the reader sees.",
+"params": {
+"FileName": "the XML file"
+}
+},
+"DoFmt": {
+"text": "Test mode: prints numbers formatted with the C-compatible formatter for comparison with C printf.",
+"params": {
+"FileName": "file of numbers"
+}
+},
+"HexToBytes": {
+"text": "Converts hex text to bytes.",
+"returns": "the bytes",
+"params": {
+"S": "hex digits"
+}
+},
+"DoUU": {
+"text": "Test mode: UU-encodes and decodes data and compares with the C++ codec's output.",
+"params": {
+"FileName": "the file to encode"
+}
+},
+"xmltest.pas::DoRoundTrip": {
+"text": "Test mode: reads and writes XML back to a file; the round-trip check compares the two.",
+"params": {
+"OutName": "the file to write"
+}
+}
+}

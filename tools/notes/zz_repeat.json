@@ -1,0 +1,31 @@
+{
+"AToI": {
+"text": "What the C library's atoi gives for text that starts with a number: leading spaces skipped, an optional sign, the digits after it, and 0 if there are none. What comes after the digits is ignored, and a number too big stops at the largest.",
+"returns": "the number",
+"params": {
+"S": "the text"
+}
+},
+"TfrmMain.DoRepeatNameDown": {
+"text": "Handler (Repeat Directions > Name Decrement): the number in the next label or text counts down.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.DoRepeatPinUp": {
+"text": "Handler (Repeat Directions > Pin Increment): pin numbers count up as pins are placed one after another.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.DoRepeatPinDown": {
+"text": "Handler (Repeat Directions > Pin Decrement): pin numbers count down as pins are placed one after another.",
+"params": {
+"Sender": "the menu item"
+}
+},
+"TfrmMain.RepeatInfo": {
+"text": "The Repeat Directions as text, for tests: the name and pin directions, which menu items are ticked, and whether they can be used.",
+"returns": "the text"
+}
+}

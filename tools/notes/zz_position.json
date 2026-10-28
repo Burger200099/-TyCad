@@ -1,0 +1,13 @@
+{
+"GridSizeUnitsText": {
+"text": "The label that goes with the grid size on the position bar: .1mm (tenths of a millimetre) or .001\" (thousandths of an inch).",
+"returns": "the label",
+"params": {
+"Units": "UNITS_MM or UNITS_INCHES"
+}
+},
+"TfrmMain.PositionInfo": {
+"text": "The position bar as text, for tests: whether it is shown, the position and grid size it shows with the units, the state of the snap and Show grid controls, the View menu tick and the ribbon button.",
+"returns": "the text"
+}
+}

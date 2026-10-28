@@ -1,0 +1,28 @@
+inherited fmRectCircle: TfmRectCircle
+  Height = 100
+  Width = 300
+  ClientHeight = 100
+  ClientWidth = 300
+  inherited lbCaption: TLabel
+    Top = 85
+    Width = 300
+    Caption = 'Rectangle / Circle'
+  end
+  inherited cbWireType: TComboBox
+    Left = 88
+    OnChange = WireTypeChange
+    OnDrawItem = WireTypeDrawItem
+  end
+  inherited cbAngle: TComboBox
+    Left = 96
+    Top = 53
+  end
+  object sbFill: TSpeedButton[6]
+    Left = 238
+    Height = 72
+    Top = 5
+    Width = 52
+    Caption = 'Fill'
+    Layout = blGlyphTop
+  end
+end

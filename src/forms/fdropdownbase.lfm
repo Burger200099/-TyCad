@@ -1,0 +1,11 @@
+object frmDropDownBase: TfrmDropDownBase
+  Left = 490
+  Height = 200
+  Top = 250
+  Width = 200
+  BorderIcons = []
+  BorderStyle = bsNone
+  ClientHeight = 200
+  ClientWidth = 200
+  LCLVersion = '4.8.0.0'
+end

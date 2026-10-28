@@ -1,0 +1,124 @@
+object frDemoWire: TfrDemoWire
+  Left = 0
+  Height = 73
+  Top = 0
+  Width = 360
+  ClientHeight = 73
+  ClientWidth = 360
+  TabOrder = 0
+  DesignLeft = 0
+  DesignTop = 0
+  object pnlLineWidth: TPanel
+    Left = 4
+    Height = 32
+    Top = 4
+    Width = 110
+    BevelOuter = bvNone
+    ClientHeight = 32
+    ClientWidth = 110
+    TabOrder = 0
+    object lbLineWidth: TLabel
+      Left = 0
+      Height = 15
+      Top = 9
+      Width = 40
+      Caption = 'Width:'
+      ParentColor = False
+    end
+    object spLineWidth: TSpinEdit
+      Left = 46
+      Height = 23
+      Hint = 'The thickness of the line'
+      Top = 4
+      Width = 60
+      MaxValue = 40
+      MinValue = 1
+      TabOrder = 0
+      Value = 1
+    end
+  end
+  object pnlLineColor: TPanel
+    Left = 4
+    Height = 32
+    Top = 38
+    Width = 110
+    BevelOuter = bvNone
+    ClientHeight = 32
+    ClientWidth = 110
+    TabOrder = 1
+    object lbLineColor: TLabel
+      Left = 0
+      Height = 15
+      Top = 9
+      Width = 40
+      Caption = 'Color:'
+      ParentColor = False
+    end
+    object cbtnLineColor: TColorButton
+      Left = 46
+      Height = 25
+      Hint = 'The color of the line'
+      Top = 3
+      Width = 60
+      BorderWidth = 2
+      ButtonColorSize = 16
+      ButtonColor = clBlack
+    end
+  end
+  object pnlLineStyle: TPanel
+    Left = 120
+    Height = 32
+    Top = 4
+    Width = 180
+    BevelOuter = bvNone
+    ClientHeight = 32
+    ClientWidth = 180
+    TabOrder = 2
+    object lbLineStyle: TLabel
+      Left = 0
+      Height = 15
+      Top = 9
+      Width = 36
+      Caption = 'Style:'
+      ParentColor = False
+    end
+    object cbLineStyle: TComboBox
+      Left = 42
+      Height = 23
+      Hint = 'Solid, dashed or dotted'
+      Top = 4
+      Width = 130
+      ItemHeight = 15
+      Style = csDropDownList
+      TabOrder = 0
+    end
+  end
+  object pnlFillType: TPanel
+    Left = 120
+    Height = 32
+    Top = 38
+    Width = 180
+    BevelOuter = bvNone
+    ClientHeight = 32
+    ClientWidth = 180
+    TabOrder = 3
+    object lbFillType: TLabel
+      Left = 0
+      Height = 15
+      Top = 9
+      Width = 22
+      Caption = 'Fill:'
+      ParentColor = False
+    end
+    object cbFillType: TComboBox
+      Left = 42
+      Height = 23
+      Hint = 'How the inside is filled'
+      Top = 4
+      Width = 130
+      ItemHeight = 15
+      Style = csDropDownList
+      TabOrder = 0
+    end
+  end
+end

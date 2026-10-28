@@ -1,0 +1,128 @@
+inherited frmObjectEdit: TfrmObjectEdit
+  Left = 700
+  Height = 330
+  Top = 300
+  Width = 560
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'Add Object'
+  ClientHeight = 330
+  ClientWidth = 560
+  OnCloseQuery = FormCloseQuery
+  Position = poOwnerFormCenter
+  inherited pnlButtons: TPanel
+    Top = 272
+    Width = 560
+    ClientWidth = 556
+    inherited btnOK: TButton
+      Left = 300
+    end
+    inherited btnCancel: TButton
+      Left = 430
+    end
+    inherited btnApply: TButton
+      Visible = False
+    end
+  end
+  object lblName: TLabel[1]
+    Left = 12
+    Height = 15
+    Top = 14
+    Width = 100
+    Caption = '&Name:'
+    FocusControl = edName
+  end
+  object edName: TEdit[2]
+    Left = 120
+    Height = 23
+    Hint = 'The name of the object, unique in the part (requirements on a product are matched by this name)'
+    Top = 10
+    Width = 420
+    TabOrder = 0
+  end
+  object lblDesignator: TLabel[3]
+    Left = 12
+    Height = 15
+    Top = 50
+    Width = 100
+    Caption = 'D&esignator:'
+    FocusControl = edDesignator
+  end
+  object edDesignator: TEdit[4]
+    Left = 120
+    Height = 23
+    Hint = 'The terminal number or channel name as printed on the product (A1, 13, I0.0 ...)'
+    Top = 46
+    Width = 200
+    TabOrder = 1
+  end
+  object lblKind: TLabel[5]
+    Left = 12
+    Height = 15
+    Top = 86
+    Width = 100
+    Caption = '&Kind:'
+    FocusControl = cbKind
+  end
+  object cbKind: TComboBox[6]
+    Left = 120
+    Height = 23
+    Hint = 'What the object is; only the kinds the part''s class allows are listed'
+    Top = 82
+    Width = 200
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 2
+  end
+  object lblParent: TLabel[7]
+    Left = 12
+    Height = 15
+    Top = 122
+    Width = 100
+    Caption = '&Inside:'
+    FocusControl = cbParent
+  end
+  object cbParent: TComboBox[8]
+    Left = 120
+    Height = 23
+    Hint = 'The object this one belongs to (a pole holds its contacts and terminals, a channel its terminals), or directly the part'
+    Top = 118
+    Width = 420
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 3
+  end
+  object lblSort: TLabel[9]
+    Left = 12
+    Height = 15
+    Top = 158
+    Width = 100
+    Caption = 'Or&der:'
+    FocusControl = edSort
+  end
+  object edSort: TEdit[10]
+    Left = 120
+    Height = 23
+    Hint = 'Its place among the others: smaller numbers come first'
+    Top = 154
+    Width = 80
+    TabOrder = 4
+    Text = '0'
+  end
+  object lblDescription: TLabel[11]
+    Left = 12
+    Height = 15
+    Top = 194
+    Width = 100
+    Caption = '&Description:'
+    FocusControl = edDescription
+  end
+  object edDescription: TEdit[12]
+    Left = 120
+    Height = 23
+    Hint = 'What the object is for'
+    Top = 190
+    Width = 420
+    TabOrder = 5
+  end
+end

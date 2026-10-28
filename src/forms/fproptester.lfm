@@ -1,0 +1,65 @@
+inherited frmPropertyTester: TfrmPropertyTester
+  Left = 350
+  Height = 606
+  Top = 250
+  Width = 977
+  Caption = 'Property Tester'
+  ClientHeight = 606
+  ClientWidth = 977
+  OnActivate = FormActivate
+  inherited pnlButtons: TPanel
+    Top = 548
+    Width = 977
+    ClientHeight = 54
+    ClientWidth = 973
+    inherited btnOK: TButton
+      Left = 727
+    end
+    inherited btnCancel: TButton
+      Left = 849
+    end
+    inherited btnApply: TButton
+      Left = 604
+    end
+  end
+  inline fmCloudRect1: TfmCloudRect[1]
+    Left = 8
+    Top = 7
+    TabOrder = 1
+  end
+  inline fmMeasure1: TfmMeasure[2]
+    Left = 6
+    Top = 126
+    TabOrder = 2
+  end
+  inline fmPower1: TfmPower[3]
+    Left = 8
+    Top = 255
+    TabOrder = 3
+  end
+  inline fmPropNote1: TfmPropNote[4]
+    Left = 7
+    Top = 368
+    Width = 849
+    ClientWidth = 849
+    TabOrder = 4
+    inherited lbCaption: TLabel
+      Width = 849
+    end
+  end
+  inline fmPropText1: TfmPropText[5]
+    Left = 334
+    Top = 8
+    TabOrder = 5
+  end
+  inline fmPropRibbonWire1: TfmPropRibbonWire[6]
+    Left = 440
+    Top = 136
+    TabOrder = 6
+  end
+  inline fmRectCircle1: TfmRectCircle[7]
+    Left = 270
+    Top = 258
+    TabOrder = 7
+  end
+end

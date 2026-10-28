@@ -1,0 +1,120 @@
+inherited fmSymbols: TfmSymbols
+  Height = 215
+  Width = 403
+  ClientHeight = 215
+  ClientWidth = 403
+  OnClick = FrameClick
+  DesignLeft = 1451
+  DesignTop = 171
+  inherited lbCaption: TLabel
+    Top = 200
+    Width = 403
+  end
+  object sbRotateSymbol: TSplitButton[1]
+    Left = 0
+    Height = 28
+    Hint = 'Rotate & Translate Symbol'
+    Top = 36
+    Width = 52
+    DownArrowPopup = pmRotate
+    ImageIndex = 15
+    Images = frmSharedControls.ilSpeedBtn
+    ImageWidth = 24
+    Flat = True
+    OnClick = sbRotateSymbolClick
+  end
+  object sbAllowResize: TSpeedButton[2]
+    Left = 4
+    Height = 28
+    Hint = 'Allow symbol resizing'
+    Top = 4
+    Width = 28
+    Flat = True
+    Images = frmSharedControls.ilSpeedBtn
+    ImageIndex = 66
+    ImageWidth = 24
+  end
+  object sbShowRef: TSpeedButton[3]
+    Left = 36
+    Height = 28
+    Hint = 'Show Reference'
+    Top = 4
+    Width = 28
+    Flat = True
+    Images = frmSharedControls.ilSpeedBtn
+    ImageIndex = 69
+    ImageWidth = 24
+  end
+  object sbShowPowerPins: TSpeedButton[4]
+    Left = 104
+    Height = 28
+    Hint = 'Show Power Pins'
+    Top = 36
+    Width = 28
+    Flat = True
+    Images = frmSharedControls.ilSpeedBtn
+    ImageIndex = 68
+    ImageWidth = 24
+  end
+  object edRef: TEdit[5]
+    Left = 68
+    Height = 23
+    Hint = 'Reference of the symbol (U? is numbered later by Generate Symbol References)'
+    Top = 7
+    Width = 92
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 0
+  end
+  object edSymbolText: TEdit[7]
+    Left = 168
+    Height = 23
+    Hint = 'The text of the symbol text (more fields are in the parameter list)'
+    Top = 7
+    Width = 228
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 1
+  end
+  object sbParameterList: TSplitButton[6]
+    Left = 56
+    Height = 28
+    Hint = 'Show the parameters of a symbol when it is selected (pressed in: on). The arrow shows them once'
+    Top = 36
+    Width = 44
+    ImageIndex = 67
+    Images = frmSharedControls.ilSpeedBtn
+    ImageWidth = 24
+    Flat = True
+    AutoCheck = True
+    OnClick = AutoShowClick
+    OnDropDownClick = ParametersClick
+  end
+  object pmRotate: TPopupMenu[7]
+    Left = 176
+    Top = 8
+    object miUp: TMenuItem
+      Caption = '&Up'
+      Hint = 'Symbol points up'
+    end
+    object miDown: TMenuItem
+      Caption = '&Down'
+      Hint = 'Symbol points down'
+    end
+    object miLeft: TMenuItem
+      Caption = '&Left'
+      Hint = 'Symbol points left'
+    end
+    object miRight: TMenuItem
+      Caption = '&Right'
+      Hint = 'Symbol points right'
+    end
+    object miSep1: TMenuItem
+      Caption = '-'
+    end
+    object miMirror: TMenuItem
+      Caption = '&Mirror'
+      Hint = 'Mirror the symbol'
+    end
+  end
+end

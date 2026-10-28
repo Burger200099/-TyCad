@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--This file was written by TinyCAD 3.00.04 develop
+If you wish to view this file go to https://www.tinycad.net to
+download the executable.-->
+<TinyCADSheets>
+	<HierarchicalSymbol>
+		<NAME></NAME>
+		<DETAILS>
+			<Size width='1485' height='1050'/>
+			<GUIDES horiz='7' vert='5'/>
+			<TITLE></TITLE>
+			<AUTHOR></AUTHOR>
+			<REVISION>1.0</REVISION>
+			<DOCNUMBER></DOCNUMBER>
+			<ORGANISATION></ORGANISATION>
+			<SHEETS>1 of 1</SHEETS>
+			<SHOWS>1</SHOWS>
+			<DATE></DATE>
+			<GRID spacing='50.00000' snap='1'/>
+		</DETAILS>
+		<FONT id='1'>
+			<HEIGHT>-10</HEIGHT>
+			<WIDTH>0</WIDTH>
+			<WEIGHT>400</WEIGHT>
+			<ITALIC>0</ITALIC>
+			<UNDERLINE>0</UNDERLINE>
+			<STRIKEOUT>0</STRIKEOUT>
+			<CHARSET>0</CHARSET>
+			<FACENAME>Arial</FACENAME>
+		</FONT>
+		<STYLE id='2'>
+			<STYLE>0</STYLE>
+			<COLOR>000000</COLOR>
+			<THICKNESS>1</THICKNESS>
+		</STYLE>
+		<FILL id='0'>
+			<INDEX>-1</INDEX>
+			<COLOR>000000</COLOR>
+		</FILL>
+		<FILL id='2'>
+			<INDEX>3</INDEX>
+			<COLOR>000000</COLOR>
+		</FILL>
+		<OPTIONS>
+			<GRID>1</GRID>
+			<UNITS>1</UNITS>
+			<COLOR_WIRE>FF0000</COLOR_WIRE>
+			<COLOR_BUS>0000FF</COLOR_BUS>
+			<COLOR_JUNCTION>000000</COLOR_JUNCTION>
+			<COLOR_NOCONNECT>000000</COLOR_NOCONNECT>
+			<COLOR_LABEL>208000</COLOR_LABEL>
+			<COLOR_POWER>000000</COLOR_POWER>
+			<COLOR_PIN>4040C0</COLOR_PIN>
+			<COLOR_HIDDEN_PIN>208020</COLOR_HIDDEN_PIN>
+			<COLOR_BACKGROUND>FFFFFF</COLOR_BACKGROUND>
+			<COLOR_NOTETEXT_FILL>AFFFFF</COLOR_NOTETEXT_FILL>
+			<COLOR_NOTETEXT_LINE>FF0000</COLOR_NOTETEXT_LINE>
+			<COLOR_NOTETEXT_TEXT>FF0000</COLOR_NOTETEXT_TEXT>
+		</OPTIONS>
+		<POLYGON pos='119.00000,61.00000' style='2' fill='0' polygon='0'>
+			<POINT pos='0.00000,2.00000' arc='0'/>
+			<POINT pos='0.50000,0.50000' arc='0'/>
+			<POINT pos='1.50000,0.00000' arc='0'/>
+			<POINT pos='9.50000,0.00000' arc='0'/>
+			<POINT pos='10.50000,0.50000' arc='0'/>
+			<POINT pos='11.00000,2.00000' arc='0'/>
+			<POINT pos='0.00000,2.00000' arc='0'/>
+		</POLYGON>
+		<POLYGON pos='120.00000,47.40000' style='2' fill='0' polygon='0'>
+			<POINT pos='2.00000,13.60000' arc='0'/>
+			<POINT pos='1.00000,12.10000' arc='0'/>
+			<POINT pos='0.00000,10.10000' arc='0'/>
+			<POINT pos='0.00000,8.10000' arc='0'/>
+			<POINT pos='1.00000,5.10000' arc='0'/>
+			<POINT pos='2.00000,6.60000' arc='0'/>
+			<POINT pos='2.50000,4.10000' arc='0'/>
+			<POINT pos='3.50000,2.10000' arc='0'/>
+			<POINT pos='6.00000,0.10000' arc='0'/>
+			<POINT pos='5.50000,1.60000' arc='0'/>
+			<POINT pos='5.50000,3.10000' arc='0'/>
+			<POINT pos='6.00000,5.10000' arc='0'/>
+			<POINT pos='7.00000,6.60000' arc='0'/>
+			<POINT pos='7.00000,7.10000' arc='0'/>
+			<POINT pos='6.50000,8.60000' arc='0'/>
+			<POINT pos='7.50000,7.60000' arc='0'/>
+			<POINT pos='8.00000,5.60000' arc='0'/>
+			<POINT pos='9.00000,8.10000' arc='0'/>
+			<POINT pos='9.00000,10.10000' arc='0'/>
+			<POINT pos='8.50000,12.10000' arc='0'/>
+			<POINT pos='7.50000,13.60000' arc='0'/>
+		</POLYGON>
+		<POLYGON pos='122.00000,53.00000' style='2' fill='2' polygon='1'>
+			<POINT pos='1.50000,8.00000' arc='0'/>
+			<POINT pos='0.50000,6.50000' arc='0'/>
+			<POINT pos='0.00000,5.00000' arc='0'/>
+			<POINT pos='0.50000,3.50000' arc='0'/>
+			<POINT pos='1.00000,5.00000' arc='0'/>
+			<POINT pos='1.00000,3.50000' arc='0'/>
+			<POINT pos='1.50000,1.50000' arc='0'/>
+			<POINT pos='2.00000,0.00000' arc='0'/>
+			<POINT pos='2.50000,1.50000' arc='0'/>
+			<POINT pos='3.50000,3.50000' arc='0'/>
+			<POINT pos='4.00000,5.00000' arc='0'/>
+			<POINT pos='3.50000,6.50000' arc='0'/>
+			<POINT pos='4.50000,5.50000' arc='0'/>
+			<POINT pos='5.00000,4.50000' arc='0'/>
+			<POINT pos='5.00000,6.00000' arc='0'/>
+			<POINT pos='4.00000,8.00000' arc='0'/>
+		</POLYGON>
+		<ELLIPSE a='119.00000,54.00000' b='130.00000,56.00000' style='2' fill='0'/>
+		<PIN pos='133.00000,55.00000' which='0' elec='0' direction='2' part='0' number='1' show='1' length='15' number_pos='0' centre_name='0'></PIN>
+	</HierarchicalSymbol>
+	<TinyCAD>
+		<NAME>Sheet 1</NAME>
+		<DETAILS>
+			<Size width='1485' height='1050'/>
+			<GUIDES horiz='7' vert='5'/>
+			<TITLE></TITLE>
+			<AUTHOR></AUTHOR>
+			<REVISION>1.0</REVISION>
+			<DOCNUMBER></DOCNUMBER>
+			<ORGANISATION></ORGANISATION>
+			<SHEETS>1 of 1</SHEETS>
+			<SHOWS>1</SHOWS>
+			<DATE></DATE>
+			<GRID spacing='50.00000' snap='1'/>
+		</DETAILS>
+		<OPTIONS>
+			<GRID>1</GRID>
+			<UNITS>1</UNITS>
+			<COLOR_WIRE>FF0000</COLOR_WIRE>
+			<COLOR_BUS>0000FF</COLOR_BUS>
+			<COLOR_JUNCTION>000000</COLOR_JUNCTION>
+			<COLOR_NOCONNECT>000000</COLOR_NOCONNECT>
+			<COLOR_LABEL>208000</COLOR_LABEL>
+			<COLOR_POWER>000000</COLOR_POWER>
+			<COLOR_PIN>4040C0</COLOR_PIN>
+			<COLOR_HIDDEN_PIN>208020</COLOR_HIDDEN_PIN>
+			<COLOR_BACKGROUND>FFFFFF</COLOR_BACKGROUND>
+			<COLOR_NOTETEXT_FILL>AFFFFF</COLOR_NOTETEXT_FILL>
+			<COLOR_NOTETEXT_LINE>FF0000</COLOR_NOTETEXT_LINE>
+			<COLOR_NOTETEXT_TEXT>FF0000</COLOR_NOTETEXT_TEXT>
+		</OPTIONS>
+	</TinyCAD>
+</TinyCADSheets>

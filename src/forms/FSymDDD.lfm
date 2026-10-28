@@ -1,0 +1,101 @@
+inherited frmSymbolPropList: TfrmSymbolPropList
+  Left = 1463
+  Height = 220
+  Top = 148
+  Width = 300
+  Caption = 'fmSymbolDetailsDropDown'
+  Constraints.MinHeight = 220
+  Constraints.MinWidth = 300
+  ClientHeight = 220
+  ClientWidth = 300
+  Color = clDefault
+  object Panel1: TPanel[0]
+    Left = 0
+    Height = 34
+    Top = 186
+    Width = 300
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 34
+    ClientWidth = 300
+    Color = clWindow
+    ParentBackground = False
+    ParentColor = False
+    TabOrder = 0
+    object btnAdd: TButton
+      Left = 4
+      Height = 24
+      Hint = 'Add a parameter to this symbol'
+      Top = 5
+      Width = 80
+      Caption = 'Add'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
+      OnClick = btnAddClick
+    end
+    object btnDelete: TButton
+      Left = 90
+      Height = 24
+      Hint = 'Delete the selected parameter (only one added here)'
+      Top = 5
+      Width = 80
+      Caption = 'Delete'
+      Enabled = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+      OnClick = btnDeleteClick
+    end
+    object ilResize: TImage
+      Left = 284
+      Height = 16
+      Top = 18
+      Width = 16
+      Align = alRight
+      BorderSpacing.Top = 18
+      Cursor = crSizeNWSE
+      ImageIndex = 2
+      ImageWidth = 16
+      Images = frmSharedControls.ilTinyIcons
+      OnMouseDown = ilResizeMouseDown
+      OnMouseMove = DoResizeWindow
+      OnMouseUp = ilResizeMouseUp
+    end
+  end
+  object lblCount: TLabel[1]
+    Left = 0
+    Height = 17
+    Top = 0
+    Width = 300
+    Align = alTop
+    Alignment = taCenter
+    AutoSize = False
+    BorderSpacing.Around = 0
+    Caption = '1 symbol selected'
+    Layout = tlCenter
+    ParentColor = False
+  end
+  object grdParams: TStringGrid[2]
+    Left = 0
+    Height = 186
+    Hint = 'Click Show? to turn a parameter on or off, or a value to edit it in place'
+    Top = 0
+    Width = 300
+    Align = alClient
+    ColCount = 3
+    DefaultRowHeight = 20
+    FixedCols = 0
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing, goAlwaysShowEditor, goRowHighlight, goSmoothScroll]
+    ParentShowHint = False
+    RowCount = 1
+    ShowHint = True
+    TabOrder = 1
+    OnDrawCell = grdParamsDrawCell
+    OnMouseDown = grdParamsMouseDown
+    OnResize = grdParamsResize
+    OnSelectEditor = grdParamsSelectEditor
+    OnSelection = grdParamsSelection
+    OnValidateEntry = grdParamsValidateEntry
+  end
+end

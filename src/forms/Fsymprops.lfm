@@ -1,0 +1,226 @@
+object frmSymbolProps: TfrmSymbolProps
+  Left = 700
+  Height = 660
+  Top = 300
+  Width = 720
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'Symbol Properties'
+  ClientHeight = 660
+  ClientWidth = 720
+  OnCreate = FormCreate
+  Position = poOwnerFormCenter
+  object lblLibrary: TLabel
+    Left = 12
+    Height = 20
+    Top = 8
+    Width = 300
+    Caption = 'Library:'
+  end
+  object lblParts: TLabel
+    Left = 12
+    Height = 20
+    Top = 34
+    Width = 300
+    Caption = 'Parts per package: 1'
+  end
+  object lblOrientation: TLabel
+    Left = 380
+    Height = 20
+    Top = 8
+    Width = 140
+    Caption = 'Default orientation:'
+  end
+  object cbOrientation: TComboBox
+    Left = 380
+    Height = 28
+    Hint = 'The way up a new copy of the symbol is placed'
+    Top = 30
+    Width = 140
+    ItemHeight = 20
+    Style = csDropDownList
+    TabOrder = 0
+  end
+  object lblNames: TLabel
+    Left = 12
+    Height = 20
+    Top = 68
+    Width = 300
+    Caption = 'Names of this symbol:'
+  end
+  object lbNames: TListBox
+    Left = 12
+    Height = 110
+    Hint = 'The names of this symbol (aliases); choose one to edit its description and attributes'
+    Top = 92
+    Width = 400
+    ItemHeight = 0
+    OnSelectionChange = NameSelect
+    TabOrder = 1
+  end
+  object btnAddName: TButton
+    Left = 424
+    Height = 36
+    Hint = 'Give the symbol another name'
+    Top = 92
+    Width = 150
+    Caption = 'Add &name'
+    OnClick = AddNameClick
+    TabOrder = 2
+  end
+  object btnDeleteName: TButton
+    Left = 424
+    Height = 36
+    Hint = 'Remove the chosen name (a symbol keeps at least one)'
+    Top = 136
+    Width = 150
+    Caption = '&Delete name'
+    OnClick = DeleteNameClick
+    TabOrder = 3
+  end
+  object lblDescription: TLabel
+    Left = 12
+    Height = 20
+    Top = 210
+    Width = 300
+    Caption = 'Description:'
+  end
+  object edDescription: TEdit
+    Left = 12
+    Height = 28
+    Hint = 'What the chosen name is'
+    Top = 232
+    Width = 696
+    TabOrder = 4
+  end
+  object pcTabs: TPageControl
+    Left = 12
+    Height = 280
+    Top = 270
+    Width = 696
+    ActivePage = tsAttributes
+    Hint = 'Attributes of the chosen name, and its SPICE data'
+    TabIndex = 0
+    TabOrder = 5
+    object tsAttributes: TTabSheet
+      Caption = 'Attributes'
+      ClientHeight = 244
+      ClientWidth = 688
+      object sgFields: TStringGrid
+        Left = 8
+        Height = 190
+        Hint = 'The attributes of the chosen name: Reference and Name first, then the others, each with how it shows and its default value'
+        Top = 8
+        Width = 672
+        ColCount = 3
+        FixedCols = 0
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing, goSmoothScroll]
+        RowCount = 1
+        TabOrder = 0
+        OnSelectCell = FieldSelect
+      end
+      object btnAddField: TButton
+        Left = 8
+        Height = 32
+        Hint = 'Add an attribute'
+        Top = 204
+        Width = 150
+        Caption = '&Add attribute'
+        OnClick = AddFieldClick
+        TabOrder = 1
+      end
+      object btnDeleteField: TButton
+        Left = 168
+        Height = 32
+        Hint = 'Remove the chosen attribute (not Reference or Name)'
+        Top = 204
+        Width = 170
+        Caption = 'Delete a&ttribute'
+        OnClick = DeleteFieldClick
+        TabOrder = 2
+      end
+    end
+    object tsSpice: TTabSheet
+      Caption = 'SPICE'
+      ClientHeight = 244
+      ClientWidth = 688
+      object lblModel: TLabel
+        Left = 8
+        Height = 20
+        Top = 12
+        Width = 120
+        Caption = 'Model:'
+      end
+      object edModel: TEdit
+        Left = 130
+        Height = 28
+        Hint = 'The SPICE line of the part ($$SPICE)'
+        Top = 8
+        Width = 540
+        TabOrder = 0
+      end
+      object lblProlog: TLabel
+        Left = 8
+        Height = 20
+        Top = 52
+        Width = 120
+        Caption = 'Prolog:'
+      end
+      object edProlog: TEdit
+        Left = 130
+        Height = 28
+        Hint = 'Text put before the circuit in the SPICE file'
+        Top = 48
+        Width = 540
+        TabOrder = 1
+      end
+      object lblPrologPri: TLabel
+        Left = 8
+        Height = 20
+        Top = 92
+        Width = 120
+        Caption = 'Prolog priority:'
+      end
+      object edPrologPri: TEdit
+        Left = 130
+        Height = 28
+        Hint = 'Where the prolog goes among the others, 0 to 10'
+        Top = 88
+        Width = 80
+        TabOrder = 2
+        Text = '5'
+      end
+      object lblEpilog: TLabel
+        Left = 8
+        Height = 20
+        Top = 132
+        Width = 120
+        Caption = 'Epilog:'
+      end
+      object edEpilog: TEdit
+        Left = 130
+        Height = 28
+        Hint = 'Text put after the circuit in the SPICE file'
+        Top = 128
+        Width = 540
+        TabOrder = 3
+      end
+      object lblEpilogPri: TLabel
+        Left = 8
+        Height = 20
+        Top = 172
+        Width = 120
+        Caption = 'Epilog priority:'
+      end
+      object edEpilogPri: TEdit
+        Left = 130
+        Height = 28
+        Hint = 'Where the epilog goes among the others, 0 to 10'
+        Top = 168
+        Width = 80
+        TabOrder = 4
+        Text = '5'
+      end
+    end
+  end
+end

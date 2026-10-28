@@ -1,0 +1,320 @@
+inherited frmPrint: TfrmPrint
+  Left = 1244
+  Height = 568
+  Top = 454
+  Width = 600
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'Print'
+  ClientHeight = 568
+  ClientWidth = 600
+  Position = poOwnerFormCenter
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  inherited pnlButtons: TPanel
+    Height = 46
+    Top = 522
+    Width = 600
+    ClientHeight = 42
+    ClientWidth = 596
+    TabOrder = 4
+    inherited btnOK: TButton
+      Left = 396
+      Height = 26
+      Top = 6
+      Width = 82
+      TabOrder = 0
+    end
+    inherited btnCancel: TButton
+      Left = 493
+      Height = 26
+      Top = 6
+      Width = 82
+      TabOrder = 1
+    end
+    inherited btnApply: TButton
+      Left = 297
+      Height = 26
+      Top = 6
+      Width = 82
+    end
+  end
+  object gbPrinter: TGroupBox[1]
+    Left = 13
+    Height = 106
+    Top = 6
+    Width = 579
+    Caption = 'Printer'
+    ClientHeight = 86
+    ClientWidth = 575
+    ParentFont = False
+    TabOrder = 0
+    object lbRange: TLabel
+      Left = 20
+      Height = 36
+      Top = 48
+      Width = 545
+      AutoSize = False
+      Caption = 'lbRange'
+    end
+    object Label1: TLabel
+      Left = 13
+      Height = 15
+      Top = 16
+      Width = 35
+      Caption = 'Name:'
+    end
+    object cbPrinterList: TComboBox
+      Left = 64
+      Height = 29
+      Hint = 'The printer to print on'
+      Top = 9
+      Width = 229
+      Font.Height = -16
+      ItemHeight = 21
+      ParentFont = False
+      Style = csDropDownList
+      TabOrder = 1
+      OnChange = PrinterListChange
+    end
+    object btnPrinterSetup: TButton
+      Left = 307
+      Height = 31
+      Hint = 'Change the settings of the printer'
+      Top = 8
+      Width = 102
+      Caption = 'Printer Setup...'
+      TabOrder = 0
+      OnClick = btnPrinterSetupClick
+    end
+  end
+  object gbSheets: TGroupBox[2]
+    Left = 13
+    Height = 64
+    Top = 120
+    Width = 288
+    Caption = 'Sheets'
+    ClientHeight = 44
+    ClientWidth = 284
+    TabOrder = 1
+    object rbCurrent: TRadioButton
+      Left = 61
+      Height = 19
+      Hint = 'Print only the sheet being shown'
+      Top = 8
+      Width = 58
+      Caption = '&Current'
+      Checked = True
+      TabOrder = 0
+      TabStop = True
+      OnClick = OptionChanged
+    end
+    object rbAll: TRadioButton
+      Left = 13
+      Height = 19
+      Hint = 'Print every sheet of the design'
+      Top = 8
+      Width = 32
+      Caption = '&All'
+      TabOrder = 1
+      OnClick = OptionChanged
+    end
+  end
+  object gbPages: TGroupBox[3]
+    Left = 13
+    Height = 120
+    Top = 192
+    Width = 288
+    Caption = 'Pages'
+    ClientHeight = 100
+    ClientWidth = 284
+    TabOrder = 2
+    object rbPagesAll: TRadioButton
+      Left = 13
+      Height = 19
+      Hint = 'Print every page of the print'
+      Top = 5
+      Width = 32
+      Caption = '&All'
+      Checked = True
+      TabOrder = 0
+      TabStop = True
+      OnClick = PagesRadioClick
+    end
+    object rbPagesRange: TRadioButton
+      Left = 13
+      Height = 19
+      Hint = 'Print only the pages typed in the box'
+      Top = 63
+      Width = 49
+      Caption = '&Pages'
+      TabOrder = 1
+      OnClick = PagesRadioClick
+    end
+    object edPageRange: TEdit
+      Left = 78
+      Height = 23
+      Hint = 'The pages to print, for example 1-3, 6 or 2 to 4 and 9'
+      Top = 61
+      Width = 114
+      Enabled = False
+      TabOrder = 2
+      OnChange = PageRangeChanged
+    end
+    object RadioButton1: TRadioButton
+      Left = 13
+      Height = 19
+      Hint = 'Print the current sheet only'
+      Top = 32
+      Width = 58
+      Caption = '&Current'
+      TabOrder = 3
+    end
+  end
+  object gbOptions: TGroupBox[4]
+    Left = 13
+    Height = 160
+    Top = 320
+    Width = 288
+    Caption = 'Options'
+    ClientHeight = 140
+    ClientWidth = 284
+    TabOrder = 3
+    object cbBW: TCheckBox
+      Left = 13
+      Height = 19
+      Hint = 'Print everything in black'
+      Top = 5
+      Width = 142
+      Caption = 'Print in black and white'
+      TabOrder = 0
+      OnClick = cbBWClick
+    end
+    object lbScale: TLabel
+      Left = 20
+      Height = 15
+      Top = 37
+      Width = 51
+      Caption = 'Scale (%):'
+    end
+    object cbFit: TCheckBox
+      Left = 144
+      Height = 19
+      Hint = 'Shrink or enlarge the sheet to fit on one page'
+      Top = 35
+      Width = 120
+      Caption = 'Fit on a single page'
+      TabOrder = 1
+      OnClick = cbFitClick
+    end
+    object cbNoSymText: TCheckBox
+      Left = 13
+      Height = 19
+      Hint = 'Leave the symbol text objects (the designer''s notes) off the printout'
+      Top = 62
+      Width = 200
+      Caption = 'Do not print symbol text'
+      TabOrder = 3
+      OnClick = cbNoSymTextClick
+    end
+    object cbNoSymFields: TCheckBox
+      Left = 13
+      Height = 19
+      Hint = 'Leave the text of the symbols'' properties (reference, name, values) off the printout'
+      Top = 82
+      Width = 250
+      Caption = 'Do not print symbol properties'
+      TabOrder = 4
+      OnClick = cbNoSymFieldsClick
+    end
+    object lbPages: TLabel
+      Left = 13
+      Height = 33
+      Top = 104
+      Width = 235
+      AutoSize = False
+      Caption = 'lbPages'
+      WordWrap = True
+    end
+    object edScale: TEdit
+      Left = 80
+      Height = 23
+      Hint = 'The size of the print, in per cent of the real size'
+      Top = 33
+      Width = 50
+      TabOrder = 2
+      Text = '100'
+      OnChange = OptionChanged
+    end
+  end
+  object gbPreview: TGroupBox[5]
+    Left = 312
+    Height = 392
+    Top = 120
+    Width = 280
+    ClientHeight = 372
+    ClientWidth = 276
+    TabOrder = 5
+    object plPreview: TPanel
+      Left = 8
+      Height = 312
+      Top = 0
+      Width = 260
+      BevelInner = bvLowered
+      BevelOuter = bvLowered
+      ClientHeight = 312
+      ClientWidth = 260
+      Color = clActiveBorder
+      ParentBackground = False
+      ParentColor = False
+      TabOrder = 0
+      object pbFastPreview: TPaintBox
+        Left = 8
+        Height = 292
+        Top = 8
+        Width = 242
+        OnPaint = FastPreviewPaint
+      end
+    end
+    object btnPreviewBack: TButton
+      Left = 8
+      Height = 28
+      Hint = 'Show the previous page'
+      Top = 320
+      Width = 36
+      Caption = '<'
+      TabOrder = 1
+      OnClick = btnPreviewBackClick
+    end
+    object btnPreviewFwd: TButton
+      Left = 224
+      Height = 28
+      Hint = 'Show the next page'
+      Top = 320
+      Width = 36
+      Caption = '>'
+      TabOrder = 2
+      OnClick = btnPreviewFwdClick
+    end
+    object tbPageSlider: TTrackBar
+      Left = 56
+      Height = 25
+      Top = 323
+      Width = 152
+      Max = 1
+      Min = 1
+      Position = 1
+      OnChange = PageSliderChange
+      TabOrder = 3
+    end
+    object lbPageOf: TLabel
+      Left = 56
+      Height = 15
+      Top = 354
+      Width = 152
+      Alignment = taCenter
+      AutoSize = False
+      Caption = 'Page x of x'
+    end
+  end
+end

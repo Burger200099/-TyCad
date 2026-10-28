@@ -1,0 +1,91 @@
+inherited frmDesignDetailsDropDown: TfrmDesignDetailsDropDown
+  Left = 773
+  Height = 156
+  Top = 427
+  Width = 166
+  Caption = 'frmDesignDetailsDropDown'
+  ClientHeight = 156
+  ClientWidth = 166
+  Color = clBackground
+  object Panel1: TPanel[0]
+    Left = 0
+    Height = 156
+    Top = 0
+    Width = 166
+    Align = alClient
+    BevelInner = bvRaised
+    BorderStyle = bsSingle
+    ClientHeight = 152
+    ClientWidth = 162
+    Color = clWindow
+    ParentBackground = False
+    ParentColor = False
+    TabOrder = 0
+    object cbSheetDetailsShowRuler: TCheckBox
+      Left = 7
+      Height = 19
+      Hint = 'Show the rulers round the page'
+      Top = 32
+      Width = 79
+      Caption = 'Show rulers'
+      TabOrder = 0
+    end
+    object lbSheetDetailsCols: TLabel
+      Left = 35
+      Height = 15
+      Top = 56
+      Width = 51
+      Caption = 'Columns:'
+    end
+    object edSheetDetailsCols: TEdit
+      Left = 95
+      Height = 23
+      Hint = 'How many columns the horizontal ruler is divided into'
+      Top = 52
+      Width = 48
+      TabOrder = 1
+      Text = 'edSheetDetailsCols'
+    end
+    object lbSheetDetailsRows: TLabel
+      Left = 55
+      Height = 15
+      Top = 84
+      Width = 31
+      Caption = 'Rows:'
+    end
+    object edSheetDetailsRows: TEdit
+      Left = 95
+      Height = 23
+      Hint = 'How many rows the vertical ruler is divided into'
+      Top = 80
+      Width = 48
+      TabOrder = 2
+      Text = 'edSheetDetailsRows'
+    end
+    object cbSheetDetailsBorder: TCheckBox
+      Left = 7
+      Height = 19
+      Hint = 'Draw a border round the printable area'
+      Top = 8
+      Width = 85
+      Caption = 'Show Border'
+      TabOrder = 3
+    end
+    object lbSheetDetailsMargin: TLabel
+      Left = 15
+      Height = 15
+      Top = 112
+      Width = 71
+      Caption = 'Margin (mm)'
+    end
+    object edSheetDetailsMargin: TEdit
+      Left = 95
+      Height = 23
+      Hint = 'The distance of the border from the edge of the page, in millimetres'
+      Top = 108
+      Width = 48
+      TabOrder = 4
+      Text = 'edSheetDetailsMargin'
+    end
+  end
+end

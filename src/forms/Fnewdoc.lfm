@@ -1,0 +1,249 @@
+inherited frmNewDoc: TfrmNewDoc
+  Left = 988
+  Height = 529
+  Top = 637
+  Width = 613
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'New Document'
+  ClientHeight = 529
+  ClientWidth = 613
+  Position = poOwnerFormCenter
+  OnCreate = FormCreate
+  inherited pnlButtons: TPanel
+    Top = 471
+    Width = 613
+    ClientHeight = 54
+    ClientWidth = 609
+    TabOrder = 8
+    inherited btnOK: TButton
+      Left = 409
+      Top = 6
+      Default = True
+    end
+    inherited btnCancel: TButton
+      Left = 506
+      Top = 6
+    end
+    inherited btnApply: TButton
+      Left = 310
+      Top = 6
+    end
+  end
+  object Label1: TLabel[1]
+    Left = 13
+    Height = 15
+    Top = 13
+    Width = 69
+    Caption = 'Paper family:'
+  end
+  object cbFamily: TComboBox[2]
+    Left = 26
+    Height = 23
+    Hint = 'The family of paper sizes'
+    Top = 32
+    Width = 160
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 0
+    OnChange = FamilyChange
+  end
+  object Label2: TLabel[3]
+    Left = 13
+    Height = 15
+    Top = 64
+    Width = 55
+    Caption = 'Paper size:'
+  end
+  object lbPapers: TListBox[4]
+    Left = 26
+    Height = 285
+    Hint = 'The paper sizes of the family'
+    Top = 83
+    Width = 360
+    ItemHeight = 0
+    TabOrder = 1
+    OnClick = PaperChange
+    OnDblClick = PaperSelect
+  end
+  object lbInfo: TLabel[5]
+    Left = 200
+    Height = 71
+    Top = 8
+    Width = 186
+    AutoSize = False
+    Caption = 'lbInfo'
+    WordWrap = True
+  end
+  object cbBorder: TCheckBox[6]
+    Left = 403
+    Height = 19
+    Hint = 'Draw a border round the printable area'
+    Top = 208
+    Width = 92
+    Caption = 'Draw a border'
+    Checked = True
+    State = cbChecked
+    TabOrder = 2
+  end
+  object cbAutoNumber: TCheckBox[7]
+    Left = 403
+    Height = 19
+    Hint = 'Number the sheets automatically'
+    Top = 312
+    Width = 155
+    Caption = 'Automatic sheet numbers'
+    Checked = True
+    State = cbChecked
+    TabOrder = 3
+  end
+  object Label4: TLabel[8]
+    Left = 13
+    Height = 15
+    Top = 387
+    Width = 26
+    Caption = 'Title:'
+  end
+  object Label5: TLabel[9]
+    Left = 13
+    Height = 15
+    Top = 426
+    Width = 40
+    Caption = 'Author:'
+  end
+  object Label6: TLabel[10]
+    Left = 314
+    Height = 15
+    Top = 387
+    Width = 67
+    Caption = 'Drawing no.:'
+  end
+  object Label7: TLabel[11]
+    Left = 314
+    Height = 15
+    Top = 426
+    Width = 55
+    Caption = 'Company:'
+  end
+  object edTitle: TEdit[12]
+    Left = 61
+    Height = 23
+    Hint = 'The title of the drawing'
+    Top = 384
+    Width = 240
+    TabOrder = 4
+    Text = 'edTitle'
+  end
+  object edAuthor: TEdit[13]
+    Left = 61
+    Height = 23
+    Hint = 'Who is drawing it'
+    Top = 424
+    Width = 240
+    TabOrder = 5
+    Text = 'edAuthor'
+  end
+  object edDocNo: TEdit[14]
+    Left = 403
+    Height = 23
+    Hint = 'The document number'
+    Top = 384
+    Width = 173
+    TabOrder = 6
+    Text = 'edDocNo'
+  end
+  object edOrg: TEdit[15]
+    Left = 403
+    Height = 23
+    Hint = 'The organisation the drawing belongs to'
+    Top = 424
+    Width = 173
+    TabOrder = 7
+    Text = 'edOrg'
+  end
+  object rgOrient: TGroupBox[16]
+    Left = 403
+    Height = 105
+    Top = 88
+    Width = 160
+    Caption = 'Orientation'
+    ClientHeight = 85
+    ClientWidth = 156
+    TabOrder = 9
+    OnClick = rgOrientClick
+    object rbPortrait: TRadioButton
+      Left = 11
+      Height = 19
+      Hint = 'The page is taller than it is wide'
+      Top = 8
+      Width = 68
+      Caption = 'rbPortrait'
+      TabOrder = 0
+    end
+    object rbLandscape: TRadioButton
+      Left = 11
+      Height = 19
+      Hint = 'The page is wider than it is tall'
+      Top = 50
+      Width = 85
+      Caption = 'rbLandscape'
+      TabOrder = 1
+    end
+    object pnlImg1: TPanel
+      Left = 36
+      Height = 36
+      Top = 0
+      Width = 36
+      BevelOuter = bvNone
+      ClientHeight = 36
+      ClientWidth = 36
+      TabOrder = 2
+      object imgPortrait: TImage
+        Left = 1
+        Height = 36
+        Top = 1
+        Width = 36
+        OnClick = ImageClick
+      end
+    end
+    object pnlImg2: TPanel
+      Left = 36
+      Height = 36
+      Top = 42
+      Width = 36
+      BevelOuter = bvNone
+      ClientHeight = 36
+      ClientWidth = 36
+      TabOrder = 3
+      object imgLandscape: TImage
+        Left = 1
+        Height = 36
+        Top = 1
+        Width = 36
+        ImageIndex = 1
+        OnClick = ImageClick
+      end
+    end
+  end
+  object GroupBox1: TGroupBox[17]
+    Left = 403
+    Height = 64
+    Top = 240
+    Width = 189
+    Caption = 'Border margin (mm):'
+    ClientHeight = 44
+    ClientWidth = 185
+    TabOrder = 10
+    object edMargin: TFloatSpinEdit
+      Left = 11
+      Height = 23
+      Hint = 'The distance of the border from the edge of the page, in millimetres'
+      Top = 8
+      Width = 80
+      Increment = 0.5
+      MaxValue = 100
+      TabOrder = 0
+      Value = 6.35
+    end
+  end
+end
