@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Port of TinyCAD's "Generate Symbol References" (Special.cpp: CTinyCadView::OnSpecialAnnotate and the AnnotateSetup class) and of the reference
   painter's two actions (DrawRefPainter.cpp).
 

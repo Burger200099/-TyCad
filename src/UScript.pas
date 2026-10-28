@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { A scripting hook for testing the user interface without a person: "schematic --script file"
   runs the commands in the file against the real window, using the same code paths as the mouse and
   the menus, and writes results to standard output and screenshots to files.

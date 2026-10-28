@@ -966,3 +966,7 @@ Symbol parameter list: naming an added parameter and then clicking its Show? box
 - Wires: with several wires chosen (none wholly inside the picking box), pulling an end handle stretches the nearest end of every chosen wire by the same step (it was only the pressed wire). tests/run_wirepull.py.
 - Panning (middle button, or right button in Select) while a text box has the focus: when the pan has moved the sheet the box gets the focus back. tests/run_panfocus.py.
 - Print window now has two check boxes: "Do not print symbol text" (the Symbol Text objects) and "Do not print symbol properties" (reference, name and values of every symbol); both kept in the settings, used by print and preview, exports not affected.
+
+## Licence
+
+LGPL-2.1-or-later, as TinyCAD (see `LICENSE` and `NOTICE.md`). Source files carry `SPDX-License-Identifier: LGPL-2.1-or-later`.

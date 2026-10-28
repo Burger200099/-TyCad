@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Object dialog of the parts library editor: name, designator, kind, parent, order and description of one child object of a part (a terminal, pole,
   channel ...). Used to add an object to a part and to change one. Only the kinds the part's class allows are offered, and the parents offered leave out the
   object itself and everything inside it, so the choices cannot make a cycle.

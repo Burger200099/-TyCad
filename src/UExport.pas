@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Export Image (File > Export Image..., TinyCAD's CTinyCadView::OnFileSaveasbitmap with CDlgExportPNG, CTinyCadDoc::SavePNG and CTinyCadDoc::CreateMetafile): the
   sheet on the screen, or the selected objects when something is selected, saved as a picture.
 

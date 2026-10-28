@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { What can be learnt about a picture from its bytes alone, without decoding it: its kind and its size in pixels. A PNG file
   gives them in its first chunk; a JPEG in its start-of-frame marker. The picture itself is only decoded when it is drawn.
 

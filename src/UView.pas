@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The drawing area: shows one sheet of a design and is where every tool lives.
 
   Wires and lines are drawn by the data layer's TWireTool (a port of TinyCAD's own line tool) through

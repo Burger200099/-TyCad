@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 unit UDocTabs;
 
 { The strip of tabs above the open documents: one tab for each document with its name, a close glyph on the right and a mark for unsaved changes. It is drawn by the

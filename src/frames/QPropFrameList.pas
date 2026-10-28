@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The property frames the program knows: add a frame's unit to the uses clause and register it in RegisterAllPropFrames (see QPropFrame for how a frame is made
   and how its editors are named). A kind of tool or object that is not registered gets the editors the program makes by itself.
 

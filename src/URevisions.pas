@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Which revisions the extended title block shows, and in what order: the five newest, newest first, judged by date or by revision label as the sheet's
   setting says. Dates and labels are free text, so both comparisons have to read what people type.
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Copy and paste of drawing objects, in TinyCAD's own clipboard format.
 
   TinyCAD puts the selection on the clipboard under the registered format name "TinyCAD Design"

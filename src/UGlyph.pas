@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Glyphs of parts: the small picture of a part's default symbol that the Parts tab lists (PartGlyph holds one PNG per square size). The picture is drawn with the same painter as the
   library panel's preview.
 

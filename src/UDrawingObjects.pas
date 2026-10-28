@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Port of the DATA side of Object.h / DrawingObject.* and the DrawXxx.cpp / Polygon.cpp / Power.cpp
   files: the schematic object classes, their fields, XML load/save, resource tagging and the
   polygon path flattening that load depends on.

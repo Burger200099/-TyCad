@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { USymbolBom - two small helpers for designs made before the parts library is in use: a check for symbols that share a reference, and a bill of materials made from
   the symbols placed (what a parts list is, but as a plain table, one column per attribute, to open in a spreadsheet).
 

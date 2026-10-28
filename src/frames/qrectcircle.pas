@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 unit QRectCircle;
 
 {$mode ObjFPC}{$H+}

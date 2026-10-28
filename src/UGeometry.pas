@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Geometry foundation: port of DRect.*, DSize.h, LineUtils.cpp, TransformSnap::Snap and the
   Transform class (Transform.cpp / Context.h), the direction tables used by the objects'
   rotate code, and the text-metrics interface the layout code needs.

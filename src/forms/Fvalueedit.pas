@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Field Value dialog of the parts library editor: the value of one field of a part (a field of its class) or of one of its child objects (a field of the object's
   kind). Text and ref fields are typed, int and real fields typed as numbers, bool and enum fields picked from a list. Empty / (none) removes the stored value. The
   checking of what is typed is the library's (TPartsLibrary.SetFieldValue), which explains a refusal.

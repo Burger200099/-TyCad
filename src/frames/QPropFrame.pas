@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Property frames: a frame designed in the Lazarus form designer that is shown on the ribbon in place of the editors BuildEditors makes by itself.
   One frame can serve a tool (the Properties panel of the Draw ribbon) and, for the same kind of object, the selection (the Properties ribbon).
 

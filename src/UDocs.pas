@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The list of open documents. Each document keeps together everything that belongs to it: its design,
   the file it was loaded from or saved to, whether it has unsaved changes, and its own drawing view
   (the view carries the document's undo history, zoom, scroll position and selection, so switching

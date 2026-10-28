@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Library Setup dialog (TinyCAD's CDlgLibraryBox, Library > Libraries...): the libraries in use, sorted by name, with Add (several .TCLib files at once), Remove,
   New (an empty library file), Cleanup (compacts the file) and OK. Add, Remove and New act at once on the library panel, as in TinyCAD, where OK only closes the
   window (the list is kept by the main form each time the panel changes). Remove and Cleanup are refused with TinyCAD's messages while a library is in use (being

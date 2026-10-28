@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Port of BOMGenerator.cpp / BOMGenerator.h (CBOMGenerator): the parts list (bill of materials).
 
   How a list is made:

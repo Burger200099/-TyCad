@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The editing engine: how wires are drawn, snapped, merged, split and given junctions.
 
   A faithful port of TinyCAD's CTinyCadDoc::GetStickyPoint, CJunctionUtils, CDragUtils::Merge /

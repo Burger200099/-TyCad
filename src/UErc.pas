@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Port of TinyCAD's design rules check (the electrical rules check, ERC) of Net.cpp: CTinyCadView::DoSpecialCheck and DoSpecialVHDLCheck, the
   ErrorTest options of the "Check Design Rules" dialog (CDlgERCBox) and the CDrawError markers.
 

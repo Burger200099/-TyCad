@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Helpers shared by the XML reader and writer:
   - TinyCAD's (non-standard) uuencode variant, byte-compatible with XMLWriter.cpp / XMLReader.cpp
   - C-runtime style number parsing/formatting (atoi, atof, strtol(...,16), sscanf %lg, printf %.5f)

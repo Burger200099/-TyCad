@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Port of DPoint.h (CDPoint) - TinyCAD to Free Pascal / Lazarus.
   Original: Copyright 1994-2004 Matt Pyne, LGPL 2.1+. This port keeps that licence. }
 unit UDPoint;

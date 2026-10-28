@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Print dialog (TinyCAD's CSpecialPrintDlg, IDD_PRINT): the printer (a drop down of the installed printers and a Properties button: the printer's own properties window on Windows, the system's setup
   dialog), the pages to print (typed in the Pages box: 1-3, 6 / 2 to 4 and 9 ...), whether to print the current sheet or all of them, black and white, and the scale of
   the print with a "Fit on a single page" box that puts the scale that fits the sheet on one page in the Scale box. The dialog shows how many pages the print will take

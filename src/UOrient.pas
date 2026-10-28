@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The way up of a picture: turned by quarter turns and flipped left to right, or not.
 
   A picture keeps its own orientation, because the object's two corners only say where the picture is, not which way up it is. Turning or flipping a selection that holds the picture

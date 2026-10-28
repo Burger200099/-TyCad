@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Port of XMLException.h/.cpp and the ERR_XML_* messages in xml_parse_tag.h. }
 unit UXMLException;
 

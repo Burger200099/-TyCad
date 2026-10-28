@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Save a Parts List dialog (TinyCAD's CDlgBOMExport): the file format (text, CSV, or CSV for a spreadsheet), the file to write
   with a Browse button, and four choices - all sheets, hierarchical links, all attribute information, and the sheet-number prefix.
   Changing the format changes the extension of the file name. The choices are remembered between runs (the registry values

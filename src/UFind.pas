@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Find and Replace of the text in a design.
 
   What can be searched is what TinyCAD's own Find searches (CDrawingObject::Find and its overrides): the text of a

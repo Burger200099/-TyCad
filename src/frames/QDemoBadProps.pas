@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { A demonstration of a property frame with mistakes (see QPropFrame), for the self-test script: a text box for a whole number, a number box for a color, and
   two drop-downs for the same property. The program shows the frame anyway, disables the editors it cannot use and reports each.
 

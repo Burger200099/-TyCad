@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 unit QLadder;
 
 {$mode ObjFPC}{$H+}

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { UPartsDb - reads a TyCAD parts database ("TCParts", see docs/parts_schema.sql and docs/parts_design_storage.md).
 
   NOT a TinyCAD library: the file says so (FormatInfo.TinyCADCompatible = 0) and TinyCAD cannot open it. SQLite is used through FPC's sqlite3dyn, loaded only when

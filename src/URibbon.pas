@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 unit URibbon;
 
 { The strip of tab headings above the ribbon (Home, Sheet, View, Draw ...), drawn by the program on a paint box: the system's own headings are not shown (the page control

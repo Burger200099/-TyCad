@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Text measuring with the real fonts, for the program (the tests keep the table-driven measurer of UGeometry, which is the same everywhere).
 
   TinyCAD measures text with Windows GDI: a font DatumScale (5) times larger is made, the string is measured in it and the result divided by 5, so

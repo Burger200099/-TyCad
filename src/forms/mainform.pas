@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The main window: main menu, a top-aligned page control that is the ribbon, the symbol library
   panel, the drawing area, sheet tabs and a status bar. Built entirely in code.
 

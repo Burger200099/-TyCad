@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Links between objects: text that follows another object around.
 
   A TDrawRefText names a target by its stable object id. Whenever the drawing changes,

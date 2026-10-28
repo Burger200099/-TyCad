@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Print Preview window (MFC's preview mode of TinyCAD): the pages the Print command would print, drawn on the printer's page at the scale and black and white
   of the settings, with buttons for Print..., Next Page, Prev Page, One/Two Page, Zoom In, Zoom Out and Close. The preview shows every sheet of the design, as
   TinyCAD's does (its print-all-sheets choice only changes when the Print dialog is used). Pages are drawn when they are first shown and kept until the zoom

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Reading a picture file to put in a design, and decoding a picture of a design to draw it (the part of pictures that needs the
   screen library; what is kept in the design is in UResources and UImageInfo).
 

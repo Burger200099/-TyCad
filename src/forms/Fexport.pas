@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Export Image dialog (TinyCAD's CDlgExportPNG, File > Export Image): the kind of picture (colour or black and white PNG, colour or black and white SVG - TinyCAD's
   metafile kinds), the file to write with a Browse button, and for a PNG the scale (1 to 1000 per cent) and whether to turn it a quarter turn. The scale and the turn are
   dimmed for an SVG. Changing the kind changes the extension of the file name. The choices are kept between runs (the registry values TinyCAD uses: BitmapType,

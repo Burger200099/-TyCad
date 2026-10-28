@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The data side of the symbol (.TCLib) editor: everything the editor does to a symbol except the
   window. A TSymbolEditor works on its own copy of one library symbol (its drawing and its names),
   so the library can be re-read underneath it. It creates new symbols, edits existing ones, manages

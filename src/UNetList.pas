@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Port of the netlist core of NetList.cpp / Net.h (CNetList, CNetListNode) and the Protel writer.
 
   How a netlist is built (all of it a post-processing step; nets are not stored in the file):

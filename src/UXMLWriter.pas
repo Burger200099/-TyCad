@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Port of XMLWriter.h/.cpp (CXMLWriter).
   Differences from the C++ original:
   - Writes to a TStream and assumes Strings are UTF-8 (the Lazarus convention), so

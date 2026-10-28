@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The Page Setup dialog: the paper size and orientation of a sheet, as TinyCAD's CDlgPageSizeBox: a
   standard paper or a width and height in millimetres, landscape or portrait. TinyCAD applies it to
   the current sheet only; "Use for all sheets" is an addition.

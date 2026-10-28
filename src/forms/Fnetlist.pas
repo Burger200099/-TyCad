@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The PCB Export dialog (TinyCAD's CDlgPCBExport, Special > Create PCB Net List): the file format (TinyCAD, PADS-PCB, PADS-PCB-WITH-VALUE, Eagle SCR,
   Protel, gEDA PCB, XML), the file to write with a Browse button and the sheet-number prefix choice. Changing the format changes the
   extension of the file name (.net, .scr or .net.xml). The choices are kept between runs (the registry values TinyCAD uses: Netlist and

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The parts library editor (Phase B of the parts database): one open parts file shown as a tab of the document strip next to the designs and symbols. This
   version edits the library's own details (name, description, author) and the list of generic parts: Add, Properties (name, reference letters, description,
   status), Duplicate and Delete. Every change is written to the file at once (one transaction each, Revision and Modified stamped), so there is nothing to save.

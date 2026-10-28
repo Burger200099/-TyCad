@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { Port of DocResource.*, ListOfFonts.*, ListOfStyles.*, ListOfFillStyles.* and UserColor.*
 
   Fonts, line styles and fill styles are kept in per-sheet tables. Objects refer to them by

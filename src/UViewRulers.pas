@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 { The rulers round the drawing area (TinyCAD shows them on the viewport): a strip along the top and one down the left side of the view, in the units of the sheet
   (millimetres or inches, the user's choice), measured from the sheet's origin when it has one, as the position bar is. They follow the zoom and the scrolling of
   the view and mark where the pointer is.
