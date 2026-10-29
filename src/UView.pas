@@ -343,6 +343,12 @@ type
     function PolygonAt(const P: TDPoint): Boolean;
     { the symbol that is the only object chosen, or nil }
     function SelectedSymbol: TDrawMethod;
+    { the rung of the chosen symbol (False when there is none, or it is not in a rung grid) }
+    function SymbolRung(out Info: TRungInfo): Boolean;
+    { choose the rung of the chosen symbol (0 = work it out from where it is again), as one undo step }
+    function SetSymbolRung(Number: Integer): Boolean;
+    { Add Rung Reference: a cross reference text (XREF mode 2) under the chosen symbol; returns 'added', 'exists' (the one already there is chosen), 'nosel' or 'noref' (the symbol has no reference) }
+    function AddRungReference: String;
     function SelectedLine: TDrawLine;
     function LineMakeStraight(Vertical: Boolean; const P: TDPoint): Boolean;
     function NudgeSelection(DX, DY: Integer): Boolean;
@@ -4785,6 +4791,101 @@ begin
   Result := nil;
   if (FSelected.Count = 1) and (TObject(FSelected[0]) is TDrawMethod) then
     Result := TDrawMethod(FSelected[0]);
+end;
+
+{ ===========================================================================
+  TSchematicView.SymbolRung  (function)
+  Parameters:
+    out Info: TRungInfo - the rung and how it was found
+  Returns:
+    Boolean - True when one symbol is chosen and it is inside the sheet's rung grid
+  Notes:
+    See RungOfObject in ULinks for the rule.
+  =========================================================================== }
+function TSchematicView.SymbolRung(out Info: TRungInfo): Boolean;
+var
+  S: TDrawMethod;
+begin
+  S := SelectedSymbol;
+  Result := (S <> nil) and (Sheet <> nil) and RungOfObject(Sheet, S, Info);
+end;
+
+{ ===========================================================================
+  TSchematicView.SetSymbolRung  (function)
+  Parameters:
+    Number: Integer - the rung number to keep on the symbol, or 0 to let it follow its position again
+  Returns:
+    Boolean - True when something changed
+  Notes:
+    Stores the choice on the chosen symbol (TDrawMethod.RungOverride) as one undo step; the ladder references that show its line are updated. Notes: a chosen rung stays when the
+    symbol is moved, so choose Automatic to follow the position again.
+  =========================================================================== }
+function TSchematicView.SetSymbolRung(Number: Integer): Boolean;
+var
+  S: TDrawMethod;
+begin
+  S := SelectedSymbol;
+  Result := (S <> nil) and (S.RungOverride <> Number);
+  if not Result then
+    Exit;
+  BeginChange(rsSetRung);
+  S.RungOverride := Number;
+  CommitChange(True);
+end;
+
+{ ===========================================================================
+  TSchematicView.AddRungReference  (function)
+  Parameters:  none
+  Returns:
+    String - added, exists, nosel or noref
+  Notes:
+    Right click a symbol > Add Rung Reference: puts a cross reference text (TDrawRefText, mode 2) under the chosen symbol. On a coil it reads like "5 NO  7 NC" (the rung and form of each contact
+    with the same reference), on a contact it gives the rung of the coil. It follows the symbols as they are moved or renumbered. One undo step. A symbol that already has one under mode 2
+    gets no second: that one is chosen instead. Notes: the text is put 2 mm below the symbol's box, left aligned with it, on the grid.
+  =========================================================================== }
+function TSchematicView.AddRungReference: String;
+var
+  S: TDrawMethod;
+  X: TDrawRefText;
+  i: Integer;
+  P: TDPoint;
+begin
+  S := SelectedSymbol;
+  if (S = nil) or (Sheet = nil) then
+  begin
+    Result := 'nosel';
+    Exit;
+  end;
+  if S.GetRef = '' then
+  begin
+    Result := 'noref';
+    Exit;
+  end;
+  for i := 0 to Sheet.Drawing.Count - 1 do
+    if (Sheet.Drawing[i] is TDrawRefText) and ((Sheet.Drawing[i] as TDrawRefText).Mode = 2) and ((Sheet.Drawing[i] as TDrawRefText).TargetId = S.Id) then
+    begin
+      FSelected.Clear;
+      FSelected.Add(Sheet.Drawing[i]);
+      SelectionChanged;
+      Invalidate;
+      Result := 'exists';
+      Exit;
+    end;
+  BeginChange(rsAddRungReference);
+  X := TDrawRefText.Create(Sheet.Options);
+  X.TargetId := S.Id;
+  X.Mode := 2;
+  P := DPoint(Min(S.PointA.x, S.PointB.x), Max(S.PointA.y, S.PointB.y) + 2 * UNITS_PER_MM);
+  X.PointA := P;
+  AddNew(X);
+  UpdateLinks(Design);                    // (the text is known now: put its baseline one text height below the start)
+  X.PointA := SnapPoint(DPoint(P.x, P.y + (X.PointA.y - X.PointB.y)));
+  X.UpdateLayout;
+  FSelected.Clear;
+  FSelected.Add(X);
+  CommitChange(True);
+  SelectionChanged;
+  Result := 'added';
 end;
 
 { ===========================================================================

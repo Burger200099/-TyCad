@@ -33,8 +33,8 @@ unit UScript;
 interface
 
 uses
-  Classes, SysUtils, TypInfo, UStrings, QPropFrame, LMessages, Math, Menus, LCLProc, StdCtrls, ExtCtrls, Dialogs, Forms, Controls, LCLType, Graphics, StrUtils, UDPoint, UDrawTypes, UGeometry, UResources, UDrawingObjects, UDesign, UPaper,
-  UView, UPainter, MainForm, UDialogs, Fnewdoc, Fdetails, Fpagesetup, Finput, Fbase, USettings, UProps, UUndo, UEdit, Foptions, Fpartslist, UPartsList, Fnetlist, UNetWriters, USpiceVhdl, Fercopts, UErc, UAnnotate, Fannotate, Fprint, Fpreview, Fexport, Flibraries, ULibManager, USymEdit, Fsymprops, Fsymparts, ULibrary, QLibPanel, UDocs, UTextMetrics, UViewRulers, UPrintRun, UOptions, URepeat, UOrient, FSharedCtls, QPropFrameList, QDemoWireProps, QDemoBadProps, consts, UDocTabs, UPartsDb, UPartData, Fproductpick, USymbols, CFontNameCombo, ComCtrls, crc, QPartsEditor, Fpartedit, Fclassedit, Ffieldedit, Fratingedit, Fobjectedit, Fproductedit, Fvalueedit, Fsymbolinfo;
+  Classes, SysUtils, TypInfo, UStrings, QPropFrame, LMessages, Math, Menus, LCLProc, StdCtrls, ExtCtrls, Dialogs, Forms, Controls, LCLType, Graphics, StrUtils, UDPoint, UDrawTypes, UGeometry, UResources, UDrawingObjects, UDesign, UPaper, ULinks,
+  UView, UPainter, MainForm, UDialogs, Fnewdoc, Fdetails, Fpagesetup, Finput, Fbase, USettings, UProps, UUndo, UEdit, Foptions, Fpartslist, UPartsList, Fnetlist, UNetWriters, USpiceVhdl, Fercopts, UErc, UAnnotate, Fannotate, Fprint, Fpreview, Fexport, Flibraries, ULibManager, USymEdit, Fsymprops, Fsymparts, ULibrary, QLibPanel, UDocs, UTextMetrics, UViewRulers, UPrintRun, UOptions, URepeat, UOrient, FSharedCtls, QPropFrameList, QDemoWireProps, QDemoBadProps, consts, UDocTabs, UPartsDb, UPartData, Fproductpick, USymbols, CFontNameCombo, ComCtrls, crc, QPartsEditor, Fpartedit, Fclassedit, Ffieldedit, Fratingedit, Fobjectedit, Fswitching, Fproductedit, Fvalueedit, Fsymbolinfo;
 
 procedure RunScript(Form: TfrmMain; const FileName: String);
 
@@ -622,6 +622,116 @@ begin
     finally
       Dlg.Free;
     end;
+  end;
+end;
+
+{ ===========================================================================
+  PeSwCommand  (procedure)
+  Parameters:
+    Form: TfrmMain - the main window
+    Ed: TfrPartsEditor - the parts editor shown
+    A: TStringList - the words after `pe sw`
+  Notes:
+    The script side of the Poles and Contacts dialog on the part chosen with `pe obj part|<name>` (the dialog's own calls, with its message boxes left out):
+      pe sw rows                                     PESW <kind>|<name>|<designator>|<form>|<delay>|<seconds>|<id> for each row, then PESW end <n>
+      pe sw addpole|<form>|<delay>|<seconds>          PESW addpole ok id=<id> | PESW addpole error <message>   (the Contact box holds these entries)
+      pe sw addcontact|<pole or contact name>|<form>|<delay>|<seconds>
+      pe sw set|<contact name>|<designator>|<form>|<delay>|<seconds>
+      pe sw del|<name>
+      pe sw shot|<file>                              a picture of the dialog with the last row chosen
+      pe sw dlg                                      PESWDLG forms=<list> delays=<list> rows=<n> buttons=<add pole,add contact,change,delete enabled 0|1 ...> for the dialog with nothing chosen
+  =========================================================================== }
+procedure PeSwCommand(Form: TfrmMain; Ed: TfrPartsEditor; A: TStringList);
+var
+  Sub: String;
+  Dlg: TfrmSwitching;
+  k: Integer;
+  OK: Boolean;
+
+  procedure Choose(const AName: String);
+  var
+    j: Integer;
+  begin
+    Dlg.SelectRow(-1);
+    for j := 0 to High(Dlg.Rows) do
+      if SameText(Dlg.Rows[j].Name, AName) then
+        Dlg.SelectRow(j);
+  end;
+
+  procedure Entries(const AForm, ADelay, ASecs: String);
+  begin
+    Dlg.cbForm.ItemIndex := Dlg.cbForm.Items.IndexOf(AForm);
+    Dlg.cbDelay.ItemIndex := Dlg.cbDelay.Items.IndexOf(ADelay);
+    Dlg.edSecs.Text := ASecs;
+  end;
+
+  procedure Report(const What: String);
+  begin
+    if OK then
+      WriteLn('PESW ', What, ' ok')
+    else
+      WriteLn('PESW ', What, ' error ', Dlg.LastError);
+  end;
+
+begin
+  Sub := LowerCase(A[0]);
+  Dlg := TfrmSwitching.Create(Form);
+  try
+    Dlg.Setup(Ed.Lib, Ed.CurrentObjPartID);
+    Dlg.OnChanged := @Ed.SwitchChanged;
+    if Sub = 'rows' then
+    begin
+      for k := 0 to High(Dlg.Rows) do
+        WriteLn('PESW ', Dlg.Rows[k].Kind, '|', Dlg.Rows[k].Name, '|', Dlg.Rows[k].Designator, '|', Dlg.Rows[k].Form, '|', Dlg.Rows[k].Delay, '|', FloatToStr(Dlg.Rows[k].DelaySecs), '|', Dlg.Rows[k].ID);
+      WriteLn('PESW end ', Length(Dlg.Rows));
+    end
+    else if Sub = 'addpole' then
+    begin
+      Entries(A[1], A[2], A[3]);
+      OK := Dlg.DoAddPole;
+      Report('addpole');
+    end
+    else if Sub = 'addcontact' then
+    begin
+      Choose(A[1]);
+      Entries(A[2], A[3], A[4]);
+      OK := Dlg.DoAddContact;
+      Report('addcontact');
+    end
+    else if Sub = 'set' then
+    begin
+      Choose(A[1]);
+      Dlg.edDesignator.Text := A[2];
+      Entries(A[3], A[4], A[5]);
+      OK := Dlg.DoChange;
+      Report('set');
+    end
+    else if Sub = 'del' then
+    begin
+      Choose(A[1]);
+      OK := Dlg.DoDelete;
+      Report('del');
+    end
+    else if Sub = 'shot' then
+    begin
+      Dlg.Show;
+      Dlg.SelectRow(Length(Dlg.Rows) - 1);
+      Application.ProcessMessages;
+      SaveForm(Dlg, A[1]);
+      WriteLn('PESW shot ', A[1]);
+    end
+    else if Sub = 'dlg' then
+    begin
+      WriteLn('PESWDLG forms=', StringReplace(Dlg.cbForm.Items.CommaText, ',', '/', [rfReplaceAll]), ' delays=', StringReplace(Dlg.cbDelay.Items.CommaText, ',', '/', [rfReplaceAll]),
+        ' rows=', Dlg.lvRows.Items.Count, ' addpole=', Ord(Dlg.btnAddPole.Enabled), ' addcontact=', Ord(Dlg.btnAddContact.Enabled), ' change=', Ord(Dlg.btnChange.Enabled), ' delete=', Ord(Dlg.btnDelete.Enabled));
+      if Dlg.lvRows.Items.Count > 0 then
+      begin
+        Dlg.SelectRow(0);
+        WriteLn('PESWDLG first=', Dlg.Rows[0].Name, ' addcontact=', Ord(Dlg.btnAddContact.Enabled), ' change=', Ord(Dlg.btnChange.Enabled), ' delete=', Ord(Dlg.btnDelete.Enabled));
+      end;
+    end;
+  finally
+    Dlg.Free;
   end;
 end;
 
@@ -1387,6 +1497,8 @@ var
   KMsg: TLMKey;
   FS: TFileStream;
   Txt, Txt2, Txt3: String;
+  RI: TRungInfo;
+  RPi: Integer;
   DF: TfrmDetails;
   ApplyAll: Boolean;
   PF: TfrmPageSetup;
@@ -1690,6 +1802,8 @@ begin
                   PeRatCommand(Form, PeEd, PeArgs)
                 else if S = 'obj' then
                   PeObjCommand(Form, PeEd, PeArgs)
+                else if S = 'sw' then
+                  PeSwCommand(Form, PeEd, PeArgs)
                 else if S = 'prod' then
                   PeProdCommand(Form, PeEd, PeArgs)
                 else if S = 'val' then
@@ -4427,6 +4541,31 @@ begin
             WriteLn('PDBPLACE ', T[1], ' ', Form.PlacePartRow(StrToInt(T[1]), Num(T[2]), Num(T[3])));
             Settle;
           end
+        else if Cmd = 'rungref' then
+          begin
+            { rungref : Add Rung Reference on the chosen symbol; RUNGREF <added|exists|nosel|noref> }
+            WriteLn('RUNGREF ', Form.View.AddRungReference);
+            Settle;
+          end
+        else if Cmd = 'rung' then
+          begin
+            { rung : RUNG <found 0|1> <number> amb=<0|1> over=<0|1> cand=<a,b,..> for the chosen symbol; rung set <n> | rung auto : choose its rung / let it follow its position again, RUNG SET <0|1> }
+            if (T.Count > 1) and (LowerCase(T[1]) = 'set') then
+              WriteLn('RUNG SET ', Ord(Form.View.SetSymbolRung(StrToInt(T[2]))))
+            else if (T.Count > 1) and (LowerCase(T[1]) = 'auto') then
+              WriteLn('RUNG SET ', Ord(Form.View.SetSymbolRung(0)))
+            else if Form.View.SymbolRung(RI) then
+            begin
+              Txt2 := '';
+              for RPi := 0 to High(RI.Candidates) do
+                Txt2 := Txt2 + IfThen(RPi > 0, ',', '') + IntToStr(RI.Candidates[RPi]);
+              WriteLn('RUNG 1 ', RI.Number, ' amb=', Ord(RI.Ambiguous), ' over=', Ord(RI.Overridden), ' cand=', Txt2, ' box=', FormatFloat('0.###', Min(Form.View.SelectedSymbol.PointA.y, Form.View.SelectedSymbol.PointB.y) / 5), ',',
+                FormatFloat('0.###', Max(Form.View.SelectedSymbol.PointA.y, Form.View.SelectedSymbol.PointB.y) / 5));
+            end
+            else
+              WriteLn('RUNG 0 0 amb=0 over=0 cand=');
+            Settle;
+          end
         else if Cmd = 'insertcontact' then
           begin
             { insertcontact <NO|NC|any> <x mm> <y mm> [yes|no] : Special > Insert (NO / NC / Next Free) Contact of Selected Coil, then a click at the point to put it down;
@@ -5153,7 +5292,8 @@ begin
           begin
             for k := 0 to Form.View.Sheet.Drawing.Count - 1 do
               if Form.View.Sheet.Drawing[k] is TDrawRefText then
-                WriteLn('XREF "', (Form.View.Sheet.Drawing[k] as TDrawRefText).DisplayText, '" mode=', (Form.View.Sheet.Drawing[k] as TDrawRefText).Mode);
+                WriteLn('XREF "', (Form.View.Sheet.Drawing[k] as TDrawRefText).DisplayText, '" mode=', (Form.View.Sheet.Drawing[k] as TDrawRefText).Mode, ' at=', FormatFloat('0.###', Form.View.Sheet.Drawing[k].PointA.x / 5), ',',
+                  FormatFloat('0.###', Form.View.Sheet.Drawing[k].PointA.y / 5));
           end
         else if Cmd = 'shot' then
           begin

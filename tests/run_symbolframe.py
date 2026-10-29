@@ -104,6 +104,11 @@ o, a, f = saved(H + ["libplace %d 90 70" % R0, "selectall", "symlist sel open", 
                      "symlist sel click %d 2" % (last + 1), "symlist sel type 24 V", "symlist sel enter", "symlist sel state", "symlist sel close"])
 check("an added parameter can be renamed and given a value", f[-1][1:3] == ("Voltage", "24 V"), f[-1])
 check("... and Delete is on only for it", any("delete=1" in l for l in o if l.startswith("SYMLIST state")), o[-3:])
+# a name typed but not accepted with Enter is kept when Add is clicked (it went blank), and a name can not be emptied
+o, a, f = saved(H + ["libplace %d 90 70" % R0, "selectall", "symlist sel open", "symlist sel add", "symlist sel click %d 0" % (last + 1), "symlist sel type Aux Contact", "symlist sel add", "symlist sel close"])
+check("a name typed without Enter, then Add: the first parameter is named 'Aux Contact', the second is the new 'Other'", len(f) == len(fields) + 2 and f[-2][1] == "Aux Contact" and f[-1][1] == "Other", f[-2:])
+o, a, f = saved(H + ["libplace %d 90 70" % R0, "selectall", "symlist sel open", "symlist sel add", "symlist sel click %d 0" % (last + 1), "symlist sel type", "symlist sel enter", "symlist sel close"])
+check("a name emptied and accepted keeps its old name (never blank)", f[-1][1] == "Other", f[-1])
 o, a, f = saved(H + ["libplace %d 90 70" % R0, "selectall", "symlist sel open", "symlist sel add", "symlist sel click %d 0" % (last + 1), "symlist sel delete", "symlist sel close"])
 check("Delete takes the added parameter away", f == fields, (len(f), len(fields)))
 o, a, f = saved(H + ["libplace %d 90 70" % R0, "selectall", "symlist sel open", "symlist sel add", "symlist sel close", "undo"])

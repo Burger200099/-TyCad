@@ -17,7 +17,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ComCtrls, ExtCtrls, StdCtrls, Buttons,
   LCLType, LCLProc, TypInfo, Math, Spin, UDPoint, UDrawTypes, UGeometry, UResources, UDrawingObjects, USymbols, UDesign, UDsnBinary, ULibrary, ULibXML, UPaper,
   UProps, UUndo, UView, UDialogs, consts, Fnewdoc, Fabout, QLibPanel, QFindPanel, UDocs, USettings, UOptions, Foptions, {Fcolors,}
-  UFind, Fdetails, Fpagesetup, Fpartslist, UPartsList, USymbolBom, UWireExport, UContacts, Fnetlist, UNetWriters,
+  UFind, Fdetails, Fpagesetup, Fpartslist, UPartsList, USymbolBom, UWireExport, UContacts, ULinks, Fnetlist, UNetWriters,
   USpiceVhdl, UErc, UPartCheck, Fercopts, Fercwin, UAnnotate, Fannotate, Types, Finput,
   Fbase, Fsymbolinfo, QPropFrame, QPropFrameList, StrUtils, Printers, PrintersDlgs, UPrint,
   UPrintRun, Fprint, Fpreview, UExport, Fexport, Flibraries, ULibManager,
@@ -95,6 +95,10 @@ type
     pmSheetPolySep2: TMenuItem;
     pmSheetWireCut: TMenuItem;
     pmSheetMakeHoriz: TMenuItem;
+    pmSheetRung: TMenuItem;
+    pmSheetRungRef: TMenuItem;
+    pmSheetRungAuto: TMenuItem;
+    pmSheetRungSep: TMenuItem;
     pmSheetMakeVert: TMenuItem;
     pmSheetLineSep: TMenuItem;
     pmSheetReloadHier: TMenuItem;
@@ -649,6 +653,9 @@ type
     procedure ContextPolyClick(Sender: TObject);
     procedure ContextLineClick(Sender: TObject);
     procedure ContextWireCutClick(Sender: TObject);
+    procedure ContextRungClick(Sender: TObject);
+    procedure ContextRungRefClick(Sender: TObject);
+    procedure BuildRungMenu(Sym: Boolean);
     procedure PolyDrawMenuClick(Sender: TObject);
     procedure ArcDrawMenuClick(Sender: TObject);
     procedure DoCloseAllDocuments(Sender: TObject);
@@ -13793,6 +13800,8 @@ begin
   pmSheetOpenHier.Visible := Hier;
   pmSheetHierSep.Visible := Hier;
   pmSheetReplaceSym.Visible := Sym;
+  BuildRungMenu(Sym);
+  pmSheetRungRef.Visible := Sym and (FView.SelectedSymbol.GetRef <> '');
   pmSheetSymSep.Visible := Sym;
   { the commands of every object are the items of pmSheet; here only what can be done now is set }
   Sel := FView.SelectedCount > 0;
@@ -13901,6 +13910,64 @@ end;
 procedure TfrmMain.ContextLineClick(Sender: TObject);
 begin
   FView.LineMakeStraight((Sender as TMenuItem).Tag = 1, FContextPoint);
+end;
+
+{ ===========================================================================
+  TfrmMain.BuildRungMenu  (procedure)
+  Parameters:
+    Sym: Boolean - a placed symbol is the chosen object
+  Notes:
+    The Rung item of the sheet's pop-up menu: shown for a symbol that is inside the rung grid and either spans several rungs or has a rung chosen. Its items are Automatic and one for each
+    rung the symbol's connection points are in (made here, their Tag is the rung number); the one in use is ticked.
+  =========================================================================== }
+procedure TfrmMain.BuildRungMenu(Sym: Boolean);
+var
+  Info: TRungInfo;
+  i: Integer;
+  M: TMenuItem;
+begin
+  while pmSheetRung.Count > 2 do
+    pmSheetRung.Delete(2);
+  pmSheetRung.Visible := False;
+  if (not Sym) or (not FView.SymbolRung(Info)) or ((Length(Info.Candidates) < 2) and (not Info.Overridden)) then
+    Exit;
+  pmSheetRungAuto.Tag := 0;
+  pmSheetRungAuto.Checked := not Info.Overridden;
+  for i := 0 to High(Info.Candidates) do
+  begin
+    M := TMenuItem.Create(pmSheetRung);
+    M.Caption := IntToStr(Info.Candidates[i]);
+    M.Tag := Info.Candidates[i];
+    M.RadioItem := True;
+    M.Checked := Info.Overridden and (Info.Number = Info.Candidates[i]);
+    M.OnClick := @ContextRungClick;
+    pmSheetRung.Add(M);
+  end;
+  pmSheetRung.Visible := True;
+end;
+
+{ ===========================================================================
+  TfrmMain.ContextRungClick  (procedure)
+  Parameters:
+    Sender: TObject - the chosen item of the Rung menu
+  Notes:
+    Keeps the rung chosen (its Tag) on the symbol, or 0 for Automatic.
+  =========================================================================== }
+procedure TfrmMain.ContextRungClick(Sender: TObject);
+begin
+  FView.SetSymbolRung((Sender as TMenuItem).Tag);
+end;
+
+{ ===========================================================================
+  TfrmMain.ContextRungRefClick  (procedure)
+  Parameters:
+    Sender: TObject - the menu item
+  Notes:
+    Add Rung Reference: see TSchematicView.AddRungReference.
+  =========================================================================== }
+procedure TfrmMain.ContextRungRefClick(Sender: TObject);
+begin
+  FView.AddRungReference;
 end;
 
 { ===========================================================================

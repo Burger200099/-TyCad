@@ -42,6 +42,7 @@ type
     ilResize: TImage;
     lblCount: TLabel;
     Panel1: TPanel;
+    plMain: TPanel;
     procedure btnAddClick(Sender: TObject);
     procedure btnDeleteClick(Sender: TObject);
     procedure DoResizeWindow(Sender: TObject; Shift: TShiftState; X, Y: Integer);
@@ -53,6 +54,7 @@ type
     procedure grdParamsDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
     procedure grdParamsSelection(Sender: TObject; aCol, aRow: Integer);
     procedure grdParamsValidateEntry(Sender: TObject; aCol, aRow: Integer; const OldValue: string; var NewValue: String);
+    procedure grdParamsSetEditText(Sender: TObject; ACol, ARow: Integer; const Value: string);
   private
     FMethods: TMethodArray;           // the symbols listed
     FRows: array of TParamRow;        // the fields behind each row
@@ -63,6 +65,8 @@ type
     FEditRow, FEditCol: Integer;      // (row of the list, 0 based)
     FPending: String;                 // the text typed when there is no editor on screen (the self-test script)
     FSkipValidate: Boolean;
+    FTyped: String;                   // the last text the grid reported typed in the cell being edited (the editor itself can be empty by the time a button is clicked)
+    FTypedValid: Boolean;
     FSized: Boolean;
     FOnBeforeChange: TNotifyEvent;
     FOnAfterChange: TNotifyEvent;
@@ -206,6 +210,7 @@ begin
   if not FSized then
   begin
     FSized := True;
+    grdParams.OnSetEditText := @grdParamsSetEditText;
     grdParams.ColCount := 3;
     grdParams.FixedRows := 1;
     grdParams.FixedCols := 0;
@@ -427,6 +432,11 @@ var
 begin
   if not CellEditable(ARow, ACol) then
     Exit;
+  if (ACol = 0) and (AText = '') and (RowName(ARow) <> '') then
+  begin
+    grdParams.Cells[0, ARow + 1] := RowName(ARow);   // a parameter is not left without a name: it keeps the one it had
+    Exit;
+  end;
   if ACol = 0 then
     Cur := RowName(ARow)
   else
@@ -515,6 +525,9 @@ begin
     Exit;
   FEditing := False;
   T := EditorText;
+  if FTypedValid and (T = '') then
+    T := FTyped;             // (the editor was already emptied by the focus leaving it: the text typed is what counts)
+  FTypedValid := False;
   FSkipValidate := True;
   try
     if grdParams.EditorMode then
@@ -572,6 +585,16 @@ begin
     FEditing := True;
     FEditRow := aRow - 1;
     FEditCol := aCol;
+    FTypedValid := False;
+  end;
+end;
+
+procedure TfrmSymbolPropList.grdParamsSetEditText(Sender: TObject; ACol, ARow: Integer; const Value: string);
+begin
+  if FEditing and (ARow - 1 = FEditRow) and (ACol = FEditCol) then
+  begin
+    FTyped := Value;
+    FTypedValid := True;
   end;
 end;
 
@@ -592,6 +615,9 @@ begin
   if FSkipValidate or (not FEditing) or (aRow - 1 <> FEditRow) or (aCol <> FEditCol) then
     Exit;
   FEditing := False;
+  if FTypedValid and (NewValue = '') then
+    NewValue := FTyped;
+  FTypedValid := False;
   CommitCell(aRow - 1, aCol, NewValue);
   { the grid keeps its editor on the cell (goAlwaysShowEditor): the next text typed there is an edit of the same cell, and its Enter must be taken too
     (it was ignored, and only taken when something else made the list read the fields again) }

@@ -12,7 +12,7 @@ unit QPartsEditor;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls, ComCtrls, Menus, UPartsDb, Fpartedit, Fclassedit, Ffieldedit, Fratingedit, Fobjectedit, Fproductedit, Fvalueedit, Fsymbolinfo, UGlyph;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls, ComCtrls, Menus, UPartsDb, Fpartedit, Fclassedit, Ffieldedit, Fratingedit, Fobjectedit, Fswitching, Fproductedit, Fvalueedit, Fsymbolinfo, UGlyph;
 
 type
   TPartSymbolEvent = procedure(Sender: TObject; PartID, SymbolID: Int64) of object;
@@ -74,9 +74,11 @@ type
     btnObjAdd: TButton;
     btnObjDelete: TButton;
     btnObjEdit: TButton;
+    btnObjSwitch: TButton;
     cbObjPart: TComboBox;
     lblObjPart: TLabel;
     miObjAdd: TMenuItem;
+    miObjSwitch: TMenuItem;
     miObjDelete: TMenuItem;
     miObjEdit: TMenuItem;
     pmObjects: TPopupMenu;
@@ -166,6 +168,8 @@ type
     procedure ProdRatDeleteClick(Sender: TObject);
     procedure ProdRatSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
     procedure ObjAddClick(Sender: TObject);
+    procedure ObjSwitchClick(Sender: TObject);
+    procedure SwitchChanged(Sender: TObject);
     procedure ObjEditClick(Sender: TObject);
     procedure ObjDeleteClick(Sender: TObject);
     procedure ObjDblClick(Sender: TObject);
@@ -1720,6 +1724,8 @@ begin
   btnObjEdit.Enabled := Row;
   btnObjDelete.Enabled := Row;
   miObjAdd.Enabled := CanAdd;
+  btnObjSwitch.Enabled := (FLib <> nil) and (CurrentObjPartID <> 0);
+  miObjSwitch.Enabled := btnObjSwitch.Enabled;
   miObjEdit.Enabled := Row;
   miObjDelete.Enabled := Row;
 end;
@@ -3309,6 +3315,39 @@ end;
 procedure TfrPartsEditor.ProdRatSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
 begin
   UpdateProdButtons;
+end;
+
+{ ===========================================================================
+  TfrPartsEditor.ObjSwitchClick / SwitchChanged  (procedures)
+  Notes:
+    Poles and Contacts...: the dialog (Fswitching) for the part shown on the Objects page. Each change it makes goes straight to the file; SwitchChanged shows it in the tree, the part
+    list (revision) and the rest.
+  =========================================================================== }
+procedure TfrPartsEditor.ObjSwitchClick(Sender: TObject);
+var
+  Dlg: TfrmSwitching;
+begin
+  if (FLib = nil) or (CurrentObjPartID = 0) then
+    Exit;
+  Dlg := TfrmSwitching.Create(Self);
+  try
+    Dlg.Setup(FLib, CurrentObjPartID);
+    Dlg.OnChanged := @SwitchChanged;
+    Dlg.ShowModal;
+  finally
+    Dlg.Free;
+  end;
+end;
+
+procedure TfrPartsEditor.SwitchChanged(Sender: TObject);
+var
+  PartID: Int64;
+begin
+  PartID := CurrentObjPartID;
+  Refresh(SelectedPartID);
+  FillObjParts(PartID);
+  FillObjects(0);
+  Changed;
 end;
 
 procedure TfrPartsEditor.ObjAddClick(Sender: TObject);

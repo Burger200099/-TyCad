@@ -418,6 +418,16 @@ object frPartsEditor: TfrPartsEditor
           TabOrder = 3
           OnClick = ObjDeleteClick
         end
+        object btnObjSwitch: TButton
+          Left = 680
+          Height = 26
+          Hint = 'The poles and contacts of the part: form (NO, NC ...) and delay of each contact, add and remove them'
+          Top = 5
+          Width = 150
+          Caption = 'Poles and &Contacts...'
+          TabOrder = 4
+          OnClick = ObjSwitchClick
+        end
       end
       object tvObjects: TTreeView
         Left = 0
@@ -1099,6 +1109,11 @@ object frPartsEditor: TfrPartsEditor
       Caption = 'Delete Object'
       Hint = 'Delete the chosen object'
       OnClick = ObjDeleteClick
+    end
+    object miObjSwitch: TMenuItem
+      Caption = 'Poles and Contacts...'
+      Hint = 'The poles and contacts of the part: form and delay of each contact'
+      OnClick = ObjSwitchClick
     end
   end
   object pmRatings: TPopupMenu

@@ -91,7 +91,7 @@ ps = shape(onpoly[0])
 check("on a polygon side: the handle and arc commands first, a separator, then TinyCAD's common commands", [c for d, c, k in ps[:8]] == POLYTOP and ps[8:] == COMMON, ps)
 check("the polygon under the click was chosen, and its commands are enabled", onpoly[1] == 1 and all(en(onpoly[0], c) == 1 for c in POLYTOP if c != "-") and en(onpoly[0], "Cut") == 1, onpoly)
 check("inside the polygon, far from any side: no polygon commands (the click is not on a handle or side)", shape(inside[0])[0:1] != [(0, "Add_handle", "")] and "Add_handle" not in [c for d, c, e, k in inside[0]], inside[0][:3])
-ss = shape(onsym[0])
+ss = [x for x in shape(onsym[0]) if x[1] != "Add_Rung_Reference"]     # (a symbol with a reference also has Add Rung Reference; the Rung submenu shows only when it spans rungs)
 check("on a symbol: Replace Symbol... first, a separator, then the common commands", ss[0][1] == "Replace_Symbol..." and ss[1][1] == "-" and ss[2:] == COMMON, ss[:3])
 check("the symbol was chosen", onsym[1] == 1, onsym[1])
 sn = [l for l in o if l.startswith("SYMNAME")][0]

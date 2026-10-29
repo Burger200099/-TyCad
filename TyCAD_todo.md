@@ -364,3 +364,12 @@ Order matters: each phase builds on the one before. Every item follows the stand
 - DONE: parts plan step 2 (Insert NO/NC/Next Free Contact of selected coil). NEXT: step 3 (rung assignment) / step 4 (cross-reference text with NO/NC and Add Rung Reference). Open: contact numbering across sheets is by reference text only; a coil with more contacts than the part has is just refused with a message.
 - DONE: ruler units (right-click menu on the rulers, Options > Sheets > Ruler Units). The choice is program-wide, not per design; say if it should be saved in each design.
 - DONE: pin property frame shown while the Pin tool is active. Open: a ghost of the pin under the cursor before the click (none is drawn today).
+- [x] Symbol parameter list: a name typed (with or without Enter) is kept when Add is clicked, and a parameter can no longer be left with a blank name (src/forms/FSymDDD.pas; tests/run_symbolframe.py).
+- [x] Layout changes from the user's .lfm files (mainform, fsharedctls, FSymDDD) taken in; plMain field added to TfrmSymbolPropList; languages/schematic.pot regenerated.
+- DECISION (step 6, multi-pole bus): a multi-conductor bus is drawn as individual bus wires (one per conductor, at the pole spacing) grouped together internally as one multi-phase bus.
+- [x] Parts plan step 3: rung assignment with the most-overlap rule, ambiguity flag, stored override and right-click Rung menu (ULinks, UView, mainform; tests/run_rungassign.py).
+- [ ] run_gui.py: 3 checks already failing before step 3 (label View tab, shape tool objects, options defaults list) - look at when next in that file.
+- [ ] Rung: a chosen rung does not follow the symbol when moved; consider clearing it when the symbol is moved to another rung.
+- [x] Parts plan step 4: Add Rung Reference (XREF mode 2) with NO/NC forms; tests/run_rungref.py.
+- [ ] Rung reference: choose the separator / a format (e.g. NO before the number), and a way to refresh position after moving the symbol.
+- [x] Parts plan step 5: Poles and Contacts dialog (poles/contacts as part data, form, delay); tests/run_partsswitch.py. NEXT: step 6 (bus: individual wires grouped as one multi-phase bus, conductor count + spacing, right click Change to bus).

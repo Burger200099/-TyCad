@@ -402,6 +402,10 @@ resourcestring
   rsAddHandle = 'Add handle';
   rsDeleteHandle = 'Delete handle';
   rsMakeVertical = 'Make vertical';
+  rsSetRung = 'Set rung';
+  rsAddRungReference = 'Add rung reference';
+  rsThatObjectIsNotAContact = 'That object is not a contact.';
+  rsADelayedContactNeedsA = 'A delayed contact needs a delay time of more than 0 seconds.';
   rsMakeHorizontal = 'Make horizontal';
   rsAddWireCut = 'Add wire cut';
   rsSelectClickShiftClickOr = 'Select: click, shift-click or drag a box; drag to move';

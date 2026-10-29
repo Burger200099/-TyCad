@@ -1,0 +1,192 @@
+inherited frmSwitching: TfrmSwitching
+  Left = 600
+  Height = 470
+  Top = 250
+  Width = 700
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'Poles and Contacts'
+  ClientHeight = 470
+  ClientWidth = 700
+  OnActivate = SwitchActivate
+  Position = poOwnerFormCenter
+  inherited pnlButtons: TPanel
+    Top = 412
+    Width = 700
+    ClientWidth = 696
+    inherited btnOK: TButton
+      Left = 440
+      Caption = 'Close'
+    end
+    inherited btnCancel: TButton
+      Visible = False
+    end
+    inherited btnApply: TButton
+      Visible = False
+    end
+  end
+  object lvRows: TListView[1]
+    Left = 8
+    Height = 220
+    Hint = 'The coil, poles and contacts of the part, in order; choose a contact to change its form and delay'
+    Top = 8
+    Width = 684
+    Columns = <    
+      item
+        Caption = 'Name'
+        Width = 150
+      end    
+      item
+        Caption = 'Kind'
+        Width = 70
+      end    
+      item
+        Caption = 'Designator'
+        Width = 100
+      end    
+      item
+        Caption = 'Form'
+        Width = 110
+      end    
+      item
+        Caption = 'Delay'
+        Width = 110
+      end    
+      item
+        Caption = 'Seconds'
+        Width = 90
+      end>
+    ReadOnly = True
+    RowSelect = True
+    ShowHint = True
+    TabOrder = 0
+    ViewStyle = vsReport
+    OnSelectItem = RowSelect
+  end
+  object gbContact: TGroupBox[2]
+    Left = 8
+    Height = 100
+    Top = 236
+    Width = 684
+    Caption = 'Contact'
+    ClientHeight = 80
+    ClientWidth = 680
+    TabOrder = 1
+    object lblDesignator: TLabel
+      Left = 12
+      Height = 15
+      Top = 12
+      Width = 80
+      Caption = '&Designator:'
+      FocusControl = edDesignator
+    end
+    object edDesignator: TEdit
+      Left = 96
+      Height = 23
+      Hint = 'The terminal numbers printed on the contact (13-14, 21-22 ...)'
+      Top = 8
+      Width = 120
+      ShowHint = True
+      TabOrder = 0
+    end
+    object lblForm: TLabel
+      Left = 232
+      Height = 15
+      Top = 12
+      Width = 64
+      Caption = '&Form:'
+      FocusControl = cbForm
+    end
+    object cbForm: TComboBox
+      Left = 300
+      Height = 23
+      Hint = 'NO closes when the coil is on, NC opens, CO changes over'
+      Top = 8
+      Width = 150
+      ItemHeight = 15
+      ShowHint = True
+      Style = csDropDownList
+      TabOrder = 1
+    end
+    object lblDelay: TLabel
+      Left = 12
+      Height = 15
+      Top = 48
+      Width = 80
+      Caption = 'D&elay:'
+      FocusControl = cbDelay
+    end
+    object cbDelay: TComboBox
+      Left = 96
+      Height = 23
+      Hint = 'A timing relay contact switches after the coil has been on (on-delay) or off (off-delay) for the time'
+      Top = 44
+      Width = 120
+      ItemHeight = 15
+      ShowHint = True
+      Style = csDropDownList
+      TabOrder = 2
+    end
+    object lblSecs: TLabel
+      Left = 232
+      Height = 15
+      Top = 48
+      Width = 64
+      Caption = '&Time (s):'
+      FocusControl = edSecs
+    end
+    object edSecs: TEdit
+      Left = 300
+      Height = 23
+      Hint = 'The delay in seconds'
+      Top = 44
+      Width = 80
+      ShowHint = True
+      TabOrder = 3
+    end
+    object btnChange: TButton
+      Left = 450
+      Height = 26
+      Hint = 'Keep these entries on the chosen contact'
+      Top = 28
+      Width = 110
+      Caption = '&Change'
+      ShowHint = True
+      TabOrder = 4
+      OnClick = ChangeClick
+    end
+  end
+  object btnAddPole: TButton[3]
+    Left = 8
+    Height = 28
+    Hint = 'Add a pole with one contact of the form and delay chosen above'
+    Top = 346
+    Width = 130
+    Caption = 'Add &Pole'
+    ShowHint = True
+    TabOrder = 2
+    OnClick = AddPoleClick
+  end
+  object btnAddContact: TButton[4]
+    Left = 146
+    Height = 28
+    Hint = 'Add a contact of the form and delay chosen above inside the chosen pole'
+    Top = 346
+    Width = 130
+    Caption = 'Add &Contact'
+    ShowHint = True
+    TabOrder = 3
+    OnClick = AddContactClick
+  end
+  object btnDelete: TButton[5]
+    Left = 284
+    Height = 28
+    Hint = 'Delete the chosen pole or contact'
+    Top = 346
+    Width = 130
+    Caption = '&Delete'
+    ShowHint = True
+    TabOrder = 4
+    OnClick = DeleteClick
+  end
+end

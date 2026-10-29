@@ -91,7 +91,7 @@ const
   PowerChoices = 'Bar|Circle|Wave|Arrow|Earth';
 
   UnitChoices = 'Millimetres|Inches';
-  ModeChoices = 'Line number|Contact line numbers';
+  ModeChoices = 'Line number|Contact line numbers|Contact types and rungs';
   PinShapeChoices = 'Normal|Dot|Clock|Dot Clock|Power|Hidden|Cross';                           // TinyCAD's pin types (CEditDlgPinEdit)
   PinElecChoices = 'Input|Output|Tristate|Open Collector|Passive|Input/Output|Not Connected';   // ... and electrical types
 

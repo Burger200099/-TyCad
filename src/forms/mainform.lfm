@@ -1,8 +1,9 @@
 object frmMain: TfrmMain
-  Left = 855
+  Left = 670
   Height = 477
-  Top = 490
+  Top = 284
   Width = 1623
+  AllowDropFiles = True
   Caption = 'frmMain'
   ClientHeight = 477
   ClientWidth = 1623
@@ -10,10 +11,9 @@ object frmMain: TfrmMain
   Position = poScreenCenter
   LCLVersion = '4.8.0.0'
   OnActivate = FormActivate
-  AllowDropFiles = True
   OnCloseQuery = FormCloseQuery
-  OnDropFiles = FormDropFiles
   OnCreate = FormCreate
+  OnDropFiles = FormDropFiles
   OnKeyDown = FormKeyDown
   OnResize = FormResize
   object sbMainBar: TStatusBar
@@ -240,10 +240,10 @@ object frmMain: TfrmMain
     Hint = 'The toolbars'
     Top = 26
     Width = 1623
-    ActivePage = FTabView
+    ActivePage = FTabDraw
     Align = alTop
     Images = frmSharedControls.ilSpeedBtn
-    TabIndex = 1
+    TabIndex = 2
     TabOrder = 4
     OnChange = RibbonPageChange
     object FTabHome: TTabSheet
@@ -1316,7 +1316,7 @@ object frmMain: TfrmMain
           Width = 28
           Flat = True
           Images = frmSharedControls.ilSpeedBtn
-          ImageIndex = 47
+          ImageIndex = 75
           ImageWidth = 24
           ShowHint = True
           ParentShowHint = False
@@ -2931,6 +2931,25 @@ object frmMain: TfrmMain
       Hint = 'Replace the selected symbol with another one'
       Visible = False
       OnClick = DoReplaceSymbol
+    end
+    object pmSheetRung: TMenuItem
+      Caption = 'Rung'
+      Hint = 'The ladder rung this symbol belongs to'
+      Visible = False
+      object pmSheetRungAuto: TMenuItem
+        Caption = 'Automatic'
+        Hint = 'Work the rung out from where the symbol is'
+        OnClick = ContextRungClick
+      end
+      object pmSheetRungSep: TMenuItem
+        Caption = '-'
+      end
+    end
+    object pmSheetRungRef: TMenuItem
+      Caption = 'Add Rung Reference'
+      Hint = 'Put a cross reference under this symbol: the rung and form of the contacts of a coil, or the rung of the coil of a contact'
+      Visible = False
+      OnClick = ContextRungRefClick
     end
     object pmSheetSymSep: TMenuItem
       Caption = '-'

@@ -68,6 +68,16 @@ type
     Sort: Integer;
   end;
 
+  { one switching element of a part (Poles and Contacts page): a coil, a pole or a contact with what it switches }
+  TSwitchRow = record
+    ID, ParentID: Int64;
+    Kind, Name, Designator: String;       // Kind is Coil, Pole or Contact (or a kind below one of them)
+    Form: String;                         // a contact's Form (NO, NC, CO ...), '' for the others
+    Delay: String;                        // a contact's Delay: none, on-delay or off-delay ('none' when never set), '' for the others
+    DelaySecs: Double;                    // the delay time in seconds, 0 for none
+  end;
+  TSwitchRowArray = array of TSwitchRow;
+
   TKindInfo = record
     ID: Int64;
     Name: String;
@@ -193,6 +203,18 @@ type
     function ContactForm(ObjectID: Int64): String;
     { the contacts of a part (kind Contact) with their forms, in the order of PartObjects }
     function ContactObjects(PartID: Int64): TContactInfoArray;
+    { Poles and Contacts: gives the Contact kind its Delay (none / on-delay / off-delay) and DelaySecs fields when the file does not have them yet (files made before them) }
+    procedure EnsureDelayFields;
+    { the values a Contact field takes (Form, Delay) as a comma list, '' when it has none }
+    function ContactEnum(const AField: String): String;
+    { the coils, poles and contacts of a part in tree order, with each contact's Form, Delay and delay time }
+    function SwitchRows(PartID: Int64): TSwitchRowArray;
+    { adds the next Pole (named Pole n, PoleNo n) with one Contact inside it of this Form and delay; returns the pole's ObjectID }
+    function AddSwitchPole(PartID: Int64; const AForm, ADelay: String; ADelaySecs: Double): Int64;
+    { adds a Contact (named Contact n) inside the pole (0 = directly in the part); returns its ObjectID }
+    function AddSwitchContact(PartID, PoleID: Int64; const AForm, ADelay: String; ADelaySecs: Double): Int64;
+    { sets a contact's designator, Form, Delay and delay time in one revision step; a time needs a delay (on-delay / off-delay), none clears it }
+    procedure SetSwitchContact(ObjectID: Int64; const ADesignator, AForm, ADelay: String; ADelaySecs: Double);
     { the drawing of a schematic symbol of the part that shows a contact, preferring one whose contact has this Form; '' when the part has none }
     function ContactSymbolXml(PartID: Int64; const Form: String): String;
     { SymbolID draws ObjectID (0 = the whole device); refused unless the object is one of FunctionObjects of the symbol's part. The part's Revision goes up }
@@ -2627,6 +2649,190 @@ begin
       Result[High(Result)].Name := F[i].Name;
       Result[High(Result)].Form := ContactForm(F[i].ID);
     end;
+end;
+
+{ ===========================================================================
+  TPartsLibrary.EnsureDelayFields  (procedure)
+  Notes:
+    Adds the fields Delay (enum none, on-delay, off-delay) and DelaySecs (real, s) to the Contact kind when it does not have them (a parts file made before the Poles and Contacts page);
+    new files have them from the start. Safe to call again; nothing else changes.
+  =========================================================================== }
+procedure TPartsLibrary.EnsureDelayFields;
+begin
+  if QueryInt('select count(*) from ObjectKind where Name = ''Contact''') = 0 then
+    Exit;
+  if QueryInt('select count(*) from KindFieldDef where Name = ''Delay'' and KindID = (select KindID from ObjectKind where Name = ''Contact'')') = 0 then
+    Mutate(['INSERT INTO KindFieldDef(KindID, Name, Type, EnumValues, Required, Description) SELECT KindID, ''Delay'', ''enum'', ''none,on-delay,off-delay'', 0, ''timing relay contact: switches after the coil is on or off'' FROM ObjectKind WHERE Name = ''Contact''']);
+  if QueryInt('select count(*) from KindFieldDef where Name = ''DelaySecs'' and KindID = (select KindID from ObjectKind where Name = ''Contact'')') = 0 then
+    Mutate(['INSERT INTO KindFieldDef(KindID, Name, Type, Unit, Required, Description) SELECT KindID, ''DelaySecs'', ''real'', ''s'', 0, ''the delay time'' FROM ObjectKind WHERE Name = ''Contact''']);
+end;
+
+function TPartsLibrary.ContactEnum(const AField: String): String;
+begin
+  EnsureDelayFields;
+  Result := QueryText('select coalesce(EnumValues, '''') from KindFieldDef where Name = ' + SqlQ(AField) + ' and KindID = (select KindID from ObjectKind where Name = ''Contact'')');
+end;
+
+{ ===========================================================================
+  TPartsLibrary.SwitchRows  (function)
+  Parameters:
+    PartID: Int64 - the part
+  Returns:
+    TSwitchRowArray - every Coil, Pole and Contact (or kind below one) in the order of PartObjects
+  Notes:
+    A contact's Delay reads 'none' when it has no value. Delay time is the DelaySecs value.
+  =========================================================================== }
+function TPartsLibrary.SwitchRows(PartID: Int64): TSwitchRowArray;
+var
+  F: TObjectRefArray;
+  i: Integer;
+  FS: TFormatSettings;
+  T: String;
+begin
+  SetLength(Result, 0);
+  FS := DefaultFormatSettings;
+  FS.DecimalSeparator := '.';
+  F := FunctionObjects(PartID);
+  SetLength(Result, Length(F));
+  for i := 0 to High(F) do
+  begin
+    Result[i].ID := F[i].ID;
+    Result[i].ParentID := F[i].ParentID;
+    Result[i].Kind := F[i].Kind;
+    Result[i].Name := F[i].Name;
+    Result[i].Designator := F[i].Designator;
+    Result[i].Form := '';
+    Result[i].Delay := '';
+    Result[i].DelaySecs := 0;
+    if F[i].Kind = 'Contact' then
+    begin
+      Result[i].Form := ContactForm(F[i].ID);
+      T := QueryText('select coalesce(v.ValueText, '''') from ObjectValue v join KindFieldDef f on f.FieldID = v.FieldID where v.ObjectID = ' + IntToStr(F[i].ID) + ' and f.Name = ''Delay''');
+      if T = '' then
+        T := 'none';
+      Result[i].Delay := T;
+      T := QueryText('select coalesce(cast(v.ValueNum as text), '''') from ObjectValue v join KindFieldDef f on f.FieldID = v.FieldID where v.ObjectID = ' + IntToStr(F[i].ID) + ' and f.Name = ''DelaySecs''');
+      Result[i].DelaySecs := StrToFloatDef(T, 0, FS);
+    end;
+  end;
+end;
+
+{ ===========================================================================
+  TPartsLibrary.AddSwitchContact  (function)
+  Parameters:
+    PartID, PoleID: Int64 - the part and the pole the contact goes in (0 = directly in the part)
+    const AForm, ADelay: String - Form (NO, NC ...) and Delay (none, on-delay, off-delay); ADelaySecs the time in seconds
+  Returns:
+    Int64 - the new contact's ObjectID
+  Notes:
+    Named "Contact n" with n one past the highest number the part's contacts have, placed after the others in the pole. Rules of AddObject and SetFieldValue apply (the class must allow
+    contacts, the form must be one of the field's values); when a value is refused the contact is not left behind.
+  =========================================================================== }
+function TPartsLibrary.AddSwitchContact(PartID, PoleID: Int64; const AForm, ADelay: String; ADelaySecs: Double): Int64;
+var
+  KindID, N, Sort: Int64;
+  Nm: String;
+begin
+  EnsureDelayFields;
+  KindID := QueryInt('select KindID from ObjectKind where Name = ''Contact''');
+  N := QueryInt('select count(*) from PartObject where PartID = ' + IntToStr(PartID) + ' and KindID = ' + IntToStr(KindID)) + 1;
+  Nm := 'Contact ' + IntToStr(N);
+  while QueryInt('select count(*) from PartObject where PartID = ' + IntToStr(PartID) + ' and lower(Name) = ' + SqlQ(LowerCase(Nm))) > 0 do
+  begin
+    Inc(N);
+    Nm := 'Contact ' + IntToStr(N);
+  end;
+  Sort := QueryInt('select coalesce(max(Sort), 0) from PartObject where PartID = ' + IntToStr(PartID)) + 10;
+  Result := AddObject(PartID, PoleID, KindID, Nm, '', '', Sort);
+  try
+    SetSwitchContact(Result, '', AForm, ADelay, ADelaySecs);
+  except
+    DeleteObject(Result);
+    raise;
+  end;
+end;
+
+{ ===========================================================================
+  TPartsLibrary.AddSwitchPole  (function)
+  Parameters:
+    PartID: Int64 - the part
+    const AForm, ADelay: String; ADelaySecs: Double - as AddSwitchContact, for the contact the pole starts with
+  Returns:
+    Int64 - the new pole's ObjectID
+  Notes:
+    Named "Pole n" with PoleNo n (one past the highest number the part has), after the other objects. Raises EPartsError when the class does not allow poles; a refused contact removes the pole again.
+  =========================================================================== }
+function TPartsLibrary.AddSwitchPole(PartID: Int64; const AForm, ADelay: String; ADelaySecs: Double): Int64;
+var
+  KindID, N, Sort, FieldID: Int64;
+  Nm: String;
+begin
+  EnsureDelayFields;
+  KindID := QueryInt('select KindID from ObjectKind where Name = ''Pole''');
+  N := QueryInt('select count(*) from PartObject where PartID = ' + IntToStr(PartID) + ' and KindID = ' + IntToStr(KindID)) + 1;
+  Nm := 'Pole ' + IntToStr(N);
+  while QueryInt('select count(*) from PartObject where PartID = ' + IntToStr(PartID) + ' and lower(Name) = ' + SqlQ(LowerCase(Nm))) > 0 do
+  begin
+    Inc(N);
+    Nm := 'Pole ' + IntToStr(N);
+  end;
+  Sort := QueryInt('select coalesce(max(Sort), 0) from PartObject where PartID = ' + IntToStr(PartID)) + 10;
+  Result := AddObject(PartID, 0, KindID, Nm, '', '', Sort);
+  try
+    FieldID := QueryInt('select FieldID from KindFieldDef where Name = ''PoleNo'' and KindID = ' + IntToStr(KindID));
+    if FieldID <> 0 then
+      SetFieldValue(PartID, Result, FieldID, IntToStr(N));
+    AddSwitchContact(PartID, Result, AForm, ADelay, ADelaySecs);
+  except
+    DeleteObject(Result);
+    raise;
+  end;
+end;
+
+{ ===========================================================================
+  TPartsLibrary.SetSwitchContact  (procedure)
+  Parameters:
+    ObjectID: Int64 - a contact
+    const ADesignator, AForm, ADelay: String; ADelaySecs: Double - the new values
+  Notes:
+    Sets the designator (terminal numbers printed on it), the Form (one of the field's values), the Delay and its time. none (or empty) removes the Delay and the time; a time of
+    0 or less with on-delay / off-delay is refused. Raises EPartsError and changes nothing when a value is not accepted. Each stored value is a revision step of the part.
+  =========================================================================== }
+procedure TPartsLibrary.SetSwitchContact(ObjectID: Int64; const ADesignator, AForm, ADelay: String; ADelaySecs: Double);
+var
+  PartID, FForm, FDelay, FSecs, KindID: Int64;
+  Dl: String;
+  i: Integer;
+  Rows: TObjectRefArray;
+  FS: TFormatSettings;
+begin
+  PartID := QueryInt('select coalesce(PartID, 0) from PartObject where ObjectID = ' + IntToStr(ObjectID));
+  if PartID = 0 then
+    raise EPartsError.Create(rsThatObjectIsNotAn);
+  EnsureDelayFields;
+  KindID := QueryInt('select KindID from PartObject where ObjectID = ' + IntToStr(ObjectID));
+  FForm := QueryInt('select f.FieldID from KindFieldDef f where f.Name = ''Form'' and f.KindID = ' + IntToStr(KindID));
+  FDelay := QueryInt('select f.FieldID from KindFieldDef f where f.Name = ''Delay'' and f.KindID = ' + IntToStr(KindID));
+  FSecs := QueryInt('select f.FieldID from KindFieldDef f where f.Name = ''DelaySecs'' and f.KindID = ' + IntToStr(KindID));
+  if (FForm = 0) or (FDelay = 0) or (FSecs = 0) then
+    raise EPartsError.Create(rsThatObjectIsNotAContact);
+  Dl := Trim(ADelay);
+  if SameText(Dl, 'none') then
+    Dl := '';
+  if (Dl <> '') and (ADelaySecs <= 0) then
+    raise EPartsError.Create(rsADelayedContactNeedsA);
+  FS := DefaultFormatSettings;
+  FS.DecimalSeparator := '.';
+  Rows := PartObjects(PartID);
+  for i := 0 to High(Rows) do
+    if Rows[i].ID = ObjectID then
+      UpdateObject(ObjectID, Rows[i].ParentID, Rows[i].KindID, Rows[i].Name, ADesignator, Rows[i].Description, Rows[i].Sort);
+  SetFieldValue(PartID, ObjectID, FForm, AForm);
+  SetFieldValue(PartID, ObjectID, FDelay, Dl);
+  if Dl = '' then
+    SetFieldValue(PartID, ObjectID, FSecs, '')
+  else
+    SetFieldValue(PartID, ObjectID, FSecs, FloatToStr(ADelaySecs, FS));
 end;
 
 { ===========================================================================

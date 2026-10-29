@@ -1843,6 +1843,26 @@ msgctxt "ustrings.rsmakevertical"
 msgid "Make vertical"
 msgstr ""
 
+#: ustrings.rssetrung
+msgctxt "ustrings.rssetrung"
+msgid "Set rung"
+msgstr ""
+
+#: ustrings.rsaddrungreference
+msgctxt "ustrings.rsaddrungreference"
+msgid "Add rung reference"
+msgstr ""
+
+#: ustrings.rsthatobjectisnotacontact
+msgctxt "ustrings.rsthatobjectisnotacontact"
+msgid "That object is not a contact."
+msgstr ""
+
+#: ustrings.rsadelayedcontactneedsa
+msgctxt "ustrings.rsadelayedcontactneedsa"
+msgid "A delayed contact needs a delay time of more than 0 seconds."
+msgstr ""
+
 #: ustrings.rsmakehorizontal
 msgctxt "ustrings.rsmakehorizontal"
 msgid "Make horizontal"
@@ -4201,33 +4221,33 @@ msgctxt "tfrmsymbolproplist.caption"
 msgid "fmSymbolDetailsDropDown"
 msgstr ""
 
-#: tfrmsymbolproplist.panel1.btnadd.hint
-msgctxt "tfrmsymbolproplist.panel1.btnadd.hint"
+#: tfrmsymbolproplist.plmain.panel1.btnadd.hint
+msgctxt "tfrmsymbolproplist.plmain.panel1.btnadd.hint"
 msgid "Add a parameter to this symbol"
 msgstr ""
 
-#: tfrmsymbolproplist.panel1.btnadd.caption
-msgctxt "tfrmsymbolproplist.panel1.btnadd.caption"
+#: tfrmsymbolproplist.plmain.panel1.btnadd.caption
+msgctxt "tfrmsymbolproplist.plmain.panel1.btnadd.caption"
 msgid "Add"
 msgstr ""
 
-#: tfrmsymbolproplist.panel1.btndelete.hint
-msgctxt "tfrmsymbolproplist.panel1.btndelete.hint"
+#: tfrmsymbolproplist.plmain.panel1.btndelete.hint
+msgctxt "tfrmsymbolproplist.plmain.panel1.btndelete.hint"
 msgid "Delete the selected parameter (only one added here)"
 msgstr ""
 
-#: tfrmsymbolproplist.panel1.btndelete.caption
-msgctxt "tfrmsymbolproplist.panel1.btndelete.caption"
+#: tfrmsymbolproplist.plmain.panel1.btndelete.caption
+msgctxt "tfrmsymbolproplist.plmain.panel1.btndelete.caption"
 msgid "Delete"
 msgstr ""
 
-#: tfrmsymbolproplist.lblcount.caption
-msgctxt "tfrmsymbolproplist.lblcount.caption"
+#: tfrmsymbolproplist.plmain.lblcount.caption
+msgctxt "tfrmsymbolproplist.plmain.lblcount.caption"
 msgid "1 symbol selected"
 msgstr ""
 
-#: tfrmsymbolproplist.grdparams.hint
-msgctxt "tfrmsymbolproplist.grdparams.hint"
+#: tfrmsymbolproplist.plmain.grdparams.hint
+msgctxt "tfrmsymbolproplist.plmain.grdparams.hint"
 msgid "Click Show? to turn a parameter on or off, or a value to edit it in place"
 msgstr ""
 
@@ -6833,6 +6853,136 @@ msgstr ""
 #: tfrmratingedit.edcondition.hint
 msgctxt "tfrmratingedit.edcondition.hint"
 msgid "When the value holds, for example AC-15 230 V (a product is compared on the same condition)"
+msgstr ""
+
+#: tfrmswitching.caption
+msgctxt "tfrmswitching.caption"
+msgid "Poles and Contacts"
+msgstr ""
+
+#: tfrmswitching.pnlbuttons.btnok.caption
+msgctxt "tfrmswitching.pnlbuttons.btnok.caption"
+msgid "Close"
+msgstr ""
+
+#: tfrmswitching.lvrows.hint
+msgctxt "tfrmswitching.lvrows.hint"
+msgid "The coil, poles and contacts of the part, in order; choose a contact to change its form and delay"
+msgstr ""
+
+#: tfrmswitching.lvrows.columns[0].caption
+msgctxt "tfrmswitching.lvrows.columns[0].caption"
+msgid "Name"
+msgstr ""
+
+#: tfrmswitching.lvrows.columns[1].caption
+msgctxt "tfrmswitching.lvrows.columns[1].caption"
+msgid "Kind"
+msgstr ""
+
+#: tfrmswitching.lvrows.columns[2].caption
+msgctxt "tfrmswitching.lvrows.columns[2].caption"
+msgid "Designator"
+msgstr ""
+
+#: tfrmswitching.lvrows.columns[3].caption
+msgctxt "tfrmswitching.lvrows.columns[3].caption"
+msgid "Form"
+msgstr ""
+
+#: tfrmswitching.lvrows.columns[4].caption
+msgctxt "tfrmswitching.lvrows.columns[4].caption"
+msgid "Delay"
+msgstr ""
+
+#: tfrmswitching.lvrows.columns[5].caption
+msgctxt "tfrmswitching.lvrows.columns[5].caption"
+msgid "Seconds"
+msgstr ""
+
+#: tfrmswitching.gbcontact.caption
+msgctxt "tfrmswitching.gbcontact.caption"
+msgid "Contact"
+msgstr ""
+
+#: tfrmswitching.gbcontact.lbldesignator.caption
+msgctxt "tfrmswitching.gbcontact.lbldesignator.caption"
+msgid "&Designator:"
+msgstr ""
+
+#: tfrmswitching.gbcontact.eddesignator.hint
+msgctxt "tfrmswitching.gbcontact.eddesignator.hint"
+msgid "The terminal numbers printed on the contact (13-14, 21-22 ...)"
+msgstr ""
+
+#: tfrmswitching.gbcontact.lblform.caption
+msgctxt "tfrmswitching.gbcontact.lblform.caption"
+msgid "&Form:"
+msgstr ""
+
+#: tfrmswitching.gbcontact.cbform.hint
+msgctxt "tfrmswitching.gbcontact.cbform.hint"
+msgid "NO closes when the coil is on, NC opens, CO changes over"
+msgstr ""
+
+#: tfrmswitching.gbcontact.lbldelay.caption
+msgctxt "tfrmswitching.gbcontact.lbldelay.caption"
+msgid "D&elay:"
+msgstr ""
+
+#: tfrmswitching.gbcontact.cbdelay.hint
+msgctxt "tfrmswitching.gbcontact.cbdelay.hint"
+msgid "A timing relay contact switches after the coil has been on (on-delay) or off (off-delay) for the time"
+msgstr ""
+
+#: tfrmswitching.gbcontact.lblsecs.caption
+msgctxt "tfrmswitching.gbcontact.lblsecs.caption"
+msgid "&Time (s):"
+msgstr ""
+
+#: tfrmswitching.gbcontact.edsecs.hint
+msgctxt "tfrmswitching.gbcontact.edsecs.hint"
+msgid "The delay in seconds"
+msgstr ""
+
+#: tfrmswitching.gbcontact.btnchange.hint
+msgctxt "tfrmswitching.gbcontact.btnchange.hint"
+msgid "Keep these entries on the chosen contact"
+msgstr ""
+
+#: tfrmswitching.gbcontact.btnchange.caption
+msgctxt "tfrmswitching.gbcontact.btnchange.caption"
+msgid "&Change"
+msgstr ""
+
+#: tfrmswitching.btnaddpole.hint
+msgctxt "tfrmswitching.btnaddpole.hint"
+msgid "Add a pole with one contact of the form and delay chosen above"
+msgstr ""
+
+#: tfrmswitching.btnaddpole.caption
+msgctxt "tfrmswitching.btnaddpole.caption"
+msgid "Add &Pole"
+msgstr ""
+
+#: tfrmswitching.btnaddcontact.hint
+msgctxt "tfrmswitching.btnaddcontact.hint"
+msgid "Add a contact of the form and delay chosen above inside the chosen pole"
+msgstr ""
+
+#: tfrmswitching.btnaddcontact.caption
+msgctxt "tfrmswitching.btnaddcontact.caption"
+msgid "Add &Contact"
+msgstr ""
+
+#: tfrmswitching.btndelete.hint
+msgctxt "tfrmswitching.btndelete.hint"
+msgid "Delete the chosen pole or contact"
+msgstr ""
+
+#: tfrmswitching.btndelete.caption
+msgctxt "tfrmswitching.btndelete.caption"
+msgid "&Delete"
 msgstr ""
 
 #: tfrmsymbolinfo.caption
@@ -9920,6 +10070,36 @@ msgctxt "tfrmmain.pmsheet.pmsheetreplacesym.hint"
 msgid "Replace the selected symbol with another one"
 msgstr ""
 
+#: tfrmmain.pmsheet.pmsheetrung.caption
+msgctxt "tfrmmain.pmsheet.pmsheetrung.caption"
+msgid "Rung"
+msgstr ""
+
+#: tfrmmain.pmsheet.pmsheetrung.hint
+msgctxt "tfrmmain.pmsheet.pmsheetrung.hint"
+msgid "The ladder rung this symbol belongs to"
+msgstr ""
+
+#: tfrmmain.pmsheet.pmsheetrung.pmsheetrungauto.caption
+msgctxt "tfrmmain.pmsheet.pmsheetrung.pmsheetrungauto.caption"
+msgid "Automatic"
+msgstr ""
+
+#: tfrmmain.pmsheet.pmsheetrung.pmsheetrungauto.hint
+msgctxt "tfrmmain.pmsheet.pmsheetrung.pmsheetrungauto.hint"
+msgid "Work the rung out from where the symbol is"
+msgstr ""
+
+#: tfrmmain.pmsheet.pmsheetrungref.caption
+msgctxt "tfrmmain.pmsheet.pmsheetrungref.caption"
+msgid "Add Rung Reference"
+msgstr ""
+
+#: tfrmmain.pmsheet.pmsheetrungref.hint
+msgctxt "tfrmmain.pmsheet.pmsheetrungref.hint"
+msgid "Put a cross reference under this symbol: the rung and form of the contacts of a coil, or the rung of the coil of a contact"
+msgstr ""
+
 #: tfrmmain.pmsheet.pmsheetundo.caption
 msgctxt "tfrmmain.pmsheet.pmsheetundo.caption"
 msgid "Undo"
@@ -10985,6 +11165,16 @@ msgctxt "tfrpartseditor.pceditor.tsobjects.pnlobjtools.btnobjdelete.caption"
 msgid "D&elete Object"
 msgstr ""
 
+#: tfrpartseditor.pceditor.tsobjects.pnlobjtools.btnobjswitch.hint
+msgctxt "tfrpartseditor.pceditor.tsobjects.pnlobjtools.btnobjswitch.hint"
+msgid "The poles and contacts of the part: form (NO, NC ...) and delay of each contact, add and remove them"
+msgstr ""
+
+#: tfrpartseditor.pceditor.tsobjects.pnlobjtools.btnobjswitch.caption
+msgctxt "tfrpartseditor.pceditor.tsobjects.pnlobjtools.btnobjswitch.caption"
+msgid "Poles and &Contacts..."
+msgstr ""
+
 #: tfrpartseditor.pceditor.tsobjects.tvobjects.hint
 msgctxt "tfrpartseditor.pceditor.tsobjects.tvobjects.hint"
 msgid "The terminals, poles, channels ... of the part; an object inside another hangs below it (double click to change one)"
@@ -11573,6 +11763,16 @@ msgstr ""
 #: tfrpartseditor.pmobjects.miobjdelete.hint
 msgctxt "tfrpartseditor.pmobjects.miobjdelete.hint"
 msgid "Delete the chosen object"
+msgstr ""
+
+#: tfrpartseditor.pmobjects.miobjswitch.caption
+msgctxt "tfrpartseditor.pmobjects.miobjswitch.caption"
+msgid "Poles and Contacts..."
+msgstr ""
+
+#: tfrpartseditor.pmobjects.miobjswitch.hint
+msgctxt "tfrpartseditor.pmobjects.miobjswitch.hint"
+msgid "The poles and contacts of the part: form and delay of each contact"
 msgstr ""
 
 #: tfrpartseditor.pmratings.miratadd.caption

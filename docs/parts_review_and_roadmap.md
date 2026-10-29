@@ -47,9 +47,9 @@ What both do, and what matters to you: ONE device identity, many symbols, each s
 |---|------|--------------------|------|
 | 1 (done) | Placed symbol records the part object it shows (Coil / Pole n / Contact m) | the basis for everything below | medium |
 | 2 (done) | "Insert contact of K1": choose a coil, the contact takes the reference and the next unused NO/NC contact of that relay; warn when a relay has none left | no typing of references, no counting poles | medium |
-| 3 | Rung assignment: default = the rung where the symbol's connection points sit; when it spans several rungs, the one it overlaps most; if still ambiguous a small picker; the choice is stored on the symbol | line numbers right without work | small |
-| 4 | Cross-reference text with contact type ("5 NO  7 NC") and "Add Rung Reference" on right click (coil -> its contacts, contact -> its coil) | what you described, EPLAN style | small (extends TDrawRefText) |
-| 5 | Poles as data on the part (rows: coil, pole, contact form NO/NC, delayed on/off) | relays and timers described once | small (schema has it) |
+| 3 (DONE 2026-10-28) | Rung assignment: default = the rung where the symbol's connection points sit; when it spans several rungs, the one it overlaps most; if still ambiguous a small picker; the choice is stored on the symbol | line numbers right without work | small |
+| 4 (DONE 2026-10-28) | Cross-reference text with contact type ("5 NO  7 NC") and "Add Rung Reference" on right click (coil -> its contacts, contact -> its coil) | what you described, EPLAN style | small (extends TDrawRefText) |
+| 5 (DONE 2026-10-28) | Poles as data on the part (rows: coil, pole, contact form NO/NC, delayed on/off) | relays and timers described once | small (schema has it) |
 | 6 | Multi-pole snapping onto the existing Bus object (given a conductor count and spacing; right click a wire > Change to bus): part pole pitch and an n-conductor bus; placing a 3-pole device snaps all poles onto a 3-wire bus (2 on a 2-wire bus) | the SkyCAD behaviour you liked | larger |
 | 7 | Simplify "Add part": a wizard (pick class -> only that class's fields; presets such as "relay with 3 NO + 1 NC", "contactor 3-pole + aux"), tabs for products / 3D / outlines hidden under Advanced | adding a part in seconds; custom parts possible | medium |
 | 8 | "Make part from this symbol" (right click a drawn symbol) and a starter library of common electrical parts | rarely need to create parts | medium |
@@ -64,3 +64,5 @@ Do 1 to 4 first: they remove the most repetition and do not depend on the parts 
 - SkyCAD: I could not test it; its custom-part story was not visible to you either, so this design should not copy it blindly.
 
 Sources: Autodesk help (Schematic Components; To Work With Ladders; Create a three-phase circuit); EPLAN Infoportal (cross-reference generation).
+
+**Decision (step 6):** a multi-conductor bus looks like individual bus wires (one per conductor, at the pole spacing) grouped internally as one multi-phase bus.

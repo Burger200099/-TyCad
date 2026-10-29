@@ -226,8 +226,8 @@ check("every shape tool made its object", cls(st3) == want, f"{cls(st3)}")
 check("the second ruler offers its position as a property", any(l.startswith("PROPS ruler.pos=400") for l in out2))
 xr = [l for l in out2 if l.startswith("XREF")]
 # the resistors sit at y = 93 mm (mean of their pins); the rung grid (border 6.35 + indent 33.65 = 40 mm) has 20 rows of 9.97 mm from y = 40 mm, numbered from 11, then from 101: row 5
-check("linked text shows the ladder line of its target", xr and xr[0] == 'XREF "16" mode=0', str(xr))
-check("and follows when the ladder is renumbered", len(xr) > 1 and xr[1] == 'XREF "106" mode=0', str(xr))
+check("linked text shows the ladder line of its target", xr and xr[0].startswith('XREF "16" mode=0'), str(xr))
+check("and follows when the ladder is renumbered", len(xr) > 1 and xr[1].startswith('XREF "106" mode=0'), str(xr))
 props = [l for l in out2 if l.startswith("PROPS")]
 mixed_before = [l for l in props if "font.height=10" in l and "font.color=(mixed)" in l]
 mixed_after = [l for l in props if "font.height=24" in l and "font.bold=1" in l and "font.color=(mixed)" in l]
