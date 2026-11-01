@@ -373,3 +373,14 @@ Order matters: each phase builds on the one before. Every item follows the stand
 - [x] Parts plan step 4: Add Rung Reference (XREF mode 2) with NO/NC forms; tests/run_rungref.py.
 - [ ] Rung reference: choose the separator / a format (e.g. NO before the number), and a way to refresh position after moving the symbol.
 - [x] Parts plan step 5: Poles and Contacts dialog (poles/contacts as part data, form, delay); tests/run_partsswitch.py. NEXT: step 6 (bus: individual wires grouped as one multi-phase bus, conductor count + spacing, right click Change to bus).
+- [x] Parts plan step 6: 1-6 conductor bus, Change to bus, pole snapping onto buses and ladder rails (tests/run_busn.py, run_polesnap.py). NEXT: step 7 (Add Part wizard and presets). Open: snap while dragging a symbol; symbol pins of a multi-pole part are found by geometry only (a row at the bus spacing), not from the part's Pole objects.
+- [x] Parts plan step 7: Add Part wizard with presets, Advanced box (tests/run_partwizard.py). NEXT: step 8 (Make part from this symbol, starter library). Open: user-defined presets; a preset could also pick a default symbol.
+- [x] Part ribbon page (name + reference, glyph, object list with [Page, line] / [unused], Goto / Place) replacing the three Special > Insert Contact items; Parts tab preview.
+- [x] Print / export of a sheet not yet shown: labels' text missing (layout not done) fixed; tests/run_printunopened.py.
+- [x] Part symbol Symbol Properties: Shows list on New (unshown objects only), Standard a fixed list, dialog on store/Library menu replaces the library one for part symbols, rename reaches the Symbols page.
+- [x] Paste into the symbol editor: placed symbols come in as their lines/pins, wires become lines, circuit-only objects dropped; tests/run_symbolpaste.py.
+- [x] Select All Alike submenu for a right clicked symbol (All Symbols / Identical References / Identical Names), built in code; tests/run_selalike.py.
+- [ ] Linked text target: the Target ID property is a bare number now; it needs a drop-down window with a tree of every sheet and the symbols (objects) on it to choose from.
+- [ ] Move the Part ribbon page into a frame on the View ribbon tab (it is a page of its own now, shown while a symbol of a part is selected).
+- [x] Virtual poles: a Form (standard / virtual) on the pole itself, a new pole starts virtual; the pole's own symbol (one contact with a line between the pins, or ladder-style vertical lines) is still just symbol design.
+- [x] Contact Form `virtual` (no symbol, not offered in the Part ribbon, the Objects menu or Shows); right click on a part symbol: Objects > every object (select / put on the pointer), Add Symbol Rung Text.

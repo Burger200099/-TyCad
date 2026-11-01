@@ -34,7 +34,7 @@ interface
 
 uses
   Classes, SysUtils, TypInfo, UStrings, QPropFrame, LMessages, Math, Menus, LCLProc, StdCtrls, ExtCtrls, Dialogs, Forms, Controls, LCLType, Graphics, StrUtils, UDPoint, UDrawTypes, UGeometry, UResources, UDrawingObjects, UDesign, UPaper, ULinks,
-  UView, UPainter, MainForm, UDialogs, Fnewdoc, Fdetails, Fpagesetup, Finput, Fbase, USettings, UProps, UUndo, UEdit, Foptions, Fpartslist, UPartsList, Fnetlist, UNetWriters, USpiceVhdl, Fercopts, UErc, UAnnotate, Fannotate, Fprint, Fpreview, Fexport, Flibraries, ULibManager, USymEdit, Fsymprops, Fsymparts, ULibrary, QLibPanel, UDocs, UTextMetrics, UViewRulers, UPrintRun, UOptions, URepeat, UOrient, FSharedCtls, QPropFrameList, QDemoWireProps, QDemoBadProps, consts, UDocTabs, UPartsDb, UPartData, Fproductpick, USymbols, CFontNameCombo, ComCtrls, crc, QPartsEditor, Fpartedit, Fclassedit, Ffieldedit, Fratingedit, Fobjectedit, Fswitching, Fproductedit, Fvalueedit, Fsymbolinfo;
+  UView, UPainter, MainForm, UDialogs, Fnewdoc, Fdetails, Fpagesetup, Finput, Fbase, USettings, UProps, UUndo, UEdit, Foptions, Fpartslist, UPartsList, Fnetlist, UNetWriters, USpiceVhdl, Fercopts, UErc, UAnnotate, Fannotate, Fprint, Fpreview, Fexport, Flibraries, ULibManager, USymEdit, Fsymprops, Fsymparts, ULibrary, QLibPanel, UDocs, UTextMetrics, UViewRulers, UPrintRun, UOptions, URepeat, UOrient, FSharedCtls, QPropFrameList, QDemoWireProps, QDemoBadProps, consts, UDocTabs, UPartsDb, UPartData, Fproductpick, USymbols, CFontNameCombo, ComCtrls, crc, QPartsEditor, Fpartedit, Fclassedit, Ffieldedit, Fratingedit, Fobjectedit, Fswitching, Fpartwizard, UPartPresets, Fproductedit, Fvalueedit, Fsymbolinfo;
 
 procedure RunScript(Form: TfrmMain; const FileName: String);
 
@@ -641,6 +641,70 @@ end;
       pe sw shot|<file>                              a picture of the dialog with the last row chosen
       pe sw dlg                                      PESWDLG forms=<list> delays=<list> rows=<n> buttons=<add pole,add contact,change,delete enabled 0|1 ...> for the dialog with nothing chosen
   =========================================================================== }
+procedure PeWizCommand(Form: TfrmMain; Ed: TfrPartsEditor; A: TStringList);
+var
+  Sub: String;
+  Dlg: TfrmPartWizard;
+  Pr: TPartPresetArray;
+  k: Integer;
+  OK: Boolean;
+begin
+  { pe wiz presets | dlg|<key> | shot|<key>|<png> | add|<key>|<name>|<poles>|<no>|<nc>|<coil 0/1>|<delay>|<secs>|<letters>|<class name or empty>
+    The Add Part wizard: the presets, what the wizard shows for one, a picture of it, or the part it makes (name '' = the one the wizard makes). }
+  Sub := A[0];
+  if Sub = 'presets' then
+  begin
+    Pr := PartPresets;
+    for k := 0 to High(Pr) do
+      WriteLn('PEWIZ preset ', Pr[k].Key, '|', Pr[k].Title, '|', Pr[k].ClassName, '|', Pr[k].RefPrefix, '|', Ord(Pr[k].AskPoles), Ord(Pr[k].AskNO), Ord(Pr[k].AskNC), Ord(Pr[k].AskCoil), Ord(Pr[k].AskDelay));
+    Exit;
+  end;
+  if Sub = 'adv' then
+  begin
+    { pe wiz adv | adv|on | adv|off : the Advanced box of the editor tab and which pages show }
+    if (A.Count > 1) and (A[1] = 'on') then
+      Ed.cbAdvanced.Checked := True
+    else if (A.Count > 1) and (A[1] = 'off') then
+      Ed.cbAdvanced.Checked := False;
+    WriteLn('PEWIZ adv checked=', Ord(Ed.cbAdvanced.Checked), ' classes=', Ord(Ed.tsClasses.TabVisible), ' products=', Ord(Ed.tsProducts.TabVisible), ' page=', Ed.PageName);
+    Exit;
+  end;
+  Dlg := TfrmPartWizard.Create(Ed);
+  try
+    Dlg.Setup(Ed.Lib);
+    Dlg.ChoosePreset(A[1]);
+    if Sub = 'dlg' then
+      WriteLn('PEWIZ dlg name=[', Dlg.PartName, '] letters=[', Dlg.RefPrefix, '] summary=[', Dlg.SummaryText, '] shown=', Ord(Dlg.sePoles.Visible), Ord(Dlg.seNO.Visible), Ord(Dlg.seNC.Visible), Ord(Dlg.cbCoil.Visible),
+        Ord(Dlg.cbDelay.Visible), Ord(Dlg.cbClass.Visible), ' poles=', Dlg.sePoles.Value, ' no=', Dlg.seNO.Value, ' nc=', Dlg.seNC.Value, ' coil=', Ord(Dlg.cbCoil.Checked), ' delay=', Dlg.cbDelay.Text)
+    else if Sub = 'shot' then
+    begin
+      Dlg.Show;
+      Application.ProcessMessages;
+      SaveForm(Dlg, A[2]);
+      WriteLn('PEWIZ shot ', A[2]);
+    end
+    else if Sub = 'add' then
+    begin
+      Dlg.SetEntries(StrToInt(A[3]), StrToInt(A[4]), StrToInt(A[5]), A[6] = '1', A[7], StrToFloatDef(A[8], 0, DefaultFormatSettings));
+      if A[2] <> '' then
+        Dlg.edName.Text := A[2];
+      if A[9] <> '' then
+        Dlg.edRef.Text := A[9];
+      if A[10] <> '' then
+        for k := 0 to Dlg.cbClass.Items.Count - 1 do
+          if SameText(Dlg.cbClass.Items[k], A[10]) then
+            Dlg.cbClass.ItemIndex := k;
+      OK := Ed.AddPresetPart(Dlg.Preset, Dlg.Params, Dlg.PartName, Dlg.RefPrefix, Dlg.Description, Dlg.ClassID);
+      if OK then
+        WriteLn('PEWIZ add ok id=', Ed.SelectedPartID, ' name=', Dlg.PartName)
+      else
+        WriteLn('PEWIZ add error ', Ed.LastError);
+    end;
+  finally
+    Dlg.Free;
+  end;
+end;
+
 procedure PeSwCommand(Form: TfrmMain; Ed: TfrPartsEditor; A: TStringList);
 var
   Sub: String;
@@ -705,6 +769,21 @@ begin
       Entries(A[3], A[4], A[5]);
       OK := Dlg.DoChange;
       Report('set');
+    end
+    else if Sub = 'setpole' then
+    begin
+      { pe sw setpole|<pole name>|<standard|virtual> }
+      Choose(A[1]);
+      Dlg.cbPoleForm.ItemIndex := Dlg.cbPoleForm.Items.IndexOf(A[2]);
+      OK := Dlg.DoChangePole;
+      Report('setpole');
+    end
+    else if Sub = 'boxes' then
+    begin
+      { pe sw boxes|<row name or empty> : which box is shown for the row (PESWBOX contact=<0|1> pole=<0|1> change=<0|1> changepole=<0|1> poleform=<form> form=<form>) }
+      Choose(A[1]);
+      WriteLn('PESWBOX contact=', Ord(Dlg.gbContact.Visible), ' pole=', Ord(Dlg.gbPole.Visible), ' change=', Ord(Dlg.btnChange.Enabled), ' changepole=', Ord(Dlg.btnChangePole.Enabled),
+        ' poleform=', Dlg.cbPoleForm.Text, ' form=', Dlg.cbForm.Text, ' designator=[', Dlg.edDesignator.Text, ']');
     end
     else if Sub = 'del' then
     begin
@@ -1218,7 +1297,7 @@ begin
   end
   else if Sub = 'start' then
   begin
-    Doc := Form.StartPartSymbol(Ed, Ed.CurrentSymPartID, Ed.SymbolIDOfRow(Row), A[2], A[3], A[4]);
+    Doc := Form.StartPartSymbol(Ed, Ed.CurrentSymPartID, Ed.SymbolIDOfRow(Row), A[2], A[3], A[4], IfThen(A.Count > 5, StrToInt64Def(A[5], 0), Int64(0)));
     if Doc = nil then
       WriteLn('PE sym start error no symbol editor')
     else
@@ -1289,8 +1368,14 @@ begin
     Dlg := TfrmSymbolInfo.Create(Form);
     try
       with Ed.SymbolRowAt(Row) do
-        Dlg.Setup(Standard, Purpose, Name);
-      WriteLn('PEDLG caption=', Dlg.Caption, ' standard=', Dlg.Standard, ' purpose=', Dlg.Purpose, ' name=', Dlg.SymName, ' purposes=', Dlg.cbPurpose.Items.Count);
+        if (A.Count > 2) and (A[2] = 'shows') then
+          Dlg.Setup(Standard, Purpose, Name, Ed.Lib.UnshownObjects(Ed.CurrentSymPartID, ID), ShowsID)       { as Part Symbol Properties offers it }
+        else if (A.Count > 2) and (A[2] = 'newshows') then
+          Dlg.Setup(Standard, Purpose, Name, Ed.Lib.UnshownObjects(Ed.CurrentSymPartID, 0), 0)               { as New... offers it }
+        else
+          Dlg.Setup(Standard, Purpose, Name);
+      WriteLn('PEDLG caption=', Dlg.Caption, ' standard=', Dlg.Standard, ' purpose=', Dlg.Purpose, ' name=', Dlg.SymName, ' purposes=', Dlg.cbPurpose.Items.Count,
+        ' stdstyle=', Ord(Dlg.cbStandard.Style = csDropDownList), ' shows=[', StringReplace(Dlg.cbShows.Items.CommaText, '"', '', [rfReplaceAll]), '] showsvisible=', Ord(Dlg.cbShows.Visible));
     finally
       Dlg.Free;
     end;
@@ -1804,6 +1889,8 @@ begin
                   PeObjCommand(Form, PeEd, PeArgs)
                 else if S = 'sw' then
                   PeSwCommand(Form, PeEd, PeArgs)
+                else if S = 'wiz' then
+                  PeWizCommand(Form, PeEd, PeArgs)
                 else if S = 'prod' then
                   PeProdCommand(Form, PeEd, PeArgs)
                 else if S = 'val' then
@@ -1985,6 +2072,12 @@ begin
           end
         else if Cmd = 'syminfo' then
           SymbolInfoLines(Form)
+        else if Cmd = 'partsyminfo' then
+          begin
+            { partsyminfo <standard> <purpose> <name or -> <shows id> : OK of Symbol Properties for the part symbol being edited }
+            Form.ApplyPartSymbolInfo(Form.CurrentDocument, T[1], T[2], IfThen(T[3] = '-', '', T[3]), StrToInt64Def(T[4], 0));
+            WriteLn('PARTSYMINFO ok');
+          end
         else if Cmd = 'sym' then
           begin
             { sym <name>=<value> ... : the symbol editor's commands, one step at a time; after each step SYM <step> ok=<0|1> msg=[<message>] and the SYMINFO of the current document.
@@ -4566,6 +4659,36 @@ begin
               WriteLn('RUNG 0 0 amb=0 over=0 cand=');
             Settle;
           end
+        else if Cmd = 'pdbpreview' then
+          begin
+            { pdbpreview <row> [dbl <x mm> <y mm>] : chooses a part of the Parts tab and prints PDBPREVIEW <row> shown=<0|1> (the preview under the list holds its symbol); dbl then double clicks the
+              preview, which places the part (a click at the point puts it down) }
+            Form.frameLibraryPanel.SelectPartRow(StrToInt(T[1]));
+            WriteLn('PDBPREVIEW ', T[1], ' shown=', Ord(Form.frameLibraryPanel.PartPreviewShown));
+            if (T.Count > 4) and (LowerCase(T[2]) = 'dbl') then
+            begin
+              Form.PartsWarnMode := 1;
+              Form.frameLibraryPanel.DoubleClickPartPreview;
+              Form.View.ClickAt(Form.View.DesignToScreen(DPoint(Num(T[3]) * UNITS_PER_MM, Num(T[4]) * UNITS_PER_MM)).x,
+                                Form.View.DesignToScreen(DPoint(Num(T[3]) * UNITS_PER_MM, Num(T[4]) * UNITS_PER_MM)).y, []);
+              Settle;
+              WriteLn('PDBPREVIEW dbl objects=', Form.View.Sheet.Drawing.Count);
+            end;
+          end
+        else if Cmd = 'partribbon' then
+          begin
+            { partribbon [pick <n> | press] : the Part page of the ribbon. Alone it prints PARTRIBBON visible=<0|1> title=[part name and reference] object=[chosen object] button=[Goto|Place] enabled=<0|1>
+              index=<chosen> glyph=<0|1> items=[object line|...]; pick chooses item n of its list (0-based), press clicks the button (PARTRIBBON press <goto|placed|nosymbol|refused|blocked|none>); a placed symbol
+              is put down with a click (clickmm) as usual }
+            if (T.Count > 2) and (LowerCase(T[1]) = 'pick') then
+              Form.PartRibbonPick(StrToInt(T[2]))
+            else if (T.Count > 1) and (LowerCase(T[1]) = 'press') then
+            begin
+              WriteLn('PARTRIBBON press ', Form.PartRibbonPress);
+              Settle;
+            end;
+            WriteLn('PARTRIBBON ', Form.PartRibbonState);
+          end
         else if Cmd = 'insertcontact' then
           begin
             { insertcontact <NO|NC|any> <x mm> <y mm> [yes|no] : Special > Insert (NO / NC / Next Free) Contact of Selected Coil, then a click at the point to put it down;
@@ -5245,6 +5368,7 @@ begin
             for m := 1 to T.Count - 1 do
               if StrToIntDef(T[m], -1) < Form.View.Sheet.Drawing.Count then
                 Form.View.SelectObject(Form.View.Sheet.Drawing[StrToInt(T[m])], True);
+            Form.ViewSelection(nil);      { (what a click does: the ribbon follows the selection) }
             Settle;
             WriteLn('SELIDX ', Form.View.SelectedCount);
           end

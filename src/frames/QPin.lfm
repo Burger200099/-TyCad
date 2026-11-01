@@ -18,12 +18,12 @@ inherited fmPin: TfmPin
     Caption = 'Number'
   end
   object edPinName: TEdit[2]
+    Hint = 'The name of the pin'
     Left = 48
     Height = 23
     Top = 6
     Width = 139
     TabOrder = 0
-    
   end
   object lbName: TLabel[3]
     Left = 9
@@ -33,24 +33,24 @@ inherited fmPin: TfmPin
     Caption = 'Name'
   end
   object edPinNumber: TEdit[4]
-    Hint = 'The number of the pin'
     Left = 186
     Height = 23
+    Hint = 'The number of the pin'
     Top = 38
     Width = 50
     TabOrder = 1
   end
   object lbNumPos: TLabel[5]
-    Left = 250
+    Left = 248
     Height = 15
     Top = 42
-    Width = 43
-    Caption = 'Number pos.'
+    Width = 46
+    Caption = 'Shift text'
   end
   object sePinNumPos: TSpinEdit[6]
-    Hint = 'Where along the pin the number is written'
     Left = 298
     Height = 23
+    Hint = 'Where along the pin the number is written'
     Top = 38
     Width = 50
     TabOrder = 2
@@ -63,9 +63,9 @@ inherited fmPin: TfmPin
     Caption = 'Length'
   end
   object sePinLength: TSpinEdit[8]
-    Hint = 'The length of the pin'
     Left = 244
     Height = 23
+    Hint = 'The length of the pin'
     Top = 6
     Width = 50
     TabOrder = 3
@@ -78,9 +78,9 @@ inherited fmPin: TfmPin
     Caption = 'Type'
   end
   object cbPinShape: TComboBox[10]
-    Hint = 'The type of the pin'
     Left = 392
     Height = 23
+    Hint = 'The type of the pin'
     Top = 38
     Width = 100
     ItemHeight = 15
@@ -95,9 +95,9 @@ inherited fmPin: TfmPin
     Caption = 'Electrical Type'
   end
   object cbPinElec: TComboBox[12]
-    Hint = 'The electrical type of the pin'
     Left = 392
     Height = 23
+    Hint = 'The electrical type of the pin'
     Top = 6
     Width = 100
     ItemHeight = 15
@@ -105,9 +105,9 @@ inherited fmPin: TfmPin
     TabOrder = 5
   end
   object sbPinShowName: TSpeedButton[13]
-    Hint = 'Show the name'
     Left = 9
     Height = 28
+    Hint = 'Show the name'
     Top = 36
     Width = 28
     AllowAllUp = True
@@ -118,9 +118,9 @@ inherited fmPin: TfmPin
     ImageWidth = 24
   end
   object sbPinShowNumber: TSpeedButton[14]
-    Hint = 'Show the number'
     Left = 43
     Height = 28
+    Hint = 'Show the number'
     Top = 36
     Width = 28
     AllowAllUp = True
@@ -131,9 +131,9 @@ inherited fmPin: TfmPin
     ImageWidth = 24
   end
   object sbPinCentre: TSpeedButton[15]
-    Hint = 'Centre the name on the pin'
     Left = 77
     Height = 28
+    Hint = 'Centre the name on the pin'
     Top = 36
     Width = 28
     AllowAllUp = True

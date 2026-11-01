@@ -36,7 +36,7 @@ unit QPropFrame;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, StdCtrls, ExtCtrls, Spin, Dialogs, Buttons, UProps, UDrawTypes, UDrawingObjects;
+  Classes, SysUtils, Forms, Controls, StdCtrls, ExtCtrls, Spin, Dialogs, Buttons, UProps, UDrawTypes, UDrawingObjects, QPropBase;
 
 type
   TPropFrameClass = class of TFrame;
@@ -57,6 +57,7 @@ type
     Mode: TBindMode;
   end;
   TFrameBindings = array of TFrameBinding;
+  TControlArray = array of TControl;
 
 { the frame for a kind of tool or object (see the unit's comment for the keys); a second registration of a key replaces the first.
   AAliases links controls whose names do not end with a property key:  'control=prop.key[:caption,caption]'  ('control=' says it is not an editor) }
@@ -379,15 +380,27 @@ end;
     AControl: TControl
     const ACaptions: String - text
   Notes:
-    Hides the control and its captions.
+    Hides the control and its captions; what it hides is added to AHidden.
   =========================================================================== }
-procedure HideWith(AFrame: TFrame; AControl: TControl; const ACaptions: String);
+procedure AddHidden(var AHidden: TControlArray; AControl: TControl);
+var
+  i: Integer;
+begin
+  for i := 0 to High(AHidden) do
+    if AHidden[i] = AControl then
+      Exit;
+  SetLength(AHidden, Length(AHidden) + 1);
+  AHidden[High(AHidden)] := AControl;
+end;
+
+procedure HideWith(AFrame: TFrame; AControl: TControl; const ACaptions: String; var AHidden: TControlArray);
 var
   L: TStringList;
   i: Integer;
   C: TComponent;
 begin
   AControl.Visible := False;
+  AddHidden(AHidden, AControl);
   if ACaptions = '' then
     Exit;
   L := TStringList.Create;
@@ -397,7 +410,10 @@ begin
     begin
       C := AFrame.FindComponent(Trim(L[i]));
       if C is TControl then
+      begin
         TControl(C).Visible := False;
+        AddHidden(AHidden, TControl(C));
+      end;
     end;
   finally
     L.Free;
@@ -413,7 +429,7 @@ end;
     caption and its editor in a panel of their own disappear together); one with a visible
     editor stays.
   =========================================================================== }
-procedure HideEmptyPanels(AFrame: TFrame);
+procedure HideEmptyPanels(AFrame: TFrame; var AHidden: TControlArray);
 var
   i, k: Integer;
   P: TWinControl;
@@ -433,7 +449,10 @@ begin
           Inc(Shown);
       end;
     if (Editors > 0) and (Shown = 0) then
+    begin
       P.Visible := False;
+      AddHidden(AHidden, P);
+    end;
   end;
 end;
 
@@ -454,7 +473,8 @@ end;
     (with its captions) when it has not. An editor of the wrong class is disabled; an editor for
     a property that another one has already taken is disabled too (a check box for a choice may
     share it); both are reported in Problems. Afterwards a panel with no visible editor left is
-    hidden.
+    hidden. A frame made from TfmPropertyBase is then told what was hidden
+    (ControlsHidden, called also when nothing was), so it can resize or rearrange itself.
   =========================================================================== }
 function BindPropFrame(AFrame: TFrame; const Defs: TPropDefArray; Aliases: TStrings; out Bindings: TFrameBindings; Problems: TStrings): Integer;
 var
@@ -463,8 +483,10 @@ var
   Key, Msg, Caps, Line: String;
   Taken: TStringList;
   M: TBindMode;
+  Hidden: TControlArray;
 begin
   SetLength(Bindings, 0);
+  SetLength(Hidden, 0);
   Taken := TStringList.Create;
   try
     for i := 0 to AFrame.ComponentCount - 1 do
@@ -501,7 +523,7 @@ begin
           k := N;
       if k < 0 then
       begin
-        HideWith(AFrame, C, Caps);      // the tool or selection has no such property
+        HideWith(AFrame, C, Caps, Hidden);      // the tool or selection has no such property
         Continue;
       end;
       M := ControlMode(Defs[k], C);
@@ -534,7 +556,9 @@ begin
   finally
     Taken.Free;
   end;
-  HideEmptyPanels(AFrame);
+  HideEmptyPanels(AFrame, Hidden);
+  if AFrame is TfmPropertyBase then
+    TfmPropertyBase(AFrame).ControlsHidden(Hidden);      // the frame lays itself out for what is left showing
   Result := Length(Bindings);
 end;
 

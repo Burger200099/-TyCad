@@ -23,9 +23,13 @@ type
     btnDelete: TButton;
     cbDelay: TComboBox;
     cbForm: TComboBox;
+    cbPoleForm: TComboBox;
+    btnChangePole: TButton;
     edDesignator: TEdit;
     edSecs: TEdit;
     gbContact: TGroupBox;
+    gbPole: TGroupBox;
+    lblPoleForm: TLabel;
     lblDelay: TLabel;
     lblDesignator: TLabel;
     lblForm: TLabel;
@@ -34,6 +38,7 @@ type
     procedure AddContactClick(Sender: TObject);
     procedure AddPoleClick(Sender: TObject);
     procedure ChangeClick(Sender: TObject);
+    procedure ChangePoleClick(Sender: TObject);
     procedure DeleteClick(Sender: TObject);
     procedure RowSelect(Sender: TObject; Item: TListItem; Selected: Boolean);
     procedure SwitchActivate(Sender: TObject);
@@ -48,6 +53,8 @@ type
     function RowIndexOf(ID: Int64): Integer;
     function SelectedIndex: Integer;
     procedure UpdateButtons;
+    procedure ShowBoxes;
+    procedure ResetEntries;
   protected
     procedure KeyDown(var Key: Word; Shift: TShiftState); override;
   public
@@ -59,6 +66,7 @@ type
     function DoAddPole: Boolean;
     function DoAddContact: Boolean;
     function DoChange: Boolean;
+    function DoChangePole: Boolean;
     function DoDelete: Boolean;
     property OnChanged: TNotifyEvent read FOnChanged write FOnChanged;
     property LastError: String read FLastError;
@@ -95,14 +103,12 @@ begin
     cbForm.Items.Assign(L);
     L.DelimitedText := FLib.ContactEnum('Delay');
     cbDelay.Items.Assign(L);
+    L.DelimitedText := FLib.PoleFormEnum;
+    cbPoleForm.Items.Assign(L);
   finally
     L.Free;
   end;
-  if cbForm.Items.Count > 0 then
-    cbForm.ItemIndex := 0;
-  if cbDelay.Items.Count > 0 then
-    cbDelay.ItemIndex := 0;
-  edSecs.Text := '';
+  ResetEntries;
   Fill(0);
 end;
 
@@ -141,6 +147,7 @@ begin
       lvRows.Items[FSel].Selected := True;
       lvRows.Items[FSel].MakeVisible(False);
     end;
+  ResetEntries;      { (the boxes do not keep what the row chosen before had) }
   if (FSel >= 0) and (FRows[FSel].Kind = 'Contact') then
   begin
     edDesignator.Text := FRows[FSel].Designator;
@@ -150,7 +157,14 @@ begin
       edSecs.Text := ''
     else
       edSecs.Text := FloatToStr(FRows[FSel].DelaySecs);
+  end
+  else if (FSel >= 0) and (FRows[FSel].Kind = 'Pole') then
+  begin
+    cbPoleForm.ItemIndex := cbPoleForm.Items.IndexOf(FRows[FSel].Form);
+    if cbPoleForm.ItemIndex < 0 then
+      cbPoleForm.ItemIndex := 0;      { (a pole of a file made before the field is standard) }
   end;
+  ShowBoxes;
   UpdateButtons;
 end;
 
@@ -196,6 +210,39 @@ begin
     lvRows.Items.EndUpdate;
   end;
   UpdateButtons;
+  if FSel >= 0 then
+    SelectRow(FSel);      { (the boxes show the row that is chosen) }
+end;
+
+{ ===========================================================================
+  TfrmSwitching.ResetEntries  (procedure)
+  Notes:
+    Puts the Contact and Pole boxes to what a new contact or pole starts with: the first Form (NO), no delay, no time, no designator, a standard pole.
+  =========================================================================== }
+procedure TfrmSwitching.ResetEntries;
+begin
+  edDesignator.Text := '';
+  if cbForm.Items.Count > 0 then
+    cbForm.ItemIndex := 0;
+  if cbDelay.Items.Count > 0 then
+    cbDelay.ItemIndex := 0;
+  edSecs.Text := '';
+  if cbPoleForm.Items.Count > 0 then
+    cbPoleForm.ItemIndex := 0;
+end;
+
+{ ===========================================================================
+  TfrmSwitching.ShowBoxes  (procedure)
+  Notes:
+    The Pole box is shown for a pole, the Contact box for a contact and when nothing is chosen (what Add Pole and Add Contact start from); the coil has neither.
+  =========================================================================== }
+procedure TfrmSwitching.ShowBoxes;
+var
+  I: Integer;
+begin
+  I := SelectedIndex;
+  gbPole.Visible := (I >= 0) and (FRows[I].Kind = 'Pole');
+  gbContact.Visible := (I < 0) or (FRows[I].Kind = 'Contact');
 end;
 
 procedure TfrmSwitching.UpdateButtons;
@@ -206,10 +253,12 @@ begin
   I := SelectedIndex;
   IsContact := (I >= 0) and (FRows[I].Kind = 'Contact');
   btnChange.Enabled := IsContact;
+  btnChangePole.Enabled := (I >= 0) and (FRows[I].Kind = 'Pole');
   btnDelete.Enabled := (I >= 0) and (FRows[I].Kind <> 'Coil');
   btnAddPole.Enabled := FLib <> nil;
   btnAddContact.Enabled := (I >= 0) and ((FRows[I].Kind = 'Pole') or (FRows[I].Kind = 'Contact'));
   gbContact.Enabled := True;
+  ShowBoxes;
 end;
 
 { the base form shows OK and Cancel when it is activated: only Close is wanted here (the changes are in the file already), and Esc closes too }
@@ -346,6 +395,32 @@ begin
   Result := True;
 end;
 
+function TfrmSwitching.DoChangePole: Boolean;
+var
+  I: Integer;
+  Id: Int64;
+begin
+  Result := False;
+  FLastError := '';
+  I := SelectedIndex;
+  if (I < 0) or (FRows[I].Kind <> 'Pole') then
+    Exit;
+  Id := FRows[I].ID;
+  try
+    FLib.SetPoleForm(Id, cbPoleForm.Text);
+  except
+    on E: EPartsError do
+    begin
+      FLastError := E.Message;
+      Exit;
+    end;
+  end;
+  Fill(Id);
+  if Assigned(FOnChanged) then
+    FOnChanged(Self);
+  Result := True;
+end;
+
 function TfrmSwitching.DoDelete: Boolean;
 var
   I: Integer;
@@ -387,6 +462,13 @@ end;
 procedure TfrmSwitching.ChangeClick(Sender: TObject);
 begin
   if not DoChange then
+    if FLastError <> '' then
+      MessageDlg(Caption, FLastError, mtError, [mbOK], 0);
+end;
+
+procedure TfrmSwitching.ChangePoleClick(Sender: TObject);
+begin
+  if not DoChangePole then
     if FLastError <> '' then
       MessageDlg(Caption, FLastError, mtError, [mbOK], 0);
 end;

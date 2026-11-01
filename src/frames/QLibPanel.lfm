@@ -10,38 +10,19 @@ object frLibraryPanel: TfrLibraryPanel
   TabOrder = 0
   DesignLeft = 1010
   DesignTop = 401
-  object pbPreview: TPaintBox
-    Left = 0
-    Height = 136
-    Hint = 'The chosen symbol (double click to place it)'
-    Top = 509
-    Width = 625
-    Align = alBottom
-    OnDblClick = ListDblClick
-    OnPaint = PreviewPaint
-  end
-  object Splitter1: TSplitter
-    Cursor = crVSplit
-    Left = 0
-    Height = 5
-    Hint = 'Drag to change the size of the preview'
-    Top = 504
-    Width = 625
-    Align = alBottom
-    ResizeAnchor = akBottom
-  end
   object pcLibrary: TPageControl
     Left = 0
-    Height = 504
+    Height = 645
+    Hint = 'Symbol libraries and parts libraries'
     Top = 0
     Width = 625
-    ActivePage = tsSymbols
+    ActivePage = tsParts
     Align = alClient
-    Hint = 'Symbol libraries and parts libraries'
-    TabOrder = 1
+    TabIndex = 1
+    TabOrder = 0
     object tsSymbols: TTabSheet
       Caption = 'Symbols'
-      ClientHeight = 476
+      ClientHeight = 617
       ClientWidth = 617
       object edFilter: TEdit
         Left = 0
@@ -80,10 +61,30 @@ object frLibraryPanel: TfrLibraryPanel
         OnDblClick = ListDblClick
         OnMouseDown = TreeMouseDown
       end
+      object pbPreview: TPaintBox
+        Left = 0
+        Height = 136
+        Hint = 'The chosen symbol (double click to place it)'
+        Top = 481
+        Width = 617
+        Align = alBottom
+        OnDblClick = ListDblClick
+        OnPaint = PreviewPaint
+      end
+      object Splitter1: TSplitter
+        Cursor = crVSplit
+        Left = 0
+        Height = 5
+        Hint = 'Drag to change the size of the preview'
+        Top = 476
+        Width = 617
+        Align = alBottom
+        ResizeAnchor = akBottom
+      end
     end
     object tsParts: TTabSheet
       Caption = 'Parts'
-      ClientHeight = 476
+      ClientHeight = 617
       ClientWidth = 617
       object lbPartsCaption: TLabel
         Left = 0
@@ -113,10 +114,12 @@ object frLibraryPanel: TfrLibraryPanel
         Top = 40
         Width = 617
         Align = alClient
-        Columns = <        item
+        Columns = <        
+          item
             Caption = 'Part'
             Width = 320
-          end        item
+          end        
+          item
             Caption = 'Class'
             Width = 140
           end>
@@ -128,6 +131,26 @@ object frLibraryPanel: TfrLibraryPanel
         ViewStyle = vsReport
         OnDblClick = PartsDblClick
         OnSelectItem = PartsSelectItem
+      end
+      object pbPartPreview: TPaintBox
+        Left = 0
+        Height = 136
+        Hint = 'The chosen symbol (double click to place it)'
+        Top = 481
+        Width = 617
+        Align = alBottom
+        OnDblClick = ListDblClick
+        OnPaint = PreviewPaint
+      end
+      object Splitter2: TSplitter
+        Cursor = crVSplit
+        Left = 0
+        Height = 5
+        Hint = 'Drag to change the size of the preview'
+        Top = 476
+        Width = 617
+        Align = alBottom
+        ResizeAnchor = akBottom
       end
     end
   end

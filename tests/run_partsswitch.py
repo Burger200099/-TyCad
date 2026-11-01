@@ -47,6 +47,9 @@ def model(c, p):
         kk = isa(k, ("Coil", "Pole", "Contact"))
         if not kk: continue
         form = delay = ""; secs = 0.0
+        if kk == "Pole":
+            for f, vt, vn in c.execute("select FieldID, ValueText, ValueNum from ObjectValue where ObjectID=?", (oid,)):
+                if fid[f] == "Form": form = vt or ""
         if kk == "Contact":
             delay = "none"
             for f, vt, vn in c.execute("select FieldID, ValueText, ValueNum from ObjectValue where ObjectID=?", (oid,)):
@@ -131,5 +134,15 @@ o = run(OPEN(g) + ["pe sw addpole|NO|on-delay|3"])
 c = db(g); names = {r[0] for r in c.execute("select Name from KindFieldDef where KindID=(select KindID from ObjectKind where Name='Contact')")}
 got = [r for r in model(c, pid(c, CT)) if r[1] == "Contact"][-1]; c.close()
 check("an older file gets the Delay and DelaySecs fields when the dialog is used, and the pole is added", {"Delay", "DelaySecs"} <= names and got[4:] == ("NO", "on-delay", 3.0), (names, got))
-if fails: print("poles and contacts: %d checks, %d failed" % (checks, len(fails))); sys.exit(1)
+# ---- Pole form: a new pole is virtual; the dialog shows the Pole box for a pole (and not the Contact box), and the box has the pole's form; Change sets standard / virtual
+f = mk("pole.TCParts")
+o = run(OPEN(f) + ["pe sw boxes|", "pe sw addpole|NC|none|", "pe sw boxes|Pole 4", "pe sw setpole|Pole 4|standard", "pe sw boxes|Pole 4", "pe sw boxes|1L1-1T1", "pe sw boxes|A1/A2"])
+bx = [l for l in o if l.startswith("PESWBOX")]
+c = db(f); pf = c.execute("select v.ValueText from ObjectValue v join PartObject o using(ObjectID) join KindFieldDef d using(FieldID) where o.Name='Pole 4' and d.Name='Form'").fetchone()
+check("nothing chosen: the Contact box shows", len(bx) == 5 and "contact=1 pole=0" in bx[0], bx)
+check("a new pole is virtual, and choosing it shows the Pole box (Change for the pole enabled, the Contact box hidden, the contact entries reset)", "contact=0 pole=1" in bx[1] and "changepole=1" in bx[1] and "change=0" in bx[1] and "poleform=virtual" in bx[1] and "form=NO" in bx[1], bx[1:2])
+check("Change on the pole stores standard", pf and pf[0] == "standard" and "poleform=standard" in bx[2], (pf, bx[2:3]))
+check("a contact shows the Contact box, a coil neither", "contact=1 pole=0" in bx[3] and "contact=0 pole=0" in bx[4], bx[3:])
+if fails:
+    print("poles and contacts: %d checks, %d failed" % (checks, len(fails))); sys.exit(1)
 print("poles and contacts: %d checks, 0 failed" % checks)

@@ -20,7 +20,7 @@ const
   { the choices of a line style property; any list showing them is drawn with pictures (ilListBoxImages) }
   DashChoices = 'Solid|Dash|Dot|Dash-dot|Dash-dot-dot';
   AngleChoices = 'Free|90 degrees|45 degrees';  // wire angle options
-  PhaseChoices = '1 phase|3 phase';             // a bus of one wire or of three
+  PhaseChoices = '1 phase|2 wires|3 phase|4 wires|5 wires|6 wires';   // the conductors of a bus: the number is the choice's index + 1
   ArcChoices = 'in|out';                        // the two kinds of arc (Arc_in, Arc_out): the arc tool's and an arc's 'arc.type'
   FillChoices = 'None|Solid|Horizontal|Vertical|Backward diagonal|Forward diagonal|Cross|Diagonal cross';      // the fill styles (the Fill button and its menu use the positions)
 const
@@ -1261,7 +1261,7 @@ begin
     if (Obj is TDrawLine) and ((Obj as TDrawLine).Kind = xBus) then
     begin
       if Name = 'bus.phases' then
-        Value := ChoiceText(PhaseChoices, Ord((Obj as TDrawLine).Phases = 3))
+        Value := ChoiceText(PhaseChoices, Max(1, Min(6, (Obj as TDrawLine).Phases)) - 1)
       else
         Value := FloatText((Obj as TDrawLine).PhaseSpacing / UNITS_PER_MM);
     end
@@ -1496,7 +1496,7 @@ begin
   else if Name = 'arc.type' then
     SetArcType(Obj as TDrawPolygon, Value)
   else if Name = 'bus.phases' then
-    (Obj as TDrawLine).Phases := 1 + 2 * Ord(ChoiceIndex(PhaseChoices, Value) = 1)
+    (Obj as TDrawLine).Phases := Max(0, ChoiceIndex(PhaseChoices, Value)) + 1
   else if Name = 'bus.spacing' then
     (Obj as TDrawLine).PhaseSpacing := Max(1, ParseFloat(Value, DefaultPhaseSpacing / UNITS_PER_MM) * UNITS_PER_MM)
   else if Name = 'poly.closed' then

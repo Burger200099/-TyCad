@@ -12,6 +12,88 @@ msgstr ""
 "Language-Team: \n"
 "Language: \n"
 
+#: ustrings.rsobjects
+msgctxt "ustrings.rsobjects"
+msgid "Objects"
+msgstr ""
+
+#: ustrings.rsobjectshint
+msgctxt "ustrings.rsobjectshint"
+msgid "The poles, contacts and coil of this part: choose one that is drawn to select it, or one that is not to put it on the pointer"
+msgstr ""
+
+#: ustrings.rsaddsymbolrungtext
+msgctxt "ustrings.rsaddsymbolrungtext"
+msgid "Add Symbol Rung Text"
+msgstr ""
+
+#: ustrings.rsaddsymbolrungtexthint
+msgctxt "ustrings.rsaddsymbolrungtexthint"
+msgid "Put down a linked text that says the ladder line this symbol is on"
+msgstr ""
+
+#: ustrings.rspartribbon
+msgctxt "ustrings.rspartribbon"
+msgid "Part"
+msgstr ""
+
+#: ustrings.rsgoto
+msgctxt "ustrings.rsgoto"
+msgid "Goto"
+msgstr ""
+
+#: ustrings.rsplace
+msgctxt "ustrings.rsplace"
+msgid "Place"
+msgstr ""
+
+#: ustrings.rsunused
+msgctxt "ustrings.rsunused"
+msgid "[unused]"
+msgstr ""
+
+#: ustrings.rspageline
+#, object-pascal-format
+msgctxt "ustrings.rspageline"
+msgid "[Page %d, line %d]"
+msgstr ""
+
+#: ustrings.rspageonly
+#, object-pascal-format
+msgctxt "ustrings.rspageonly"
+msgid "[Page %d]"
+msgstr ""
+
+#: ustrings.rspartslibrarynotopen
+msgctxt "ustrings.rspartslibrarynotopen"
+msgid "(the parts library of this part is not open)"
+msgstr ""
+
+#: ustrings.rsnosymbolshowsthat
+msgctxt "ustrings.rsnosymbolshowsthat"
+msgid "No symbol of the part shows that object."
+msgstr ""
+
+#: ustrings.rsthepictureofthe
+msgctxt "ustrings.rsthepictureofthe"
+msgid "The symbol that shows the chosen object"
+msgstr ""
+
+#: ustrings.rseveryobjectofthepart
+msgctxt "ustrings.rseveryobjectofthepart"
+msgid "Every object of the part, and where it is drawn"
+msgstr ""
+
+#: ustrings.rsshowwhereitis
+msgctxt "ustrings.rsshowwhereitis"
+msgid "Show the object on its page"
+msgstr ""
+
+#: ustrings.rsputitonthe
+msgctxt "ustrings.rsputitonthe"
+msgid "Put the symbol of the object on the sheet"
+msgstr ""
+
 #: ustrings.rsnotasymboldocument
 msgctxt "ustrings.rsnotasymboldocument"
 msgid "Not a symbol document"
@@ -1858,6 +1940,11 @@ msgctxt "ustrings.rsthatobjectisnotacontact"
 msgid "That object is not a contact."
 msgstr ""
 
+#: ustrings.rsthatobjectisnotapole
+msgctxt "ustrings.rsthatobjectisnotapole"
+msgid "That object is not a pole."
+msgstr ""
+
 #: ustrings.rsadelayedcontactneedsa
 msgctxt "ustrings.rsadelayedcontactneedsa"
 msgid "A delayed contact needs a delay time of more than 0 seconds."
@@ -2827,6 +2914,166 @@ msgstr ""
 #: ustrings.rsbusphase2
 msgctxt "ustrings.rsbusphase2"
 msgid "Bus: 1 phase"
+msgstr ""
+
+#: ustrings.rsbuswires
+#, object-pascal-format
+msgctxt "ustrings.rsbuswires"
+msgid "Bus: %d wires"
+msgstr ""
+
+#: ustrings.rschangetobus
+msgctxt "ustrings.rschangetobus"
+msgid "Change to bus"
+msgstr ""
+
+#: ustrings.rschangetowire
+msgctxt "ustrings.rschangetowire"
+msgid "Change to wire"
+msgstr ""
+
+#: ustrings.rsnwires
+#, object-pascal-format
+msgctxt "ustrings.rsnwires"
+msgid "%d wires"
+msgstr ""
+
+#: ustrings.rssnappolestobus
+msgctxt "ustrings.rssnappolestobus"
+msgid "Snap poles to bus"
+msgstr ""
+
+#: ustrings.rsalikeallsymbols
+msgctxt "ustrings.rsalikeallsymbols"
+msgid "All Symbols"
+msgstr ""
+
+#: ustrings.rsalikeallsymbolshint
+msgctxt "ustrings.rsalikeallsymbolshint"
+msgid "Select every symbol on the sheet"
+msgstr ""
+
+#: ustrings.rsalikereferences
+msgctxt "ustrings.rsalikereferences"
+msgid "Identical References"
+msgstr ""
+
+#: ustrings.rsalikereferenceshint
+msgctxt "ustrings.rsalikereferenceshint"
+msgid "Select the symbols whose reference is the same with its numbers taken out (R1, R12 and r7 are alike), ignoring case"
+msgstr ""
+
+#: ustrings.rsalikenames
+msgctxt "ustrings.rsalikenames"
+msgid "Identical Names"
+msgstr ""
+
+#: ustrings.rsalikenameshint
+msgctxt "ustrings.rsalikenameshint"
+msgid "Select the symbols with the same name, ignoring case"
+msgstr ""
+
+#: ustrings.rspresetrelay
+msgctxt "ustrings.rspresetrelay"
+msgid "Relay with coil and contacts"
+msgstr ""
+
+#: ustrings.rspresetrelayhint
+msgctxt "ustrings.rspresetrelayhint"
+msgid "A relay: one coil and the normally open and normally closed contacts you ask for"
+msgstr ""
+
+#: ustrings.rspresetcontactor
+msgctxt "ustrings.rspresetcontactor"
+msgid "Contactor (poles + auxiliary)"
+msgstr ""
+
+#: ustrings.rspresetcontactorhint
+msgctxt "ustrings.rspresetcontactorhint"
+msgid "A contactor: one coil, main poles that close together, and auxiliary contacts"
+msgstr ""
+
+#: ustrings.rspresettimer
+msgctxt "ustrings.rspresettimer"
+msgid "Timer relay (delayed contacts)"
+msgstr ""
+
+#: ustrings.rspresettimerhint
+msgctxt "ustrings.rspresettimerhint"
+msgid "A relay whose contacts change after a delay when the coil is switched on or off"
+msgstr ""
+
+#: ustrings.rspresetbreaker
+msgctxt "ustrings.rspresetbreaker"
+msgid "Circuit breaker (poles only)"
+msgstr ""
+
+#: ustrings.rspresetbreakerhint
+msgctxt "ustrings.rspresetbreakerhint"
+msgid "A breaker or switch: main poles and no coil"
+msgstr ""
+
+#: ustrings.rspresetterminal
+msgctxt "ustrings.rspresetterminal"
+msgid "Terminal block"
+msgstr ""
+
+#: ustrings.rspresetterminalhint
+msgctxt "ustrings.rspresetterminalhint"
+msgid "A terminal block with no function objects; add its terminals in the Objects page"
+msgstr ""
+
+#: ustrings.rspresetother
+msgctxt "ustrings.rspresetother"
+msgid "Other part (choose the class)"
+msgstr ""
+
+#: ustrings.rspresetotherhint
+msgctxt "ustrings.rspresetotherhint"
+msgid "An empty part of any class; add its objects and values in the other pages"
+msgstr ""
+
+#: ustrings.rsthismakes
+#, object-pascal-format
+msgctxt "ustrings.rsthismakes"
+msgid "This makes: %s"
+msgstr ""
+
+#: ustrings.rscoilword
+msgctxt "ustrings.rscoilword"
+msgid "coil"
+msgstr ""
+
+#: ustrings.rsnpolesword
+#, object-pascal-format
+msgctxt "ustrings.rsnpolesword"
+msgid "%d poles"
+msgstr ""
+
+#: ustrings.rsauxiliaryword
+msgctxt "ustrings.rsauxiliaryword"
+msgid "auxiliary contacts"
+msgstr ""
+
+#: ustrings.rsdelayedword
+#, object-pascal-format
+msgctxt "ustrings.rsdelayedword"
+msgid "%s %.4g s"
+msgstr ""
+
+#: ustrings.rsnoobjectsword
+msgctxt "ustrings.rsnoobjectsword"
+msgid "no objects"
+msgstr ""
+
+#: ustrings.rsbuswiresmenu
+msgctxt "ustrings.rsbuswiresmenu"
+msgid "Number of wires"
+msgstr ""
+
+#: ustrings.rsbusonewire
+msgctxt "ustrings.rsbusonewire"
+msgid "1 wire"
 msgstr ""
 
 #: ustrings.rsbusmixed
@@ -6114,14 +6361,29 @@ msgctxt "tfrmoptions.pcoptions.tssheets.label8.caption"
 msgid "New Sheet Default Behavior"
 msgstr ""
 
+#: tfrmoptions.pcoptions.tssheets.radiogroup1.hint
+msgctxt "tfrmoptions.pcoptions.tssheets.radiogroup1.hint"
+msgid "The unit the rulers count in"
+msgstr ""
+
 #: tfrmoptions.pcoptions.tssheets.radiogroup1.caption
 msgctxt "tfrmoptions.pcoptions.tssheets.radiogroup1.caption"
 msgid "Ruler Units"
 msgstr ""
 
+#: tfrmoptions.pcoptions.tssheets.radiogroup1.rbrulermm.hint
+msgctxt "tfrmoptions.pcoptions.tssheets.radiogroup1.rbrulermm.hint"
+msgid "Rulers in millimetres"
+msgstr ""
+
 #: tfrmoptions.pcoptions.tssheets.radiogroup1.rbrulermm.caption
 msgctxt "tfrmoptions.pcoptions.tssheets.radiogroup1.rbrulermm.caption"
 msgid "mm"
+msgstr ""
+
+#: tfrmoptions.pcoptions.tssheets.radiogroup1.rbrulerin.hint
+msgctxt "tfrmoptions.pcoptions.tssheets.radiogroup1.rbrulerin.hint"
+msgid "Rulers in inches"
 msgstr ""
 
 #: tfrmoptions.pcoptions.tssheets.radiogroup1.rbrulerin.caption
@@ -6422,6 +6684,121 @@ msgstr ""
 #: tfrmpartslist.lblnote.caption
 msgctxt "tfrmpartslist.lblnote.caption"
 msgid "As in TinyCAD, the sheet-number prefix does not change the list. Hierarchical symbols are not loaded by this program yet, so the hierarchical option changes nothing here either; both choices are kept."
+msgstr ""
+
+#: tfrmpartwizard.caption
+msgctxt "tfrmpartwizard.caption"
+msgid "Add Part"
+msgstr ""
+
+#: tfrmpartwizard.pnlbuttons.btnok.caption
+msgctxt "tfrmpartwizard.pnlbuttons.btnok.caption"
+msgid "Add Part"
+msgstr ""
+
+#: tfrmpartwizard.lbpresets.hint
+msgctxt "tfrmpartwizard.lbpresets.hint"
+msgid "What kind of part: only the entries that kind needs are shown"
+msgstr ""
+
+#: tfrmpartwizard.lblname.caption
+msgctxt "tfrmpartwizard.lblname.caption"
+msgid "&Name:"
+msgstr ""
+
+#: tfrmpartwizard.edname.hint
+msgctxt "tfrmpartwizard.edname.hint"
+msgid "The name of the part"
+msgstr ""
+
+#: tfrmpartwizard.lblref.caption
+msgctxt "tfrmpartwizard.lblref.caption"
+msgid "&Letters:"
+msgstr ""
+
+#: tfrmpartwizard.edref.hint
+msgctxt "tfrmpartwizard.edref.hint"
+msgid "The reference letters of the part, such as K"
+msgstr ""
+
+#: tfrmpartwizard.lblclass.caption
+msgctxt "tfrmpartwizard.lblclass.caption"
+msgid "Class:"
+msgstr ""
+
+#: tfrmpartwizard.cbclass.hint
+msgctxt "tfrmpartwizard.cbclass.hint"
+msgid "The class of the part"
+msgstr ""
+
+#: tfrmpartwizard.lblpoles.caption
+msgctxt "tfrmpartwizard.lblpoles.caption"
+msgid "Main &poles:"
+msgstr ""
+
+#: tfrmpartwizard.sepoles.hint
+msgctxt "tfrmpartwizard.sepoles.hint"
+msgid "How many poles the part has"
+msgstr ""
+
+#: tfrmpartwizard.lblno.caption
+msgctxt "tfrmpartwizard.lblno.caption"
+msgid "&NO contacts:"
+msgstr ""
+
+#: tfrmpartwizard.seno.hint
+msgctxt "tfrmpartwizard.seno.hint"
+msgid "Normally open contacts in each pole"
+msgstr ""
+
+#: tfrmpartwizard.lblnc.caption
+msgctxt "tfrmpartwizard.lblnc.caption"
+msgid "N&C contacts:"
+msgstr ""
+
+#: tfrmpartwizard.senc.hint
+msgctxt "tfrmpartwizard.senc.hint"
+msgid "Normally closed contacts in each pole"
+msgstr ""
+
+#: tfrmpartwizard.cbcoil.hint
+msgctxt "tfrmpartwizard.cbcoil.hint"
+msgid "Give the part a coil"
+msgstr ""
+
+#: tfrmpartwizard.cbcoil.caption
+msgctxt "tfrmpartwizard.cbcoil.caption"
+msgid "With a &coil"
+msgstr ""
+
+#: tfrmpartwizard.lbldelay.caption
+msgctxt "tfrmpartwizard.lbldelay.caption"
+msgid "&Delay:"
+msgstr ""
+
+#: tfrmpartwizard.cbdelay.hint
+msgctxt "tfrmpartwizard.cbdelay.hint"
+msgid "The delay of the contacts"
+msgstr ""
+
+#: tfrmpartwizard.lblsecs.caption
+msgctxt "tfrmpartwizard.lblsecs.caption"
+msgid "Seconds:"
+msgstr ""
+
+#: tfrmpartwizard.edsecs.hint
+msgctxt "tfrmpartwizard.edsecs.hint"
+msgid "The delay time in seconds"
+msgstr ""
+
+#: tfrmpartwizard.lbldescription.caption
+msgctxt "tfrmpartwizard.lbldescription.caption"
+msgid "D&escription:"
+msgstr ""
+
+#: tfrmpartwizard.eddescription.hint
+msgctxt "tfrmpartwizard.eddescription.hint"
+msgid "What the part is"
 msgstr ""
 
 #: tfrmpreview.caption
@@ -6867,7 +7244,7 @@ msgstr ""
 
 #: tfrmswitching.lvrows.hint
 msgctxt "tfrmswitching.lvrows.hint"
-msgid "The coil, poles and contacts of the part, in order; choose a contact to change its form and delay"
+msgid "The coil, poles and contacts of the part, in order; choose a pole to make it standard or virtual, a contact to change its form and delay"
 msgstr ""
 
 #: tfrmswitching.lvrows.columns[0].caption
@@ -6983,6 +7360,31 @@ msgstr ""
 #: tfrmswitching.btndelete.caption
 msgctxt "tfrmswitching.btndelete.caption"
 msgid "&Delete"
+msgstr ""
+
+#: tfrmswitching.gbpole.caption
+msgctxt "tfrmswitching.gbpole.caption"
+msgid "Pole"
+msgstr ""
+
+#: tfrmswitching.gbpole.lblpoleform.caption
+msgctxt "tfrmswitching.gbpole.lblpoleform.caption"
+msgid "&Form:"
+msgstr ""
+
+#: tfrmswitching.gbpole.cbpoleform.hint
+msgctxt "tfrmswitching.gbpole.cbpoleform.hint"
+msgid "standard: the pole can be given a symbol of its own; virtual: the pole has no symbol and is not offered to be drawn (its contacts are separate)"
+msgstr ""
+
+#: tfrmswitching.gbpole.btnchangepole.hint
+msgctxt "tfrmswitching.gbpole.btnchangepole.hint"
+msgid "Keep this form on the chosen pole"
+msgstr ""
+
+#: tfrmswitching.gbpole.btnchangepole.caption
+msgctxt "tfrmswitching.gbpole.btnchangepole.caption"
+msgid "&Change"
 msgstr ""
 
 #: tfrmsymbolinfo.caption
@@ -7252,12 +7654,17 @@ msgstr ""
 
 #: tfrmbusdropdown.plback.plphases.rbphase3.hint
 msgctxt "tfrmbusdropdown.plback.plphases.rbphase3.hint"
-msgid "A bus of three wires side by side; the one drawn is the middle one"
+msgid "A bus of several wires side by side; the one drawn is the middle one (or the first of an even number)"
 msgstr ""
 
 #: tfrmbusdropdown.plback.plphases.rbphase3.caption
 msgctxt "tfrmbusdropdown.plback.plphases.rbphase3.caption"
-msgid "3 phase"
+msgid "Wires"
+msgstr ""
+
+#: tfrmbusdropdown.plback.plphases.edcount.hint
+msgctxt "tfrmbusdropdown.plback.plphases.edcount.hint"
+msgid "The number of wires, 2 to 6"
 msgstr ""
 
 #: tfrmbusdropdown.plback.lbspacing.caption
@@ -8930,36 +9337,6 @@ msgctxt "tfrmmain.mmain.mspecial.mexportwires.hint"
 msgid "Write the text of every wire label and bus name, with its sheet and position, as a CSV file"
 msgstr ""
 
-#: tfrmmain.mmain.mspecial.minsertcontactno.caption
-msgctxt "tfrmmain.mmain.mspecial.minsertcontactno.caption"
-msgid "Insert &NO Contact of Selected Coil"
-msgstr ""
-
-#: tfrmmain.mmain.mspecial.minsertcontactno.hint
-msgctxt "tfrmmain.mmain.mspecial.minsertcontactno.hint"
-msgid "Place the next unused normally open contact of the selected relay or contactor, with its reference"
-msgstr ""
-
-#: tfrmmain.mmain.mspecial.minsertcontactnc.caption
-msgctxt "tfrmmain.mmain.mspecial.minsertcontactnc.caption"
-msgid "Insert N&C Contact of Selected Coil"
-msgstr ""
-
-#: tfrmmain.mmain.mspecial.minsertcontactnc.hint
-msgctxt "tfrmmain.mmain.mspecial.minsertcontactnc.hint"
-msgid "Place the next unused normally closed contact of the selected relay or contactor, with its reference"
-msgstr ""
-
-#: tfrmmain.mmain.mspecial.minsertcontactfree.caption
-msgctxt "tfrmmain.mmain.mspecial.minsertcontactfree.caption"
-msgid "Insert Next &Free Contact of Selected Coil"
-msgstr ""
-
-#: tfrmmain.mmain.mspecial.minsertcontactfree.hint
-msgctxt "tfrmmain.mmain.mspecial.minsertcontactfree.hint"
-msgid "Place the next unused contact, of any form, of the selected relay or contactor, with its reference"
-msgstr ""
-
 #: tfrmmain.mmain.mspecial.mduprefs.caption
 msgctxt "tfrmmain.mmain.mspecial.mduprefs.caption"
 msgid "Check &Duplicate References..."
@@ -9280,164 +9657,284 @@ msgctxt "tfrmmain.mmain.mparts.mpartsedit.hint"
 msgid "Open the parts library of the Parts tab for editing in a tab of its own"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsadd.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsadd.caption"
+#: tfrmmain.mmain.mparts.mpartsparts.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsparts.hint"
+msgid "Add, change, copy and delete parts"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartsparts.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsparts.caption"
+msgid "&Parts"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartsparts.mpartsadd.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsparts.mpartsadd.caption"
 msgid "&Add Part..."
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsadd.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsadd.hint"
+#: tfrmmain.mmain.mparts.mpartsparts.mpartsadd.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsparts.mpartsadd.hint"
 msgid "Add a generic part to the library being edited"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsprops.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsprops.caption"
+#: tfrmmain.mmain.mparts.mpartsparts.mpartsprops.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsparts.mpartsprops.caption"
 msgid "Part &Properties..."
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsprops.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsprops.hint"
+#: tfrmmain.mmain.mparts.mpartsparts.mpartsprops.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsparts.mpartsprops.hint"
 msgid "Change the name, reference letters, status and description of the chosen part"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsdup.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsdup.caption"
+#: tfrmmain.mmain.mparts.mpartsparts.mpartsdup.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsparts.mpartsdup.caption"
 msgid "&Duplicate Part"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsdup.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsdup.hint"
+#: tfrmmain.mmain.mparts.mpartsparts.mpartsdup.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsparts.mpartsdup.hint"
 msgid "Make a copy of the chosen part with everything it has"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsdel.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsdel.caption"
+#: tfrmmain.mmain.mparts.mpartsparts.mpartsdel.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsparts.mpartsdel.caption"
 msgid "D&elete Part"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsdel.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsdel.hint"
+#: tfrmmain.mmain.mparts.mpartsparts.mpartsdel.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsparts.mpartsdel.hint"
 msgid "Delete the chosen part from the library"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsclassadd.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsclassadd.caption"
+#: tfrmmain.mmain.mparts.mpartsclasses.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsclasses.hint"
+msgid "Add, change and delete part classes"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartsclasses.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsclasses.caption"
+msgid "&Classes"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartsclasses.mpartsclassadd.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsclasses.mpartsclassadd.caption"
 msgid "Add &Class..."
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsclassadd.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsclassadd.hint"
+#: tfrmmain.mmain.mparts.mpartsclasses.mpartsclassadd.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsclasses.mpartsclassadd.hint"
 msgid "Add a class under the chosen one (Classes page of the parts library editor)"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsclassprops.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsclassprops.caption"
+#: tfrmmain.mmain.mparts.mpartsclasses.mpartsclassprops.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsclasses.mpartsclassprops.caption"
 msgid "Cl&ass Properties..."
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsclassprops.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsclassprops.hint"
+#: tfrmmain.mmain.mparts.mpartsclasses.mpartsclassprops.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsclasses.mpartsclassprops.hint"
 msgid "Change the name, parent, abstract flag and description of the chosen class"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsclassdel.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsclassdel.caption"
+#: tfrmmain.mmain.mparts.mpartsclasses.mpartsclassdel.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsclasses.mpartsclassdel.caption"
 msgid "Delete Cl&ass"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsclassdel.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsclassdel.hint"
+#: tfrmmain.mmain.mparts.mpartsclasses.mpartsclassdel.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsclasses.mpartsclassdel.hint"
 msgid "Delete the chosen class (it must have no subclasses, parts or products)"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsfieldadd.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsfieldadd.caption"
+#: tfrmmain.mmain.mparts.mpartsfields.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsfields.hint"
+msgid "Add, change and delete the fields of a class"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartsfields.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsfields.caption"
+msgid "&Fields"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartsfields.mpartsfieldadd.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsfields.mpartsfieldadd.caption"
 msgid "Add &Field..."
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsfieldadd.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsfieldadd.hint"
+#: tfrmmain.mmain.mparts.mpartsfields.mpartsfieldadd.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsfields.mpartsfieldadd.hint"
 msgid "Declare a field on the chosen class; its subclasses inherit it"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsfieldprops.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsfieldprops.caption"
+#: tfrmmain.mmain.mparts.mpartsfields.mpartsfieldprops.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsfields.mpartsfieldprops.caption"
 msgid "Fi&eld Properties..."
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsfieldprops.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsfieldprops.hint"
+#: tfrmmain.mmain.mparts.mpartsfields.mpartsfieldprops.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsfields.mpartsfieldprops.hint"
 msgid "Change the chosen field (only a field the class declares itself)"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsfielddel.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsfielddel.caption"
+#: tfrmmain.mmain.mparts.mpartsfields.mpartsfielddel.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsfields.mpartsfielddel.caption"
 msgid "Delete Fiel&d"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsfielddel.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsfielddel.hint"
+#: tfrmmain.mmain.mparts.mpartsfields.mpartsfielddel.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsfields.mpartsfielddel.hint"
 msgid "Delete the chosen field (no part may have a value for it)"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsobjadd.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsobjadd.caption"
+#: tfrmmain.mmain.mparts.mpartsobjects.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsobjects.hint"
+msgid "Add, change and delete the objects inside a part"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartsobjects.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsobjects.caption"
+msgid "&Objects"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartsobjects.mpartsobjadd.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsobjects.mpartsobjadd.caption"
 msgid "Add Ob&ject..."
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsobjadd.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsobjadd.hint"
+#: tfrmmain.mmain.mparts.mpartsobjects.mpartsobjadd.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsobjects.mpartsobjadd.hint"
 msgid "Add a terminal, pole, channel ... to the chosen part (Objects page of the parts library editor)"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsobjprops.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsobjprops.caption"
+#: tfrmmain.mmain.mparts.mpartsobjects.mpartsobjprops.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsobjects.mpartsobjprops.caption"
 msgid "Object Pr&operties..."
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsobjprops.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsobjprops.hint"
+#: tfrmmain.mmain.mparts.mpartsobjects.mpartsobjprops.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsobjects.mpartsobjprops.hint"
 msgid "Change the chosen child object"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsobjdel.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsobjdel.caption"
+#: tfrmmain.mmain.mparts.mpartsobjects.mpartsobjdel.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsobjects.mpartsobjdel.caption"
 msgid "Delete O&bject"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsobjdel.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsobjdel.hint"
+#: tfrmmain.mmain.mparts.mpartsobjects.mpartsobjdel.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsobjects.mpartsobjdel.hint"
 msgid "Delete the chosen child object and what is inside it"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsratadd.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsratadd.caption"
+#: tfrmmain.mmain.mparts.mpartsrequirements.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsrequirements.hint"
+msgid "Add, change and delete the requirements of a part"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartsrequirements.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsrequirements.caption"
+msgid "&Requirements"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartsrequirements.mpartsratadd.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsrequirements.mpartsratadd.caption"
 msgid "Add Re&quirement..."
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsratadd.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsratadd.hint"
+#: tfrmmain.mmain.mparts.mpartsrequirements.mpartsratadd.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsrequirements.mpartsratadd.hint"
 msgid "Add a rating the chosen part must have (Requirements page of the parts library editor)"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsratprops.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsratprops.caption"
+#: tfrmmain.mmain.mparts.mpartsrequirements.mpartsratprops.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsrequirements.mpartsratprops.caption"
 msgid "Requirement Proper&ties..."
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsratprops.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsratprops.hint"
+#: tfrmmain.mmain.mparts.mpartsrequirements.mpartsratprops.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsrequirements.mpartsratprops.hint"
 msgid "Change the chosen requirement"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsratdel.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsratdel.caption"
+#: tfrmmain.mmain.mparts.mpartsrequirements.mpartsratdel.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsrequirements.mpartsratdel.caption"
 msgid "Delete Requ&irement"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsratdel.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsratdel.hint"
+#: tfrmmain.mmain.mparts.mpartsrequirements.mpartsratdel.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsrequirements.mpartsratdel.hint"
 msgid "Delete the chosen requirement"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartssymbols.hint
+msgctxt "tfrmmain.mmain.mparts.mpartssymbols.hint"
+msgid "The symbols of a part"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartssymbols.caption
+msgctxt "tfrmmain.mmain.mparts.mpartssymbols.caption"
+msgid "&Symbols"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartssymbols.mpartssymnew.caption
+msgctxt "tfrmmain.mmain.mparts.mpartssymbols.mpartssymnew.caption"
+msgid "&New Part Symbol..."
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartssymbols.mpartssymnew.hint
+msgctxt "tfrmmain.mmain.mparts.mpartssymbols.mpartssymnew.hint"
+msgid "Draw a new symbol for the part (Symbols page of the parts library editor)"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartssymbols.mpartssymedit.caption
+msgctxt "tfrmmain.mmain.mparts.mpartssymbols.mpartssymedit.caption"
+msgid "Edit Part S&ymbol"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartssymbols.mpartssymedit.hint
+msgctxt "tfrmmain.mmain.mparts.mpartssymbols.mpartssymedit.hint"
+msgid "Edit the chosen symbol in the symbol editor"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartssymbols.mpartssymimport.caption
+msgctxt "tfrmmain.mmain.mparts.mpartssymbols.mpartssymimport.caption"
+msgid "Import Symbol from Li&brary Panel..."
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartssymbols.mpartssymimport.hint
+msgctxt "tfrmmain.mmain.mparts.mpartssymbols.mpartssymimport.hint"
+msgid "Take the symbol chosen in the library panel as a new symbol of the part"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartssymbols.mpartssymprops.caption
+msgctxt "tfrmmain.mmain.mparts.mpartssymbols.mpartssymprops.caption"
+msgid "Part Symbol Properti&es..."
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartssymbols.mpartssymprops.hint
+msgctxt "tfrmmain.mmain.mparts.mpartssymbols.mpartssymprops.hint"
+msgid "Standard, purpose and name of the chosen symbol"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartssymbols.mpartssymdefault.caption
+msgctxt "tfrmmain.mmain.mparts.mpartssymbols.mpartssymdefault.caption"
+msgid "Make Default Sym&bol"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartssymbols.mpartssymdefault.hint
+msgctxt "tfrmmain.mmain.mparts.mpartssymbols.mpartssymdefault.hint"
+msgid "Place the chosen symbol by default"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartssymbols.mpartssymdel.caption
+msgctxt "tfrmmain.mmain.mparts.mpartssymbols.mpartssymdel.caption"
+msgid "Delete Part Symbo&l"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartssymbols.mpartssymdel.hint
+msgctxt "tfrmmain.mmain.mparts.mpartssymbols.mpartssymdel.hint"
+msgid "Delete the chosen symbol"
 msgstr ""
 
 #: tfrmmain.mmain.mparts.mpartsvalset.caption
@@ -9458,66 +9955,6 @@ msgstr ""
 #: tfrmmain.mmain.mparts.mpartsvalclear.hint
 msgctxt "tfrmmain.mmain.mparts.mpartsvalclear.hint"
 msgid "Remove the stored value of the chosen field"
-msgstr ""
-
-#: tfrmmain.mmain.mparts.mpartssymnew.caption
-msgctxt "tfrmmain.mmain.mparts.mpartssymnew.caption"
-msgid "&New Part Symbol..."
-msgstr ""
-
-#: tfrmmain.mmain.mparts.mpartssymnew.hint
-msgctxt "tfrmmain.mmain.mparts.mpartssymnew.hint"
-msgid "Draw a new symbol for the part (Symbols page of the parts library editor)"
-msgstr ""
-
-#: tfrmmain.mmain.mparts.mpartssymedit.caption
-msgctxt "tfrmmain.mmain.mparts.mpartssymedit.caption"
-msgid "Edit Part S&ymbol"
-msgstr ""
-
-#: tfrmmain.mmain.mparts.mpartssymedit.hint
-msgctxt "tfrmmain.mmain.mparts.mpartssymedit.hint"
-msgid "Edit the chosen symbol in the symbol editor"
-msgstr ""
-
-#: tfrmmain.mmain.mparts.mpartssymimport.caption
-msgctxt "tfrmmain.mmain.mparts.mpartssymimport.caption"
-msgid "Import Symbol from Li&brary Panel..."
-msgstr ""
-
-#: tfrmmain.mmain.mparts.mpartssymimport.hint
-msgctxt "tfrmmain.mmain.mparts.mpartssymimport.hint"
-msgid "Take the symbol chosen in the library panel as a new symbol of the part"
-msgstr ""
-
-#: tfrmmain.mmain.mparts.mpartssymprops.caption
-msgctxt "tfrmmain.mmain.mparts.mpartssymprops.caption"
-msgid "Part Symbol Properti&es..."
-msgstr ""
-
-#: tfrmmain.mmain.mparts.mpartssymprops.hint
-msgctxt "tfrmmain.mmain.mparts.mpartssymprops.hint"
-msgid "Standard, purpose and name of the chosen symbol"
-msgstr ""
-
-#: tfrmmain.mmain.mparts.mpartssymdefault.caption
-msgctxt "tfrmmain.mmain.mparts.mpartssymdefault.caption"
-msgid "Make Default Sym&bol"
-msgstr ""
-
-#: tfrmmain.mmain.mparts.mpartssymdefault.hint
-msgctxt "tfrmmain.mmain.mparts.mpartssymdefault.hint"
-msgid "Place the chosen symbol by default"
-msgstr ""
-
-#: tfrmmain.mmain.mparts.mpartssymdel.caption
-msgctxt "tfrmmain.mmain.mparts.mpartssymdel.caption"
-msgid "Delete Part Symbo&l"
-msgstr ""
-
-#: tfrmmain.mmain.mparts.mpartssymdel.hint
-msgctxt "tfrmmain.mmain.mparts.mpartssymdel.hint"
-msgid "Delete the chosen symbol"
 msgstr ""
 
 #: tfrmmain.mmain.mparts.mpartsprodadd.caption
@@ -10008,6 +10445,46 @@ msgstr ""
 #: tfrmmain.pmsheet.pmsheetcurve.hint
 msgctxt "tfrmmain.pmsheet.pmsheetcurve.hint"
 msgid "Make the side nearest the click a curve"
+msgstr ""
+
+#: tfrmmain.pmsheet.pmsheetinsertcontact.caption
+msgctxt "tfrmmain.pmsheet.pmsheetinsertcontact.caption"
+msgid "Insert Next Free Contact"
+msgstr ""
+
+#: tfrmmain.pmsheet.pmsheetinsertcontact.hint
+msgctxt "tfrmmain.pmsheet.pmsheetinsertcontact.hint"
+msgid "Place the next unused contact of this relay or contactor, with its reference"
+msgstr ""
+
+#: tfrmmain.pmsheet.pmsheetpolesnap.caption
+msgctxt "tfrmmain.pmsheet.pmsheetpolesnap.caption"
+msgid "Snap poles to bus"
+msgstr ""
+
+#: tfrmmain.pmsheet.pmsheetpolesnap.hint
+msgctxt "tfrmmain.pmsheet.pmsheetpolesnap.hint"
+msgid "Move the device so its poles are on the conductors of the bus (or the rails of the ladder) beside it"
+msgstr ""
+
+#: tfrmmain.pmsheet.pmsheetbus.caption
+msgctxt "tfrmmain.pmsheet.pmsheetbus.caption"
+msgid "Change to bus"
+msgstr ""
+
+#: tfrmmain.pmsheet.pmsheetbus.hint
+msgctxt "tfrmmain.pmsheet.pmsheetbus.hint"
+msgid "Make the wire a bus of several conductors side by side"
+msgstr ""
+
+#: tfrmmain.pmsheet.pmsheettowire.caption
+msgctxt "tfrmmain.pmsheet.pmsheettowire.caption"
+msgid "Change to wire"
+msgstr ""
+
+#: tfrmmain.pmsheet.pmsheettowire.hint
+msgctxt "tfrmmain.pmsheet.pmsheettowire.hint"
+msgid "Make the bus an ordinary wire again"
 msgstr ""
 
 #: tfrmmain.pmsheet.pmsheetwirecut.caption
@@ -10685,16 +11162,6 @@ msgctxt "tfrfindpanel.lbfindresults.hint"
 msgid "What was found; click an item to see it"
 msgstr ""
 
-#: tfrlibrarypanel.pbpreview.hint
-msgctxt "tfrlibrarypanel.pbpreview.hint"
-msgid "The chosen symbol (double click to place it)"
-msgstr ""
-
-#: tfrlibrarypanel.splitter1.hint
-msgctxt "tfrlibrarypanel.splitter1.hint"
-msgid "Drag to change the size of the preview"
-msgstr ""
-
 #: tfrlibrarypanel.pclibrary.hint
 msgctxt "tfrlibrarypanel.pclibrary.hint"
 msgid "Symbol libraries and parts libraries"
@@ -10723,6 +11190,16 @@ msgstr ""
 #: tfrlibrarypanel.pclibrary.tssymbols.tvlib.hint
 msgctxt "tfrlibrarypanel.pclibrary.tssymbols.tvlib.hint"
 msgid "The libraries and their symbols"
+msgstr ""
+
+#: tfrlibrarypanel.pclibrary.tssymbols.pbpreview.hint
+msgctxt "tfrlibrarypanel.pclibrary.tssymbols.pbpreview.hint"
+msgid "The chosen symbol (double click to place it)"
+msgstr ""
+
+#: tfrlibrarypanel.pclibrary.tssymbols.splitter1.hint
+msgctxt "tfrlibrarypanel.pclibrary.tssymbols.splitter1.hint"
+msgid "Drag to change the size of the preview"
 msgstr ""
 
 #: tfrlibrarypanel.pclibrary.tsparts.caption
@@ -10758,6 +11235,16 @@ msgstr ""
 #: tfrlibrarypanel.pclibrary.tsparts.lvparts.columns[1].caption
 msgctxt "tfrlibrarypanel.pclibrary.tsparts.lvparts.columns[1].caption"
 msgid "Class"
+msgstr ""
+
+#: tfrlibrarypanel.pclibrary.tsparts.pbpartpreview.hint
+msgctxt "tfrlibrarypanel.pclibrary.tsparts.pbpartpreview.hint"
+msgid "The chosen symbol (double click to place it)"
+msgstr ""
+
+#: tfrlibrarypanel.pclibrary.tsparts.splitter2.hint
+msgctxt "tfrlibrarypanel.pclibrary.tsparts.splitter2.hint"
+msgid "Drag to change the size of the preview"
 msgstr ""
 
 #: tfrlibrarypanel.pmlibview.minew.caption
@@ -10928,6 +11415,21 @@ msgstr ""
 #: tfrpartseditor.pnlinfo.btnlibapply.caption
 msgctxt "tfrpartseditor.pnlinfo.btnlibapply.caption"
 msgid "Apply"
+msgstr ""
+
+#: tfrpartseditor.pnlinfo.cbadvanced.hint
+msgctxt "tfrpartseditor.pnlinfo.cbadvanced.hint"
+msgid "Also show the Classes and Products pages (the class tree, and the catalog products with their ratings, outlines and 3D models)"
+msgstr ""
+
+#: tfrpartseditor.pnlinfo.cbadvanced.caption
+msgctxt "tfrpartseditor.pnlinfo.cbadvanced.caption"
+msgid "Advanced"
+msgstr ""
+
+#: tfrpartseditor.pceditor.hint
+msgctxt "tfrpartseditor.pceditor.hint"
+msgid "The pages of the parts library editor"
 msgstr ""
 
 #: tfrpartseditor.pceditor.tsparts.caption
@@ -11895,6 +12397,11 @@ msgctxt "tfmpin.lbnumber.caption"
 msgid "Number"
 msgstr ""
 
+#: tfmpin.edpinname.hint
+msgctxt "tfmpin.edpinname.hint"
+msgid "The name of the pin"
+msgstr ""
+
 #: tfmpin.lbname.caption
 msgctxt "tfmpin.lbname.caption"
 msgid "Name"
@@ -11907,7 +12414,7 @@ msgstr ""
 
 #: tfmpin.lbnumpos.caption
 msgctxt "tfmpin.lbnumpos.caption"
-msgid "Number pos."
+msgid "Shift text"
 msgstr ""
 
 #: tfmpin.sepinnumpos.hint

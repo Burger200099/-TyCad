@@ -54,7 +54,7 @@ bad = []
 for m in re.finditer(r"Format\((rs\w+),\s*\[([^\]]*)\]\)", src_all):
     t = dict(rs).get("ustrings." + m.group(1).lower())
     if t is None: continue
-    n_t = len(re.findall(r"%(?!%)[sd]|%\d+:[sd]", t))
+    n_t = len(re.findall(r"%(?!%)[.\d]*[sdg]|%\d+:[sd]", t))
     depth = 0; n_a = 1 if m.group(2).strip() else 0
     for ch in m.group(2):
         if ch in "([": depth += 1

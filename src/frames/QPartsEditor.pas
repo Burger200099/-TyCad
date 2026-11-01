@@ -12,7 +12,7 @@ unit QPartsEditor;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls, ComCtrls, Menus, UPartsDb, Fpartedit, Fclassedit, Ffieldedit, Fratingedit, Fobjectedit, Fswitching, Fproductedit, Fvalueedit, Fsymbolinfo, UGlyph;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls, ComCtrls, Menus, UPartsDb, Fpartedit, Fclassedit, Ffieldedit, Fratingedit, Fobjectedit, Fswitching, Fpartwizard, UPartPresets, Fproductedit, Fvalueedit, Fsymbolinfo, UGlyph;
 
 type
   TPartSymbolEvent = procedure(Sender: TObject; PartID, SymbolID: Int64) of object;
@@ -71,6 +71,7 @@ type
     pnlProdTools: TPanel;
     splProducts: TSplitter;
     tsProducts: TTabSheet;
+    cbAdvanced: TCheckBox;
     btnObjAdd: TButton;
     btnObjDelete: TButton;
     btnObjEdit: TButton;
@@ -168,6 +169,7 @@ type
     procedure ProdRatDeleteClick(Sender: TObject);
     procedure ProdRatSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
     procedure ObjAddClick(Sender: TObject);
+    procedure AdvancedChange(Sender: TObject);
     procedure ObjSwitchClick(Sender: TObject);
     procedure SwitchChanged(Sender: TObject);
     procedure ObjEditClick(Sender: TObject);
@@ -241,6 +243,8 @@ type
     procedure Refresh(SelectPartID: Int64);
     { the commands (the Parts menu and the buttons). Add / Properties ask in the dialog, Duplicate asks for the name, Delete asks to confirm }
     procedure CmdAdd;
+    procedure CmdAddClassic;
+    function AddPresetPart(const APreset: TPartPreset; const P: TPresetParams; const AName, ARef, ADesc: String; AClassID: Int64): Boolean;
     procedure CmdProperties;
     procedure CmdDuplicate;
     procedure CmdDelete;
@@ -637,11 +641,69 @@ begin
 end;
 
 { ===========================================================================
+  TfrPartsEditor.AddPresetPart  (function)
+  Parameters:
+    const APreset: TPartPreset - the kind of part chosen in the wizard
+    const P: TPresetParams - its counts
+    const AName, ARef, ADesc: String - name, reference letters, description
+    AClassID: Int64 - the class (only used by the preset that has none)
+  Returns:
+    Boolean - True when the part and its objects were made (and the part is now the chosen row)
+  Notes:
+    UPartPresets.BuildPresetPart without asking anything; when something is refused the part is not left behind and LastError holds the reason.
+  =========================================================================== }
+function TfrPartsEditor.AddPresetPart(const APreset: TPartPreset; const P: TPresetParams; const AName, ARef, ADesc: String; AClassID: Int64): Boolean;
+var
+  Id: Int64;
+begin
+  Result := False;
+  FLastError := '';
+  try
+    Id := BuildPresetPart(FLib, APreset, P, AName, ARef, ADesc, AClassID);
+  except
+    on E: EPartsError do
+    begin
+      FLastError := E.Message;
+      Exit;
+    end;
+  end;
+  Refresh(Id);
+  Changed;
+  Result := True;
+end;
+
+{ ===========================================================================
   TfrPartsEditor.CmdAdd  (procedure)
   Notes:
-    Parts > Add Part...: the Part dialog for a new part; OK adds it, a refusal is explained and the dialog opens again with the entries.
+    Parts > Add Part...: the wizard (Fpartwizard): a kind of part from the presets, the entries that kind needs, OK makes the part with its coil, poles and contacts. A refusal is
+    explained and the wizard opens again with the entries.
   =========================================================================== }
 procedure TfrPartsEditor.CmdAdd;
+var
+  Dlg: TfrmPartWizard;
+begin
+  if FLib = nil then
+    Exit;
+  Dlg := TfrmPartWizard.Create(Self);
+  try
+    Dlg.Setup(FLib);
+    while Dlg.ShowModal = mrOK do
+    begin
+      if AddPresetPart(Dlg.Preset, Dlg.Params, Dlg.PartName, Dlg.RefPrefix, Dlg.Description, Dlg.ClassID) then
+        Break;
+      ShowError(FLastError);
+    end;
+  finally
+    Dlg.Free;
+  end;
+end;
+
+{ ===========================================================================
+  TfrPartsEditor.CmdAddClassic  (procedure)
+  Notes:
+    The Part dialog for a new part (name, class, letters, status, description), without objects; OK adds it, a refusal is explained and the dialog opens again with the entries.
+  =========================================================================== }
+procedure TfrPartsEditor.CmdAddClassic;
 var
   Dlg: TfrmPartEdit;
 begin
@@ -937,8 +999,22 @@ begin
     Result := 'parts';
 end;
 
+{ the Advanced box: the Classes and Products pages are shown when it is ticked and hidden (back to the Parts page when one of them is open) when it is not }
+procedure TfrPartsEditor.AdvancedChange(Sender: TObject);
+begin
+  if (not cbAdvanced.Checked) and ((pcEditor.ActivePage = tsClasses) or (pcEditor.ActivePage = tsProducts)) then
+  begin
+    pcEditor.ActivePage := tsParts;
+    PageChange(nil);
+  end;
+  tsClasses.TabVisible := cbAdvanced.Checked;
+  tsProducts.TabVisible := cbAdvanced.Checked;
+end;
+
 procedure TfrPartsEditor.ShowPage(const AName: String);
 begin
+  if ((AName = 'classes') or (AName = 'products')) and (not cbAdvanced.Checked) then
+    cbAdvanced.Checked := True;
   if AName = 'classes' then
     pcEditor.ActivePage := tsClasses
   else if AName = 'objects' then
@@ -3048,7 +3124,7 @@ begin
     Exit;
   Dlg := TfrmSymbolInfo.Create(Self);
   try
-    Dlg.Setup(FSymbols[Row].Standard, FSymbols[Row].Purpose, FSymbols[Row].Name, FLib.FunctionObjects(CurrentSymPartID), FSymbols[Row].ShowsID);
+    Dlg.Setup(FSymbols[Row].Standard, FSymbols[Row].Purpose, FSymbols[Row].Name, FLib.UnshownObjects(CurrentSymPartID, FSymbols[Row].ID), FSymbols[Row].ShowsID);
     while Dlg.ShowModal = mrOK do
     begin
       if ChangeSymbolInfo(FSymbols[Row].ID, Dlg.Standard, Dlg.Purpose, Dlg.SymName) and ChangeSymbolShows(FSymbols[Row].ID, Dlg.ShowsID) then

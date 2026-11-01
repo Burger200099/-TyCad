@@ -41,11 +41,30 @@ function PhaseSpacingDrawn(ADrawing: TDrawingList; AGroup: Integer): Double;
 { P is the free end of a wire of a 3-phase bus: Shifts are the moves from P to the free end of each of the other wires of the group at that end (two of them). False when
   it is not. }
 function PhaseCompanionEnds(ADrawing: TDrawingList; const P: TDPoint; out Shifts: TPhaseSegments): Boolean;
+{ the lowest and highest Phase number of a bus of ACount conductors: the drawn wire is Phase 0, so 3 conductors are -1..1, 2 are 0..1, 4 are -1..2, 5 are -2..2 }
+function PhaseLow(ACount: Integer): Integer;
+function PhaseHigh(ACount: Integer): Integer;
 
 implementation
 
 const
   Tol = 0.01;       // design units: points closer than this are the same point
+
+function PhaseLow(ACount: Integer): Integer;
+begin
+  if ACount < 2 then
+    Result := 0
+  else
+    Result := -((ACount - 1) div 2);
+end;
+
+function PhaseHigh(ACount: Integer): Integer;
+begin
+  if ACount < 2 then
+    Result := 0
+  else
+    Result := PhaseLow(ACount) + ACount - 1;
+end;
 
 { ===========================================================================
   Near  (function)
@@ -270,7 +289,7 @@ begin
       { parallel, and the outer wire's start within the length of the middle one }
       if Abs((O.PointB.x - O.PointA.x) * Dy - (O.PointB.y - O.PointA.y) * Dx) / L > 0.5 then
         Continue;
-      D := Abs((O.PointA.x - M.PointA.x) * Dy - (O.PointA.y - M.PointA.y) * Dx) / L;
+      D := Abs((O.PointA.x - M.PointA.x) * Dy - (O.PointA.y - M.PointA.y) * Dx) / L / Abs(O.Phase);
       if D > 0.01 then
         Exit(D);
     end;
@@ -293,7 +312,7 @@ function ReconcilePhases(ADesign: TDesignFile; ASheet: TDesignSheet; Removed: TL
 var
   Dr: TDrawingList;
   Pending, Mids, All, Groups: TList;
-  i, j, k, g, Side, Cnt: Integer;
+  i, j, k, g, Slot, Cnt: Integer;
   L, C: TDrawLine;
   Comp: array of Integer;      // the component of each pending wire
   NC, Old: Integer;
@@ -301,7 +320,7 @@ var
   S, Drawn: Double;
   Segs, Res: TPhaseSegments;
   Rebuild, AnyOne: Boolean;
-  Outers: array[0..1] of Integer;
+  Want: Integer;               // the number of conductors the group should have
 
   procedure Join(a, b: Integer);
   var
@@ -326,7 +345,7 @@ begin
   AnyOne := False;
   for i := 0 to Dr.Count - 1 do
     if (Dr[i] is TDrawLine) and ((Dr[i] as TDrawLine).Kind = xBus) then
-      if ((Dr[i] as TDrawLine).Phases = 3) or ((Dr[i] as TDrawLine).Group <> 0) then
+      if ((Dr[i] as TDrawLine).Phases >= 2) or ((Dr[i] as TDrawLine).Group <> 0) then
         AnyOne := True;
   if not AnyOne then
     Exit;
@@ -337,7 +356,7 @@ begin
       if (Dr[i] is TDrawLine) and ((Dr[i] as TDrawLine).Kind = xBus) then
       begin
         L := Dr[i] as TDrawLine;
-        if (L.Group = 0) and (L.Phases = 3) then
+        if (L.Group = 0) and (L.Phases >= 2) then
           Pending.Add(L);
       end;
     if Pending.Count > 0 then
@@ -391,6 +410,7 @@ begin
       Cnt := 0;
       Rebuild := False;
       S := 0;
+      Want := 0;
       for i := 0 to All.Count - 1 do
       begin
         L := TDrawLine(All[i]);
@@ -399,6 +419,8 @@ begin
           Mids.Add(L);
           if S = 0 then
             S := L.PhaseSpacing;
+          if Want = 0 then
+            Want := L.Phases;
         end;
       end;
       { a group that lost its middle wires (deleted): nothing to make the others from, they are plain buses now }
@@ -438,10 +460,14 @@ begin
         if TDrawLine(All[i]).Phase <> 0 then
           Inc(Cnt);
       Drawn := PhaseSpacingDrawn(Dr, g);
-      Rebuild := (Cnt <> 2 * Mids.Count) or (Abs(Drawn - S) > 0.01);
+      Rebuild := (Cnt <> (Want - 1) * Mids.Count) or (Abs(Drawn - S) > 0.01);
+      if not Rebuild then
+        for i := 0 to All.Count - 1 do
+          if (TDrawLine(All[i]).Phase < PhaseLow(Want)) or (TDrawLine(All[i]).Phase > PhaseHigh(Want)) then
+            Rebuild := True;
       for i := 0 to All.Count - 1 do
       begin
-        TDrawLine(All[i]).Phases := 3;
+        TDrawLine(All[i]).Phases := Want;
         TDrawLine(All[i]).PhaseSpacing := S;
       end;
       if not Rebuild then
@@ -460,19 +486,19 @@ begin
         Segs[i].A := TDrawLine(Mids[i]).PointA;
         Segs[i].B := TDrawLine(Mids[i]).PointB;
       end;
-      for Side := -1 to 1 do
+      for Slot := PhaseLow(Want) to PhaseHigh(Want) do
       begin
-        if Side = 0 then
+        if Slot = 0 then
           Continue;
-        Res := OffsetSegments(Segs, S, Side);
+        Res := OffsetSegments(Segs, S * Abs(Slot), Sign(Slot));
         for i := 0 to Mids.Count - 1 do
         begin
           C := TDrawLine(Mids[i]).Clone as TDrawLine;
           C.PointA := Res[i].A;
           C.PointB := Res[i].B;
           C.Group := g;
-          C.Phase := Side;
-          C.Phases := 3;
+          C.Phase := Slot;
+          C.Phases := Want;
           C.PhaseSpacing := S;
           C.Id := ADesign.NextObjectId;
           Dr.Add(C);
@@ -559,17 +585,18 @@ begin
           Other := EndOf(M, Gap);
           Ax := Other.x - E.x; Ay := Other.y - E.y;
           { across the wire: no distance along it, and within two spacings }
-          if (Abs(Ax * Dr.x + Ay * Dr.y) < 0.5) and (Sqrt(Ax * Ax + Ay * Ay) <= 2 * L.PhaseSpacing + 0.5) and (Sqrt(Ax * Ax + Ay * Ay) > 0.01) then
+          if (Abs(Ax * Dr.x + Ay * Dr.y) < 0.5) and (Sqrt(Ax * Ax + Ay * Ay) <= (L.Phases + 1) * L.PhaseSpacing + 0.5) and (Sqrt(Ax * Ax + Ay * Ay) > 0.01) then
           begin
             SetLength(Ends, Length(Ends) + 1);
             Ends[High(Ends)] := DPoint(Ax, Ay);
           end;
         end;
       end;
-      if Length(Ends) = 2 then
+      if (L.Phases >= 2) and (Length(Ends) = L.Phases - 1) then
       begin
-        SetLength(Shifts, 2);
-        Shifts[0].A := Ends[0]; Shifts[1].A := Ends[1];
+        SetLength(Shifts, Length(Ends));
+        for Gap := 0 to High(Ends) do
+          Shifts[Gap].A := Ends[Gap];
         Exit(True);
       end;
     end;

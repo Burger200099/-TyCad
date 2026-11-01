@@ -55,7 +55,7 @@ uses UStrings;
     const Choices: TObjectRefArray - the coil, pole and contact objects of the part (TPartsLibrary.FunctionObjects)
     AShowsID: Int64 - the one the symbol draws now (0 = the whole device)
   Notes:
-    The standard can be typed (IEC, ANSI, JIC ... are offered); the purpose is one of schematic, oneline, panel, block. Shows lists the whole device and then each choice by name.
+    The standard is chosen from a list (IEC, ANSI, JIC, DIN; one the file already has is added); the purpose is one of schematic, oneline, panel, block. Shows lists the whole device and then each choice by name.
   =========================================================================== }
 { ===========================================================================
   TfrmSymbolInfo.Setup  (procedure)
@@ -87,7 +87,12 @@ begin
   end;
   if (cbShows.ItemIndex < 0) or (AShowsID = 0) then
     cbShows.ItemIndex := 0;
-  cbStandard.Text := AStandard;
+  { a standard stored in the file that is not one of the usual ones stays choosable }
+  if (AStandard <> '') and (cbStandard.Items.IndexOf(AStandard) < 0) then
+    cbStandard.Items.Add(AStandard);
+  cbStandard.ItemIndex := cbStandard.Items.IndexOf(AStandard);
+  if cbStandard.ItemIndex < 0 then
+    cbStandard.ItemIndex := 0;
   cbPurpose.ItemIndex := cbPurpose.Items.IndexOf(APurpose);
   if cbPurpose.ItemIndex < 0 then
     cbPurpose.ItemIndex := 0;

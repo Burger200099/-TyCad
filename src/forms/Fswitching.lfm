@@ -28,7 +28,7 @@ inherited frmSwitching: TfrmSwitching
   object lvRows: TListView[1]
     Left = 8
     Height = 220
-    Hint = 'The coil, poles and contacts of the part, in order; choose a contact to change its form and delay'
+    Hint = 'The coil, poles and contacts of the part, in order; choose a pole to make it standard or virtual, a contact to change its form and delay'
     Top = 8
     Width = 684
     Columns = <    
@@ -188,5 +188,46 @@ inherited frmSwitching: TfrmSwitching
     ShowHint = True
     TabOrder = 4
     OnClick = DeleteClick
+  end
+  object gbPole: TGroupBox
+    Left = 8
+    Height = 100
+    Top = 236
+    Width = 684
+    Caption = 'Pole'
+    ClientHeight = 80
+    ClientWidth = 680
+    TabOrder = 5
+    Visible = False
+    object lblPoleForm: TLabel
+      Left = 12
+      Height = 15
+      Top = 12
+      Width = 80
+      Caption = '&Form:'
+      FocusControl = cbPoleForm
+    end
+    object cbPoleForm: TComboBox
+      Left = 96
+      Height = 23
+      Hint = 'standard: the pole can be given a symbol of its own; virtual: the pole has no symbol and is not offered to be drawn (its contacts are separate)'
+      Top = 8
+      Width = 150
+      ItemHeight = 15
+      ShowHint = True
+      Style = csDropDownList
+      TabOrder = 0
+    end
+    object btnChangePole: TButton
+      Left = 450
+      Height = 26
+      Hint = 'Keep this form on the chosen pole'
+      Top = 8
+      Width = 110
+      Caption = '&Change'
+      ShowHint = True
+      TabOrder = 1
+      OnClick = ChangePoleClick
+    end
   end
 end

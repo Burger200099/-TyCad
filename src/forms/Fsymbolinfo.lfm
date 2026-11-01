@@ -44,6 +44,7 @@ inherited frmSymbolInfo: TfrmSymbolInfo
       'JIC'
       'DIN'
     )
+    Style = csDropDownList
     TabOrder = 0
   end
   object lblPurpose: TLabel[3]

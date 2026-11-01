@@ -193,6 +193,7 @@ lfm = open(os.path.join(ROOT, "src", "forms", "mainform.lfm"), encoding="utf-8")
 m = re.search(r"object mParts: TMenuItem.*?\n    end\n", lfm, re.S); txt = m.group(0) if m else ""
 want = [("mPartsDel", "DoPartDelete"), ("mPartsSep2", None), ("mPartsClassAdd", "DoClassAdd"), ("mPartsClassProps", "DoClassProperties"), ("mPartsClassDel", "DoClassDelete"), ("mPartsSep3", None),
         ("mPartsFieldAdd", "DoFieldAdd"), ("mPartsFieldProps", "DoFieldProperties"), ("mPartsFieldDel", "DoFieldDelete")]
+want = [w for w in want if not w[0].startswith("mPartsSep")]       # (the Parts menu is condensed into submenus: no separators between the groups)
 pos = [txt.find("object " + n + ":") for n, _ in want]
 check("mainform.lfm: the class and field items follow the part items, in order, each wired", all(p >= 0 for p in pos) and pos == sorted(pos) and all(("OnClick = " + h) in txt for _, h in want if h), pos)
 print("Parts class checks: %d, failed %d" % (checks, len(fails)))

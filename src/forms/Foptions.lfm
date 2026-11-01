@@ -770,6 +770,7 @@ inherited frmOptions: TfrmOptions
         TabOrder = 5
       end
       object RadioGroup1: TRadioGroup
+        Hint = 'The unit the rulers count in'
         Left = 16
         Height = 50
         Top = 120
@@ -788,6 +789,7 @@ inherited frmOptions: TfrmOptions
         ColumnLayout = clVerticalThenHorizontal
         TabOrder = 6
         object rbRulerMM: TRadioButton
+          Hint = 'Rulers in millimetres'
           Left = 6
           Height = 30
           Top = 0
@@ -796,6 +798,7 @@ inherited frmOptions: TfrmOptions
           TabOrder = 0
         end
         object rbRulerIN: TRadioButton
+          Hint = 'Rulers in inches'
           Left = 107
           Height = 30
           Top = 0

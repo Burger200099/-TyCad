@@ -258,7 +258,7 @@ const
     'INSERT INTO KindFieldDef(FieldID,KindID,Name,Type,Unit,EnumValues,Required,Description) VALUES (18,7,''Function'',''enum'',NULL,''power_in,power_out,signal,coil,contact,common,shield,PE,N,network'',1,'''')',
     'INSERT INTO KindFieldDef(FieldID,KindID,Name,Type,Unit,EnumValues,Required,Description) VALUES (19,7,''Connection'',''enum'',NULL,''screw,spring,push-in,ring,fast-on,plug,solder,M12,RJ45'',0,'''')',
     'INSERT INTO KindFieldDef(FieldID,KindID,Name,Type,Unit,EnumValues,Required,Description) VALUES (20,8,''PoleNo'',''int'',NULL,NULL,0,'''')',
-    'INSERT INTO KindFieldDef(FieldID,KindID,Name,Type,Unit,EnumValues,Required,Description) VALUES (21,9,''Form'',''enum'',NULL,''NO,NC,CO,make-before-break,latching'',1,'''')',
+    'INSERT INTO KindFieldDef(FieldID,KindID,Name,Type,Unit,EnumValues,Required,Description) VALUES (21,9,''Form'',''enum'',NULL,''NO,NC,CO,make-before-break,latching,virtual'',1,'''')',
     'INSERT INTO KindFieldDef(FieldID,KindID,Name,Type,Unit,EnumValues,Required,Description) VALUES (22,9,''Delay'',''enum'',NULL,''none,on-delay,off-delay'',0,''timing relay contact: switches after the coil is on or off'')',
     'INSERT INTO KindFieldDef(FieldID,KindID,Name,Type,Unit,EnumValues,Required,Description) VALUES (23,9,''DelaySecs'',''real'',''s'',NULL,0,''the delay time'')',
     'INSERT INTO KindFieldDef(FieldID,KindID,Name,Type,Unit,EnumValues,Required,Description) VALUES (24,9,''Material'',''text'',NULL,NULL,0,'''')',

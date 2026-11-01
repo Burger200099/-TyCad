@@ -23,6 +23,7 @@ type
   { TfrmBusDropDown }
 
   TfrmBusDropDown = class(TfrmDropDownBase)
+    edCount: TEdit;
     edMult: TEdit;
     edSpacing: TEdit;
     lbSpacing: TLabel;
@@ -44,12 +45,14 @@ type
     procedure edSpacingExit(Sender: TObject);
     procedure edSpacingChange(Sender: TObject);
     procedure PhaseClick(Sender: TObject);
+    procedure edCountChange(Sender: TObject);
+    procedure edCountKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure edMultChange(Sender: TObject);
     procedure edMultExit(Sender: TObject);
     procedure edMultKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SpaceClick(Sender: TObject);
   private
-    FPhases: Integer;               // 1 or 3
+    FPhases: Integer;               // the number of wires, 1 to 6
     FSpacingMm: Double;             // the distance between the wires
     FGridMm: Double;                // the grid, for the multiples
     FUnits: Integer;                // the units of the sheet (not used: the box at the foot is in millimetres)
@@ -77,11 +80,12 @@ var
 implementation
 
 
-uses UStrings;
+uses UStrings, StrUtils;
 
 {$R *.lfm}
 
 const
+  MaxWires = 6;        // the most wires of a bus
   Multiples = 5;       // the radio buttons for 1 to 5 grids
 
 { ===========================================================================
@@ -164,10 +168,7 @@ end;
   =========================================================================== }
 procedure TfrmBusDropDown.SetBus(APhases: Integer; ASpacingMm, AGridMm: Double; AUnits: Integer);
 begin
-  if APhases = 3 then
-    FPhases := 3
-  else
-    FPhases := 1;
+  FPhases := Max(1, Min(MaxWires, APhases));
   FSpacingMm := ASpacingMm;
   FGridMm := AGridMm;
   FUnits := AUnits;
@@ -188,7 +189,8 @@ begin
   FUpdating := True;
   try
     rbPhase1.Checked := FPhases = 1;
-    rbPhase3.Checked := FPhases = 3;
+    rbPhase3.Checked := FPhases >= 2;
+    edCount.Text := IntToStr(IfThen(FPhases >= 2, FPhases, 3));
     M := 0;      { (the whole number of grids the spacing is, 0 when it is not one) }
     if FGridMm > 0 then
     begin
@@ -235,10 +237,35 @@ begin
   if FUpdating then
     Exit;
   if Sender = rbPhase3 then
-    FPhases := 3
+    FPhases := Max(2, Min(MaxWires, StrToIntDef(Trim(edCount.Text), 3)))
   else
     FPhases := 1;
   Pick;
+end;
+
+{ the number of wires typed in the box: a change counts when the several wires choice is the one ticked }
+procedure TfrmBusDropDown.edCountChange(Sender: TObject);
+var
+  N: Integer;
+begin
+  if FUpdating then
+    Exit;
+  N := StrToIntDef(Trim(edCount.Text), 0);
+  if (N >= 2) and (N <= MaxWires) and rbPhase3.Checked and (N <> FPhases) then
+  begin
+    FPhases := N;
+    Pick;
+  end;
+end;
+
+procedure TfrmBusDropDown.edCountKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_RETURN then
+  begin
+    Key := 0;
+    rbPhase3.Checked := True;
+    PhaseClick(rbPhase3);
+  end;
 end;
 
 { ===========================================================================
@@ -456,8 +483,10 @@ var
 begin
   if Copy(AAct, 1, 6) = 'phase ' then
   begin
-    if Trim(Copy(AAct, 7, 9)) = '3' then
+    K := StrToIntDef(Trim(Copy(AAct, 7, 9)), 1);
+    if K >= 2 then
     begin
+      FUpdating := True; edCount.Text := IntToStr(K); FUpdating := False;
       rbPhase3.Checked := True; PhaseClick(rbPhase3);
     end
     else
