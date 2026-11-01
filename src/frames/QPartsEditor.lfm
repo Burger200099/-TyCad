@@ -71,6 +71,18 @@ object frPartsEditor: TfrPartsEditor
       TabOrder = 3
       OnClick = LibApplyClick
     end
+    object cbAdvanced: TCheckBox
+      Left = 710
+      Height = 19
+      Hint = 'Also show the Classes and Products pages (the class tree, and the catalog products with their ratings, outlines and 3D models)'
+      Top = 38
+      Width = 80
+      Caption = 'Advanced'
+      OnChange = AdvancedChange
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 4
+    end
     object lblLibFile: TLabel
       Left = 8
       Height = 15
@@ -80,6 +92,7 @@ object frPartsEditor: TfrPartsEditor
     end
   end
   object pcEditor: TPageControl
+    Hint = 'The pages of the parts library editor'
     Left = 0
     Height = 384
     Top = 96
@@ -190,6 +203,7 @@ object frPartsEditor: TfrPartsEditor
       end
     end
     object tsClasses: TTabSheet
+      TabVisible = False
       Caption = 'Classes'
       ClientHeight = 356
       ClientWidth = 792
@@ -417,6 +431,16 @@ object frPartsEditor: TfrPartsEditor
           Caption = 'D&elete Object'
           TabOrder = 3
           OnClick = ObjDeleteClick
+        end
+        object btnObjSwitch: TButton
+          Left = 680
+          Height = 26
+          Hint = 'The poles and contacts of the part: form (NO, NC ...) and delay of each contact, add and remove them'
+          Top = 5
+          Width = 150
+          Caption = 'Poles and &Contacts...'
+          TabOrder = 4
+          OnClick = ObjSwitchClick
         end
       end
       object tvObjects: TTreeView
@@ -763,6 +787,10 @@ object frPartsEditor: TfrPartsEditor
           item
             Caption = 'Size (bytes)'
             Width = 100
+          end
+          item
+            Caption = 'Shows'
+            Width = 140
           end>
         HideSelection = False
         ReadOnly = True
@@ -774,6 +802,7 @@ object frPartsEditor: TfrPartsEditor
       end
     end
     object tsProducts: TTabSheet
+      TabVisible = False
       Caption = 'Products'
       ClientHeight = 356
       ClientWidth = 792
@@ -1095,6 +1124,11 @@ object frPartsEditor: TfrPartsEditor
       Caption = 'Delete Object'
       Hint = 'Delete the chosen object'
       OnClick = ObjDeleteClick
+    end
+    object miObjSwitch: TMenuItem
+      Caption = 'Poles and Contacts...'
+      Hint = 'The poles and contacts of the part: form and delay of each contact'
+      OnClick = ObjSwitchClick
     end
   end
   object pmRatings: TPopupMenu

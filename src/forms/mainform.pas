@@ -17,7 +17,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ComCtrls, ExtCtrls, StdCtrls, Buttons,
   LCLType, LCLProc, TypInfo, Math, Spin, UDPoint, UDrawTypes, UGeometry, UResources, UDrawingObjects, USymbols, UDesign, UDsnBinary, ULibrary, ULibXML, UPaper,
   UProps, UUndo, UView, UDialogs, consts, Fnewdoc, Fabout, QLibPanel, QFindPanel, UDocs, USettings, UOptions, Foptions, {Fcolors,}
-  UFind, Fdetails, Fpagesetup, Fpartslist, UPartsList, USymbolBom, Fnetlist, UNetWriters,
+  UFind, Fdetails, Fpagesetup, Fpartslist, UPartsList, USymbolBom, UWireExport, UContacts, ULinks, UPartPreview, Fnetlist, UNetWriters,
   USpiceVhdl, UErc, UPartCheck, Fercopts, Fercwin, UAnnotate, Fannotate, Types, Finput,
   Fbase, Fsymbolinfo, QPropFrame, QPropFrameList, StrUtils, Printers, PrintersDlgs, UPrint,
   UPrintRun, Fprint, Fpreview, UExport, Fexport, Flibraries, ULibManager,
@@ -39,8 +39,30 @@ type
     FileName: String;
     PartID: Int64;
     Standard, Purpose, SymName: String;
+    ShowsID: Int64;                                    // the coil, pole or contact the symbol draws (0 = the whole device)
+    OrigStandard, OrigPurpose, OrigName: String;       // what a stored symbol had when it was opened (an unchanged one is not written again)
+    OrigShowsID: Int64;
     function SaveBlob(const Blob: String; Ed: TSymbolEditor): Int64;
   end;
+
+  { the part the Part ribbon is about: the last placed part that was selected (it stays when the selection goes, so a symbol can be placed on another page) }
+  TPartCtx = record
+    Valid: Boolean;
+    UID, Name, Ref, ObjName: String;
+    SymbolIds: array of Integer;       // the symbols that make up the device while its reference is not numbered yet (CB?) and says nothing about which device it is
+    Doc: TObject;                      // the document it was chosen in
+  end;
+
+  { one line of the Part ribbon's list: an object of the part and where it is drawn }
+  TPartItem = record
+    ObjectID: Int64;
+    Name, Kind, Form: String;
+    Placed: Boolean;
+    Sheet, Line: Integer;              // 0-based sheet, ladder line (0 = none)
+    Obj: TDrawMethod;
+    Text: String;                      // the line as listed
+  end;
+  TPartItemArray = array of TPartItem;
 
   TSheetDetail = (sdRulers, sdCols, sdRows, sdBorder, sdMargin, sdExtended);
 
@@ -93,8 +115,16 @@ type
     pmSheetArcOut: TMenuItem;
     pmSheetCurve: TMenuItem;
     pmSheetPolySep2: TMenuItem;
+    pmSheetInsertContact: TMenuItem;
+    pmSheetPoleSnap: TMenuItem;
+    pmSheetBus: TMenuItem;
+    pmSheetToWire: TMenuItem;
     pmSheetWireCut: TMenuItem;
     pmSheetMakeHoriz: TMenuItem;
+    pmSheetRung: TMenuItem;
+    pmSheetRungRef: TMenuItem;
+    pmSheetRungAuto: TMenuItem;
+    pmSheetRungSep: TMenuItem;
     pmSheetMakeVert: TMenuItem;
     pmSheetLineSep: TMenuItem;
     pmSheetReloadHier: TMenuItem;
@@ -319,6 +349,10 @@ type
     mPartsList: TMenuItem;
     mSymbolBom: TMenuItem;
     mSymbolData: TMenuItem;
+    mExportWires: TMenuItem;
+    pmRulerUnits: TPopupMenu;
+    miRulerMM: TMenuItem;
+    miRulerIN: TMenuItem;
     mDupRefs: TMenuItem;
     mNetList: TMenuItem;
     mCheckRules: TMenuItem;
@@ -353,23 +387,19 @@ type
     mPartsProps: TMenuItem;
     mPartsDup: TMenuItem;
     mPartsDel: TMenuItem;
-    mPartsSep2: TMenuItem;
+    mPartsParts, mPartsClasses, mPartsFields, mPartsObjects, mPartsRequirements, mPartsSymbols: TMenuItem;     // the submenus the Parts menu is condensed into
     mPartsClassAdd: TMenuItem;
     mPartsClassProps: TMenuItem;
     mPartsClassDel: TMenuItem;
-    mPartsSep3: TMenuItem;
     mPartsFieldAdd: TMenuItem;
     mPartsFieldProps: TMenuItem;
     mPartsFieldDel: TMenuItem;
-    mPartsSep4: TMenuItem;
     mPartsObjAdd: TMenuItem;
     mPartsObjProps: TMenuItem;
     mPartsObjDel: TMenuItem;
-    mPartsSep5: TMenuItem;
     mPartsRatAdd: TMenuItem;
     mPartsRatProps: TMenuItem;
     mPartsRatDel: TMenuItem;
-    mPartsSep6: TMenuItem;
     mPartsSep7: TMenuItem;
     mPartsValSet: TMenuItem;
     mPartsValClear: TMenuItem;
@@ -506,6 +536,7 @@ type
     procedure DoPartsList(Sender: TObject);
     procedure DoSymbolBom(Sender: TObject);
     procedure DoSymbolData(Sender: TObject);
+    procedure DoExportWires(Sender: TObject);
     procedure DoCheckDupRefs(Sender: TObject);
     procedure DoNetList(Sender: TObject);
     procedure DoCheckRules(Sender: TObject);
@@ -561,6 +592,13 @@ type
     procedure DoValueClear(Sender: TObject);
     procedure DoProductImport(Sender: TObject);
     procedure DoProductExport(Sender: TObject);
+    procedure BuildPartRibbon;
+    procedure UpdatePartRibbon;
+    procedure PartObjectChange(Sender: TObject);
+    procedure PartGoClick(Sender: TObject);
+    procedure PartGlyphPaint(Sender: TObject);
+    procedure ShowChosenPartObject;
+    function PartItemsOf(PL: TPartsLibrary; Idx: Integer): TPartItemArray;
     procedure DoPartSymNew(Sender: TObject);
     procedure DoPartSymEdit(Sender: TObject);
     procedure DoPartSymImport(Sender: TObject);
@@ -582,6 +620,9 @@ type
     procedure DoDelete(Sender: TObject);
     procedure DoSelectAll(Sender: TObject);
     procedure DoSelectAllAlike(Sender: TObject);
+    procedure DoSelectAlikeSymbols(Sender: TObject);
+    procedure BuildAlikeMenu(ASymbol: Boolean);
+    procedure ContextInsertContactClick(Sender: TObject);
     procedure ColorButtonClick(Sender: TObject);
     procedure DoPlaceSymbol(Sender: TObject);
     procedure DoAddSheet(Sender: TObject);
@@ -622,6 +663,8 @@ type
     procedure DoColors(Sender: TObject);
     procedure DoShowPosition(Sender: TObject);
     procedure DoShowViewRulers(Sender: TObject);
+    procedure DoRulerUnits(Sender: TObject);
+    procedure RulerUnitsPopup(Sender: TObject);
     procedure ViewMovedForRulers(Sender: TObject);
     procedure ArcTypeChangedByView(Sender: TObject);
     procedure DoRepeatNameUp(Sender: TObject);
@@ -639,6 +682,12 @@ type
     procedure ContextPolyClick(Sender: TObject);
     procedure ContextLineClick(Sender: TObject);
     procedure ContextWireCutClick(Sender: TObject);
+    procedure ContextBusClick(Sender: TObject);
+    procedure BuildBusMenu;
+    procedure ContextPoleSnapClick(Sender: TObject);
+    procedure ContextRungClick(Sender: TObject);
+    procedure ContextRungRefClick(Sender: TObject);
+    procedure BuildRungMenu(Sym: Boolean);
     procedure PolyDrawMenuClick(Sender: TObject);
     procedure ArcDrawMenuClick(Sender: TObject);
     procedure DoCloseAllDocuments(Sender: TObject);
@@ -680,6 +729,8 @@ type
     procedure PartPlace(Sender: TObject; PartIndex: Integer);
     function PartsWarningAccepted: Boolean;
     function PlacePart(PartIndex: Integer): String;
+    function BeginPlacePart(PL: TPartsLibrary; PartIndex: Integer; const Xml, Ref: String; const Copy: TPartCopy): String;
+    function InsertContactOf(const Form: String; out Chosen: String): String;
     function ChooseProduct: String;
     procedure HookSymbolFrame(AFrame: TfmSymbols);
     procedure SymbolAutoShowChange(Sender: TObject);
@@ -748,6 +799,17 @@ type
     FAutoShowParams: Boolean;      // the parameter button of the symbol frames is on: the list opens whenever a symbol is selected
     FPropTimer: TTimer;            // applies a number box a moment after its last change (PropSpinDelay)
     FSpinPending: TControl;        // the number box waiting for it
+    FPartPage: TTabSheet;            // the Part page of the ribbon (made in code; its tab shows while a part is the one being worked on)
+    FPartTitle, FPartObjLabel, FPartCaption: TLabel;
+    FPartGlyph: TPaintBox;
+    FPartObjects: TComboBox;
+    FPartGo: TButton;
+    FPartPicture: TSymbolPreview;    // the symbol that shows the chosen object
+    FPartCtx: TPartCtx;
+    FPartItems: TPartItemArray;
+    FPartUpdating: Boolean;
+    FObjectsMenu: TMenuItem;        // right click on a part symbol: Objects > every object of the part (made in BuildContextMenu)
+    FRungTextItem: TMenuItem;       // right click on a symbol: Add Symbol Rung Text
     FTabBeforeProps: String;       // the ribbon tab that was showing when selecting brought the Properties tab forward ("" when none to go back to)
     FProps: TPropEditorArray;
     FUpdatingProps: Boolean;
@@ -936,7 +998,9 @@ type
     { Store in library: checks the symbol and stores it, replacing the symbol it came from. False with the errors in Msg when it has any; Msg holds the warnings otherwise }
     function StoreSymbolDoc(Doc: TDocument; out Msg: String): Boolean;
     { starts the symbol editor on a symbol of a part of a parts file (SymbolID 0: a new one with these properties); stored back into the file }
-    function StartPartSymbol(Ed: TfrPartsEditor; PartID, SymbolID: Int64; const AStandard, APurpose, AName: String): TDocument;
+    function StartPartSymbol(Ed: TfrPartsEditor; PartID, SymbolID: Int64; const AStandard, APurpose, AName: String; AShowsID: Int64 = 0): TDocument;
+    function AskPartSymbolInfo(Doc: TDocument): Boolean;
+    procedure ApplyPartSymbolInfo(Doc: TDocument; const AStandard, APurpose, AName: String; AShowsID: Int64);
     { takes the symbol chosen in the library panel as a new symbol of the part }
     function ImportPanelSymbol(Ed: TfrPartsEditor; PartID: Int64; const AStandard, APurpose, AName: String; out Msg: String): Boolean;
     function DeleteLibrarySymbol(LibIndex, SetIndex: Integer; out Msg: String): Boolean;
@@ -946,6 +1010,9 @@ type
     procedure ImportLibraryDialog(ALibIndex: Integer);
     { ---- the pop-up menu of a right click on the sheet ---- }
     function BuildContextMenu(const P: TDPoint): TPopupMenu;
+    procedure BuildObjectsMenu(ASym: Boolean);
+    procedure ContextObjectClick(Sender: TObject);
+    procedure ContextRungTextClick(Sender: TObject);
     function ContextMenuNow: TPopupMenu;
     procedure ViewContext(Sender: TObject; X, Y: Integer; const P: TDPoint);
     function ReplaceSymbolWith(LibIndex, SetIndex, RecIndex: Integer; KeepFields: Boolean; out Msg: String): Boolean;
@@ -994,6 +1061,7 @@ type
     function WritePartsList(const AFileName: String; const Opt: TBomOptions): Boolean;
     function WriteSymbolBom(const AFileName: String): Boolean;
     function WriteSymbolData(const AFileName: String): Boolean;
+    function WriteWires(const AFileName: String; out Count: Integer): Boolean;
     function CheckDuplicateRefs(Quiet: Boolean): String;
     function CurrentFileName: String;
     function ExportNetList(F: TfrmNetlist): Boolean;
@@ -1160,6 +1228,10 @@ type
     property ProductPickAnswer: String read FProductPickAnswer write FProductPickAnswer;
     property PartsWarnMode: Integer read FPartsWarnMode write FPartsWarnMode;
     function PlacePartRow(Row: Integer; Xmm, Ymm: Double): String;
+    { the Part ribbon, for the self-test script: what it shows, the choice of an object in its list, and its Goto / Place button }
+    function PartRibbonState: String;
+    procedure PartRibbonPick(Index: Integer);
+    function PartRibbonPress: String;
     property DetailsDrop: TfrmDesignDetailsDropDown read FDetailsDrop;      // the form of the Details button (for the self-test script)
     property View: TSchematicView read GetView;
 //    property LibPanel: TfrLibraryPanel read FLibPanel;
@@ -1347,6 +1419,8 @@ begin
   FRulerLeft.Visible := False;
   FRulerTop.Font.Name := 'Segoe UI';
   FRulerLeft.Font.Name := 'Segoe UI';
+  FRulerTop.PopupMenu := pmRulerUnits;      // (the rulers are only there to click on while they are shown)
+  FRulerLeft.PopupMenu := pmRulerUnits;
   tcDocs.PopupMenu := pmDocTabs;
   frameLibraryPanel.OnPlace := @LibPlace;
   frameLibraryPanel.OnPartPlace := @PartPlace;
@@ -1655,6 +1729,7 @@ begin
   mPartsList.Enabled := FDesign <> nil;
   mSymbolBom.Enabled := FDesign <> nil;
   mSymbolData.Enabled := FDesign <> nil;
+  mExportWires.Enabled := FDesign <> nil;
   mDupRefs.Enabled := FDesign <> nil;
   mNetList.Enabled := FDesign <> nil;
   mCheckRules.Enabled := FDesign <> nil;
@@ -1993,6 +2068,7 @@ begin
     vtLabel: Result := 'label';
     vtPower: Result := 'power';
     vtPlace: Result := 'method';
+    vtPin: Result := 'pin';
   else
     Result := '';
   end;
@@ -2047,7 +2123,7 @@ function TfrmMain.ShowFrame(AParent: TWinControl; AOwner: TComponent; const AKey
   var AFrame: TFrame; var ABind: TFrameBindings; AProblems: TStringList): Integer;
 var
   Cls: TPropFrameClass;
-  i, Groups: Integer;      // (Groups: counts the blank items)
+  i, Groups, Chosen: Integer;      // (Groups: counts the blank items)
   C: TControl;
   Sl: TStringList;
   Cb: TComboBox;
@@ -2060,10 +2136,12 @@ begin
   AFrame := Cls.Create(AOwner);
   Result := AFrame.Width;      { the width it was designed with, before it is made to fill the panel }
   AFrame.Parent := AParent;
-  AFrame.Align := alClient;
+  Chosen := AFrame.Width;      { (what the parent did to it, to tell it from what ControlsHidden does) }
   if AFrame is TfmPropertyBase then
     TfmPropertyBase(AFrame).AfterCreate;      { (the frame's own set-up: the font list, the pictures of a list) }
   BindPropFrame(AFrame, Defs, PropFrameAliases(AKey), ABind, AProblems);
+  Result := Result + (AFrame.Width - Chosen);      { (ControlsHidden of the frame may have resized it; it is not aligned yet, so the panel is not what sets its width) }
+  AFrame.Align := alClient;
   if AFrame is TfmSymbols then
     HookSymbolFrame(TfmSymbols(AFrame));
   SetLength(Items, Length(ABind));
@@ -2973,7 +3051,7 @@ begin
         else if C is TCheckBox then
           TCheckBox(C).Checked := K > 0
         else if (C is TSpeedButton) and (AEditor.Mode = bmDrop) then
-          ShowBusGlyph(TSpeedButton(C), IfThen(K = 1, 3, IfThen(K = 0, 1, 0)), 0)
+          ShowBusGlyph(TSpeedButton(C), IfThen(K >= 0, K + 1, 0), 0)
         else if (C is TSpeedButton) and (AEditor.Mode = bmFill) then
           ShowFillGlyph(TSpeedButton(C), K, ColorOfHex(FillColorOf(C.Tag)))
         else if C is TSpeedButton then
@@ -3481,12 +3559,12 @@ begin
     B.Canvas.FillRect(0, 0, 32, 32);
     B.Canvas.Pen.Color := clBlue;
     B.Canvas.Pen.Width := 3;
-    if APhases = 3 then
+    if APhases >= 2 then
     begin
-      for X := 0 to 2 do
+      for X := 0 to Min(6, APhases) - 1 do
       begin
-        B.Canvas.MoveTo(5 + X * 11, 3);
-        B.Canvas.LineTo(5 + X * 11, 28);
+        B.Canvas.MoveTo(5 + X * (22 div (Min(6, APhases) - 1 + Ord(APhases < 3))), 3);
+        B.Canvas.LineTo(5 + X * (22 div (Min(6, APhases) - 1 + Ord(APhases < 3))), 28);
       end;
     end
     else
@@ -3500,6 +3578,8 @@ begin
   end;
   if APhases = 3 then
     AButton.Hint := rsBusPhase
+  else if APhases >= 2 then
+    AButton.Hint := Format(rsBusWires, [APhases])
   else if APhases = 1 then
     AButton.Hint := rsBusPhase2
   else
@@ -3546,7 +3626,7 @@ begin
   Mm := ParseFloat(Sp, DefaultPhaseSpacing / UNITS_PER_MM);
   if Mm <= 0 then
     Mm := DefaultPhaseSpacing / UNITS_PER_MM;
-  FBusDrop.SetBus(IfThen(ChoiceIndex(PhaseChoices, CurrentChoice(I)) = 1, 3, 1), Mm, FView.Sheet.Snap.Grid / UNITS_PER_MM, FView.Sheet.Options.Units);
+  FBusDrop.SetBus(Max(0, ChoiceIndex(PhaseChoices, CurrentChoice(I))) + 1, Mm, FView.Sheet.Snap.Grid / UNITS_PER_MM, FView.Sheet.Options.Units);
   FBusDrop.Popup(Sender as TControl);
 end;
 
@@ -3575,8 +3655,8 @@ begin
     Sp := CommonValue(FView.SelectedList, 'bus.spacing', Mixed);
   if (Sp = '') or (Abs(ParseFloat(Sp, 0) - ASpacingMm) > 0.0005) then
     CommitNamed(I, 'bus.spacing', FloatText(ASpacingMm));
-  if ChoiceIndex(PhaseChoices, CurrentChoice(I)) <> IfThen(APhases = 3, 1, 0) then
-    CommitAny(I, ChoiceText(PhaseChoices, IfThen(APhases = 3, 1, 0)));
+  if ChoiceIndex(PhaseChoices, CurrentChoice(I)) <> Max(1, Min(6, APhases)) - 1 then
+    CommitAny(I, ChoiceText(PhaseChoices, Max(1, Min(6, APhases)) - 1));
 end;
 
 { ===========================================================================
@@ -5616,6 +5696,43 @@ begin
     ProgramSettings.ShowViewRulers := AShow;
     SaveSettings;
   end;
+  UpdateViewRulers;
+end;
+
+{ ===========================================================================
+  TfrmMain.RulerUnitsPopup  (procedure)
+  Parameters:
+    Sender: TObject - the ruler menu
+  Notes:
+    The menu of the rulers (right click on a ruler): the units the rulers show now are ticked.
+  =========================================================================== }
+procedure TfrmMain.RulerUnitsPopup(Sender: TObject);
+var
+  U: Integer;
+begin
+  U := UNITS_MM;
+  if (FDesign <> nil) and (FView.Sheet <> nil) then
+    U := FView.Sheet.Options.Units;
+  U := RulerUnitsFor(U);
+  miRulerMM.Checked := U = UNITS_MM;
+  miRulerIN.Checked := U = UNITS_INCHES;
+end;
+
+{ ===========================================================================
+  TfrmMain.DoRulerUnits  (procedure)
+  Parameters:
+    Sender: TObject - the millimetres or the inches item of the ruler menu
+  Notes:
+    The rulers show the chosen units from now on (and at the next start): the grid and the position bar keep the sheet's units. The choice is the same one Options > Sheets >
+    Ruler Units makes.
+  =========================================================================== }
+procedure TfrmMain.DoRulerUnits(Sender: TObject);
+begin
+  if Sender = miRulerIN then
+    ProgramSettings.RulerUnits := UNITS_INCHES
+  else
+    ProgramSettings.RulerUnits := UNITS_MM;
+  SaveSettings;
   UpdateViewRulers;
 end;
 
@@ -7684,6 +7801,52 @@ begin
   Target := AskFileToWrite(SaveDlg, rsExportSymbolData, rsCSVFileCsvCsvAll, 'csv', Def + '.csv');
   if Target <> '' then
     WriteSymbolData(Target);
+end;
+
+{ ===========================================================================
+  TfrmMain.WriteWires  (function)
+  Parameters:
+    const AFileName: String - the file to write
+    out Count: Integer - the number of wire labels and bus names written
+  Returns:
+    Boolean - True when the file was written
+  Notes:
+    Writes the text on the wires of the current design (UWireExport.WireTextCsv), UTF-8. A file that cannot be written gives a message and False.
+  =========================================================================== }
+function TfrmMain.WriteWires(const AFileName: String; out Count: Integer): Boolean;
+begin
+  Count := 0;
+  Result := False;
+  if FDesign = nil then
+    Exit;
+  Result := SaveTextFile(AFileName, WireTextCsv(FDesign, Count));
+  if not Result then
+    ReportProblem(rsCannotWriteTheWiresFile);
+end;
+
+{ ===========================================================================
+  TfrmMain.DoExportWires  (procedure)
+  Parameters:
+    Sender: TObject - the menu item
+  Notes:
+    Special > Export Wires...: asks for a file (the design's name with _wires.csv to start with) and writes the text of every wire label and bus name.
+  =========================================================================== }
+procedure TfrmMain.DoExportWires(Sender: TObject);
+var
+  Target, Def: String;
+  N: Integer;
+begin
+  if FDesign = nil then
+    Exit;
+  FView.CancelTool;
+  Def := ChangeFileExt(GetFileName, '');
+  if Def = '' then
+    Def := 'wires'
+  else
+    Def := Def + '_wires';
+  Target := AskFileToWrite(SaveDlg, rsExportWires, rsCSVFileCsvCsvAll, 'csv', Def + '.csv');
+  if Target <> '' then
+    WriteWires(Target, N);
 end;
 
 { ===========================================================================
@@ -10601,13 +10764,22 @@ var
 begin
   if (CurDoc = nil) or (CurDoc.Symbol = nil) then
     Exit;
-  F := BeginSymbolProps;
-  try
-    if F.ShowModal <> mrOK then
+  if CurDoc.Symbol.Sink is TPartSymbolSink then
+  begin
+    { the symbol of a part keeps its standard, purpose, name and what it shows in the parts file: those are asked for, not the names and attributes of a library symbol }
+    if not AskPartSymbolInfo(CurDoc) then
       Exit;
-    EndSymbolProps(F, True);
-  finally
-    F.Free;
+  end
+  else
+  begin
+    F := BeginSymbolProps;
+    try
+      if F.ShowModal <> mrOK then
+        Exit;
+      EndSymbolProps(F, True);
+    finally
+      F.Free;
+    end;
   end;
   if StoreSymbolDoc(CurDoc, Msg) then
     sbMainBar.Panels[0].Text := Msg
@@ -10626,6 +10798,11 @@ procedure TfrmMain.DoSymbolProps(Sender: TObject);
 var
   F: TfrmSymbolProps;
 begin
+  if (CurDoc <> nil) and (CurDoc.Symbol <> nil) and (CurDoc.Symbol.Sink is TPartSymbolSink) then
+  begin
+    AskPartSymbolInfo(CurDoc);
+    Exit;
+  end;
   F := BeginSymbolProps;
   if F = nil then
     Exit;
@@ -11089,14 +11266,96 @@ begin
   try
     Lib.Open(FileName);
     if Ed.SourceID = -1 then
-      Result := Lib.AddSymbol(PartID, Standard, Purpose, SymName, Blob)
+    begin
+      Result := Lib.AddSymbol(PartID, Standard, Purpose, SymName, Blob);
+      if ShowsID <> 0 then
+        Lib.SetSymbolShows(Result, ShowsID);
+    end
     else
     begin
       Lib.UpdateSymbolDrawing(Ed.SourceID, Blob);
       Result := Ed.SourceID;
+      { what the Symbol Properties dialog changed since the symbol was opened }
+      if (Standard <> OrigStandard) or (Purpose <> OrigPurpose) or (SymName <> OrigName) then
+        Lib.UpdateSymbolInfo(Result, Standard, Purpose, SymName);
+      if ShowsID <> OrigShowsID then
+        Lib.SetSymbolShows(Result, ShowsID);
     end;
+    OrigStandard := Standard;
+    OrigPurpose := Purpose;
+    OrigName := SymName;
+    OrigShowsID := ShowsID;
   finally
     Lib.Free;
+  end;
+end;
+
+{ ===========================================================================
+  TfrmMain.ApplyPartSymbolInfo  (procedure)
+  Parameters:
+    Doc: TDocument - the document of a part's symbol
+    const AStandard, APurpose, AName: String; AShowsID: Int64 - the symbol's new properties
+  Notes:
+    What OK of the Symbol Properties dialog does: the values go into the symbol's sink (written with the drawing at the next store), the symbol takes the name (an empty one is
+    left as it was) and the document has unsaved changes.
+  =========================================================================== }
+procedure TfrmMain.ApplyPartSymbolInfo(Doc: TDocument; const AStandard, APurpose, AName: String; AShowsID: Int64);
+var
+  Sink: TPartSymbolSink;
+begin
+  if (Doc = nil) or (Doc.Symbol = nil) or not (Doc.Symbol.Sink is TPartSymbolSink) then
+    Exit;
+  Sink := TPartSymbolSink(Doc.Symbol.Sink);
+  Sink.Standard := AStandard;
+  Sink.Purpose := APurpose;
+  if AName <> '' then
+    Sink.SymName := AName;
+  Sink.ShowsID := AShowsID;
+  if (AName <> '') and (Doc.Symbol.LibrarySet.RecordCount > 0) then
+    Doc.Symbol.LibrarySet.Records[0].Name := AName;
+  Doc.Modified := True;
+  UpdateDocTabs;
+  UpdateFormTitle;
+end;
+
+{ ===========================================================================
+  TfrmMain.AskPartSymbolInfo  (function)
+  Parameters:
+    Doc: TDocument - the document of a part's symbol
+  Returns:
+    Boolean - True when OK was chosen
+  Notes:
+    Symbol Properties of a symbol that belongs to a part (Store in library, Library > Symbol Properties): the drawing standard, purpose, name and what the symbol shows. Shows
+    offers the whole device and the objects of the part no other symbol shows. OK puts them into the symbol's sink, so the next store writes them with the drawing, and gives the
+    symbol its new name (so a rename shows on the Symbols page, and in the tab, when it is stored).
+  =========================================================================== }
+function TfrmMain.AskPartSymbolInfo(Doc: TDocument): Boolean;
+var
+  Sink: TPartSymbolSink;
+  Lib: TPartsLibrary;
+  Choices: TObjectRefArray;
+  Dlg: TfrmSymbolInfo;
+begin
+  Result := False;
+  if (Doc = nil) or (Doc.Symbol = nil) or not (Doc.Symbol.Sink is TPartSymbolSink) then
+    Exit;
+  Sink := TPartSymbolSink(Doc.Symbol.Sink);
+  Lib := TPartsLibrary.Create;
+  try
+    Lib.Open(Sink.FileName);
+    Choices := Lib.UnshownObjects(Sink.PartID, Doc.Symbol.SourceID);
+  finally
+    Lib.Free;
+  end;
+  Dlg := TfrmSymbolInfo.Create(Self);
+  try
+    Dlg.Setup(Sink.Standard, Sink.Purpose, Sink.SymName, Choices, Sink.ShowsID);
+    if Dlg.ShowModal <> mrOK then
+      Exit;
+    ApplyPartSymbolInfo(Doc, Dlg.Standard, Dlg.Purpose, Dlg.SymName, Dlg.ShowsID);
+    Result := True;
+  finally
+    Dlg.Free;
   end;
 end;
 
@@ -11112,7 +11371,7 @@ end;
     Parts > New / Edit Part Symbol: the symbol is opened for drawing as a document of its own (a symbol being edited already is just shown); Store in library writes it back
     into the parts file. A new symbol is added to the part only when it is stored.
   =========================================================================== }
-function TfrmMain.StartPartSymbol(Ed: TfrPartsEditor; PartID, SymbolID: Int64; const AStandard, APurpose, AName: String): TDocument;
+function TfrmMain.StartPartSymbol(Ed: TfrPartsEditor; PartID, SymbolID: Int64; const AStandard, APurpose, AName: String; AShowsID: Int64): TDocument;
 var
   i, Pi: Integer;
   Sym: TSymbolEditor;
@@ -11138,6 +11397,7 @@ begin
   Sink.Standard := AStandard;
   Sink.Purpose := APurpose;
   Sink.SymName := AName;
+  Sink.ShowsID := AShowsID;
   Blob := '';
   Nm := AName;
   if SymbolID <> 0 then
@@ -11148,12 +11408,18 @@ begin
       begin
         Sink.Standard := Rows[i].Standard;
         Sink.Purpose := Rows[i].Purpose;
+        Sink.ShowsID := Rows[i].ShowsID;
         Nm := Rows[i].Name;
       end;
     Blob := Ed.Lib.SymbolDrawing(SymbolID);
   end;
   if Nm = '' then
     Nm := Ed.Lib.Parts[Pi].Name;
+  Sink.SymName := Nm;
+  Sink.OrigStandard := Sink.Standard;
+  Sink.OrigPurpose := Sink.Purpose;
+  Sink.OrigName := Nm;
+  Sink.OrigShowsID := Sink.ShowsID;
   Ref := Ed.Lib.Parts[Pi].RefPrefix;
   Desc := Ed.Lib.Parts[Pi].Description;
   Sym := TSymbolEditor.Create(nil);
@@ -11234,7 +11500,7 @@ end;
     Sender: TObject - the parts library editor
     PartID, SymbolID: Int64 - the part and symbol; 0 for a new symbol
   Notes:
-    The Symbols page's New and Edit: a new symbol asks for its standard, purpose and name first.
+    The Symbols page's New and Edit: a new symbol asks for its standard, purpose, name and what it shows first.
   =========================================================================== }
 procedure TfrmMain.PartSymbolEdit(Sender: TObject; PartID, SymbolID: Int64);
 var
@@ -11253,9 +11519,10 @@ begin
     Exit;
   Dlg := TfrmSymbolInfo.Create(Self);
   try
-    Dlg.Setup('IEC', 'schematic', Ed.Lib.Parts[Pi].Name);
+    { what the symbol can show: the objects of the part no other symbol shows yet (or the whole device) }
+    Dlg.Setup('IEC', 'schematic', Ed.Lib.Parts[Pi].Name, Ed.Lib.UnshownObjects(PartID, 0), 0);
     if Dlg.ShowModal = mrOK then
-      StartPartSymbol(Ed, PartID, 0, Dlg.Standard, Dlg.Purpose, Dlg.SymName);
+      StartPartSymbol(Ed, PartID, 0, Dlg.Standard, Dlg.Purpose, Dlg.SymName, Dlg.ShowsID);
   finally
     Dlg.Free;
   end;
@@ -11669,6 +11936,79 @@ end;
 procedure TfrmMain.DoSelectAllAlike(Sender: TObject);
 begin
   FView.SelectAllAlike;
+end;
+
+{ ===========================================================================
+  TfrmMain.ContextInsertContactClick  (procedure)
+  Parameters:
+    Sender: TObject - the menu item
+  Notes:
+    Right click a placed part > Insert Next Free Contact: see InsertContactOf (any form; the symbol is the coil).
+  =========================================================================== }
+procedure TfrmMain.ContextInsertContactClick(Sender: TObject);
+var
+  C: String;
+begin
+  InsertContactOf('', C);
+end;
+
+{ ===========================================================================
+  TfrmMain.BuildAlikeMenu  (procedure)
+  Parameters:
+    ASymbol: Boolean - True when the right click chose a symbol
+  Notes:
+    Select All Alike is a plain command (it selects everything of the same kind as the selection) unless a symbol was right clicked: then it gets a submenu of three items, which are made
+    here, in code, each time the menu is built. For any other object the item has no children and its OnClick is DoSelectAllAlike; for a symbol its OnClick is nil, so that opening the submenu
+    (the mouse over it) cannot run the command:
+      All Symbols            Tag 0  every symbol on the sheet
+      Identical References   Tag 1  symbols whose reference is the same once the numbers are taken out (R1, r12 and R7), ignoring case
+      Identical Names        Tag 2  symbols with the same Name, ignoring case
+    The Tag is the mode TSchematicView.SelectAlikeSymbols takes; the items share the handler DoSelectAlikeSymbols.
+  =========================================================================== }
+procedure TfrmMain.BuildAlikeMenu(ASymbol: Boolean);
+var
+  i: Integer;
+  M: TMenuItem;
+begin
+  { the items of the last time are taken away (Delete frees them) }
+  while pmSheetSelectAllAlike.Count > 0 do
+    pmSheetSelectAllAlike.Delete(0);
+  if not ASymbol then
+    begin
+      { a plain command: the item itself does the work }
+      pmSheetSelectAllAlike.OnClick := @DoSelectAllAlike;
+    end
+  else
+    begin
+      { a submenu: the item itself does nothing (a click on a parent item would also run on mouse over), the three sub items do the work }
+      pmSheetSelectAllAlike.OnClick := nil;
+      for i := 0 to 2 do
+        begin
+          M := TMenuItem.Create(pmSheetSelectAllAlike);
+          { (the texts are in UStrings, for translation) }
+          case i of
+            0: begin M.Caption := rsAlikeAllSymbols; M.Hint := rsAlikeAllSymbolsHint; end;
+            1: begin M.Caption := rsAlikeReferences; M.Hint := rsAlikeReferencesHint; end;
+          else
+            begin M.Caption := rsAlikeNames; M.Hint := rsAlikeNamesHint; end;
+          end;
+          M.Tag := i;
+          M.OnClick := @DoSelectAlikeSymbols;
+          pmSheetSelectAllAlike.Add(M);
+        end;
+    end;
+end;
+
+{ ===========================================================================
+  TfrmMain.DoSelectAlikeSymbols  (procedure)
+  Parameters:
+    Sender: TObject - the sub item chosen; its Tag is the mode (0 All Symbols, 1 Identical References, 2 Identical Names)
+  Notes:
+    Menu handler of the submenu Select All Alike has when a symbol was right clicked: see TSchematicView.SelectAlikeSymbols.
+  =========================================================================== }
+procedure TfrmMain.DoSelectAlikeSymbols(Sender: TObject);
+begin
+  FView.SelectAlikeSymbols((Sender as TMenuItem).Tag);
 end;
 
 { ===========================================================================
@@ -12602,6 +12942,7 @@ begin
   // ribbon setup
   FRibbonTabs := TRibbonTabStrip.Create(Self, pbRibbonDisplay, FRibbon);
   FRibbonTabs.OnChoose := @ChooseRibbonTab;
+  BuildPartRibbon;
   FRibbon.ShowTabs := False;
   pbRibbonDisplay.Font.Name := 'Segoe UI';
   pbRibbonDisplay.Font.Size := 11;
@@ -13126,6 +13467,7 @@ begin
   if (FErcForm <> nil) and (FErcDoc <> nil) and (FErcDoc = GetCurDoc) and (FView.SelectedCount = 1) and (FView.SelectedObject(0) is TDrawError) then
     FErcForm.SetSelect((FView.SelectedObject(0) as TDrawError).ErrorNumber);
   RebuildProps;
+  UpdatePartRibbon;
   { one text object (text, wire label or note) selected: its text box takes the focus with the whole text selected }
   if (FView.SelectedCount = 1) and (FView.Tool = vtSelect) and
      ((FView.SelectedObject(0) is TDrawText) or (FView.SelectedObject(0) is TDrawLabel) or (FView.SelectedObject(0) is TDrawNoteText)) then
@@ -13185,6 +13527,7 @@ begin
   begin
     UpdateFormTitle;
     ShowPropValues;
+    UpdatePartRibbon;
   end;
 end;
 
@@ -13664,6 +14007,8 @@ end;
 function TfrmMain.BuildContextMenu(const P: TDPoint): TPopupMenu;
 var
   Sel, Any, Poly, Line, Hier, Sym: Boolean;
+  PoleDelta: TDPoint;
+  PoleCount: Integer;
 begin
   FContextPoint := P;
   { what depends on the object: the items are in the form file and are shown only for that kind of object }
@@ -13679,14 +14024,21 @@ begin
   pmSheetArcOut.Visible := Poly;
   pmSheetCurve.Visible := Poly;
   pmSheetPolySep2.Visible := Poly;
+  BuildBusMenu;
+  pmSheetPoleSnap.Visible := Sym and FView.PoleSnapDelta(FView.SelectedSymbol, PoleDelta, PoleCount) and ((Abs(PoleDelta.x) > 0.001) or (Abs(PoleDelta.y) > 0.001));
   pmSheetWireCut.Visible := Line and FView.WireCanCut(P);
   pmSheetMakeHoriz.Visible := Line;
   pmSheetMakeVert.Visible := Line;
-  pmSheetLineSep.Visible := Line;
+  pmSheetLineSep.Visible := Line or pmSheetBus.Visible or pmSheetToWire.Visible or pmSheetPoleSnap.Visible;
   pmSheetReloadHier.Visible := Hier;
   pmSheetOpenHier.Visible := Hier;
   pmSheetHierSep.Visible := Hier;
   pmSheetReplaceSym.Visible := Sym;
+  BuildRungMenu(Sym);
+  BuildObjectsMenu(Sym);
+  pmSheetRungRef.Visible := Sym and (FView.SelectedSymbol.GetRef <> '');
+  { Insert Next Free Contact (the same command as Special > Insert Next Free Contact of Selected Coil) for a symbol that is a generic part from a parts library }
+  pmSheetInsertContact.Visible := Sym and (FView.SelectedSymbol.GetSymbolData is TDesignFileSymbol) and (not TDesignFileSymbol(FView.SelectedSymbol.GetSymbolData).PartInfo.IsEmpty);
   pmSheetSymSep.Visible := Sym;
   { the commands of every object are the items of pmSheet; here only what can be done now is set }
   Sel := FView.SelectedCount > 0;
@@ -13703,6 +14055,7 @@ begin
   pmSheetDuplicate.Enabled := Sel;
   pmSheetSelectAll.Enabled := Any;
   pmSheetSelectAllAlike.Enabled := Sel;
+  BuildAlikeMenu(Sym);
   pmSheetDelete.Enabled := Sel;
   pmSheetRotateLeft.Enabled := Sel;
   pmSheetRotateRight.Enabled := Sel;
@@ -13795,6 +14148,202 @@ end;
 procedure TfrmMain.ContextLineClick(Sender: TObject);
 begin
   FView.LineMakeStraight((Sender as TMenuItem).Tag = 1, FContextPoint);
+end;
+
+{ ===========================================================================
+  TfrmMain.BuildRungMenu  (procedure)
+  Parameters:
+    Sym: Boolean - a placed symbol is the chosen object
+  Notes:
+    The Rung item of the sheet's pop-up menu: shown for a symbol that is inside the rung grid and either spans several rungs or has a rung chosen. Its items are Automatic and one for each
+    rung the symbol's connection points are in (made here, their Tag is the rung number); the one in use is ticked.
+  =========================================================================== }
+procedure TfrmMain.BuildRungMenu(Sym: Boolean);
+var
+  Info: TRungInfo;
+  i: Integer;
+  M: TMenuItem;
+begin
+  while pmSheetRung.Count > 2 do
+    pmSheetRung.Delete(2);
+  pmSheetRung.Visible := False;
+  if (not Sym) or (not FView.SymbolRung(Info)) or ((Length(Info.Candidates) < 2) and (not Info.Overridden)) then
+    Exit;
+  pmSheetRungAuto.Tag := 0;
+  pmSheetRungAuto.Checked := not Info.Overridden;
+  for i := 0 to High(Info.Candidates) do
+  begin
+    M := TMenuItem.Create(pmSheetRung);
+    M.Caption := IntToStr(Info.Candidates[i]);
+    M.Tag := Info.Candidates[i];
+    M.RadioItem := True;
+    M.Checked := Info.Overridden and (Info.Number = Info.Candidates[i]);
+    M.OnClick := @ContextRungClick;
+    pmSheetRung.Add(M);
+  end;
+  pmSheetRung.Visible := True;
+end;
+
+{ ===========================================================================
+  TfrmMain.ContextRungClick  (procedure)
+  Parameters:
+    Sender: TObject - the chosen item of the Rung menu
+  Notes:
+    Keeps the rung chosen (its Tag) on the symbol, or 0 for Automatic.
+  =========================================================================== }
+procedure TfrmMain.ContextRungClick(Sender: TObject);
+begin
+  FView.SetSymbolRung((Sender as TMenuItem).Tag);
+end;
+
+{ ===========================================================================
+  TfrmMain.BuildObjectsMenu  (procedure)
+  Parameters:
+    ASym: Boolean - a placed symbol is chosen
+  Notes:
+    Objects > (the poles, contacts and coil of the part of the chosen symbol, each with where it is: [Page n, line n] or [unused]; the virtual ones are not listed) and Add Symbol
+    Rung Text, both made here and put in front of Insert Next Free Contact. The Objects menu is there for a symbol of a part only. A drawn object is selected (its sheet shown), an
+    unused one is put on the pointer to be dropped (the same as Goto / Place of the Part page).
+  =========================================================================== }
+procedure TfrmMain.BuildObjectsMenu(ASym: Boolean);
+var
+  i, At: Integer;
+  M: TMenuItem;
+  IsPart: Boolean;
+begin
+  if FObjectsMenu = nil then
+  begin
+    At := pmSheet.Items.IndexOf(pmSheetInsertContact);
+    if At < 0 then
+      At := 0;
+    FObjectsMenu := TMenuItem.Create(Self);
+    FObjectsMenu.Caption := rsObjects;
+    FObjectsMenu.Hint := rsObjectsHint;
+    pmSheet.Items.Insert(At, FObjectsMenu);
+    FRungTextItem := TMenuItem.Create(Self);
+    FRungTextItem.Caption := rsAddSymbolRungText;
+    FRungTextItem.Hint := rsAddSymbolRungTextHint;
+    FRungTextItem.OnClick := @ContextRungTextClick;
+    pmSheet.Items.Insert(At + 1, FRungTextItem);
+  end;
+  while FObjectsMenu.Count > 0 do
+    FObjectsMenu.Delete(0);
+  FRungTextItem.Visible := ASym and (FView.SelectedSymbol <> nil) and (FView.SelectedSymbol.GetRef <> '');
+  IsPart := ASym and (FView.SelectedSymbol <> nil) and (FView.SelectedSymbol.GetSymbolData is TDesignFileSymbol) and
+    (not TDesignFileSymbol(FView.SelectedSymbol.GetSymbolData).PartInfo.IsEmpty);
+  if IsPart then
+    UpdatePartRibbon;      { (the part of the chosen symbol and its list of objects) }
+  IsPart := IsPart and FPartCtx.Valid and (Length(FPartItems) > 0);
+  FObjectsMenu.Visible := IsPart;
+  if not IsPart then
+    Exit;
+  for i := 0 to High(FPartItems) do
+  begin
+    M := TMenuItem.Create(FObjectsMenu);
+    M.Caption := FPartItems[i].Text;
+    M.Tag := i;
+    M.OnClick := @ContextObjectClick;
+    FObjectsMenu.Add(M);
+  end;
+end;
+
+{ ===========================================================================
+  TfrmMain.ContextObjectClick  (procedure)
+  Parameters:
+    Sender: TObject - the item of the Objects menu (its Tag is the object's place in the Part page's list)
+  =========================================================================== }
+procedure TfrmMain.ContextObjectClick(Sender: TObject);
+begin
+  PartRibbonPick((Sender as TMenuItem).Tag);
+  PartRibbonPress;
+end;
+
+{ ===========================================================================
+  TfrmMain.ContextRungTextClick  (procedure)
+  Parameters:
+    Sender: TObject - the menu item
+  Notes:
+    Add Symbol Rung Text: a linked text saying the ladder line of the chosen symbol follows the pointer and is put down by a click.
+  =========================================================================== }
+procedure TfrmMain.ContextRungTextClick(Sender: TObject);
+begin
+  if FView.SelectedSymbol <> nil then
+    FView.BeginSymbolRungText(FView.SelectedSymbol);
+end;
+
+{ ===========================================================================
+  TfrmMain.ContextRungRefClick  (procedure)
+  Parameters:
+    Sender: TObject - the menu item
+  Notes:
+    Add Rung Reference: see TSchematicView.AddRungReference.
+  =========================================================================== }
+procedure TfrmMain.ContextRungRefClick(Sender: TObject);
+begin
+  FView.AddRungReference;
+end;
+
+{ ===========================================================================
+  TfrmMain.BuildBusMenu  (procedure)
+  Parameters:  none
+  Notes:
+    Change to bus (with 1 to 6 wires under it) for a chosen wire, and Change to wire for a chosen bus. The number of wires the chosen buses have is ticked.
+  =========================================================================== }
+procedure TfrmMain.BuildBusMenu;
+var
+  AW, AB: Boolean;
+  W, i: Integer;
+  M: TMenuItem;
+begin
+  while pmSheetBus.Count > 0 do
+    pmSheetBus.Delete(0);
+  pmSheetBus.Visible := False;
+  pmSheetToWire.Visible := False;
+  if not FView.BusSelection(AW, AB, W) then
+    Exit;
+  if AB then
+    pmSheetBus.Caption := rsBusWiresMenu
+  else
+    pmSheetBus.Caption := rsChangeToBus;
+  for i := 1 to 6 do
+  begin
+    M := TMenuItem.Create(pmSheetBus);
+    if i = 1 then
+      M.Caption := rsBusOneWire
+    else
+      M.Caption := Format(rsNWires, [i]);
+    M.Tag := i;
+    M.RadioItem := True;
+    M.Checked := (not AW) and (W = i);
+    M.OnClick := @ContextBusClick;
+    pmSheetBus.Add(M);
+  end;
+  pmSheetBus.Visible := True;
+  pmSheetToWire.Visible := AB;
+end;
+
+{ ===========================================================================
+  TfrmMain.ContextPoleSnapClick  (procedure)
+  Parameters:
+    Sender: TObject - the menu item
+  Notes:
+    Snap poles to bus: see TSchematicView.SnapSelectedPoles.
+  =========================================================================== }
+procedure TfrmMain.ContextPoleSnapClick(Sender: TObject);
+begin
+  FView.SnapSelectedPoles;
+end;
+
+{ ===========================================================================
+  TfrmMain.ContextBusClick  (procedure)
+  Parameters:
+    Sender: TObject - the chosen item
+  Notes:
+    Change to bus: the item's Tag is the number of wires; Change to wire has Tag 0.
+  =========================================================================== }
+procedure TfrmMain.ContextBusClick(Sender: TObject);
+begin
+  FView.ChangeSelectedToBus((Sender as TMenuItem).Tag);
 end;
 
 { ===========================================================================
@@ -13962,9 +14511,6 @@ end;
 function TfrmMain.PlacePart(PartIndex: Integer): String;
 var
   PL: TPartsLibrary;
-  Sym: TDesignFileSymbol;
-  Id: Integer;
-  M: TDrawMethod;
   Xml: String;
 begin
   PL := frameLibraryPanel.PartsLibrary;
@@ -13985,17 +14531,41 @@ begin
   end;
   if not PartsWarningAccepted then
     Exit('refused');
+  Result := BeginPlacePart(PL, PartIndex, Xml, '', PL.PartCopyOf(PartIndex));
+end;
+
+{ ===========================================================================
+  TfrmMain.BeginPlacePart  (function)
+  Parameters:
+    PL: TPartsLibrary - the library
+    PartIndex: Integer - the part
+    const Xml: String - the symbol drawing to place
+    const Ref: String - the reference to give; '' = the part's reference letters followed by ?
+    const Copy: TPartCopy - the part data the placed symbol keeps (PartCopyOf, with what it shows set by the caller if different)
+  Returns:
+    String - 'placed' or 'nosymbol' (the drawing could not be read)
+  Notes:
+    Shared by PlacePart and InsertContactOf: makes the symbol from the drawing with the part's name and description and puts it on the cursor to be put down.
+  =========================================================================== }
+function TfrmMain.BeginPlacePart(PL: TPartsLibrary; PartIndex: Integer; const Xml, Ref: String; const Copy: TPartCopy): String;
+var
+  Sym: TDesignFileSymbol;
+  Id: Integer;
+  M: TDrawMethod;
+begin
   Sym := TDesignFileSymbol.Create(FView.Sheet.Options);
   Sym.Name := PL.Parts[PartIndex].Name;
   Sym.Description := PL.Parts[PartIndex].Description;
-  if PL.Parts[PartIndex].RefPrefix <> '' then
+  if Ref <> '' then
+    Sym.Reference := Ref
+  else if PL.Parts[PartIndex].RefPrefix <> '' then
     Sym.Reference := PL.Parts[PartIndex].RefPrefix + '?'
   else
     Sym.Reference := 'U?';
   Sym.Ppp := 1;
   Sym.NameType := default_show;
   Sym.RefType := default_show;
-  Sym.PartInfo := PL.PartCopyOf(PartIndex);
+  Sym.PartInfo := Copy;
   if not LoadLibrarySymbolBlob(FView.Sheet, Sym, Xml) then
   begin
     Sym.Free;
@@ -14006,6 +14576,74 @@ begin
   M := TDrawMethod.CreateFromSymbol(FView.Sheet.Options, Id, 0);
   FView.BeginPlace(M);
   Result := 'placed';
+end;
+
+{ ===========================================================================
+  TfrmMain.InsertContactOf  (function)
+  Parameters:
+    const Form: String - NO or NC wanted; '' = the next free contact of any form
+    out Chosen: String - the name of the contact chosen (when 'placed')
+  Returns:
+    String - 'placed', 'nosheet', 'blocked', 'nosel' (no single part symbol is selected), 'nolibrary' (its parts library is not the open one), 'nosymbol' (the part has no
+    contact symbol), 'none' (no free contact of that form is left) or 'refused' (the warning was answered No)
+  Notes:
+    Parts plan step 2. The selected symbol (the coil) names the device: its part and its reference. The contacts of the part that are already placed with that reference
+    are looked for in the whole design (UContacts), the next unused one of the wanted form is taken, and the contact symbol of the part is put on the cursor with the
+    coil's reference and the chosen contact in its part data. When none is left the status bar says so and nothing is placed.
+  =========================================================================== }
+function TfrmMain.InsertContactOf(const Form: String; out Chosen: String): String;
+var
+  PL: TPartsLibrary;
+  M: TDrawMethod;
+  Info: TPartCopy;
+  Idx, K: Integer;
+  Contacts: TContactInfoArray;
+  Xml, Ref: String;
+begin
+  Chosen := '';
+  if FView.Sheet = nil then
+    Exit('nosheet');
+  if FView.Sheet.Options.EditLibrary then
+    Exit('blocked');
+  M := FView.SelectedSymbol;
+  if (M = nil) or not (M.GetSymbolData is TDesignFileSymbol) or TDesignFileSymbol(M.GetSymbolData).PartInfo.IsEmpty then
+  begin
+    sbMainBar.Panels[0].Text := rsSelectTheCoilFirst;
+    Exit('nosel');
+  end;
+  Info := TDesignFileSymbol(M.GetSymbolData).PartInfo;
+  Ref := M.GetRef;
+  PL := frameLibraryPanel.PartsLibrary;
+  if PL <> nil then
+    Idx := PL.FindPart(Info.UID)
+  else
+    Idx := -1;
+  if Idx < 0 then
+  begin
+    sbMainBar.Panels[0].Text := rsThePartsLibraryOfThat;
+    Exit('nolibrary');
+  end;
+  Contacts := PL.ContactObjects(PL.Parts[Idx].ID);
+  K := NextFreeContact(Contacts, UsedContactNames(FDesign, Info.UID, Ref), Form);
+  if K < 0 then
+  begin
+    sbMainBar.Panels[0].Text := Format(rsHasNoFreeContact, [Ref, Form]);
+    Exit('none');
+  end;
+  Xml := PL.ContactSymbolXml(PL.Parts[Idx].ID, Contacts[K].Form);
+  if Xml = '' then
+  begin
+    sbMainBar.Panels[0].Text := rsThatPartHasNoContactSymbol;
+    Exit('nosymbol');
+  end;
+  if not PartsWarningAccepted then
+    Exit('refused');
+  Info := PL.PartCopyOf(Idx);
+  Info.ObjectName := Contacts[K].Name;
+  Info.ObjectKind := 'Contact';
+  Info.ObjectForm := Contacts[K].Form;
+  Chosen := Contacts[K].Name;
+  Result := BeginPlacePart(PL, Idx, Xml, Ref, Info);
 end;
 
 { ===========================================================================
@@ -14489,6 +15127,357 @@ begin
     L.DeleteParameter
   else if AAct = 'state' then
     Result := 'visible=' + IntToStr(Ord(L.Visible)) + ' delete=' + IntToStr(Ord(L.DeleteEnabled)) + ' editing=' + IntToStr(Ord(L.Editing)) + ' rows=' + IntToStr(L.RowCount);
+end;
+
+{ ===========================================================================
+  TfrmMain.BuildPartRibbon  (procedure)
+  Notes:
+    Makes the Part page of the ribbon in code: the name of the part with the reference of its symbol (CB? until it is numbered), a picture of the symbol that shows the chosen
+    object and the object's name, the list of all the objects of the part with where each is drawn, and the Goto / Place button. Its tab shows only while a part is the one being worked
+    on (UpdatePartRibbon).
+  =========================================================================== }
+procedure TfrmMain.BuildPartRibbon;
+var
+  Pn: TPanel;
+begin
+  FPartPicture := TSymbolPreview.Create;
+  FPartPage := TTabSheet.Create(FRibbon);
+  FPartPage.PageControl := FRibbon;
+  FPartPage.Caption := rsPartRibbon;
+  Pn := TPanel.Create(FPartPage);
+  Pn.Parent := FPartPage;
+  Pn.Align := alLeft;
+  Pn.Width := 480;
+  Pn.BevelOuter := bvNone;
+  Pn.Caption := '';
+  FPartCaption := TLabel.Create(Pn);
+  FPartCaption.Parent := Pn;
+  FPartCaption.Align := alBottom;
+  FPartCaption.Alignment := taCenter;
+  FPartCaption.Caption := rsPartRibbon;
+  FPartTitle := TLabel.Create(Pn);
+  FPartTitle.Parent := Pn;
+  FPartTitle.SetBounds(8, 4, 460, 18);
+  FPartTitle.Font.Style := [fsBold];
+  FPartTitle.AutoSize := False;
+  FPartGlyph := TPaintBox.Create(Pn);
+  FPartGlyph.Parent := Pn;
+  FPartGlyph.SetBounds(8, 26, 56, 54);
+  FPartGlyph.OnPaint := @PartGlyphPaint;
+  FPartGlyph.Hint := rsThePictureOfThe;
+  FPartGlyph.ShowHint := True;
+  FPartObjLabel := TLabel.Create(Pn);
+  FPartObjLabel.Parent := Pn;
+  FPartObjLabel.SetBounds(74, 28, 390, 18);
+  FPartObjLabel.AutoSize := False;
+  FPartObjects := TComboBox.Create(Pn);
+  FPartObjects.Parent := Pn;
+  FPartObjects.SetBounds(74, 50, 310, 28);
+  FPartObjects.Style := csDropDownList;
+  FPartObjects.OnChange := @PartObjectChange;
+  FPartObjects.Hint := rsEveryObjectOfThePart;
+  FPartObjects.ShowHint := True;
+  FPartGo := TButton.Create(Pn);
+  FPartGo.Parent := Pn;
+  FPartGo.SetBounds(392, 49, 80, 30);
+  FPartGo.Caption := rsGoto;
+  FPartGo.OnClick := @PartGoClick;
+  FPartGo.ShowHint := True;
+  FPartPage.TabVisible := False;
+end;
+
+{ ===========================================================================
+  TfrmMain.PartItemsOf  (function)
+  Parameters:
+    PL: TPartsLibrary - the parts library the part is in
+    Idx: Integer - the part's index in it
+  Returns:
+    TPartItemArray - the objects of the part (its coils, poles and contacts; the whole device first when a symbol of it is drawn) with where each is placed in the design
+  =========================================================================== }
+function TfrmMain.PartItemsOf(PL: TPartsLibrary; Idx: Integer): TPartItemArray;
+var
+  Objs: TObjectRefArray;
+  Placed: TPlacedObjectArray;
+  i, k, N: Integer;
+  Where: String;
+  WholeDrawn: Boolean;
+begin
+  SetLength(Result, 0);
+  Objs := PL.PlaceableObjects(PL.Parts[Idx].ID);
+  Placed := PlacedObjectsOf(FDesign, FPartCtx.UID, FPartCtx.Ref, FPartCtx.SymbolIds);
+  WholeDrawn := FPartCtx.ObjName = '';
+  for k := 0 to High(Placed) do
+    if Placed[k].ObjectName = '' then
+      WholeDrawn := True;
+  SetLength(Result, Length(Objs) + Ord(WholeDrawn));
+  N := 0;
+  if WholeDrawn then
+  begin
+    Result[0].Name := rsWholeDevice;
+    N := 1;
+  end;
+  for i := 0 to High(Objs) do
+  begin
+    Result[N + i].ObjectID := Objs[i].ID;
+    Result[N + i].Name := Objs[i].Name;
+    Result[N + i].Kind := Objs[i].Kind;
+    if SameText(Objs[i].Kind, 'Contact') then
+      Result[N + i].Form := PL.ContactForm(Objs[i].ID);
+  end;
+  for i := 0 to High(Result) do
+  begin
+    for k := 0 to High(Placed) do
+      if SameText(Placed[k].ObjectName, Result[i].Name) or ((Result[i].ObjectID = 0) and (Placed[k].ObjectName = '')) then
+      begin
+        Result[i].Placed := True;
+        Result[i].Sheet := Placed[k].Sheet;
+        Result[i].Line := Placed[k].Line;
+        Result[i].Obj := Placed[k].Obj;
+        Break;
+      end;
+    if Result[i].Placed then
+    begin
+      if Result[i].Line > 0 then
+        Where := Format(rsPageLine, [Result[i].Sheet + 1, Result[i].Line])
+      else
+        Where := Format(rsPageOnly, [Result[i].Sheet + 1]);
+    end
+    else
+      Where := rsUnused;
+    Result[i].Text := Result[i].Name;
+    if Result[i].Form <> '' then
+      Result[i].Text := Result[i].Text + ' (' + Result[i].Form + ')';
+    Result[i].Text := Result[i].Text + '   ' + Where;
+  end;
+end;
+
+{ ===========================================================================
+  TfrmMain.UpdatePartRibbon  (procedure)
+  Notes:
+    Shows the part of the selected symbol in the Part page (the part's name, the reference of the symbol, which object it draws). The page is there only while a symbol of a part is
+    selected (the symbol on the cursor after Place is selected too). Another document, or the part's library not open: no part, no Part tab.
+  =========================================================================== }
+procedure TfrmMain.UpdatePartRibbon;
+var
+  M: TDrawMethod;
+  Doc: TDocument;
+  PL: TPartsLibrary;
+  Idx, i, Sel, q: Integer;
+  Known: Boolean;
+begin
+  if FDestroying or (FPartPage = nil) or FPartUpdating then
+    Exit;
+  FPartUpdating := True;
+  try
+    Doc := GetCurDoc;
+    if (Doc = nil) or (Doc.PartsEditor <> nil) or (Doc.Symbol <> nil) or (FView.Sheet = nil) then
+      FPartCtx.Valid := False
+    else
+    begin
+      if FPartCtx.Doc <> Doc then
+        FPartCtx.Valid := False;
+      M := FView.SelectedSymbol;
+      if (M <> nil) and (M.GetSymbolData is TDesignFileSymbol) and not TDesignFileSymbol(M.GetSymbolData).PartInfo.IsEmpty then
+        with TDesignFileSymbol(M.GetSymbolData).PartInfo do
+        begin
+          { the symbols of the device are found now, from the symbol chosen (a device whose reference has no number yet, CB?, says nothing about which symbols belong to it, so the ones of
+            the same part and reference are taken, one for each object); nothing is kept between selections }
+          FPartCtx.Valid := True;
+          FPartCtx.Doc := Doc;
+          FPartCtx.UID := UID;
+          FPartCtx.Name := Name;
+          FPartCtx.ObjName := ObjectName;
+          FPartCtx.Ref := M.GetRef;
+          FPartCtx.SymbolIds := LinkedSymbolIds(FDesign, UID, M.GetRef, M);
+        end
+      else
+        FPartCtx.Valid := False;      { the Part page is there only while a symbol of a part is selected }
+    end;
+    PL := frameLibraryPanel.PartsLibrary;
+    if FPartCtx.Valid and (PL <> nil) then
+      Idx := PL.FindPart(FPartCtx.UID)
+    else
+      Idx := -1;
+    FPartPage.TabVisible := FPartCtx.Valid;
+    pbRibbonDisplay.Invalidate;
+    if not FPartCtx.Valid then
+    begin
+      SetLength(FPartItems, 0);
+      FPartObjects.Items.Clear;
+      if SameText(RibbonTabTitle, rsPartRibbon) then
+        ShowRibbonTab(IfThen(FTabBeforeProps <> '', FTabBeforeProps, 'Home'));
+      Exit;
+    end;
+    FPartTitle.Caption := FPartCtx.Name + '   ' + FPartCtx.Ref;
+    FPartObjects.Items.Clear;
+    SetLength(FPartItems, 0);
+    if Idx >= 0 then
+    begin
+      FPartItems := PartItemsOf(PL, Idx);
+      Sel := -1;
+      for i := 0 to High(FPartItems) do
+      begin
+        FPartObjects.Items.Add(FPartItems[i].Text);
+        if SameText(FPartItems[i].Name, FPartCtx.ObjName) or ((FPartCtx.ObjName = '') and (FPartItems[i].ObjectID = 0)) then
+          Sel := i;
+      end;
+      FPartObjects.ItemIndex := Sel;
+    end;
+    FPartObjects.Enabled := Idx >= 0;
+    ShowChosenPartObject;
+  finally
+    FPartUpdating := False;
+  end;
+end;
+
+{ ===========================================================================
+  TfrmMain.ShowChosenPartObject  (procedure)
+  Notes:
+    The picture, the name and the button of the Part page follow the object chosen in its list: Goto when it is drawn somewhere, Place when it is not ([unused]).
+  =========================================================================== }
+procedure TfrmMain.ShowChosenPartObject;
+var
+  PL: TPartsLibrary;
+  Idx: Integer;
+  Xml: String;
+  It: TPartItem;
+begin
+  PL := frameLibraryPanel.PartsLibrary;
+  if PL <> nil then
+    Idx := PL.FindPart(FPartCtx.UID)
+  else
+    Idx := -1;
+  Xml := '';
+  if (Idx < 0) or (FPartObjects.ItemIndex < 0) or (FPartObjects.ItemIndex > High(FPartItems)) then
+  begin
+    FPartObjLabel.Caption := IfThen(Idx < 0, rsPartsLibraryNotOpen, '');
+    FPartGo.Enabled := False;
+    FPartGo.Caption := rsGoto;
+    FPartPicture.Clear;
+    FPartGlyph.Invalidate;
+    Exit;
+  end;
+  It := FPartItems[FPartObjects.ItemIndex];
+  if It.ObjectID = 0 then
+    Xml := PL.SymbolXml(PL.Parts[Idx].ID)
+  else
+    Xml := PL.ObjectSymbolXml(PL.Parts[Idx].ID, It.ObjectID, It.Form);
+  FPartPicture.SetXml(Xml, FPartCtx.Name);
+  FPartGlyph.Invalidate;
+  FPartObjLabel.Caption := It.Name;
+  if It.Kind <> '' then
+    FPartObjLabel.Caption := It.Name + '  (' + It.Kind + IfThen(It.Form <> '', ', ' + It.Form, '') + ')';
+  FPartGo.Enabled := It.Placed or (Xml <> '');
+  if It.Placed then
+  begin
+    FPartGo.Caption := rsGoto;
+    FPartGo.Hint := rsShowWhereItIs;
+  end
+  else
+  begin
+    FPartGo.Caption := rsPlace;
+    FPartGo.Hint := rsPutItOnThe;
+  end;
+end;
+
+procedure TfrmMain.PartObjectChange(Sender: TObject);
+begin
+  ShowChosenPartObject;
+end;
+
+procedure TfrmMain.PartGlyphPaint(Sender: TObject);
+begin
+  FPartPicture.Paint(FPartGlyph.Canvas, Rect(0, 0, FPartGlyph.Width, FPartGlyph.Height));
+end;
+
+{ ===========================================================================
+  TfrmMain.PartGoClick  (procedure)
+  Notes:
+    The button of the Part page. Goto: the sheet the object is on is shown and the symbol selected and brought into sight. Place: the symbol that shows the object is put on the
+    cursor, with the reference of the part (CB? while it is not numbered) and the object in its part data, to be put down on the sheet shown now (the person may go to another page first).
+  =========================================================================== }
+procedure TfrmMain.PartGoClick(Sender: TObject);
+begin
+  PartRibbonPress;
+end;
+
+function TfrmMain.PartRibbonPress: String;
+var
+  PL: TPartsLibrary;
+  Idx, Pick: Integer;
+  It: TPartItem;
+  Xml: String;
+  Info: TPartCopy;
+begin
+  Result := 'none';
+  Pick := FPartObjects.ItemIndex;
+  PL := frameLibraryPanel.PartsLibrary;
+  if (PL = nil) or (Pick < 0) or (Pick > High(FPartItems)) or (FView.Sheet = nil) then
+    Exit;
+  Idx := PL.FindPart(FPartCtx.UID);
+  if Idx < 0 then
+    Exit;
+  It := FPartItems[Pick];
+  if It.Placed then
+  begin
+    if It.Sheet <> FView.SheetIndex then
+    begin
+      tcSheetTabs.TabIndex := It.Sheet;
+      SheetTabChange(tcSheetTabs);
+    end;
+    FView.SelectObject(It.Obj, False);
+    FView.ShowObject(It.Obj);
+    Exit('goto');
+  end;
+  if FView.Sheet.Options.EditLibrary then
+    Exit('blocked');
+  if It.ObjectID = 0 then
+    Xml := PL.SymbolXml(PL.Parts[Idx].ID)
+  else
+    Xml := PL.ObjectSymbolXml(PL.Parts[Idx].ID, It.ObjectID, It.Form);
+  if Xml = '' then
+  begin
+    sbMainBar.Panels[0].Text := rsNoSymbolShowsThat;
+    Exit('nosymbol');
+  end;
+  if not PartsWarningAccepted then
+    Exit('refused');
+  Info := PL.PartCopyOf(Idx);
+  if It.ObjectID <> 0 then
+  begin
+    Info.ObjectName := It.Name;
+    Info.ObjectKind := It.Kind;
+    Info.ObjectForm := It.Form;
+  end;
+  Result := BeginPlacePart(PL, Idx, Xml, FPartCtx.Ref, Info);
+  if Result = 'placed' then
+    FocusView;
+end;
+
+procedure TfrmMain.PartRibbonPick(Index: Integer);
+begin
+  if (Index >= 0) and (Index < FPartObjects.Items.Count) then
+  begin
+    FPartObjects.ItemIndex := Index;
+    ShowChosenPartObject;
+  end;
+end;
+
+{ ===========================================================================
+  TfrmMain.PartRibbonState  (function)
+  Returns:
+    String - what the Part page shows now, for the self-test script
+  =========================================================================== }
+function TfrmMain.PartRibbonState: String;
+var
+  i: Integer;
+  L: String;
+begin
+  L := '';
+  for i := 0 to FPartObjects.Items.Count - 1 do
+    L := L + IfThen(i > 0, '|', '') + FPartObjects.Items[i];
+  Result := 'visible=' + IntToStr(Ord(FPartPage.TabVisible)) + ' title=[' + FPartTitle.Caption + '] object=[' + FPartObjLabel.Caption + '] button=[' + FPartGo.Caption +
+    '] enabled=' + IntToStr(Ord(FPartGo.Enabled)) + ' index=' + IntToStr(FPartObjects.ItemIndex) + ' glyph=' + IntToStr(Ord(FPartPicture.HasSymbol)) + ' items=[' + L + ']';
 end;
 
 { ===========================================================================

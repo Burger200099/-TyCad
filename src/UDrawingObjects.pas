@@ -664,7 +664,8 @@ type
 
   { XREF: text that shows information about another object, kept up to date by ULinks.
     Mode 0: the ladder line number the target sits on. Mode 1: the line numbers of the other
-    symbols that share the target's reference (the contacts of a coil, or the coil of a contact). }
+    symbols that share the target's reference (the contacts of a coil, or the coil of a contact).
+    Mode 2: the same with the form of each contact and only the part's own objects: a coil shows "5 NO  7 NC", a contact the rung of its coil. }
   TDrawRefText = class(TDrawingObject)
   public
     TargetId: Integer;
@@ -707,6 +708,7 @@ type
     Fields: array of TMethodField; // index 0 = Ref, 1 = Name, 2 = Other
     Hints: array of TNetlistHint;
     Product: TProductChoice;      // the product chosen for this placed part (manufacturer, model number, its ratings); empty when none (saved as <PRODUCT>)
+    RungOverride: Integer;        // the rung number chosen for a symbol that spans several rungs of the sheet's rung grid (0 = worked out from where the symbol is; saved as the rung attribute)
     constructor Create(AOpts: TDocOptionsBase); override;
     { Place a symbol from the library (CDrawMethod(pDesign, symbol, rotation)) }
     constructor CreateFromSymbol(AOpts: TDocOptionsBase; ASymbolId, NewRot: Integer);
@@ -2783,6 +2785,7 @@ constructor TDrawMethod.Create(AOpts: TDocOptionsBase);
 begin
   inherited Create(AOpts);
   SymbolId := 0;
+  RungOverride := 0;
   PointA := DPoint(0, 0);
   PointB := PointA;
   SetLength(Fields, 3);
@@ -2862,6 +2865,8 @@ begin
   W.AddAttribute('show_power', ShowPower);
   W.AddAttribute('scale_x', ScalingX);
   W.AddAttribute('scale_y', ScalingY);
+  if RungOverride <> 0 then
+    W.AddAttribute('rung', RungOverride);
   for i := 0 to High(Fields) do
   begin
     W.AddTag('FIELD');
@@ -2920,6 +2925,7 @@ begin
   R.GetAttribute('show_power', ShowPower);
   R.GetAttribute('scale_x', ScalingX);
   R.GetAttribute('scale_y', ScalingY);
+  R.GetAttribute('rung', RungOverride);
   R.IntoTag;
   i := 0;
   while R.NextTag(Name) do
@@ -8456,6 +8462,7 @@ begin
   O.Fields := Copy(Fields, 0, Length(Fields));
   O.Hints := Copy(Hints, 0, Length(Hints));
   O.Product := Product;
+  O.RungOverride := RungOverride;
   Result := O;
 end;
 

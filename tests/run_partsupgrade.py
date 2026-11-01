@@ -13,6 +13,9 @@ tmp = tempfile.mkdtemp(); f = os.path.join(tmp, "a.TCParts"); parts_seed.build(f
 sha = lambda p: hashlib.sha256(open(p, "rb").read()).hexdigest()
 h = sha(f); check("a file at the current version is opened untouched (same bytes, no backup)", U.upgrade(f) == U.CURRENT and sha(f) == h and not os.path.exists(f + ".v1.bak"))
 check("a new file has the version in both places", sqlite3.connect(f).execute("pragma user_version").fetchone()[0] == U.CURRENT == sqlite3.connect(f).execute("select SchemaVersion from FormatInfo").fetchone()[0])
+def old(path):   # makes a version 1 file out of a new one (version 2 added Symbol.ShowsObject)
+    x = sqlite3.connect(path); x.execute("alter table Symbol drop column ShowsObject"); x.execute("update FormatInfo set SchemaVersion=1"); x.execute("pragma user_version=1"); x.commit(); x.close()
+old(f)
 steps = {1: "ALTER TABLE Part ADD COLUMN Gtin TEXT;\nCREATE INDEX idx_part_gtin ON Part(Gtin);", 2: lambda c: c.execute("update Product set Series='x' where Series is null")}
 v = U.upgrade(f, current=3, steps=steps)
 c = sqlite3.connect(f); cols = [r[1] for r in c.execute("pragma table_info(Part)")]
@@ -20,7 +23,7 @@ check("an old file goes through both steps: columns, data, version numbers and h
       and c.execute("pragma user_version").fetchone()[0] == 3 and c.execute("select FromVersion,ToVersion from SchemaHistory order by 1").fetchall() == [(1, 2), (2, 3)]
       and c.execute("select count(*) from Product where Series is null").fetchone()[0] == 0, (v, cols))
 check("the backup is the old file, at its old version", os.path.exists(f + ".v1.bak") and sqlite3.connect(f + ".v1.bak").execute("select SchemaVersion from FormatInfo").fetchone()[0] == 1)
-g = os.path.join(tmp, "b.TCParts"); parts_seed.build(g).close()
+g = os.path.join(tmp, "b.TCParts"); parts_seed.build(g).close(); old(g)
 bad = {1: "ALTER TABLE Part ADD COLUMN Ok1 TEXT;", 2: "ALTER TABLE NoSuchTable ADD COLUMN x TEXT;"}
 try: U.upgrade(g, current=3, steps=bad); raised = False
 except U.UpgradeError: raised = True
@@ -38,4 +41,6 @@ check("a database that is not a TyCAD parts file (a TinyCAD library, say) is ref
 try: U.upgrade(os.path.join(tmp, "a.TCParts"), current=5, steps={}); r4 = False
 except U.UpgradeError: r4 = True
 check("a missing step is refused before anything is written", r4)
+h1 = os.path.join(tmp, "h.TCParts"); parts_seed.build(h1).close(); w = os.path.join(tmp, "w.TCParts"); parts_seed.build(w).close(); old(h1)
+check("the real steps take a version 1 file to the layout of a new file", U.upgrade(h1) == U.CURRENT and [r[1:3] for r in sqlite3.connect(h1).execute("pragma table_info(Symbol)")] == [r[1:3] for r in sqlite3.connect(w).execute("pragma table_info(Symbol)")])
 print("%d checks, %d failed" % (n[0], len(fails))); sys.exit(1 if fails else 0)

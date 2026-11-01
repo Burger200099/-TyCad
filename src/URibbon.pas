@@ -140,6 +140,12 @@ begin
   begin
     if I >= FRibbon.PageCount then
       Break;
+    if not FRibbon.Pages[I].TabVisible then       { a page that is not shown (the Part page when no part is chosen) has no tab }
+    begin
+      if I = Index then
+        Exit(Rect(0, 0, 0, 0));
+      Continue;
+    end;
     W := FBox.Canvas.TextWidth(FRibbon.Pages[I].Caption) + Padding;
     if I = Index then
       Exit(Rect(X, 0, X + W, FBox.Height));
@@ -194,6 +200,8 @@ begin
   C.FillRect(FBox.ClientRect);
   for I := 0 to FRibbon.PageCount - 1 do
   begin
+    if not FRibbon.Pages[I].TabVisible then
+      Continue;
     R := TabRect(I);
     cText := FRibbon.Pages[I].Caption;
     Selected := FRibbon.ActivePage = FRibbon.Pages[I];

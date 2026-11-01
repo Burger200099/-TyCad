@@ -16,7 +16,7 @@ const
 //  lCopyright   = lAppName + ' ' + lTarget + ' © Copyright 2022-2026' + sLineBreak + 'Eric Hoffman, HPL Software';
   lVerMajor    = 26;  //year
   lVerMinor    = 10;  //month
-  lVerRev      = 25;  //day
+  lVerRev      = 27;  //day
 
   // where the printer's own properties window is put in the Print dialog: this far from the dialog's left and top edges (pixels; see osver.PrinterDlgTryPlace)
   PrinterPropertiesOffsetLeft = 30;
@@ -153,6 +153,7 @@ const
   REG_SHOWPOSITION = 'ShowPosition';  // the Position bar is shown
   REG_PARTSFILE = 'PartsFile';            // the parts library that was open last, opened again at start
   REG_PARTSWARNING = 'PartsWarningOff';   // the person asked not to be warned that a part from a parts library breaks TinyCAD compatibility
+  REG_RULERUNITS = 'RulerUnits';           // the units of the rulers round the drawing area: 0 mm, 1 inches, -1 the units of the sheet
   REG_SHOWVIEWRULERS = 'ShowViewRulers';  // the rulers round the drawing area are shown
   REG_SYMFONTNAME = 'SymbolFontName';      // the symbol font of Options > Fonts
   REG_SYMFONTPOINTS = 'SymbolFontPoints';
@@ -212,6 +213,7 @@ type
     ShowPosition: Boolean;             // the Position bar (pointer position, snap and grid size) is shown
     LastPartsFile: String;             // the parts library file that was open last ('' for none)
     PartsWarningOff: Boolean;          // do not warn before the first part of a parts library is placed
+    RulerUnits: Integer;               // the units of those rulers: UNITS_MM (0), UNITS_INCHES (1), or -1 = the same as the sheet's units (until one is chosen)
     ShowViewRulers: Boolean;           // the rulers along the top and left of the drawing area are shown
     SymbolFontName: String;            // Options > Fonts: the font of the text of symbols (TinyCAD's pin font), what a new design starts with
     SymbolFontPoints: Integer;         // ... its size in points

@@ -13,7 +13,7 @@ interface
 
 uses
   Classes, SysUtils, Contnrs, Forms, Controls, ExtCtrls, StdCtrls, ComCtrls, Menus, Graphics, Math, Types,
-  UDPoint, UDrawTypes, UGeometry, UDrawingObjects, USymbols, UDesign, ULibrary, UPainter, UPartsDb, Dialogs;
+  UDPoint, UDrawTypes, UGeometry, UDrawingObjects, USymbols, UDesign, ULibrary, UPainter, UPartsDb, UPartPreview, Dialogs;
 
 type
   TPlaceRequest = procedure(Sender: TObject; Lib: TSymbolLibrary; SetIndex, RecIndex: Integer) of object;
@@ -65,6 +65,8 @@ type
     miNew: TMenuItem;
     pcLibrary: TPageControl;
     pbPreview: TPaintBox;
+    pbPartPreview: TPaintBox;
+    Splitter2: TSplitter;
     pmLibView: TPopupMenu;
     Splitter1: TSplitter;
     tsSymbols: TTabSheet;
@@ -74,6 +76,7 @@ type
     procedure PartsOpenClick(Sender: TObject);
     procedure PartsDblClick(Sender: TObject);
     procedure PartsSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
+    procedure ShowPartPreview(PartIndex: Integer);
     procedure FilterChange(Sender: TObject);
     procedure PreviewPaint(Sender: TObject);
     procedure TreeChange(Sender: TObject; Node: TTreeNode);
@@ -91,6 +94,7 @@ type
     FRebuilding: Boolean;
     FPreviewDesign: TDesignFile;
     FPreviewMethod: TDrawMethod;
+    FPartPreview: TSymbolPreview;     // the default symbol of the part chosen on the Parts tab
     FOnPlace: TPlaceRequest;
     FOnChanged: TNotifyEvent;
     FOnPartsFileChanged: TNotifyEvent;
@@ -162,6 +166,9 @@ type
     function PartsRowText(Index: Integer): String;
     function PartsRowImage(Index: Integer): Integer;
     procedure SelectPartRow(Index: Integer);
+    { for the self-test script: does the preview under the Parts list show a symbol; a double click on it places the chosen part }
+    function PartPreviewShown: Boolean;
+    procedure DoubleClickPartPreview;
     function SelectedPartIndex: Integer;
     property PartsLibrary: TPartsLibrary read FPartsLib;
     property PartsError: String read FPartsError;
@@ -252,7 +259,10 @@ end;
   =========================================================================== }
 procedure TfrLibraryPanel.ListDblClick(Sender: TObject);
 begin
-  PlaceSelected;      // a library node just opens or closes as the tree does by itself
+  if Sender = pbPartPreview then
+    PartsDblClick(Sender)      // the preview of the Parts tab places the chosen part
+  else
+    PlaceSelected;      // a library node just opens or closes as the tree does by itself
 end;
 
 { ===========================================================================
@@ -269,6 +279,11 @@ var
   P: TSchematicPainter;
   L, Tp, R, B, W, H, Z: Double;
 begin
+  if Sender = pbPartPreview then
+  begin
+    FPartPreview.Paint(pbPartPreview.Canvas, Rect(0, 0, pbPartPreview.Width, pbPartPreview.Height));
+    Exit;
+  end;
   C := pbPreview.Canvas;
   C.Brush.Color := clWhite;
   C.Pen.Color := clSilver;
@@ -831,6 +846,7 @@ begin
   inherited Create(AOwner);
   FEntries := TObjectList.Create(True);
   FRefs := TObjectList.Create(True);
+  FPartPreview := TSymbolPreview.Create;
   { the pop-up menu is in the designer (pmLibView); the code keeps the items its commands and the Copy to list belong to }
   FPopup := pmLibView;
   FCommandItems[scNew] := miNew;
@@ -853,6 +869,7 @@ end;
   =========================================================================== }
 destructor TfrLibraryPanel.Destroy;
 begin
+  FPartPreview.Free;
   FPartsLib.Free;
   ClearPreview;
   if tvLib <> nil then
@@ -1093,6 +1110,8 @@ begin
   try
     lvParts.Items.Clear;
     ilParts.Clear;
+    FPartPreview.Clear;
+    pbPartPreview.Invalidate;
     if FPartsLib = nil then
     begin
       lbPartsCaption.Caption := rsPartsLibraryNoneOpen;
@@ -1159,8 +1178,26 @@ end;
   =========================================================================== }
 procedure TfrLibraryPanel.PartsSelectItem(Sender: TObject; Item: TListItem; Selected: Boolean);
 begin
+  if Selected then
+    ShowPartPreview(PtrInt(Item.Data));
   if Selected and Assigned(FOnPartSelected) then
     FOnPartSelected(Self, PtrInt(Item.Data));
+end;
+
+{ ===========================================================================
+  TfrLibraryPanel.ShowPartPreview  (procedure)
+  Parameters:
+    PartIndex: Integer - the part chosen on the Parts tab (its index in the open parts library)
+  Notes:
+    Draws the part's default symbol in the preview under the list; a part without a symbol shows an empty box. A double click on the preview places the part, as one on the list does.
+  =========================================================================== }
+procedure TfrLibraryPanel.ShowPartPreview(PartIndex: Integer);
+begin
+  if (FPartsLib <> nil) and (PartIndex >= 0) and (PartIndex < FPartsLib.PartCount) then
+    FPartPreview.SetXml(FPartsLib.SymbolXml(FPartsLib.Parts[PartIndex].ID), FPartsLib.Parts[PartIndex].Name)
+  else
+    FPartPreview.Clear;
+  pbPartPreview.Invalidate;
 end;
 
 { ===========================================================================
@@ -1189,6 +1226,16 @@ end;
 function TfrLibraryPanel.PartsRowImage(Index: Integer): Integer;
 begin
   Result := lvParts.Items[Index].ImageIndex;
+end;
+
+function TfrLibraryPanel.PartPreviewShown: Boolean;
+begin
+  Result := FPartPreview.HasSymbol;
+end;
+
+procedure TfrLibraryPanel.DoubleClickPartPreview;
+begin
+  pbPartPreview.OnDblClick(pbPartPreview);
 end;
 
 procedure TfrLibraryPanel.SelectPartRow(Index: Integer);

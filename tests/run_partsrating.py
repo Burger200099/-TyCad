@@ -140,6 +140,7 @@ check("QPartsEditor.lfm: the Requirements page with the part box, the list, the 
 ml = open(os.path.join(ROOT, "src", "forms", "mainform.lfm"), encoding="utf-8").read()
 m = re.search(r"object mParts: TMenuItem.*?\n    end\n", ml, re.S); txt = m.group(0) if m else ""
 want = [("mPartsFieldDel", "DoFieldDelete"), ("mPartsSep4", None), ("mPartsRatAdd", "DoRatingAdd"), ("mPartsRatProps", "DoRatingProperties"), ("mPartsRatDel", "DoRatingDelete")]
+want = [w for w in want if not w[0].startswith("mPartsSep")]       # (the Parts menu is condensed into submenus: no separators between the groups)
 pos = [txt.find("object " + n + ":") for n, _ in want]
 check("mainform.lfm: the requirement items follow the field items, in order, each wired", all(p >= 0 for p in pos) and pos == sorted(pos) and all(("OnClick = " + h) in txt for _, h in want if h), pos)
 print("Requirement checks: %d, failed %d" % (checks, len(fails)))

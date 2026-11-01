@@ -76,6 +76,19 @@ check("buttons after choosing the default: Edit on (the main form gives the page
 o = run(["peopen " + f, "pe page symbols", "pe sym part|" + CT, "pe sym dlg|0"])
 D = [l for l in o if l.startswith("PEDLG")]
 check("dialog shows standard, purpose and name of the symbol and four purposes", len(D) == 1 and "standard=IEC" in D[0] and "purpose=schematic" in D[0] and "name=" + CT in D[0] and "purposes=4" in D[0], D)
+check("dialog: the standard is a drop-down list, and Shows is hidden for the plain (import) form", "stdstyle=1" in D[0] and "showsvisible=0" in D[0], D)
+# Shows offers only the objects no other symbol shows: give the symbol the first coil/pole/contact, then New offers the rest and the symbol's own dialog offers all of them
+import sqlite3 as _sq
+fs = mk("shows.TCParts"); _c = _sq.connect(fs)
+_ids = [r[0] for r in _c.execute("select o.ObjectID from PartObject o join ObjectKind k on k.KindID = o.KindID where o.PartID = ? and k.Name in ('Coil', 'Pole', 'Contact') order by o.Sort", (ct,))]
+_nm = [r[0] for r in _c.execute("select o.Name from PartObject o where o.ObjectID = ?", (_ids[0],))][0]
+_c.execute("update Symbol set ShowsObject = ? where PartID = ?", (_ids[0], ct)); _c.commit(); _c.close()
+o = run(["peopen " + fs, "pe page symbols", "pe sym part|" + CT, "pe sym dlg|0|newshows", "pe sym dlg|0|shows"])
+D = [l for l in o if l.startswith("PEDLG")]
+def shows(l): return re.search(r"shows=\[(.*?)\] showsvisible", l).group(1)
+check("New offers the whole device and not the object another symbol shows", len(D) == 2 and shows(D[0]).startswith("(whole device)") and (_nm + " (") not in shows(D[0]) and "showsvisible=1" in D[0], D)
+check("the symbol's own dialog still offers its object, and has it chosen", (_nm + " (") in shows(D[1]), D)
+check("Shows has the whole device and one entry for each other object", len(_ids) >= 2 and shows(D[0]).count("(") == len(_ids), (shows(D[0]), _ids))
 # ---- edit: draw a pin, store, same symbol row
 f = mk("b.TCParts"); r0, d0 = syms(f, ct); before = pins(f, r0[0][0]); rv = rev(f, ct); oth = others(f, ct)
 o = run(["peopen " + f, "pe page symbols", "pe sym part|" + CT, "pe sym select|0", "pe sym start|0|||", "docs", "gotodoc 0", "pe sym start|0|||", "docs", "gotodoc 1", "tool pin", "clickmm 150 150", "sym store=1", "gotodoc 0", "pe sym rows"])

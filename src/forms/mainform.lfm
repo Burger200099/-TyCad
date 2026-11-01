@@ -1,27 +1,27 @@
 object frmMain: TfrmMain
-  Left = 855
-  Height = 477
-  Top = 490
-  Width = 1623
+  Left = 679
+  Height = 730
+  Top = 284
+  Width = 1614
+  AllowDropFiles = True
   Caption = 'frmMain'
-  ClientHeight = 477
-  ClientWidth = 1623
+  ClientHeight = 730
+  ClientWidth = 1614
   Menu = mMain
   Position = poScreenCenter
   LCLVersion = '4.8.0.0'
   OnActivate = FormActivate
-  AllowDropFiles = True
   OnCloseQuery = FormCloseQuery
-  OnDropFiles = FormDropFiles
   OnCreate = FormCreate
+  OnDropFiles = FormDropFiles
   OnKeyDown = FormKeyDown
   OnResize = FormResize
   object sbMainBar: TStatusBar
     Left = 0
     Height = 23
     Hint = 'Messages, the position of the pointer and the grid settings'
-    Top = 454
-    Width = 1623
+    Top = 707
+    Width = 1614
     Panels = <    
       item
         Text = 'Ready'
@@ -57,13 +57,13 @@ object frmMain: TfrmMain
   object pnlPosition: TPanel
     Left = 0
     Height = 32
-    Top = 422
-    Width = 1623
+    Top = 675
+    Width = 1614
     Align = alBottom
     BevelOuter = bvNone
     BorderStyle = bsSingle
     ClientHeight = 28
-    ClientWidth = 1619
+    ClientWidth = 1610
     TabOrder = 3
     Visible = False
     object lbZoomPct: TLabel
@@ -139,36 +139,30 @@ object frmMain: TfrmMain
   end
   object pnlLeft: TPanel
     Left = 0
-    Height = 254
+    Height = 507
     Top = 168
     Width = 220
     Align = alLeft
     Caption = 'Left'
-    ClientHeight = 254
+    ClientHeight = 507
     ClientWidth = 220
     TabOrder = 1
     OnClick = pnlLeftClick
     inline frameLibraryPanel: TfrLibraryPanel
       Left = 1
-      Height = 252
+      Height = 505
       Top = 1
       Width = 218
       Align = alClient
-      ClientHeight = 252
+      ClientHeight = 505
       ClientWidth = 218
-      inherited pbPreview: TPaintBox
-        Top = 116
-        Width = 218
-      end
-      inherited Splitter1: TSplitter
-        Top = 111
-        Width = 218
-      end
       inherited pcLibrary: TPageControl
-        Height = 111
+        Height = 505
         Width = 218
+        ActivePage = frameLibraryPanel.tsSymbols
+        TabIndex = 0
         inherited tsSymbols: TTabSheet
-          ClientHeight = 83
+          ClientHeight = 477
           ClientWidth = 210
           inherited edFilter: TEdit
             Width = 210
@@ -177,12 +171,20 @@ object frmMain: TfrmMain
             Width = 210
           end
           inherited tvLib: TTreeView
-            Height = 45
+            Height = 298
+            Width = 210
+          end
+          inherited pbPreview: TPaintBox
+            Top = 341
+            Width = 210
+          end
+          inherited Splitter1: TSplitter
+            Top = 336
             Width = 210
           end
         end
         inherited tsParts: TTabSheet
-          ClientHeight = 83
+          ClientHeight = 477
           ClientWidth = 210
           inherited lbPartsCaption: TLabel
             Width = 210
@@ -191,7 +193,15 @@ object frmMain: TfrmMain
             Width = 210
           end
           inherited lvParts: TListView
-            Height = 43
+            Height = 296
+            Width = 210
+          end
+          inherited pbPartPreview: TPaintBox
+            Top = 341
+            Width = 210
+          end
+          inherited Splitter2: TSplitter
+            Top = 336
             Width = 210
           end
         end
@@ -200,20 +210,20 @@ object frmMain: TfrmMain
   end
   object pnlMain: TPanel
     Left = 225
-    Height = 254
+    Height = 507
     Top = 168
-    Width = 1398
+    Width = 1389
     Align = alClient
     Caption = 'Center'
-    ClientHeight = 254
-    ClientWidth = 1398
+    ClientHeight = 507
+    ClientWidth = 1389
     TabOrder = 2
     OnClick = pnlMainClick
     object tcSheetTabs: TTabControl
       Left = 1
       Height = 26
-      Top = 227
-      Width = 1396
+      Top = 480
+      Width = 1387
       Images = frmSharedControls.ilSheetTabs
       OnChange = SheetTabChange
       OnGetImageIndex = SheetTabImage
@@ -229,7 +239,7 @@ object frmMain: TfrmMain
   end
   object Splitter1: TSplitter
     Left = 220
-    Height = 254
+    Height = 507
     Hint = 'Drag to change the size of the panel'
     Top = 168
     Width = 5
@@ -239,17 +249,17 @@ object frmMain: TfrmMain
     Height = 142
     Hint = 'The toolbars'
     Top = 26
-    Width = 1623
-    ActivePage = FTabView
+    Width = 1614
+    ActivePage = FTabDraw
     Align = alTop
     Images = frmSharedControls.ilSpeedBtn
-    TabIndex = 1
+    TabIndex = 2
     TabOrder = 4
     OnChange = RibbonPageChange
     object FTabHome: TTabSheet
       Caption = 'Home'
       ClientHeight = 99
-      ClientWidth = 1615
+      ClientWidth = 1606
       object rpHomeFile: TPanel
         Left = 0
         Height = 99
@@ -777,7 +787,7 @@ object frmMain: TfrmMain
     object FTabView: TTabSheet
       Caption = 'View'
       ClientHeight = 99
-      ClientWidth = 1615
+      ClientWidth = 1606
       object rpViewView: TPanel
         Left = 0
         Height = 99
@@ -1176,7 +1186,7 @@ object frmMain: TfrmMain
     object FTabDraw: TTabSheet
       Caption = 'Draw'
       ClientHeight = 99
-      ClientWidth = 1615
+      ClientWidth = 1606
       object rpDrawWires: TPanel
         Left = 72
         Height = 99
@@ -1191,7 +1201,7 @@ object frmMain: TfrmMain
           Left = 0
           Height = 15
           Top = 84
-          Width = 134
+          Width = 163
           Align = alBottom
           Alignment = taCenter
           Caption = 'Wires'
@@ -1316,7 +1326,7 @@ object frmMain: TfrmMain
           Width = 28
           Flat = True
           Images = frmSharedControls.ilSpeedBtn
-          ImageIndex = 47
+          ImageIndex = 75
           ImageWidth = 24
           ShowHint = True
           ParentShowHint = False
@@ -1324,7 +1334,7 @@ object frmMain: TfrmMain
         end
       end
       object plSep10: TPanel
-        Left = 206
+        Left = 235
         Height = 99
         Top = 0
         Width = 2
@@ -1332,7 +1342,7 @@ object frmMain: TfrmMain
         TabOrder = 1
       end
       object plDrawShapes: TPanel
-        Left = 208
+        Left = 237
         Height = 99
         Top = 0
         Width = 134
@@ -1450,7 +1460,7 @@ object frmMain: TfrmMain
         end
       end
       object plDrawMeasure: TPanel
-        Left = 344
+        Left = 373
         Height = 99
         Top = 0
         Width = 82
@@ -1512,7 +1522,7 @@ object frmMain: TfrmMain
         end
       end
       object plSep11: TPanel
-        Left = 342
+        Left = 371
         Height = 99
         Top = 0
         Width = 2
@@ -1520,7 +1530,7 @@ object frmMain: TfrmMain
         TabOrder = 4
       end
       object plSep12: TPanel
-        Left = 426
+        Left = 455
         Height = 99
         Top = 0
         Width = 2
@@ -1528,7 +1538,7 @@ object frmMain: TfrmMain
         TabOrder = 5
       end
       object plDrawLadder: TPanel
-        Left = 428
+        Left = 457
         Height = 99
         Top = 0
         Width = 170
@@ -1674,7 +1684,7 @@ object frmMain: TfrmMain
     Height = 26
     Hint = 'The toolbars'
     Top = 0
-    Width = 1623
+    Width = 1614
     Align = alTop
     OnMouseDown = RibbonTabsMouseDown
     OnMouseLeave = RibbonTabsMouseLeave
@@ -2202,6 +2212,11 @@ object frmMain: TfrmMain
         Hint = 'Write every symbol and symbol text with all of its fields, one column per field name, as a CSV file'
         OnClick = DoSymbolData
       end
+      object mExportWires: TMenuItem
+        Caption = 'Export &Wires...'
+        Hint = 'Write the text of every wire label and bus name, with its sheet and position, as a CSV file'
+        OnClick = DoExportWires
+      end
       object mDupRefs: TMenuItem
         Caption = 'Check &Duplicate References...'
         Hint = 'Find symbols that have the same reference'
@@ -2406,97 +2421,139 @@ object frmMain: TfrmMain
       object mPartsSep1: TMenuItem
         Caption = '-'
       end
-      object mPartsAdd: TMenuItem
-        Caption = '&Add Part...'
-        Hint = 'Add a generic part to the library being edited'
-        OnClick = DoPartAdd
+      object mPartsParts: TMenuItem
+        Hint = 'Add, change, copy and delete parts'
+        Caption = '&Parts'
+        object mPartsAdd: TMenuItem
+          Caption = '&Add Part...'
+          Hint = 'Add a generic part to the library being edited'
+          OnClick = DoPartAdd
+        end
+        object mPartsProps: TMenuItem
+          Caption = 'Part &Properties...'
+          Hint = 'Change the name, reference letters, status and description of the chosen part'
+          OnClick = DoPartProperties
+        end
+        object mPartsDup: TMenuItem
+          Caption = '&Duplicate Part'
+          Hint = 'Make a copy of the chosen part with everything it has'
+          OnClick = DoPartDuplicate
+        end
+        object mPartsDel: TMenuItem
+          Caption = 'D&elete Part'
+          Hint = 'Delete the chosen part from the library'
+          OnClick = DoPartDelete
+        end
       end
-      object mPartsProps: TMenuItem
-        Caption = 'Part &Properties...'
-        Hint = 'Change the name, reference letters, status and description of the chosen part'
-        OnClick = DoPartProperties
+      object mPartsClasses: TMenuItem
+        Hint = 'Add, change and delete part classes'
+        Caption = '&Classes'
+        object mPartsClassAdd: TMenuItem
+          Caption = 'Add &Class...'
+          Hint = 'Add a class under the chosen one (Classes page of the parts library editor)'
+          OnClick = DoClassAdd
+        end
+        object mPartsClassProps: TMenuItem
+          Caption = 'Cl&ass Properties...'
+          Hint = 'Change the name, parent, abstract flag and description of the chosen class'
+          OnClick = DoClassProperties
+        end
+        object mPartsClassDel: TMenuItem
+          Caption = 'Delete Cl&ass'
+          Hint = 'Delete the chosen class (it must have no subclasses, parts or products)'
+          OnClick = DoClassDelete
+        end
       end
-      object mPartsDup: TMenuItem
-        Caption = '&Duplicate Part'
-        Hint = 'Make a copy of the chosen part with everything it has'
-        OnClick = DoPartDuplicate
+      object mPartsFields: TMenuItem
+        Hint = 'Add, change and delete the fields of a class'
+        Caption = '&Fields'
+        object mPartsFieldAdd: TMenuItem
+          Caption = 'Add &Field...'
+          Hint = 'Declare a field on the chosen class; its subclasses inherit it'
+          OnClick = DoFieldAdd
+        end
+        object mPartsFieldProps: TMenuItem
+          Caption = 'Fi&eld Properties...'
+          Hint = 'Change the chosen field (only a field the class declares itself)'
+          OnClick = DoFieldProperties
+        end
+        object mPartsFieldDel: TMenuItem
+          Caption = 'Delete Fiel&d'
+          Hint = 'Delete the chosen field (no part may have a value for it)'
+          OnClick = DoFieldDelete
+        end
       end
-      object mPartsDel: TMenuItem
-        Caption = 'D&elete Part'
-        Hint = 'Delete the chosen part from the library'
-        OnClick = DoPartDelete
+      object mPartsObjects: TMenuItem
+        Hint = 'Add, change and delete the objects inside a part'
+        Caption = '&Objects'
+        object mPartsObjAdd: TMenuItem
+          Caption = 'Add Ob&ject...'
+          Hint = 'Add a terminal, pole, channel ... to the chosen part (Objects page of the parts library editor)'
+          OnClick = DoObjectAdd
+        end
+        object mPartsObjProps: TMenuItem
+          Caption = 'Object Pr&operties...'
+          Hint = 'Change the chosen child object'
+          OnClick = DoObjectProperties
+        end
+        object mPartsObjDel: TMenuItem
+          Caption = 'Delete O&bject'
+          Hint = 'Delete the chosen child object and what is inside it'
+          OnClick = DoObjectDelete
+        end
       end
-      object mPartsSep2: TMenuItem
-        Caption = '-'
+      object mPartsRequirements: TMenuItem
+        Hint = 'Add, change and delete the requirements of a part'
+        Caption = '&Requirements'
+        object mPartsRatAdd: TMenuItem
+          Caption = 'Add Re&quirement...'
+          Hint = 'Add a rating the chosen part must have (Requirements page of the parts library editor)'
+          OnClick = DoRatingAdd
+        end
+        object mPartsRatProps: TMenuItem
+          Caption = 'Requirement Proper&ties...'
+          Hint = 'Change the chosen requirement'
+          OnClick = DoRatingProperties
+        end
+        object mPartsRatDel: TMenuItem
+          Caption = 'Delete Requ&irement'
+          Hint = 'Delete the chosen requirement'
+          OnClick = DoRatingDelete
+        end
       end
-      object mPartsClassAdd: TMenuItem
-        Caption = 'Add &Class...'
-        Hint = 'Add a class under the chosen one (Classes page of the parts library editor)'
-        OnClick = DoClassAdd
-      end
-      object mPartsClassProps: TMenuItem
-        Caption = 'Cl&ass Properties...'
-        Hint = 'Change the name, parent, abstract flag and description of the chosen class'
-        OnClick = DoClassProperties
-      end
-      object mPartsClassDel: TMenuItem
-        Caption = 'Delete Cl&ass'
-        Hint = 'Delete the chosen class (it must have no subclasses, parts or products)'
-        OnClick = DoClassDelete
-      end
-      object mPartsSep3: TMenuItem
-        Caption = '-'
-      end
-      object mPartsFieldAdd: TMenuItem
-        Caption = 'Add &Field...'
-        Hint = 'Declare a field on the chosen class; its subclasses inherit it'
-        OnClick = DoFieldAdd
-      end
-      object mPartsFieldProps: TMenuItem
-        Caption = 'Fi&eld Properties...'
-        Hint = 'Change the chosen field (only a field the class declares itself)'
-        OnClick = DoFieldProperties
-      end
-      object mPartsFieldDel: TMenuItem
-        Caption = 'Delete Fiel&d'
-        Hint = 'Delete the chosen field (no part may have a value for it)'
-        OnClick = DoFieldDelete
-      end
-      object mPartsSep4: TMenuItem
-        Caption = '-'
-      end
-      object mPartsObjAdd: TMenuItem
-        Caption = 'Add Ob&ject...'
-        Hint = 'Add a terminal, pole, channel ... to the chosen part (Objects page of the parts library editor)'
-        OnClick = DoObjectAdd
-      end
-      object mPartsObjProps: TMenuItem
-        Caption = 'Object Pr&operties...'
-        Hint = 'Change the chosen child object'
-        OnClick = DoObjectProperties
-      end
-      object mPartsObjDel: TMenuItem
-        Caption = 'Delete O&bject'
-        Hint = 'Delete the chosen child object and what is inside it'
-        OnClick = DoObjectDelete
-      end
-      object mPartsSep5: TMenuItem
-        Caption = '-'
-      end
-      object mPartsRatAdd: TMenuItem
-        Caption = 'Add Re&quirement...'
-        Hint = 'Add a rating the chosen part must have (Requirements page of the parts library editor)'
-        OnClick = DoRatingAdd
-      end
-      object mPartsRatProps: TMenuItem
-        Caption = 'Requirement Proper&ties...'
-        Hint = 'Change the chosen requirement'
-        OnClick = DoRatingProperties
-      end
-      object mPartsRatDel: TMenuItem
-        Caption = 'Delete Requ&irement'
-        Hint = 'Delete the chosen requirement'
-        OnClick = DoRatingDelete
+      object mPartsSymbols: TMenuItem
+        Hint = 'The symbols of a part'
+        Caption = '&Symbols'
+        object mPartsSymNew: TMenuItem
+          Caption = '&New Part Symbol...'
+          Hint = 'Draw a new symbol for the part (Symbols page of the parts library editor)'
+          OnClick = DoPartSymNew
+        end
+        object mPartsSymEdit: TMenuItem
+          Caption = 'Edit Part S&ymbol'
+          Hint = 'Edit the chosen symbol in the symbol editor'
+          OnClick = DoPartSymEdit
+        end
+        object mPartsSymImport: TMenuItem
+          Caption = 'Import Symbol from Li&brary Panel...'
+          Hint = 'Take the symbol chosen in the library panel as a new symbol of the part'
+          OnClick = DoPartSymImport
+        end
+        object mPartsSymProps: TMenuItem
+          Caption = 'Part Symbol Properti&es...'
+          Hint = 'Standard, purpose and name of the chosen symbol'
+          OnClick = DoPartSymProps
+        end
+        object mPartsSymDefault: TMenuItem
+          Caption = 'Make Default Sym&bol'
+          Hint = 'Place the chosen symbol by default'
+          OnClick = DoPartSymDefault
+        end
+        object mPartsSymDel: TMenuItem
+          Caption = 'Delete Part Symbo&l'
+          Hint = 'Delete the chosen symbol'
+          OnClick = DoPartSymDelete
+        end
       end
       object mPartsSep7: TMenuItem
         Caption = '-'
@@ -2512,39 +2569,6 @@ object frmMain: TfrmMain
         OnClick = DoValueClear
       end
       object mPartsSep8: TMenuItem
-        Caption = '-'
-      end
-      object mPartsSymNew: TMenuItem
-        Caption = '&New Part Symbol...'
-        Hint = 'Draw a new symbol for the part (Symbols page of the parts library editor)'
-        OnClick = DoPartSymNew
-      end
-      object mPartsSymEdit: TMenuItem
-        Caption = 'Edit Part S&ymbol'
-        Hint = 'Edit the chosen symbol in the symbol editor'
-        OnClick = DoPartSymEdit
-      end
-      object mPartsSymImport: TMenuItem
-        Caption = 'Import Symbol from Li&brary Panel...'
-        Hint = 'Take the symbol chosen in the library panel as a new symbol of the part'
-        OnClick = DoPartSymImport
-      end
-      object mPartsSymProps: TMenuItem
-        Caption = 'Part Symbol Properti&es...'
-        Hint = 'Standard, purpose and name of the chosen symbol'
-        OnClick = DoPartSymProps
-      end
-      object mPartsSymDefault: TMenuItem
-        Caption = 'Make Default Sym&bol'
-        Hint = 'Place the chosen symbol by default'
-        OnClick = DoPartSymDefault
-      end
-      object mPartsSymDel: TMenuItem
-        Caption = 'Delete Part Symbo&l'
-        Hint = 'Delete the chosen symbol'
-        OnClick = DoPartSymDelete
-      end
-      object mPartsSep6: TMenuItem
         Caption = '-'
       end
       object mPartsProdAdd: TMenuItem
@@ -2867,6 +2891,29 @@ object frmMain: TfrmMain
       Caption = '-'
       Visible = False
     end
+    object pmSheetInsertContact: TMenuItem
+      Caption = 'Insert Next Free Contact'
+      Hint = 'Place the next unused contact of this relay or contactor, with its reference'
+      Visible = False
+      OnClick = ContextInsertContactClick
+    end
+    object pmSheetPoleSnap: TMenuItem
+      Caption = 'Snap poles to bus'
+      Hint = 'Move the device so its poles are on the conductors of the bus (or the rails of the ladder) beside it'
+      Visible = False
+      OnClick = ContextPoleSnapClick
+    end
+    object pmSheetBus: TMenuItem
+      Caption = 'Change to bus'
+      Hint = 'Make the wire a bus of several conductors side by side'
+      Visible = False
+    end
+    object pmSheetToWire: TMenuItem
+      Caption = 'Change to wire'
+      Hint = 'Make the bus an ordinary wire again'
+      Visible = False
+      OnClick = ContextBusClick
+    end
     object pmSheetWireCut: TMenuItem
       Caption = 'Add wire cut here'
       Hint = 'Cut the wire in two at the click'
@@ -2911,6 +2958,25 @@ object frmMain: TfrmMain
       Hint = 'Replace the selected symbol with another one'
       Visible = False
       OnClick = DoReplaceSymbol
+    end
+    object pmSheetRung: TMenuItem
+      Caption = 'Rung'
+      Hint = 'The ladder rung this symbol belongs to'
+      Visible = False
+      object pmSheetRungAuto: TMenuItem
+        Caption = 'Automatic'
+        Hint = 'Work the rung out from where the symbol is'
+        OnClick = ContextRungClick
+      end
+      object pmSheetRungSep: TMenuItem
+        Caption = '-'
+      end
+    end
+    object pmSheetRungRef: TMenuItem
+      Caption = 'Add Rung Reference'
+      Hint = 'Put a cross reference under this symbol: the rung and form of the contacts of a coil, or the rung of the coil of a contact'
+      Visible = False
+      OnClick = ContextRungRefClick
     end
     object pmSheetSymSep: TMenuItem
       Caption = '-'
@@ -3248,6 +3314,23 @@ object frmMain: TfrmMain
       Enabled = False
       Hint = 'Draw the grid dots one pixel wide (symbol editing)'
       OnClick = DoOnePxGrid
+    end
+  end
+  object pmRulerUnits: TPopupMenu
+    OnPopup = RulerUnitsPopup
+    Left = 424
+    Top = 192
+    object miRulerMM: TMenuItem
+      Caption = 'Millimetres'
+      Hint = 'Show the rulers in millimetres'
+      RadioItem = True
+      OnClick = DoRulerUnits
+    end
+    object miRulerIN: TMenuItem
+      Caption = 'Inches'
+      Hint = 'Show the rulers in inches'
+      RadioItem = True
+      OnClick = DoRulerUnits
     end
   end
   object pmCloseDocMenu: TPopupMenu

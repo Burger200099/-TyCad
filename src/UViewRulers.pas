@@ -145,7 +145,7 @@ begin
     Exit;
   Zoom := FView.Zoom;
   Scale := 1;                                        // millimetres per unit of the ruler
-  if FView.Sheet.Options.Units = UNITS_INCHES then
+  if RulerUnitsFor(FView.Sheet.Options.Units) = UNITS_INCHES then
     Scale := 25.4;
   if FVertical then
   begin
@@ -209,7 +209,7 @@ begin
     ASig[3] := FView.ClientHeight
   else
     ASig[3] := FView.ClientWidth;
-  ASig[4] := FView.Sheet.Options.Units;
+  ASig[4] := RulerUnitsFor(FView.Sheet.Options.Units);
   if FView.Sheet.Options.HasOrigin then
   begin
     ASig[5] := FView.Sheet.Options.Origin.x;
@@ -292,7 +292,7 @@ begin
   Len := IfThen(FVertical, Height, Width);
   MajorLen := Th - 3;
   MinorLen := Th div 3;
-  RulerSteps(UNITS_PER_MM * FView.Zoom * IfThen(FView.Sheet.Options.Units = UNITS_INCHES, 25.4, 1.0), 60, Major, Minor);
+  RulerSteps(UNITS_PER_MM * FView.Zoom * IfThen(RulerUnitsFor(FView.Sheet.Options.Units) = UNITS_INCHES, 25.4, 1.0), 60, Major, Minor);
   Frac := Major < 1;
   C.Brush.Style := bsClear;
   for I := 0 to High(T) do

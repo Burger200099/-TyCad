@@ -18,12 +18,12 @@ fails = []; n = [0]
 def check(name, ok, d=""):
     n[0] += 1
     if not ok: fails.append(name); print("  FAIL", name, str(d)[:500])
-def run(keys, disp):
+def run(keys, disp, after=None):
     D = ":%d" % disp
     xv = subprocess.Popen(["Xvfb", D, "-screen", "0", "1600x1000x24"], stderr=subprocess.DEVNULL); time.sleep(2)
     try:
         S = ["newdoc A4", "registerframe x all", "tool symboltext", "frameinfo tool", "frameact tool edSymbolText text Pump 7", "clickmm 80 40", "frameinfo sel", "symlist sel open", "symlist sel rows", "symlist sel pos", "symlist sel text",
-             "sleep 12000", "symlist sel text", "sleep 1500", "symlist sel text", "selectall", "selcount"]
+             "sleep 12000", "symlist sel text", "sleep 1500", "symlist sel text", "selectall", "selcount"] + (after or [])
         sp = os.path.join(tmp, "s%d.txt" % disp); open(sp, "w").write("\n".join(S) + "\n")
         p = subprocess.Popen([exe, "--script", sp], env=dict(os.environ, DISPLAY=D, HOME=tempfile.mkdtemp(dir=tmp)), stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
         d = display.Display(D); time.sleep(5)
@@ -53,4 +53,12 @@ o = run(["ctrl+a", "ctrl+c", "End", "ctrl+v"], 93); t = texts(o)
 check("Ctrl+A, Ctrl+C, End, Ctrl+V in the Value box: 'Pump 7Pump 7' (the shortcuts act on the box, not on the sheet)", t[-1:] == ["Pump 7Pump 7"], (t, o[:12]))
 o = run(["ctrl+a", "ctrl+x"], 94); t = texts(o)
 check("Ctrl+X in the Value box cuts its text and the symbol stays", t[-1:] == [""] and "SYMLIST text noframe" not in o, (t, o[:12]))
+# ---- Enter commits every time: edit the Value, Enter, edit it again, Enter: the symbol has the second text (the list's own editor stays on the cell)
+csvp = os.path.join(tmp, "v.csv")
+o = run(["ctrl+a", "a", "Return", "ctrl+a", "b", "Return"], 95, ["symdata " + csvp])
+vals = [r.split(",")[1] for r in open(csvp, encoding="utf-8").read().split("\n")[1:2]] if os.path.exists(csvp) else []
+check("Value edited twice with Enter: the second edit takes effect (symbol text reads 'b')", vals == ["b"], (vals, o[-6:]))
+o = run(["ctrl+a", "a", "Return", "ctrl+a", "b", "Return", "ctrl+a", "c", "Return"], 96, ["symdata " + csvp])
+vals = [r.split(",")[1] for r in open(csvp, encoding="utf-8").read().split("\n")[1:2]]
+check("... and a third time ('c')", vals == ["c"], vals)
 print("list keys: %d checks, %d failed" % (n[0], len(fails))); sys.exit(1 if fails else 0)

@@ -23,7 +23,11 @@ uses
   Classes, SysUtils, Types, ctypes, sqlite3dyn, ULibrary, UPartData, UPartsSchema;
 
 const
-  PARTS_SCHEMA_CURRENT = 1;      // the schema version this program knows (docs/parts_upgrade.py CURRENT: keep both in step)
+  PARTS_SCHEMA_CURRENT = 2;      // the schema version this program knows (docs/parts_upgrade.py CURRENT: keep both in step)
+  { PARTS_SCHEMA_STEPS[v - 1] is the SQL that takes a file from version v to v + 1 (docs/parts_upgrade.py STEPS) }
+  PARTS_SCHEMA_STEPS: array[0..0] of String = (
+    'ALTER TABLE Symbol ADD COLUMN ShowsObject INTEGER REFERENCES PartObject(ObjectID)'
+  );
 
 type
   EPartsError = class(Exception);
@@ -64,6 +68,16 @@ type
     Sort: Integer;
   end;
 
+  { one switching element of a part (Poles and Contacts page): a coil, a pole or a contact with what it switches }
+  TSwitchRow = record
+    ID, ParentID: Int64;
+    Kind, Name, Designator: String;       // Kind is Coil, Pole or Contact (or a kind below one of them)
+    Form: String;                         // a contact's Form (NO, NC, CO ...), '' for the others
+    Delay: String;                        // a contact's Delay: none, on-delay or off-delay ('none' when never set), '' for the others
+    DelaySecs: Double;                    // the delay time in seconds, 0 for none
+  end;
+  TSwitchRowArray = array of TSwitchRow;
+
   TKindInfo = record
     ID: Int64;
     Name: String;
@@ -98,6 +112,8 @@ type
     Standard, Purpose, Name: String;
     Bytes: Integer;
     IsDefault: Boolean;
+    ShowsID: Int64;                                     // the Coil / Pole / Contact of the part the symbol draws; 0 = the whole device
+    ShowsName: String;
   end;
 
   TInt64Array = array of Int64;
@@ -181,6 +197,42 @@ type
     { reads everything again (another connection changed the file) }
     procedure Reread;
     function SymbolRows(PartID: Int64): TSymbolRowArray;
+    { the objects of a part a symbol can draw: every Coil, Pole and Contact (or a kind below one of them), in the order of PartObjects }
+    function FunctionObjects(PartID: Int64): TObjectRefArray;
+    { FunctionObjects without the ones another symbol of the part (not ExceptSymbolID) already shows: what a symbol can still be given to show }
+    function UnshownObjects(PartID, ExceptSymbolID: Int64): TObjectRefArray;
+    { the Form value (NO, NC ...) of a contact object; '' when it has none }
+    function ContactForm(ObjectID: Int64): String;
+    { a virtual object has no symbol and is not offered anywhere to be drawn: a contact or a pole whose Form is 'virtual' }
+    function IsVirtualObject(ObjectID: Int64): Boolean;
+    { FunctionObjects without the virtual ones: what can be drawn, placed or chosen from a list }
+    function PlaceableObjects(PartID: Int64): TObjectRefArray;
+    { the contacts of a part (kind Contact) with their forms, in the order of PartObjects; the virtual ones are not listed }
+    function ContactObjects(PartID: Int64): TContactInfoArray;
+    { Poles and Contacts: gives the Contact kind its Delay (none / on-delay / off-delay) and DelaySecs fields when the file does not have them yet (files made before them) }
+    procedure EnsureDelayFields;
+    { adds the Form 'virtual' to the Contact kind's list of forms when the file does not have it (files made before it) }
+    procedure EnsureVirtualForm;
+    { the values a Contact field takes (Form, Delay) as a comma list, '' when it has none }
+    function ContactEnum(const AField: String): String;
+    { the values the Pole kind's Form takes (standard, virtual) as a comma list; EnsureDelayFields gives a file the field when it has none }
+    function PoleFormEnum: String;
+    { sets the Form of a pole: standard or virtual (a virtual pole has no symbol and is not offered to be drawn; its contacts are separate objects) }
+    procedure SetPoleForm(ObjectID: Int64; const AForm: String);
+    { the coils, poles and contacts of a part in tree order, with each contact's Form, Delay and delay time }
+    function SwitchRows(PartID: Int64): TSwitchRowArray;
+    { adds the next Pole (named Pole n, PoleNo n) with one Contact inside it of this Form and delay; returns the pole's ObjectID }
+    function AddSwitchPole(PartID: Int64; const AForm, ADelay: String; ADelaySecs: Double): Int64;
+    { adds a Contact (named Contact n) inside the pole (0 = directly in the part); returns its ObjectID }
+    function AddSwitchContact(PartID, PoleID: Int64; const AForm, ADelay: String; ADelaySecs: Double): Int64;
+    { sets a contact's designator, Form, Delay and delay time in one revision step; a time needs a delay (on-delay / off-delay), none clears it }
+    procedure SetSwitchContact(ObjectID: Int64; const ADesignator, AForm, ADelay: String; ADelaySecs: Double);
+    { the drawing of a schematic symbol of the part that shows a contact, preferring one whose contact has this Form; '' when the part has none }
+    function ContactSymbolXml(PartID: Int64; const Form: String): String;
+    { the drawing of the schematic symbol of the part that shows this object (a contact with no symbol of its own gets the contact symbol of its Form); '' when there is none }
+    function ObjectSymbolXml(PartID, ObjectID: Int64; const Form: String): String;
+    { SymbolID draws ObjectID (0 = the whole device); refused unless the object is one of FunctionObjects of the symbol's part. The part's Revision goes up }
+    procedure SetSymbolShows(SymbolID, ObjectID: Int64);
     function SymbolDrawing(SymbolID: Int64): String;
     function SymbolPartID(SymbolID: Int64): Int64;
     function AddSymbol(PartID: Int64; const AStandard, APurpose, AName, ABlob: String): Int64;
@@ -484,7 +536,7 @@ end;
 procedure TPartsLibrary.Open(const AFileName: String);
 begin
   Close;
-  FSchemaVersion := UpgradePartsFile(AFileName, PARTS_SCHEMA_CURRENT, []);
+  FSchemaVersion := UpgradePartsFile(AFileName, PARTS_SCHEMA_CURRENT, PARTS_SCHEMA_STEPS);
   FDb := OpenDb(AFileName);
   FFileName := AFileName;
   try
@@ -750,6 +802,41 @@ begin
 end;
 
 { ===========================================================================
+  TPartsLibrary.ObjectSymbolXml  (function)
+  Parameters:
+    PartID, ObjectID: Int64 - the part and one of its coil / pole / contact objects
+    const Form: String - the form (NO, NC ...) of the object when it is a contact, '' otherwise
+  Returns:
+    String - the symbol's XML, '' when no symbol shows the object (and, for a contact, none shows a contact)
+  Notes:
+    The Part ribbon uses it to draw the picture of an object and to place it: the schematic symbol that shows exactly that object, else for a contact the contact symbol of the part
+    that suits its form (ContactSymbolXml).
+  =========================================================================== }
+function TPartsLibrary.ObjectSymbolXml(PartID, ObjectID: Int64; const Form: String): String;
+var
+  St: Psqlite3_stmt;
+  P: Pointer;
+begin
+  Result := '';
+  St := Prepare('select Drawing from Symbol where PartID = ? and Purpose = ''schematic'' and ShowsObject = ? order by SymbolID limit 1');
+  try
+    sqlite3_bind_int64(St, 1, PartID);
+    sqlite3_bind_int64(St, 2, ObjectID);
+    if sqlite3_step(St) = SQLITE_ROW then
+    begin
+      P := sqlite3_column_blob(St, 0);
+      SetLength(Result, sqlite3_column_bytes(St, 0));
+      if Length(Result) > 0 then
+        Move(P^, Result[1], Length(Result));
+    end;
+  finally
+    sqlite3_finalize(St);
+  end;
+  if (Result = '') and (Form <> '') then
+    Result := ContactSymbolXml(PartID, Form);
+end;
+
+{ ===========================================================================
   TPartsLibrary.Ratings  (function)
   Parameters:
     PartID: Int64 - the part
@@ -857,13 +944,17 @@ end;
     TPartCopy - what a design keeps of the generic part
   Notes:
     The part's GUID, the library's, its name and class, and its requirements (every rating of the part with the way it is judged and the kinds of the object it is on,
-    so the fit check needs no library).
+    so the fit check needs no library). Also what the part's default schematic symbol shows of the device (ObjectName / ObjectKind / ObjectForm, see SetSymbolShows); empty
+    when it draws the whole device.
   =========================================================================== }
 function TPartsLibrary.PartCopyOf(PartIndex: Integer): TPartCopy;
 var
   St: Psqlite3_stmt;
-  N: Integer;
+  N, i: Integer;
+  ShowsID: Int64;
+  Objs: TObjectRefArray;
 begin
+  Result.ObjectName := ''; Result.ObjectKind := ''; Result.ObjectForm := '';
   Result.UID := FParts[PartIndex].UID;
   Result.LibraryUID := FLibraryUID;
   Result.Name := FParts[PartIndex].Name;
@@ -888,6 +979,20 @@ begin
     end;
   finally
     sqlite3_finalize(St);
+  end;
+  { the function the part's default schematic symbol draws }
+  ShowsID := QueryInt('select coalesce((select s.ShowsObject from Symbol s where s.PartID = ' + IntToStr(FParts[PartIndex].ID) +
+    ' and s.Purpose = ''schematic'' order by (s.SymbolID = (select BaseDefault from Part where PartID = s.PartID)) desc, s.SymbolID limit 1), 0)');
+  if ShowsID <> 0 then
+  begin
+    Objs := PartObjects(FParts[PartIndex].ID);
+    for i := 0 to High(Objs) do
+      if Objs[i].ID = ShowsID then
+      begin
+        Result.ObjectName := Objs[i].Name;
+        Result.ObjectKind := Objs[i].Kind;
+        Result.ObjectForm := ContactForm(ShowsID);
+      end;
   end;
 end;
 
@@ -1474,7 +1579,7 @@ begin
     raise EPartsError.Create(rsThatObjectIsNotIn);
   Sub := '(with recursive s(i) as (select ' + IntToStr(ObjectID) + ' union all select o.ObjectID from PartObject o join s on o.ParentObjectID = s.i) select i from s)';
   if QueryInt('select (select count(*) from SymbolPin where ObjectID in ' + Sub + ') + (select count(*) from OutlineTerminal where ObjectID in ' + Sub +
-    ') + (select count(*) from ModelTerminal where ObjectID in ' + Sub + ')') > 0 then
+    ') + (select count(*) from ModelTerminal where ObjectID in ' + Sub + ') + (select count(*) from Symbol where ShowsObject in ' + Sub + ')') > 0 then
     raise EPartsError.Create(rsASymbolPinOutlineTerminal);
   Mutate(['DELETE FROM Link WHERE FromObject IN ' + Sub + ' OR ToObject IN ' + Sub,
     'DELETE FROM PartObject WHERE ObjectID = ' + IntToStr(ObjectID),
@@ -2496,7 +2601,7 @@ var
   N: Integer;
 begin
   SetLength(Result, 0);
-  St := Prepare('select s.SymbolID, s.Standard, s.Purpose, coalesce(s.Name, ''''), length(s.Drawing), s.SymbolID = coalesce(p.BaseDefault, 0) from Symbol s join Part p using(PartID) where s.PartID = ? order by s.SymbolID');
+  St := Prepare('select s.SymbolID, s.Standard, s.Purpose, coalesce(s.Name, ''''), length(s.Drawing), s.SymbolID = coalesce(p.BaseDefault, 0), coalesce(s.ShowsObject, 0), coalesce((select o.Name from PartObject o where o.ObjectID = s.ShowsObject), '''') from Symbol s join Part p using(PartID) where s.PartID = ? order by s.SymbolID');
   try
     sqlite3_bind_int64(St, 1, PartID);
     while sqlite3_step(St) = SQLITE_ROW do
@@ -2509,10 +2614,500 @@ begin
       Result[N].Name := ColText(St, 3);
       Result[N].Bytes := sqlite3_column_int(St, 4);
       Result[N].IsDefault := sqlite3_column_int(St, 5) <> 0;
+      Result[N].ShowsID := sqlite3_column_int64(St, 6);
+      Result[N].ShowsName := ColText(St, 7);
     end;
   finally
     sqlite3_finalize(St);
   end;
+end;
+
+{ ===========================================================================
+  TPartsLibrary.UnshownObjects  (function)
+  Parameters:
+    PartID: Int64 - the part
+    ExceptSymbolID: Int64 - a symbol whose own choice stays on offer (0 or -1 for a symbol that is not stored yet)
+  Returns:
+    TObjectRefArray - the coils, poles and contacts of the part that no other symbol shows yet, in the order of FunctionObjects
+  =========================================================================== }
+function TPartsLibrary.UnshownObjects(PartID, ExceptSymbolID: Int64): TObjectRefArray;
+var
+  All: TObjectRefArray;
+  Used: array of Int64;
+  St: Psqlite3_stmt;
+  i, N: Integer;
+  Unused: Boolean;
+begin
+  SetLength(Result, 0);
+  SetLength(Used, 0);
+  All := PlaceableObjects(PartID);
+  St := Prepare('select ShowsObject from Symbol where PartID = ? and SymbolID <> ? and ShowsObject is not null');
+  try
+    sqlite3_bind_int64(St, 1, PartID);
+    sqlite3_bind_int64(St, 2, ExceptSymbolID);
+    while sqlite3_step(St) = SQLITE_ROW do
+    begin
+      SetLength(Used, Length(Used) + 1);
+      Used[High(Used)] := sqlite3_column_int64(St, 0);
+    end;
+  finally
+    sqlite3_finalize(St);
+  end;
+  for i := 0 to High(All) do
+  begin
+    Unused := True;
+    for N := 0 to High(Used) do
+      if Used[N] = All[i].ID then
+        Unused := False;
+    if Unused then
+    begin
+      SetLength(Result, Length(Result) + 1);
+      Result[High(Result)] := All[i];
+    end;
+  end;
+end;
+
+{ ===========================================================================
+  TPartsLibrary.FunctionObjects  (function)
+  Parameters:
+    PartID: Int64 - the part
+  Returns:
+    TObjectRefArray - the Coil, Pole and Contact objects of the part (and objects of a kind below those)
+  Notes:
+    These are the functions of a device that a symbol can draw: the coil of a relay, one pole of a contactor, one contact of a relay. Terminals and the like are not
+    listed; they are drawn as part of the function they belong to.
+  =========================================================================== }
+function TPartsLibrary.FunctionObjects(PartID: Int64): TObjectRefArray;
+var
+  All: TObjectRefArray;
+  Ok: array of Int64;
+  St: Psqlite3_stmt;
+  i, N: Integer;
+begin
+  SetLength(Result, 0);
+  SetLength(Ok, 0);
+  All := PartObjects(PartID);
+  St := Prepare('select o.ObjectID from PartObject o where o.PartID = ? and exists (select 1 from KindAncestors ka join ObjectKind k on k.KindID = ka.AncestorID ' +
+    'where ka.KindID = o.KindID and k.Name in (''Coil'', ''Pole'', ''Contact''))');
+  try
+    sqlite3_bind_int64(St, 1, PartID);
+    while sqlite3_step(St) = SQLITE_ROW do
+    begin
+      SetLength(Ok, Length(Ok) + 1);
+      Ok[High(Ok)] := sqlite3_column_int64(St, 0);
+    end;
+  finally
+    sqlite3_finalize(St);
+  end;
+  for i := 0 to High(All) do
+    for N := 0 to High(Ok) do
+      if Ok[N] = All[i].ID then
+      begin
+        SetLength(Result, Length(Result) + 1);
+        Result[High(Result)] := All[i];
+        Break;
+      end;
+end;
+
+{ ===========================================================================
+  TPartsLibrary.ContactForm  (function)
+  Parameters:
+    ObjectID: Int64 - an object of a part
+  Returns:
+    String - its Form value (NO, NC, CO ...), '' when it has none
+  =========================================================================== }
+function TPartsLibrary.ContactForm(ObjectID: Int64): String;
+begin
+  Result := QueryText('select coalesce(v.ValueText, '''') from ObjectValue v join KindFieldDef f on f.FieldID = v.FieldID where v.ObjectID = ' + IntToStr(ObjectID) +
+    ' and f.Name = ''Form''');
+end;
+
+{ ===========================================================================
+  TPartsLibrary.ContactObjects  (function)
+  Parameters:
+    PartID: Int64 - the part
+  Returns:
+    TContactInfoArray - every object of kind Contact with its Form, in the order of PartObjects
+  =========================================================================== }
+function TPartsLibrary.ContactObjects(PartID: Int64): TContactInfoArray;
+var
+  F: TObjectRefArray;
+  i: Integer;
+begin
+  SetLength(Result, 0);
+  F := FunctionObjects(PartID);
+  for i := 0 to High(F) do
+    if (F[i].Kind = 'Contact') and not IsVirtualObject(F[i].ID) then
+    begin
+      SetLength(Result, Length(Result) + 1);
+      Result[High(Result)].Name := F[i].Name;
+      Result[High(Result)].Form := ContactForm(F[i].ID);
+    end;
+end;
+
+{ ===========================================================================
+  TPartsLibrary.EnsureDelayFields  (procedure)
+  Notes:
+    Adds the fields Delay (enum none, on-delay, off-delay) and DelaySecs (real, s) to the Contact kind when it does not have them (a parts file made before the Poles and Contacts page);
+    new files have them from the start. Safe to call again; nothing else changes.
+  =========================================================================== }
+procedure TPartsLibrary.EnsureDelayFields;
+begin
+  if QueryInt('select count(*) from ObjectKind where Name = ''Contact''') = 0 then
+    Exit;
+  if QueryInt('select count(*) from KindFieldDef where Name = ''Delay'' and KindID = (select KindID from ObjectKind where Name = ''Contact'')') = 0 then
+    Mutate(['INSERT INTO KindFieldDef(KindID, Name, Type, EnumValues, Required, Description) SELECT KindID, ''Delay'', ''enum'', ''none,on-delay,off-delay'', 0, ''timing relay contact: switches after the coil is on or off'' FROM ObjectKind WHERE Name = ''Contact''']);
+  if QueryInt('select count(*) from KindFieldDef where Name = ''DelaySecs'' and KindID = (select KindID from ObjectKind where Name = ''Contact'')') = 0 then
+    Mutate(['INSERT INTO KindFieldDef(KindID, Name, Type, Unit, Required, Description) SELECT KindID, ''DelaySecs'', ''real'', ''s'', 0, ''the delay time'' FROM ObjectKind WHERE Name = ''Contact''']);
+  if (QueryInt('select count(*) from ObjectKind where Name = ''Pole''') > 0) and
+     (QueryInt('select count(*) from KindFieldDef where Name = ''Form'' and KindID = (select KindID from ObjectKind where Name = ''Pole'')') = 0) then
+    Mutate(['INSERT INTO KindFieldDef(KindID, Name, Type, EnumValues, Required, Description) SELECT KindID, ''Form'', ''enum'', ''standard,virtual'', 0, ''virtual: the pole has no symbol and is not offered to be drawn'' FROM ObjectKind WHERE Name = ''Pole''']);
+end;
+
+{ ===========================================================================
+  TPartsLibrary.EnsureVirtualForm  (procedure)
+  Notes:
+    A contact of Form virtual stands for a contact that exists in the device (its number, its place in the pole) but is not drawn on the schematic: it has no symbol and is
+    hidden from the lists a symbol is chosen from. Files made before it get the value added to the list of the Form field; nothing else changes. Safe to call again.
+  =========================================================================== }
+procedure TPartsLibrary.EnsureVirtualForm;
+var
+  E: String;
+begin
+  E := QueryText('select coalesce(EnumValues, '''') from KindFieldDef where Name = ''Form'' and KindID = (select KindID from ObjectKind where Name = ''Contact'')');
+  if (E = '') or (Pos('virtual', E) > 0) then
+    Exit;
+  Mutate(['UPDATE KindFieldDef SET EnumValues = EnumValues || '',virtual'' WHERE Name = ''Form'' AND KindID = (SELECT KindID FROM ObjectKind WHERE Name = ''Contact'')']);
+end;
+
+{ ===========================================================================
+  TPartsLibrary.IsVirtualObject  (function)
+  Parameters:
+    ObjectID: Int64 - an object of a part
+  Returns:
+    Boolean - True for a contact or a pole whose Form is virtual
+  =========================================================================== }
+function TPartsLibrary.IsVirtualObject(ObjectID: Int64): Boolean;
+var
+  Kind: String;
+begin
+  Result := False;
+  Kind := QueryText('select k.Name from PartObject o join ObjectKind k on k.KindID = o.KindID where o.ObjectID = ' + IntToStr(ObjectID));
+  if SameText(Kind, 'Contact') then
+    Result := SameText(ContactForm(ObjectID), 'virtual')
+  else if SameText(Kind, 'Pole') then
+    Result := SameText(ContactForm(ObjectID), 'virtual');
+end;
+
+{ ===========================================================================
+  TPartsLibrary.PlaceableObjects  (function)
+  Parameters:
+    PartID: Int64 - the part
+  Returns:
+    TObjectRefArray - FunctionObjects without the virtual objects
+  =========================================================================== }
+function TPartsLibrary.PlaceableObjects(PartID: Int64): TObjectRefArray;
+var
+  All: TObjectRefArray;
+  i: Integer;
+begin
+  SetLength(Result, 0);
+  All := FunctionObjects(PartID);
+  for i := 0 to High(All) do
+    if not IsVirtualObject(All[i].ID) then
+    begin
+      SetLength(Result, Length(Result) + 1);
+      Result[High(Result)] := All[i];
+    end;
+end;
+
+{ ===========================================================================
+  TPartsLibrary.PoleFormEnum  (function)
+  Returns:
+    String - the values of the Pole kind's Form field (standard,virtual), '' when the kind has none
+  =========================================================================== }
+function TPartsLibrary.PoleFormEnum: String;
+begin
+  EnsureDelayFields;
+  Result := QueryText('select coalesce(EnumValues, '''') from KindFieldDef where Name = ''Form'' and KindID = (select KindID from ObjectKind where Name = ''Pole'')');
+end;
+
+{ ===========================================================================
+  TPartsLibrary.SetPoleForm  (procedure)
+  Parameters:
+    ObjectID: Int64 - a pole
+    const AForm: String - standard or virtual
+  Notes:
+    Raises EPartsError when the object is not a pole or the value is not one of the field's. The part's revision goes up.
+  =========================================================================== }
+procedure TPartsLibrary.SetPoleForm(ObjectID: Int64; const AForm: String);
+var
+  PartID, FForm: Int64;
+begin
+  PartID := QueryInt('select coalesce(PartID, 0) from PartObject where ObjectID = ' + IntToStr(ObjectID));
+  if PartID = 0 then
+    raise EPartsError.Create(rsThatObjectIsNotAn);
+  EnsureDelayFields;
+  FForm := QueryInt('select f.FieldID from KindFieldDef f join PartObject o on o.KindID = f.KindID where f.Name = ''Form'' and o.ObjectID = ' + IntToStr(ObjectID) +
+    ' and o.KindID = (select KindID from ObjectKind where Name = ''Pole'')');
+  if FForm = 0 then
+    raise EPartsError.Create(rsThatObjectIsNotAPole);
+  SetFieldValue(PartID, ObjectID, FForm, AForm);
+end;
+
+function TPartsLibrary.ContactEnum(const AField: String): String;
+begin
+  EnsureDelayFields;
+  EnsureVirtualForm;
+  Result := QueryText('select coalesce(EnumValues, '''') from KindFieldDef where Name = ' + SqlQ(AField) + ' and KindID = (select KindID from ObjectKind where Name = ''Contact'')');
+end;
+
+{ ===========================================================================
+  TPartsLibrary.SwitchRows  (function)
+  Parameters:
+    PartID: Int64 - the part
+  Returns:
+    TSwitchRowArray - every Coil, Pole and Contact (or kind below one) in the order of PartObjects
+  Notes:
+    A contact's Delay reads 'none' when it has no value. Delay time is the DelaySecs value.
+  =========================================================================== }
+function TPartsLibrary.SwitchRows(PartID: Int64): TSwitchRowArray;
+var
+  F: TObjectRefArray;
+  i: Integer;
+  FS: TFormatSettings;
+  T: String;
+begin
+  SetLength(Result, 0);
+  FS := DefaultFormatSettings;
+  FS.DecimalSeparator := '.';
+  F := FunctionObjects(PartID);
+  SetLength(Result, Length(F));
+  for i := 0 to High(F) do
+  begin
+    Result[i].ID := F[i].ID;
+    Result[i].ParentID := F[i].ParentID;
+    Result[i].Kind := F[i].Kind;
+    Result[i].Name := F[i].Name;
+    Result[i].Designator := F[i].Designator;
+    Result[i].Form := '';
+    Result[i].Delay := '';
+    Result[i].DelaySecs := 0;
+    if F[i].Kind = 'Pole' then
+      Result[i].Form := ContactForm(F[i].ID);      // (the Form field of the Pole kind: standard / virtual; '' for a file made before it)
+    if F[i].Kind = 'Contact' then
+    begin
+      Result[i].Form := ContactForm(F[i].ID);
+      T := QueryText('select coalesce(v.ValueText, '''') from ObjectValue v join KindFieldDef f on f.FieldID = v.FieldID where v.ObjectID = ' + IntToStr(F[i].ID) + ' and f.Name = ''Delay''');
+      if T = '' then
+        T := 'none';
+      Result[i].Delay := T;
+      T := QueryText('select coalesce(cast(v.ValueNum as text), '''') from ObjectValue v join KindFieldDef f on f.FieldID = v.FieldID where v.ObjectID = ' + IntToStr(F[i].ID) + ' and f.Name = ''DelaySecs''');
+      Result[i].DelaySecs := StrToFloatDef(T, 0, FS);
+    end;
+  end;
+end;
+
+{ ===========================================================================
+  TPartsLibrary.AddSwitchContact  (function)
+  Parameters:
+    PartID, PoleID: Int64 - the part and the pole the contact goes in (0 = directly in the part)
+    const AForm, ADelay: String - Form (NO, NC ...) and Delay (none, on-delay, off-delay); ADelaySecs the time in seconds
+  Returns:
+    Int64 - the new contact's ObjectID
+  Notes:
+    Named "Contact n" with n one past the highest number the part's contacts have, placed after the others in the pole. Rules of AddObject and SetFieldValue apply (the class must allow
+    contacts, the form must be one of the field's values); when a value is refused the contact is not left behind.
+  =========================================================================== }
+function TPartsLibrary.AddSwitchContact(PartID, PoleID: Int64; const AForm, ADelay: String; ADelaySecs: Double): Int64;
+var
+  KindID, N, Sort: Int64;
+  Nm: String;
+begin
+  EnsureDelayFields;
+  KindID := QueryInt('select KindID from ObjectKind where Name = ''Contact''');
+  N := QueryInt('select count(*) from PartObject where PartID = ' + IntToStr(PartID) + ' and KindID = ' + IntToStr(KindID)) + 1;
+  Nm := 'Contact ' + IntToStr(N);
+  while QueryInt('select count(*) from PartObject where PartID = ' + IntToStr(PartID) + ' and lower(Name) = ' + SqlQ(LowerCase(Nm))) > 0 do
+  begin
+    Inc(N);
+    Nm := 'Contact ' + IntToStr(N);
+  end;
+  Sort := QueryInt('select coalesce(max(Sort), 0) from PartObject where PartID = ' + IntToStr(PartID)) + 10;
+  Result := AddObject(PartID, PoleID, KindID, Nm, '', '', Sort);
+  try
+    SetSwitchContact(Result, '', AForm, ADelay, ADelaySecs);
+  except
+    DeleteObject(Result);
+    raise;
+  end;
+end;
+
+{ ===========================================================================
+  TPartsLibrary.AddSwitchPole  (function)
+  Parameters:
+    PartID: Int64 - the part
+    const AForm, ADelay: String; ADelaySecs: Double - as AddSwitchContact, for the contact the pole starts with
+  Returns:
+    Int64 - the new pole's ObjectID
+  Notes:
+    Named "Pole n" with PoleNo n (one past the highest number the part has), after the other objects; its Form is virtual. Raises EPartsError when the class does not allow poles; a refused contact removes the pole again.
+  =========================================================================== }
+function TPartsLibrary.AddSwitchPole(PartID: Int64; const AForm, ADelay: String; ADelaySecs: Double): Int64;
+var
+  KindID, N, Sort, FieldID: Int64;
+  Nm: String;
+begin
+  EnsureDelayFields;
+  KindID := QueryInt('select KindID from ObjectKind where Name = ''Pole''');
+  N := QueryInt('select count(*) from PartObject where PartID = ' + IntToStr(PartID) + ' and KindID = ' + IntToStr(KindID)) + 1;
+  Nm := 'Pole ' + IntToStr(N);
+  while QueryInt('select count(*) from PartObject where PartID = ' + IntToStr(PartID) + ' and lower(Name) = ' + SqlQ(LowerCase(Nm))) > 0 do
+  begin
+    Inc(N);
+    Nm := 'Pole ' + IntToStr(N);
+  end;
+  Sort := QueryInt('select coalesce(max(Sort), 0) from PartObject where PartID = ' + IntToStr(PartID)) + 10;
+  Result := AddObject(PartID, 0, KindID, Nm, '', '', Sort);
+  try
+    FieldID := QueryInt('select FieldID from KindFieldDef where Name = ''PoleNo'' and KindID = ' + IntToStr(KindID));
+    if FieldID <> 0 then
+      SetFieldValue(PartID, Result, FieldID, IntToStr(N));
+    SetPoleForm(Result, 'virtual');      // a new pole is virtual until it is given a symbol of its own
+    AddSwitchContact(PartID, Result, AForm, ADelay, ADelaySecs);
+  except
+    DeleteObject(Result);
+    raise;
+  end;
+end;
+
+{ ===========================================================================
+  TPartsLibrary.SetSwitchContact  (procedure)
+  Parameters:
+    ObjectID: Int64 - a contact
+    const ADesignator, AForm, ADelay: String; ADelaySecs: Double - the new values
+  Notes:
+    Sets the designator (terminal numbers printed on it), the Form (one of the field's values), the Delay and its time. none (or empty) removes the Delay and the time; a time of
+    0 or less with on-delay / off-delay is refused. Raises EPartsError and changes nothing when a value is not accepted. Each stored value is a revision step of the part.
+  =========================================================================== }
+procedure TPartsLibrary.SetSwitchContact(ObjectID: Int64; const ADesignator, AForm, ADelay: String; ADelaySecs: Double);
+var
+  PartID, FForm, FDelay, FSecs, KindID: Int64;
+  Dl: String;
+  i: Integer;
+  Rows: TObjectRefArray;
+  FS: TFormatSettings;
+begin
+  PartID := QueryInt('select coalesce(PartID, 0) from PartObject where ObjectID = ' + IntToStr(ObjectID));
+  if PartID = 0 then
+    raise EPartsError.Create(rsThatObjectIsNotAn);
+  EnsureDelayFields;
+  KindID := QueryInt('select KindID from PartObject where ObjectID = ' + IntToStr(ObjectID));
+  FForm := QueryInt('select f.FieldID from KindFieldDef f where f.Name = ''Form'' and f.KindID = ' + IntToStr(KindID));
+  FDelay := QueryInt('select f.FieldID from KindFieldDef f where f.Name = ''Delay'' and f.KindID = ' + IntToStr(KindID));
+  FSecs := QueryInt('select f.FieldID from KindFieldDef f where f.Name = ''DelaySecs'' and f.KindID = ' + IntToStr(KindID));
+  if (FForm = 0) or (FDelay = 0) or (FSecs = 0) then
+    raise EPartsError.Create(rsThatObjectIsNotAContact);
+  Dl := Trim(ADelay);
+  if SameText(Dl, 'none') then
+    Dl := '';
+  if (Dl <> '') and (ADelaySecs <= 0) then
+    raise EPartsError.Create(rsADelayedContactNeedsA);
+  FS := DefaultFormatSettings;
+  FS.DecimalSeparator := '.';
+  Rows := PartObjects(PartID);
+  for i := 0 to High(Rows) do
+    if Rows[i].ID = ObjectID then
+      UpdateObject(ObjectID, Rows[i].ParentID, Rows[i].KindID, Rows[i].Name, ADesignator, Rows[i].Description, Rows[i].Sort);
+  SetFieldValue(PartID, ObjectID, FForm, AForm);
+  SetFieldValue(PartID, ObjectID, FDelay, Dl);
+  if Dl = '' then
+    SetFieldValue(PartID, ObjectID, FSecs, '')
+  else
+    SetFieldValue(PartID, ObjectID, FSecs, FloatToStr(ADelaySecs, FS));
+end;
+
+{ ===========================================================================
+  TPartsLibrary.ContactSymbolXml  (function)
+  Parameters:
+    PartID: Int64 - the part
+    const Form: String - the Form wanted (NO, NC ...), '' = any
+  Returns:
+    String - the drawing (TinyCAD symbol XML) of a schematic symbol that shows a contact, '' when there is none
+  Notes:
+    The symbol of a contact is a template: it is placed for whichever contact of the part is next free, so a symbol whose own contact has the Form wanted is preferred,
+    else the first contact symbol (the placed symbol then says which contact it is, in its part data).
+  =========================================================================== }
+function TPartsLibrary.ContactSymbolXml(PartID: Int64; const Form: String): String;
+var
+  St: Psqlite3_stmt;
+  P: Pointer;
+  Forms: TContactInfoArray;
+  Match: Boolean;
+  i: Integer;
+begin
+  Result := '';
+  Forms := ContactObjects(PartID);
+  St := Prepare('select s.Drawing, o.Name from Symbol s join PartObject o on o.ObjectID = s.ShowsObject join ObjectKind k on k.KindID = o.KindID ' +
+    'where s.PartID = ? and s.Purpose = ''schematic'' and k.Name = ''Contact'' order by s.SymbolID');
+  try
+    sqlite3_bind_int64(St, 1, PartID);
+    while sqlite3_step(St) = SQLITE_ROW do
+    begin
+      Match := Form = '';
+      for i := 0 to High(Forms) do
+        if SameText(Forms[i].Name, ColText(St, 1)) and SameText(Forms[i].Form, Form) then
+          Match := True;
+      if (Result = '') or Match then
+      begin
+        P := sqlite3_column_blob(St, 0);
+        SetLength(Result, sqlite3_column_bytes(St, 0));
+        if Length(Result) > 0 then
+          Move(P^, Result[1], Length(Result));
+      end;
+      if Match then
+        Break;
+    end;
+  finally
+    sqlite3_finalize(St);
+  end;
+end;
+
+{ ===========================================================================
+  TPartsLibrary.SetSymbolShows  (procedure)
+  Parameters:
+    SymbolID, ObjectID: Int64 - the symbol and the object of its part it draws (0 = the whole device)
+  Notes:
+    A relay is drawn as a coil symbol on one sheet and contact symbols on others; this says which one a symbol is, so a placed symbol knows it. The object must be one of
+    FunctionObjects of the symbol's part. The part's Revision goes up.
+  =========================================================================== }
+procedure TPartsLibrary.SetSymbolShows(SymbolID, ObjectID: Int64);
+var
+  PartID: Int64;
+  Idx, i: Integer;
+  F: TObjectRefArray;
+  Found: Boolean;
+  V: String;
+begin
+  PartID := QueryInt('select coalesce(PartID, 0) from Symbol where SymbolID = ' + IntToStr(SymbolID));
+  Idx := PartIndexOfID(PartID);
+  if Idx < 0 then
+    raise EPartsError.Create(rsThatSymbolIsNotIn);
+  if ObjectID = 0 then
+    V := 'NULL'
+  else
+  begin
+    Found := False;
+    F := FunctionObjects(PartID);
+    for i := 0 to High(F) do
+      if F[i].ID = ObjectID then
+        Found := True;
+    if not Found then
+      raise EPartsError.Create(rsASymbolCanOnlyShow);
+    V := IntToStr(ObjectID);
+  end;
+  Mutate(['UPDATE Symbol SET ShowsObject = ' + V + ' WHERE SymbolID = ' + IntToStr(SymbolID),
+    'UPDATE Part SET Revision = ' + SqlQ(RevisionAfter(Idx)) + ', Modified = datetime(''now'') WHERE PartID = ' + IntToStr(PartID)]);
 end;
 
 { ===========================================================================
@@ -2936,6 +3531,9 @@ begin
       NewSyms[i] := sqlite3_last_insert_rowid(FDb);
       if OldSyms[i] = Def then
         Exec('UPDATE Part SET BaseDefault = ' + IntToStr(NewSyms[i]) + ' WHERE PartID = ' + New);
+      for n := 0 to High(OldIds) do
+        Exec('UPDATE Symbol SET ShowsObject = ' + IntToStr(NewIds[n]) + ' WHERE SymbolID = ' + IntToStr(NewSyms[i]) + ' AND EXISTS (SELECT 1 FROM Symbol WHERE SymbolID = ' +
+          IntToStr(OldSyms[i]) + ' AND ShowsObject = ' + IntToStr(OldIds[n]) + ')');
       for n := 0 to High(OldIds) do
         Exec('INSERT INTO SymbolPin(SymbolID, ObjectID, X, Y, Direction) SELECT ' + IntToStr(NewSyms[i]) + ', ' + IntToStr(NewIds[n]) + ', X, Y, Direction FROM SymbolPin WHERE SymbolID = ' +
           IntToStr(OldSyms[i]) + ' AND ObjectID = ' + IntToStr(OldIds[n]));

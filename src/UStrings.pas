@@ -11,6 +11,24 @@ unit UStrings;
 interface
 
 resourcestring
+  rsObjects = 'Objects';
+  rsObjectsHint = 'The poles, contacts and coil of this part: choose one that is drawn to select it, or one that is not to put it on the pointer';
+  rsAddSymbolRungText = 'Add Symbol Rung Text';
+  rsAddSymbolRungTextHint = 'Put down a linked text that says the ladder line this symbol is on';
+  { the Part ribbon }
+  rsPartRibbon = 'Part';
+  rsGoto = 'Goto';
+  rsPlace = 'Place';
+  rsUnused = '[unused]';
+  rsPageLine = '[Page %d, line %d]';
+  rsPageOnly = '[Page %d]';
+  rsPartsLibraryNotOpen = '(the parts library of this part is not open)';
+  rsNoSymbolShowsThat = 'No symbol of the part shows that object.';
+  rsThePictureOfThe = 'The symbol that shows the chosen object';
+  rsEveryObjectOfThePart = 'Every object of the part, and where it is drawn';
+  rsShowWhereItIs = 'Show the object on its page';
+  rsPutItOnThe = 'Put the symbol of the object on the sheet';
+
 
   { UDesign.pas }
   rsNotASymbolDocument = 'Not a symbol document';
@@ -175,7 +193,13 @@ resourcestring
   rsAnObjectCannotBePlaced = 'An object cannot be placed below itself or below one of its own children.';
   rsTheObjectHoldsValuesOf = 'The object holds values of fields that the new kind does not have.';
   rsThatObjectIsNotIn = 'That object is not in this library.';
-  rsASymbolPinOutlineTerminal = 'A symbol pin, outline terminal or 3D terminal uses this object or one inside it; remove that first.';
+  rsSelectTheCoilFirst = 'Select the coil (a placed part symbol) first.';
+  rsThePartsLibraryOfThat = 'The parts library of that part is not the one open in the Parts tab.';
+  rsHasNoFreeContact = '%s has no free %s contact left.';
+  rsThatPartHasNoContactSymbol = 'That part has no schematic symbol that shows a contact.';
+  rsWholeDevice = '(whole device)';
+  rsASymbolCanOnlyShow = 'A symbol can only show a coil, a pole or a contact of its part.';
+  rsASymbolPinOutlineTerminal = 'A symbol, symbol pin, outline terminal or 3D terminal uses this object or one inside it; remove that first.';
   rsTheProductIsNotIn = 'The product is not in this library.';
   rsTheProductBelongsToAnother = 'The product belongs to another class than the part, so it cannot be suggested for it.';
   rsTheProductNeedsAManufacturer = 'The product needs a manufacturer.';
@@ -396,6 +420,11 @@ resourcestring
   rsAddHandle = 'Add handle';
   rsDeleteHandle = 'Delete handle';
   rsMakeVertical = 'Make vertical';
+  rsSetRung = 'Set rung';
+  rsAddRungReference = 'Add rung reference';
+  rsThatObjectIsNotAContact = 'That object is not a contact.';
+  rsThatObjectIsNotAPole = 'That object is not a pole.';
+  rsADelayedContactNeedsA = 'A delayed contact needs a delay time of more than 0 seconds.';
   rsMakeHorizontal = 'Make horizontal';
   rsAddWireCut = 'Add wire cut';
   rsSelectClickShiftClickOr = 'Select: click, shift-click or drag a box; drag to move';
@@ -633,6 +662,37 @@ resourcestring
   rsFill2 = 'Fill %s %s';
   rsBusPhase = 'Bus: 3 phase';
   rsBusPhase2 = 'Bus: 1 phase';
+  rsBusWires = 'Bus: %d wires';
+  rsChangeToBus = 'Change to bus';
+  rsChangeToWire = 'Change to wire';
+  rsNWires = '%d wires';
+  rsSnapPolesToBus = 'Snap poles to bus';
+  rsAlikeAllSymbols = 'All Symbols';
+  rsAlikeAllSymbolsHint = 'Select every symbol on the sheet';
+  rsAlikeReferences = 'Identical References';
+  rsAlikeReferencesHint = 'Select the symbols whose reference is the same with its numbers taken out (R1, R12 and r7 are alike), ignoring case';
+  rsAlikeNames = 'Identical Names';
+  rsAlikeNamesHint = 'Select the symbols with the same name, ignoring case';
+  rsPresetRelay = 'Relay with coil and contacts';
+  rsPresetRelayHint = 'A relay: one coil and the normally open and normally closed contacts you ask for';
+  rsPresetContactor = 'Contactor (poles + auxiliary)';
+  rsPresetContactorHint = 'A contactor: one coil, main poles that close together, and auxiliary contacts';
+  rsPresetTimer = 'Timer relay (delayed contacts)';
+  rsPresetTimerHint = 'A relay whose contacts change after a delay when the coil is switched on or off';
+  rsPresetBreaker = 'Circuit breaker (poles only)';
+  rsPresetBreakerHint = 'A breaker or switch: main poles and no coil';
+  rsPresetTerminal = 'Terminal block';
+  rsPresetTerminalHint = 'A terminal block with no function objects; add its terminals in the Objects page';
+  rsPresetOther = 'Other part (choose the class)';
+  rsPresetOtherHint = 'An empty part of any class; add its objects and values in the other pages';
+  rsThisMakes = 'This makes: %s';
+  rsCoilWord = 'coil';
+  rsNPolesWord = '%d poles';
+  rsAuxiliaryWord = 'auxiliary contacts';
+  rsDelayedWord = '%s %.4g s';
+  rsNoObjectsWord = 'no objects';
+  rsBusWiresMenu = 'Number of wires';
+  rsBusOneWire = '1 wire';
   rsBusMixed = 'Bus: mixed';
   rsDesignDetailsAllSheets = 'Design details (all sheets)';
   rsDesignDetails2 = 'Design details';
@@ -685,6 +745,8 @@ resourcestring
   rsExportSymbolBoM = 'Export Symbol BoM';
   rsExportSymbolData = 'Export Symbol Data';
   rsCannotWriteTheSymbolDataFile = 'Cannot write the symbol data file.  Please try again with a different filename.';
+  rsExportWires = 'Export Wires';
+  rsCannotWriteTheWiresFile = 'Cannot write the wires file.  Please try again with a different filename.';
   rsCSVFileCsvCsvAll = 'CSV file (*.csv)|*.csv|All files (*.*)|*.*';
   rsCreateSpiceNetList = 'Create Spice Net List';
   rsSPICENetNetAllFiles = 'SPICE (*.net)|*.net|All files (*.*)|*.*';

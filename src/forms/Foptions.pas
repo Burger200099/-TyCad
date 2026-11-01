@@ -62,6 +62,10 @@ type
     lbSheetDetailsMargin: TLabel;
     lbSheetDetailsRows: TLabel;
     Panel1: TPanel;
+    Panel2: TPanel;
+    RadioGroup1: TRadioGroup;
+    rbRulerMM: TRadioButton;
+    rbRulerIN: TRadioButton;
     tbSheets: TToggleBox;
     tsSheets: TTabSheet;
     gbSymbolFonts: TGroupBox;
@@ -126,6 +130,7 @@ type
     procedure ApplyClicked(Sender: TObject);
   private
     FUnits: Integer;            // the units the grid spacing is shown in now
+    FRulerRaw, FRulerShown: Integer;   // ProgramSettings.RulerUnits as loaded (-1 = follows the sheet) and the units that showed (what the radio buttons were set to)
     FBusy: Boolean;             // the dialog is changing its own controls
     FShownMm: Double;           // the spacing, exactly, that the grid box was last filled with by the dialog itself ...
     FShownText: String;         // ... and the text it was shown as (the box is read back exactly while it still says that)
@@ -319,6 +324,13 @@ begin
     sbItalic.Down := D.SymbolFontItalic;
 //    cbSymbolItalic.Checked := D.SymbolFontItalic;
     cbSheetDetailsBorder.Checked := D.SheetBorder;
+    FRulerRaw := D.RulerUnits;
+    if D.RulerUnits in [UNITS_MM, UNITS_INCHES] then
+      FRulerShown := D.RulerUnits
+    else
+      FRulerShown := D.Units;
+    rbRulerMM.Checked := FRulerShown = UNITS_MM;
+    rbRulerIN.Checked := FRulerShown = UNITS_INCHES;
     cbSheetDetailsShowRuler.Checked := D.SheetRulers;
     edSheetDetailsCols.Text := IntToStr(D.SheetCols);
     edSheetDetailsRows.Text := RowLetter(D.SheetRows);
@@ -395,6 +407,12 @@ begin
   D.SymbolFontBold := sbBold.Down; //cbSymbolBold.Checked;
   D.SymbolFontItalic := sbItalic.Down;  //cbSymbolItalic.Checked;
   D.SheetBorder := cbSheetDetailsBorder.Checked;
+  { the rulers keep following the sheet unless the choice was changed here }
+  N := Ord(rbRulerIN.Checked);
+  if N = FRulerShown then
+    D.RulerUnits := FRulerRaw
+  else
+    D.RulerUnits := N;
   D.SheetRulers := cbSheetDetailsShowRuler.Checked;
   D.SheetCols := StrToIntDef(Trim(edSheetDetailsCols.Text), 0);
   S := Trim(edSheetDetailsRows.Text);

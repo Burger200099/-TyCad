@@ -251,6 +251,7 @@ var
   Sheet: TDesignSheet;
 begin
   Sheet := Design.Sheets[SheetIndex];
+  Sheet.UpdateLayout;       { a sheet nobody has shown yet has no text boxes }
   T := TTransform.Create;
   try
     T.SetZoomFactor(Zoom);

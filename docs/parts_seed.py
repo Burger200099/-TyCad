@@ -21,7 +21,7 @@ def build(path):
     if os.path.exists(path): os.remove(path)
     c = sqlite3.connect(path); c.execute("PRAGMA foreign_keys=ON"); c.executescript(open(os.path.join(HERE, "parts_schema.sql")).read())
     c.execute("insert into LibraryInfo(LibraryUID,Name,Created) values (?,?,datetime('now'))", (str(uuid.uuid4()), 'Sample parts'))
-    c.execute("insert into FormatInfo values ('TyCAD-Parts',1,0,datetime('now'),'parts_seed.py')")
+    c.execute("insert into FormatInfo values ('TyCAD-Parts',2,0,datetime('now'),'parts_seed.py')")
     cid, kid = {}, {}
     def cls(name, parent=None, abstract=0, desc=""):
         cid[name] = c.execute("insert into PartClass(Name,ParentID,Abstract,Description) values (?,?,?,?)", (name, cid.get(parent), abstract, desc)).lastrowid
@@ -55,7 +55,7 @@ def build(path):
     kind("Pole", "PassiveObject", desc="a switching path; holds its contacts and terminals")
     kfld("Pole", "PoleNo", "int")
     kind("Contact", "PassiveObject", desc="a switching element")
-    kfld("Contact", "Form", "enum", enum="NO,NC,CO,make-before-break,latching", req=1); kfld("Contact", "Material", "text"); kfld("Contact", "Mechanical life", "int", "ops")
+    kfld("Contact", "Form", "enum", enum="NO,NC,CO,make-before-break,latching", req=1); kfld("Contact", "Delay", "enum", enum="none,on-delay,off-delay", desc="timing relay contact: switches after the coil is on or off"); kfld("Contact", "DelaySecs", "real", "s", desc="the delay time"); kfld("Contact", "Material", "text"); kfld("Contact", "Mechanical life", "int", "ops")
     kind("Channel", "PassiveObject", desc="one input or output of an I/O part; holds its terminals")
     kfld("Channel", "Signal", "enum", enum="digital,analog_voltage,analog_current,relay,pulse,temperature,serial", req=1)
     kfld("Channel", "Direction", "enum", enum="input,output,bidirectional", req=1); kfld("Channel", "Addressing", "text")

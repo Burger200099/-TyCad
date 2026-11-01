@@ -5,7 +5,7 @@
 -- Inheritance rule: a class (of parts) or a kind (of child objects) has every field and every allowed child kind
 -- of all its ancestors, plus its own. Fields are declared once, on the highest class that needs them.
 PRAGMA foreign_keys = ON;
-PRAGMA user_version = 1;             -- the same number as FormatInfo.SchemaVersion (a quick read for tools); keep both in step
+PRAGMA user_version = 2;             -- the same number as FormatInfo.SchemaVersion (a quick read for tools); keep both in step
 
 CREATE TABLE FormatInfo (            -- one row: lets the program warn on first use and keeps TinyCAD from opening the file by mistake
   Format TEXT NOT NULL CHECK (Format = 'TyCAD-Parts'),
@@ -107,7 +107,8 @@ CREATE TABLE Link (                  -- internal relations: bridged terminals, a
 CREATE TABLE Symbol (                    -- Drawing = the symbol as TinyCAD XML (the same BLOB as the Symbol table of a .TCLib), so the symbol loader and editor read it as is
   SymbolID INTEGER PRIMARY KEY, PartID INTEGER NOT NULL REFERENCES Part(PartID) ON DELETE CASCADE,
   Standard TEXT NOT NULL DEFAULT 'IEC', Purpose TEXT NOT NULL DEFAULT 'schematic' CHECK (Purpose IN ('schematic','oneline','panel','block')),
-  PartNo INTEGER NOT NULL DEFAULT 0, Name TEXT, Drawing BLOB NOT NULL, OriginX REAL, OriginY REAL);
+  PartNo INTEGER NOT NULL DEFAULT 0, Name TEXT, Drawing BLOB NOT NULL, OriginX REAL, OriginY REAL,
+  ShowsObject INTEGER REFERENCES PartObject(ObjectID));   -- the Coil / Pole / Contact of the part this symbol draws; NULL = the whole device
 CREATE TABLE SymbolPin (             -- which child object each pin of a symbol is, so a symbol can be swapped without touching the data
   SymbolID INTEGER NOT NULL REFERENCES Symbol(SymbolID) ON DELETE CASCADE, ObjectID INTEGER NOT NULL REFERENCES PartObject(ObjectID),
   X REAL NOT NULL, Y REAL NOT NULL, Direction INTEGER, PRIMARY KEY (SymbolID, ObjectID));

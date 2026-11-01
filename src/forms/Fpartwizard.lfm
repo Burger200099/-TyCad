@@ -1,0 +1,230 @@
+inherited frmPartWizard: TfrmPartWizard
+  Left = 600
+  Height = 480
+  Top = 200
+  Width = 700
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'Add Part'
+  ClientHeight = 480
+  ClientWidth = 700
+  OnCloseQuery = FormCloseQuery
+  Position = poOwnerFormCenter
+  inherited pnlButtons: TPanel
+    Top = 422
+    Width = 700
+    ClientWidth = 696
+    inherited btnOK: TButton
+      Left = 440
+      Caption = 'Add Part'
+    end
+    inherited btnApply: TButton
+      Visible = False
+    end
+  end
+  object lbPresets: TListBox[1]
+    Left = 8
+    Height = 400
+    Hint = 'What kind of part: only the entries that kind needs are shown'
+    Top = 8
+    Width = 250
+    ItemHeight = 0
+    OnClick = PresetClick
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 0
+  end
+  object lblHint: TLabel
+    Left = 270
+    Height = 15
+    Top = 8
+    Width = 420
+    AutoSize = False
+    Height = 34
+    Width = 420
+    Caption = ''
+    ParentColor = False
+    WordWrap = True
+  end
+  object lblName: TLabel
+    Left = 270
+    Height = 15
+    Top = 52
+    Width = 60
+    Caption = '&Name:'
+    ParentColor = False
+  end
+  object edName: TEdit
+    Hint = 'The name of the part'
+    Left = 340
+    Height = 23
+    Top = 48
+    Width = 350
+    TabOrder = 1
+    Text = ''
+    OnChange = NameChange
+  end
+  object lblRef: TLabel
+    Left = 270
+    Height = 15
+    Top = 84
+    Width = 60
+    Caption = '&Letters:'
+    ParentColor = False
+  end
+  object edRef: TEdit
+    Hint = 'The reference letters of the part, such as K'
+    Left = 340
+    Height = 23
+    Top = 80
+    Width = 70
+    TabOrder = 2
+    Text = ''
+  end
+  object lblClass: TLabel
+    Left = 430
+    Height = 15
+    Top = 84
+    Width = 40
+    Caption = 'Class:'
+    ParentColor = False
+  end
+  object cbClass: TComboBox
+    Hint = 'The class of the part'
+    Left = 476
+    Height = 23
+    Top = 80
+    Width = 214
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 3
+  end
+  object lblPoles: TLabel
+    Left = 270
+    Height = 15
+    Top = 124
+    Width = 90
+    Caption = 'Main &poles:'
+    ParentColor = False
+  end
+  object sePoles: TSpinEdit
+    Hint = 'How many poles the part has'
+    Left = 370
+    Height = 23
+    Top = 120
+    Width = 70
+    MaxValue = 12
+    OnChange = EntryChange
+    TabOrder = 4
+  end
+  object lblNO: TLabel
+    Left = 270
+    Height = 15
+    Top = 156
+    Width = 90
+    Caption = '&NO contacts:'
+    ParentColor = False
+  end
+  object seNO: TSpinEdit
+    Hint = 'Normally open contacts in each pole'
+    Left = 370
+    Height = 23
+    Top = 152
+    Width = 70
+    MaxValue = 24
+    OnChange = EntryChange
+    TabOrder = 5
+  end
+  object lblNC: TLabel
+    Left = 270
+    Height = 15
+    Top = 188
+    Width = 90
+    Caption = 'N&C contacts:'
+    ParentColor = False
+  end
+  object seNC: TSpinEdit
+    Hint = 'Normally closed contacts in each pole'
+    Left = 370
+    Height = 23
+    Top = 184
+    Width = 70
+    MaxValue = 24
+    OnChange = EntryChange
+    TabOrder = 6
+  end
+  object cbCoil: TCheckBox
+    Hint = 'Give the part a coil'
+    Left = 470
+    Height = 19
+    Top = 122
+    Width = 120
+    Caption = 'With a &coil'
+    OnChange = EntryChange
+    TabOrder = 7
+  end
+  object lblDelay: TLabel
+    Left = 270
+    Height = 15
+    Top = 226
+    Width = 90
+    Caption = '&Delay:'
+    ParentColor = False
+  end
+  object cbDelay: TComboBox
+    Hint = 'The delay of the contacts'
+    Left = 370
+    Height = 23
+    Top = 222
+    Width = 110
+    ItemHeight = 15
+    OnChange = EntryChange
+    Style = csDropDownList
+    TabOrder = 8
+  end
+  object lblSecs: TLabel
+    Left = 490
+    Height = 15
+    Top = 226
+    Width = 50
+    Caption = 'Seconds:'
+    ParentColor = False
+  end
+  object edSecs: TEdit
+    Hint = 'The delay time in seconds'
+    Left = 546
+    Height = 23
+    Top = 222
+    Width = 60
+    TabOrder = 9
+    Text = '5'
+    OnChange = EntryChange
+  end
+  object lblDescription: TLabel
+    Left = 270
+    Height = 15
+    Top = 270
+    Width = 90
+    Caption = 'D&escription:'
+    ParentColor = False
+  end
+  object edDescription: TEdit
+    Hint = 'What the part is'
+    Left = 370
+    Height = 23
+    Top = 266
+    Width = 320
+    TabOrder = 10
+    Text = ''
+  end
+  object lblSummary: TLabel
+    Left = 270
+    Height = 40
+    Top = 320
+    Width = 420
+    AutoSize = False
+    Caption = ''
+    WordWrap = True
+    ParentColor = False
+  end
+end

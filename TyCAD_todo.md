@@ -231,7 +231,7 @@ Order matters: each phase builds on the one before. Every item follows the stand
 - [ ] E3 Several electrical views of one part (see D6)
 - [ ] E4 Units: store SI and convert on display? Current: unit text per rating with RatingQuantity.Unit; add a conversion table (mA -> A) so a 4-20 mA module and a 0.02 A product compare
 - [ ] E5 Currency/price storage for Offer (decimal as integer minor units)
-- [ ] E6 Schema version 2 plan: nothing shipped yet; the moment a parts file leaves the test folder, raise CURRENT with a step and keep docs/parts_upgrade.py in sync
+- [x] E6 Schema version 2 shipped with Symbol.ShowsObject (parts plan step 1). Old note: nothing shipped yet; the moment a parts file leaves the test folder, raise CURRENT with a step and keep docs/parts_upgrade.py in sync
 - [ ] E7 Localisation of class and quantity names (Name stays the key; add display names)
 
 ## Phase F - things to verify on Windows (cannot be done here)
@@ -358,3 +358,29 @@ Order matters: each phase builds on the one before. Every item follows the stand
 - DONE: stretching several chosen wires together by one end handle (the end nearest the handle on each wire).
 - DONE: focus returns to the text box after a pan.
 - DONE: second print check box for symbol property text.
+- DONE: Special > Export Wires (wire labels and bus names, CSV). Assumed 'wire marker text' = wire labels + bus names; power symbol net names are not included.
+- DONE: parameter list remembers its size for the session.
+- DONE: parts plan step 1: part symbols record the Coil/Pole/Contact they draw (schema v2), placed part keeps it in the .dsn. NEXT: step 2 'Insert contact of K1' (docs/parts_review_and_roadmap.md). Not seen on Windows: the Shows drop-down layout.
+- DONE: parts plan step 2 (Insert NO/NC/Next Free Contact of selected coil). NEXT: step 3 (rung assignment) / step 4 (cross-reference text with NO/NC and Add Rung Reference). Open: contact numbering across sheets is by reference text only; a coil with more contacts than the part has is just refused with a message.
+- DONE: ruler units (right-click menu on the rulers, Options > Sheets > Ruler Units). The choice is program-wide, not per design; say if it should be saved in each design.
+- DONE: pin property frame shown while the Pin tool is active. Open: a ghost of the pin under the cursor before the click (none is drawn today).
+- [x] Symbol parameter list: a name typed (with or without Enter) is kept when Add is clicked, and a parameter can no longer be left with a blank name (src/forms/FSymDDD.pas; tests/run_symbolframe.py).
+- [x] Layout changes from the user's .lfm files (mainform, fsharedctls, FSymDDD) taken in; plMain field added to TfrmSymbolPropList; languages/schematic.pot regenerated.
+- DECISION (step 6, multi-pole bus): a multi-conductor bus is drawn as individual bus wires (one per conductor, at the pole spacing) grouped together internally as one multi-phase bus.
+- [x] Parts plan step 3: rung assignment with the most-overlap rule, ambiguity flag, stored override and right-click Rung menu (ULinks, UView, mainform; tests/run_rungassign.py).
+- [ ] run_gui.py: 3 checks already failing before step 3 (label View tab, shape tool objects, options defaults list) - look at when next in that file.
+- [ ] Rung: a chosen rung does not follow the symbol when moved; consider clearing it when the symbol is moved to another rung.
+- [x] Parts plan step 4: Add Rung Reference (XREF mode 2) with NO/NC forms; tests/run_rungref.py.
+- [ ] Rung reference: choose the separator / a format (e.g. NO before the number), and a way to refresh position after moving the symbol.
+- [x] Parts plan step 5: Poles and Contacts dialog (poles/contacts as part data, form, delay); tests/run_partsswitch.py. NEXT: step 6 (bus: individual wires grouped as one multi-phase bus, conductor count + spacing, right click Change to bus).
+- [x] Parts plan step 6: 1-6 conductor bus, Change to bus, pole snapping onto buses and ladder rails (tests/run_busn.py, run_polesnap.py). NEXT: step 7 (Add Part wizard and presets). Open: snap while dragging a symbol; symbol pins of a multi-pole part are found by geometry only (a row at the bus spacing), not from the part's Pole objects.
+- [x] Parts plan step 7: Add Part wizard with presets, Advanced box (tests/run_partwizard.py). NEXT: step 8 (Make part from this symbol, starter library). Open: user-defined presets; a preset could also pick a default symbol.
+- [x] Part ribbon page (name + reference, glyph, object list with [Page, line] / [unused], Goto / Place) replacing the three Special > Insert Contact items; Parts tab preview.
+- [x] Print / export of a sheet not yet shown: labels' text missing (layout not done) fixed; tests/run_printunopened.py.
+- [x] Part symbol Symbol Properties: Shows list on New (unshown objects only), Standard a fixed list, dialog on store/Library menu replaces the library one for part symbols, rename reaches the Symbols page.
+- [x] Paste into the symbol editor: placed symbols come in as their lines/pins, wires become lines, circuit-only objects dropped; tests/run_symbolpaste.py.
+- [x] Select All Alike submenu for a right clicked symbol (All Symbols / Identical References / Identical Names), built in code; tests/run_selalike.py.
+- [ ] Linked text target: the Target ID property is a bare number now; it needs a drop-down window with a tree of every sheet and the symbols (objects) on it to choose from.
+- [ ] Move the Part ribbon page into a frame on the View ribbon tab (it is a page of its own now, shown while a symbol of a part is selected).
+- [x] Virtual poles: a Form (standard / virtual) on the pole itself, a new pole starts virtual; the pole's own symbol (one contact with a line between the pins, or ladder-style vertical lines) is still just symbol design.
+- [x] Contact Form `virtual` (no symbol, not offered in the Part ribbon, the Objects menu or Shows); right click on a part symbol: Objects > every object (select / put on the pointer), Add Symbol Rung Text.

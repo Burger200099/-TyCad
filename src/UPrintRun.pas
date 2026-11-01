@@ -646,6 +646,7 @@ begin
   else
     Idx := ActiveSheet;
   Sheet := Design.Sheets[Idx];
+  Sheet.UpdateLayout;       { a sheet nobody has shown yet has no text boxes (a label's text would not be drawn) }
   T := TTransform.Create;
   try
     T.SetZoomFactor(L.Zoom * Factor);

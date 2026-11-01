@@ -20,7 +20,7 @@ interface
 uses
   Classes, SysUtils, Controls, Forms, StdCtrls, Graphics, Math, Types, LCLType, ExtCtrls, Menus, UDPoint, UDrawTypes,
   UGeometry, UResources, UDrawingObjects, USymbols, UDesign, UPaper, UPainter, UEdit, UUndo, ULinks,
-  UProps, UClip, UDocVars, UImageInfo, UImageLoad, UOptions, URepeat, UAnnotate, UPhases, Clipbrd;
+  UProps, UClip, UDocVars, UImageInfo, UImageLoad, UOptions, URepeat, UAnnotate, UPhases, UBusSnap, Clipbrd;
 
 type
   TViewTool = (vtSelect, vtWire, vtLine, vtPolygon, vtRect, vtCircle, vtArc, vtNote, vtCloud,
@@ -122,6 +122,8 @@ type
     procedure PruneSelection;
     procedure DropPaste;
     procedure CancelPaste;
+    function ExplodePlacedSymbols(Imp: TList): Integer;
+    function MakeFitSymbol(Imp: TList): Integer;
     function BeginPasteFrom(Src: TStream; const UndoName, FailMsg, PlaceMsg, DoneMsg: String): Integer;
     function StartBlock(Imp: TList; const PlaceMsg, DoneMsg: String): Integer;
     procedure ClipboardToStream(S: TStream);
@@ -198,6 +200,7 @@ type
     procedure SelectObject(Obj: TDrawingObject; Add: Boolean);
     procedure SelectAll;
     procedure SelectAllAlike;
+    function SelectAlikeSymbols(Mode: Integer): Integer;
     { scroll the sheet, if it needs it, so the object can be seen (at the zoom it has now) }
     procedure ShowObject(Obj: TDrawingObject);
     { ---- resizing with handles ---- }
@@ -230,6 +233,8 @@ type
     procedure BeginTool(ATool: TViewTool);
     procedure PaintRef(const P: TDPoint; Remove: Boolean);
     procedure BeginPlace(Meth: TDrawMethod);
+    { Add Symbol Rung Text: the linked text of the symbol's ladder line (mode 0) follows the pointer until it is clicked down }
+    procedure BeginSymbolRungText(Sym: TDrawingObject);
     { the reference painter (Generate Symbol References > Use reference painter): a click on a symbol gives it the next number from StartVal, a right click
       takes its number away }
     procedure BeginRefPainter(StartVal: Integer);
@@ -296,6 +301,8 @@ type
     { the properties a draw tool can be given (line colour and style, fill, font ...) and the ones chosen so far }
     function ToolPropDefs(ATool: TViewTool): TPropDefArray;
     function ToolPropValue(ATool: TViewTool; const AName: String): String;
+    { gives a pin the values the next pin will have: those of the pin placed last (its number and name counted on) with what was chosen in the Pin tool's panel over them }
+    procedure FillPendingPin(Pn: TDrawPin);
     procedure SetToolDefault(ATool: TViewTool; const AName, AValue: String);
     procedure ClearToolDefaults;
     function WireAngleNow: Integer;
@@ -341,6 +348,17 @@ type
     function PolygonAt(const P: TDPoint): Boolean;
     { the symbol that is the only object chosen, or nil }
     function SelectedSymbol: TDrawMethod;
+    { the rung of the chosen symbol (False when there is none, or it is not in a rung grid) }
+    function SymbolRung(out Info: TRungInfo): Boolean;
+    { choose the rung of the chosen symbol (0 = work it out from where it is again), as one undo step }
+    function SetSymbolRung(Number: Integer): Boolean;
+    function PoleSnapDelta(M: TDrawMethod; out Delta: TDPoint; out Poles: Integer): Boolean;
+    function SnapPolesOf(M: TDrawMethod): Integer;
+    function SnapSelectedPoles: Integer;
+    function BusSelection(out AnyWire, AnyBus: Boolean; out Wires: Integer): Boolean;
+    function ChangeSelectedToBus(Wires: Integer): Boolean;
+    { Add Rung Reference: a cross reference text (XREF mode 2) under the chosen symbol; returns 'added', 'exists' (the one already there is chosen), 'nosel' or 'noref' (the symbol has no reference) }
+    function AddRungReference: String;
     function SelectedLine: TDrawLine;
     function LineMakeStraight(Vertical: Boolean; const P: TDPoint): Boolean;
     function NudgeSelection(DX, DY: Integer): Boolean;
@@ -1288,6 +1306,8 @@ var
   ArcsUsed: Boolean;
   Tmp: TDrawPolygon;
   Tmp2: TDrawText;
+  XTmp: TDrawRefText;
+  XLine: Integer;
   TmpL: TDrawLabel;
   Tmp3: TDrawingObject;
   TmpPainter: TSchematicPainter;
@@ -1428,6 +1448,23 @@ begin
         Painter := TSchematicPainter.Create(C, FT);
         try
           Painter.PaintObject(FXTarget, True);
+          if (FStage = 1) and FHaveMouse and (FTool = vtXRefLine) then
+          begin
+            { the text about to be put down follows the pointer, saying what it will say }
+            XTmp := TDrawRefText.Create(Sheet.Options);
+            try
+              XTmp.TargetId := FXTarget.Id;
+              XTmp.Mode := 0;
+              XTmp.PointA := SnapPoint(FMouseDesign);
+              XTmp.CachedText := '?';
+              if LineNumberOfObject(Sheet, FXTarget, XLine) then
+                XTmp.CachedText := IntToStr(XLine);
+              XTmp.UpdateLayout;
+              Painter.PaintObject(XTmp, True);
+            finally
+              XTmp.Free;
+            end;
+          end;
         finally
           Painter.Free;
         end;
@@ -1754,6 +1791,66 @@ begin
 end;
 
 { ===========================================================================
+  TSchematicView.SelectAlikeSymbols  (function)
+  Parameters:
+    Mode: Integer - which symbols to select (see Notes): 0 all symbols, 1 identical references, 2 identical names
+  Returns:
+    Integer - how many symbols are selected afterwards (0 and nothing changed when no symbol is the one chosen)
+  Notes:
+    The submenu of Select All Alike that a right click on a symbol gives (mainform.lfm: pmSheetAlikeAll / pmSheetAlikeRef / pmSheetAlikeName). The symbol chosen is the one that was right clicked
+    (the only one selected). The symbols compared are the same kind of object as it (so a symbol is never matched with a text or a wire):
+      0  All Symbols: every symbol on the sheet.
+      1  Identical References: every symbol whose reference is the same as the chosen one's once the numbers are taken out, ignoring case: R1, r12 and R7 are alike and not like RN1. The "?"
+         of an unnumbered reference (R?) is taken out with the numbers, so R? is alike R1. A symbol with no reference letters at all is alike the other symbols that have none.
+      2  Identical Names: every symbol with the same Name field (the part or symbol name), ignoring case and spaces at the ends.
+    The symbols found replace the selection. As for Select All Alike, a selection is not a change: no undo step.
+  =========================================================================== }
+function TSchematicView.SelectAlikeSymbols(Mode: Integer): Integer;
+var
+  S, M: TDrawMethod;
+  i: Integer;
+  Key: String;
+
+  { the reference with its numbers (and the ? of one not numbered yet) taken out, in lower case }
+  function RefLetters(Sym: TDrawMethod): String;
+  var
+    j: Integer;
+    R: String;
+  begin
+    R := LowerCase(Sym.GetRef);
+    Result := '';
+    for j := 1 to Length(R) do
+      if not (R[j] in ['0'..'9', '?']) then
+        Result := Result + R[j];
+    Result := Trim(Result);
+  end;
+
+begin
+  Result := 0;
+  S := SelectedSymbol;
+  if (S = nil) or (Sheet = nil) then
+    Exit;
+  Key := '';
+  if Mode = 1 then
+    Key := RefLetters(S)
+  else if Mode = 2 then
+    Key := LowerCase(Trim(S.GetName));
+  FSelected.Clear;
+  for i := 0 to Sheet.Drawing.Count - 1 do
+  begin
+    if (Sheet.Drawing[i].GetType <> S.GetType) or not (Sheet.Drawing[i] is TDrawMethod) then
+      Continue;
+    M := Sheet.Drawing[i] as TDrawMethod;
+    if (Mode = 0) or ((Mode = 1) and (RefLetters(M) = Key)) or ((Mode = 2) and (LowerCase(Trim(M.GetName)) = Key)) then
+      FSelected.Add(M);
+  end;
+  Result := FSelected.Count;
+  FAreaA := DPoint(0, 0);
+  FAreaB := DPoint(Sheet.Details.PageWidth, Sheet.Details.PageHeight);
+  SelectionChanged;
+end;
+
+{ ===========================================================================
   TSchematicView.SelectedCount  (function)
   Parameters:  none
   Returns:
@@ -1895,6 +1992,8 @@ begin
   FTool := ATool;
   if ATool = vtSelect then
     Cursor := crDefault
+  else if (ATool = vtXRefLine) or (ATool = vtXRefContacts) then
+    Cursor := crHandPoint
   else
     Cursor := crCross;
   if ATool in [vtWire, vtLine, vtBus] then
@@ -2045,6 +2144,22 @@ begin
   Status(ToolHint(vtPlace));
   if Assigned(FOnToolChanged) then
     FOnToolChanged(Self);
+  Invalidate;
+end;
+
+{ ===========================================================================
+  TSchematicView.BeginSymbolRungText  (procedure)
+  Parameters:
+    Sym: TDrawingObject - the symbol the text is about
+  Notes:
+    Starts the line number link tool with its target already chosen, so the first click puts the text down (XRefClick, stage 1) and the text shows on the pointer meanwhile.
+  =========================================================================== }
+procedure TSchematicView.BeginSymbolRungText(Sym: TDrawingObject);
+begin
+  BeginTool(vtXRefLine);
+  FXTarget := Sym;
+  FStage := 1;
+  Status(rsNowClickWhereTheText);
   Invalidate;
 end;
 
@@ -2344,9 +2459,7 @@ var
   BS: TDrawBusSlash;
   Tx: TDrawText;
   St: TDrawSymbolText;
-  Pn, Prev: TDrawPin;
-  i: Integer;
-  Num, PName: String;
+  Pn: TDrawPin;
 begin
   if ((FTool = vtOrigin) and (not Sheet.Options.EditLibrary)) or
      ((FTool = vtPin) and (not Sheet.Options.EditLibrary) and (not Sheet.IsHierarchicalSymbol)) then
@@ -2358,26 +2471,11 @@ begin
     vtPin:
       begin
         P := SnapPoint(NoSnap);
-        { the pin starts as the one placed last (if it is still there): its direction, length, shape and so on, with its number and name counted on }
-        Prev := nil;
-        if FLastPinId <> 0 then
-          for i := 0 to Sheet.Drawing.Count - 1 do
-            if (Sheet.Drawing[i].Id = FLastPinId) and (Sheet.Drawing[i] is TDrawPin) then
-              Prev := TDrawPin(Sheet.Drawing[i]);
         BeginChange(rsAddPin);
         Pn := TDrawPin.Create(Sheet.Options);
-        if Prev <> nil then
-        begin
-          Pn.Dir := Prev.Dir; Pn.Length := Prev.Length; Pn.NumberPos := Prev.NumberPos; Pn.Which := Prev.Which;
-          Pn.Elec := Prev.Elec; Pn.Show := Prev.Show; Pn.CentreName := Prev.CentreName;
-          Num := Prev.Number; PName := Prev.Str;
-          NextPinValues(Num, PName, FPinDir, FNameDir);
-          Pn.Number := Num; Pn.Str := PName;
-        end
-        else
-        begin
-          Pn.Number := '1'; Pn.Str := '';
-        end;
+        FillPendingPin(Pn);
+        if FToolDefaults[vtPin] <> nil then
+          FToolDefaults[vtPin].Clear;      // (what was chosen in the panel was for this pin; the next one counts on from it)
         Pn.Part := Sheet.Options.EditPart;
         Pn.PointA := P;
         Pn.DetermineSize;
@@ -2708,6 +2806,7 @@ end;
   =========================================================================== }
 procedure TSchematicView.MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
+  PolesOn: Integer;
   P: TDPoint;
   Hit: TDrawingObject;
   EndFirst: Boolean;
@@ -2867,13 +2966,15 @@ begin
         BeginChange(rsPlaceSymbol);
         FGhost.PointA := SnapPoint(P);
         FGhost.NewRotation;
+        PolesOn := SnapPolesOf(FGhost);
         Placed := FGhost.Clone as TDrawMethod;
         AddNew(Placed);
         Placed.UpdateLayout;
         Status(Format(rsPlaced, [Placed.GetRef, Placed.GetName]));
         FSelected.Clear;
         FSelected.Add(Placed);
-        PlacePhaseCopies(Placed);
+        if PolesOn < 2 then
+          PlacePhaseCopies(Placed);       // (a device whose poles are on the conductors is the whole bus's: no copies)
         CommitChange(True);
         SelectionChanged;
         if Assigned(FOnPlaced) then
@@ -2908,7 +3009,8 @@ begin
         end;
       end;
       { a field (reference, name, value ...) of the one selected symbol is dragged by itself, and keeps its new place relative to the symbol }
-      if (Button = mbLeft) and (not (ssShift in Shift)) and (FSelected.Count = 1) then
+      { (a symbol text is one block of text: a press on any line of it moves all of it, the lines are not dragged out of it) }
+      if (Button = mbLeft) and (not (ssShift in Shift)) and (FSelected.Count = 1) and (not (TObject(FSelected[0]) is TDrawSymbolText)) then
       begin
         FFieldCode := TDrawingObject(FSelected[0]).FieldAt(P);
         if FFieldCode >= FIELD_BASE then
@@ -3199,6 +3301,7 @@ begin
       begin
         FGhost.PointA := SnapPoint(P);
         FGhost.NewRotation;
+        SnapPolesOf(FGhost);
         Invalidate;
       end;
     vtText, vtLabel, vtJunction, vtNoConnect, vtPower, vtBusSlash: Invalidate;
@@ -3415,6 +3518,20 @@ begin
       end;
     Exit;
   end;
+  if ATool = vtPin then
+  begin
+    { the pin about to be placed: all of its properties (a pin can only be placed while a symbol is edited) }
+    if Sheet.Options.EditLibrary or Sheet.IsHierarchicalSymbol then
+    begin
+      Sample := TDrawPin.Create(Sheet.Options);
+      try
+        Result := ObjectProps(Sample);
+      finally
+        Sample.Free;
+      end;
+    end;
+    Exit;
+  end;
   Sample := ToolSampleOf(Sheet.Options, ATool);
   if Sample = nil then
     Exit;
@@ -3456,6 +3573,42 @@ begin
 end;
 
 { ===========================================================================
+  TSchematicView.FillPendingPin  (procedure)
+  Parameters:
+    Pn: TDrawPin - a new pin
+  Notes:
+    The pin starts as the one placed last (if it is still there): its direction, length, shape and so on, with its number and name counted on; a first pin starts as a new
+    pin does. What was chosen in the Pin tool's panel before the pin is put down (FToolDefaults) is applied over that. Used for the panel's values and for the pin placed.
+  =========================================================================== }
+procedure TSchematicView.FillPendingPin(Pn: TDrawPin);
+var
+  Prev: TDrawPin;
+  i: Integer;
+  Num, PName: String;
+begin
+  Prev := nil;
+  if FLastPinId <> 0 then
+    for i := 0 to Sheet.Drawing.Count - 1 do
+      if (Sheet.Drawing[i].Id = FLastPinId) and (Sheet.Drawing[i] is TDrawPin) then
+        Prev := TDrawPin(Sheet.Drawing[i]);
+  if Prev <> nil then
+  begin
+    Pn.Dir := Prev.Dir; Pn.Length := Prev.Length; Pn.NumberPos := Prev.NumberPos; Pn.Which := Prev.Which;
+    Pn.Elec := Prev.Elec; Pn.Show := Prev.Show; Pn.CentreName := Prev.CentreName;
+    Num := Prev.Number; PName := Prev.Str;
+    NextPinValues(Num, PName, FPinDir, FNameDir);
+    Pn.Number := Num; Pn.Str := PName;
+  end
+  else
+  begin
+    Pn.Number := '1'; Pn.Str := '';
+  end;
+  if FToolDefaults[vtPin] <> nil then
+    for i := 0 to FToolDefaults[vtPin].Count - 1 do
+      SetProp(Pn, FToolDefaults[vtPin].Names[i], FToolDefaults[vtPin].ValueFromIndex[i]);
+end;
+
+{ ===========================================================================
   TSchematicView.ToolPropValue  (function)
   Parameters:
     ATool: TViewTool
@@ -3480,6 +3633,17 @@ begin
   if (ATool = vtPlace) and (FGhost <> nil) then
   begin
     GetProp(FGhost, AName, Result);      { (the symbol being placed holds what was chosen for it) }
+    Exit;
+  end;
+  if ATool = vtPin then
+  begin
+    Sample := TDrawPin.Create(Sheet.Options);       { (the pin as the next one will be) }
+    try
+      FillPendingPin(TDrawPin(Sample));
+      GetProp(Sample, AName, Result);
+    finally
+      Sample.Free;
+    end;
     Exit;
   end;
   if AName = 'wire.angle' then
@@ -4129,9 +4293,113 @@ begin
       Status(FailMsg);
       Exit;
     end;
+    { a symbol being drawn cannot hold placed symbols (stored, they have no pins and draw as a box): they come in as the lines and pins they are made of }
+    if Sheet.Options.EditLibrary then
+    begin
+      ExplodePlacedSymbols(Imp);
+      MakeFitSymbol(Imp);
+    end;
     Result := StartBlock(Imp, PlaceMsg, DoneMsg);
   finally
     Imp.Free;
+  end;
+end;
+
+{ ===========================================================================
+  TSchematicView.ExplodePlacedSymbols  (function)
+  Parameters:
+    Imp: TList - the objects just pasted (already on the sheet); placed symbols in it are replaced by their parts
+  Returns:
+    Integer - how many placed symbols were broken up
+  Notes:
+    Pasting into the symbol editor (a symbol of a library or of a part) what was copied from a drawing as a placed symbol: the symbol is not wanted as an object of its own (a symbol inside a symbol
+    is stored without pins and shows as a box when opened again) but as the lines, pins and texts it is drawn with. Each is copied from the symbol's drawing and moved to where the symbol
+    stood. Only a symbol placed upright and not mirrored or scaled is broken up (its drawing needs no turning); another is left as it is. Each part gets a new id.
+  =========================================================================== }
+function TSchematicView.ExplodePlacedSymbols(Imp: TList): Integer;
+var
+  i, k: Integer;
+  M: TDrawMethod;
+  Tr: TDPoint;
+  L: TDrawingList;
+  C: TDrawingObject;
+  Parts: TList;
+begin
+  Result := 0;
+  Parts := TList.Create;
+  try
+    for i := Imp.Count - 1 downto 0 do
+    begin
+      if not (TObject(Imp[i]) is TDrawMethod) then
+        Continue;
+      M := TDrawMethod(Imp[i]);
+      if (M.Rotate <> 0) or (M.ScalingX <> 1) or (M.ScalingY <> 1) then
+        Continue;
+      if not M.ExtractSymbol(Tr, L) then
+        Continue;
+      Parts.Clear;
+      for k := 0 to L.Count - 1 do
+      begin
+        C := L[k].Clone;
+        C.Shift(M.PointA);
+        C.Id := FDesign.NextObjectId;
+        Parts.Add(C);
+      end;
+      Sheet.Drawing.Remove(M);          { (frees it) }
+      Imp.Delete(i);
+      for k := 0 to Parts.Count - 1 do
+      begin
+        Sheet.Drawing.Add(TDrawingObject(Parts[k]));
+        Imp.Add(Parts[k]);
+      end;
+      Inc(Result);
+    end;
+  finally
+    Parts.Free;
+  end;
+end;
+
+{ ===========================================================================
+  TSchematicView.MakeFitSymbol  (function)
+  Parameters:
+    Imp: TList - the objects just pasted (already on the sheet)
+  Returns:
+    Integer - how many objects were changed or taken out
+  Notes:
+    Pasting into the symbol editor what was copied from a drawing: the wires and buses of the drawing become plain lines (a symbol is drawn with lines; the wire and bus tools are
+    refused in the editor, and a wire in a symbol would be taken for a connection), and the objects that only make sense in a circuit (junctions, no connects, labels, power symbols,
+    ladders and rung grids) are left out.
+  =========================================================================== }
+function TSchematicView.MakeFitSymbol(Imp: TList): Integer;
+var
+  i: Integer;
+  O: TObject;
+  Drop: Boolean;
+begin
+  Result := 0;
+  for i := Imp.Count - 1 downto 0 do
+  begin
+    O := TObject(Imp[i]);
+    Drop := (O is TDrawJunction) or (O is TDrawNoConnect) or (O is TDrawLabel) or (O is TDrawPower) or (O is TDrawLadder) or (O is TDrawRungGrid);
+    if Drop then
+    begin
+      Imp.Delete(i);
+      Sheet.Drawing.Remove(TDrawingObject(O));       { (frees it) }
+      Inc(Result);
+    end
+    else if (O is TDrawLine) and (TDrawLine(O).Kind in [xWire, xBus]) then
+    begin
+      with TDrawLine(O) do
+      begin
+        Kind := xLineEx2;
+        UseDefaultStyle := False;
+        Style := 0;
+        Group := 0;
+        Phase := 0;
+        Phases := 1;
+      end;
+      Inc(Result);
+    end;
   end;
 end;
 
@@ -4738,6 +5006,282 @@ begin
   Result := nil;
   if (FSelected.Count = 1) and (TObject(FSelected[0]) is TDrawMethod) then
     Result := TDrawMethod(FSelected[0]);
+end;
+
+{ ===========================================================================
+  TSchematicView.SymbolRung  (function)
+  Parameters:
+    out Info: TRungInfo - the rung and how it was found
+  Returns:
+    Boolean - True when one symbol is chosen and it is inside the sheet's rung grid
+  Notes:
+    See RungOfObject in ULinks for the rule.
+  =========================================================================== }
+function TSchematicView.SymbolRung(out Info: TRungInfo): Boolean;
+var
+  S: TDrawMethod;
+begin
+  S := SelectedSymbol;
+  Result := (S <> nil) and (Sheet <> nil) and RungOfObject(Sheet, S, Info);
+end;
+
+{ ===========================================================================
+  TSchematicView.SetSymbolRung  (function)
+  Parameters:
+    Number: Integer - the rung number to keep on the symbol, or 0 to let it follow its position again
+  Returns:
+    Boolean - True when something changed
+  Notes:
+    Stores the choice on the chosen symbol (TDrawMethod.RungOverride) as one undo step; the ladder references that show its line are updated. Notes: a chosen rung stays when the
+    symbol is moved, so choose Automatic to follow the position again.
+  =========================================================================== }
+function TSchematicView.SetSymbolRung(Number: Integer): Boolean;
+var
+  S: TDrawMethod;
+begin
+  S := SelectedSymbol;
+  Result := (S <> nil) and (S.RungOverride <> Number);
+  if not Result then
+    Exit;
+  BeginChange(rsSetRung);
+  S.RungOverride := Number;
+  CommitChange(True);
+end;
+
+{ ===========================================================================
+  TSchematicView.PoleSnapDelta  (function)
+  Parameters:
+    M: TDrawMethod - a symbol, placed or being placed
+    out Delta: TDPoint - the move that puts a row of its pins on the conductors of a bus
+    out Poles: Integer - how many pins land on a conductor
+  Returns:
+    Boolean - True when a row of its pins fits a multi-conductor bus or a ladder (UBusSnap)
+  Notes:
+    Only a symbol of a part from a parts library that shows the whole device or its poles is looked at; a plain TinyCAD symbol never moves by itself.
+  =========================================================================== }
+function TSchematicView.PoleSnapDelta(M: TDrawMethod; out Delta: TDPoint; out Poles: Integer): Boolean;
+var
+  D: TObject;
+  Kind: String;
+  Bus: Integer;
+begin
+  Result := False;
+  Delta := DPoint(0, 0); Poles := 0;
+  if (M = nil) or (Sheet = nil) then
+    Exit;
+  D := M.GetSymbolData;
+  if not (D is TDesignFileSymbol) then
+    Exit;
+  if TDesignFileSymbol(D).PartInfo.UID = '' then
+    Exit;
+  Kind := TDesignFileSymbol(D).PartInfo.ObjectKind;
+  if (Kind <> '') and (Kind <> 'Pole') then
+    Exit;
+  Result := PoleSnap(M.ActivePoints, BusesOfSheet(Sheet), Delta, Poles, Bus);
+end;
+
+{ ===========================================================================
+  TSchematicView.SnapPolesOf  (function)
+  Parameters:
+    M: TDrawMethod - the symbol
+  Returns:
+    Integer - the number of poles put on conductors, 0 when it was not moved or matched
+  Notes:
+    Moves the symbol (without any undo step: its caller makes it) so its poles are on the conductors of the bus it is at.
+  =========================================================================== }
+function TSchematicView.SnapPolesOf(M: TDrawMethod): Integer;
+var
+  Delta: TDPoint;
+begin
+  Result := 0;
+  if PoleSnapDelta(M, Delta, Result) then
+    M.PointA := DPoint(M.PointA.x + Delta.x, M.PointA.y + Delta.y)
+  else
+    Result := 0;
+end;
+
+{ ===========================================================================
+  TSchematicView.SnapSelectedPoles  (function)
+  Parameters:  none
+  Returns:
+    Integer - the number of poles put on conductors, 0 when nothing was done
+  Notes:
+    Right click a symbol > Snap poles to bus: the chosen symbol moves onto the bus at it as one undo step.
+  =========================================================================== }
+function TSchematicView.SnapSelectedPoles: Integer;
+var
+  S: TDrawMethod;
+  Delta: TDPoint;
+begin
+  Result := 0;
+  S := SelectedSymbol;
+  if (S = nil) or (not PoleSnapDelta(S, Delta, Result)) then
+  begin
+    Result := 0;
+    Exit;
+  end;
+  BeginChange(rsSnapPolesToBus);
+  S.PointA := DPoint(S.PointA.x + Delta.x, S.PointA.y + Delta.y);
+  S.UpdateLayout;
+  CommitChange(True);
+end;
+
+{ ===========================================================================
+  TSchematicView.BusSelection  (function)
+  Parameters:
+    out AnyWire: Boolean - the selection has a plain wire
+    out AnyBus: Boolean - the selection has a bus
+    out Wires: Integer - the number of conductors when all the buses chosen are the same, else 0
+  Returns:
+    Boolean - True when something is chosen and everything chosen is a wire or a bus
+  Notes:
+    What the right click menu looks at for Change to bus and Change to wire.
+  =========================================================================== }
+function TSchematicView.BusSelection(out AnyWire, AnyBus: Boolean; out Wires: Integer): Boolean;
+var
+  i: Integer;
+  L: TDrawLine;
+begin
+  AnyWire := False; AnyBus := False; Wires := -1;
+  Result := FSelected.Count > 0;
+  for i := 0 to FSelected.Count - 1 do
+  begin
+    if not (TObject(FSelected[i]) is TDrawLine) then
+      Exit(False);
+    L := TDrawLine(FSelected[i]);
+    if L.Kind = xWire then
+      AnyWire := True
+    else if L.Kind = xBus then
+    begin
+      AnyBus := True;
+      if Wires = -1 then
+        Wires := Max(1, L.Phases)
+      else if Wires <> Max(1, L.Phases) then
+        Wires := 0;
+    end
+    else
+      Exit(False);
+  end;
+  if Wires < 0 then
+    Wires := 0;
+end;
+
+{ ===========================================================================
+  TSchematicView.ChangeSelectedToBus  (function)
+  Parameters:
+    Wires: Integer - the number of conductors of the bus (1 = a bus of one wire), or 0 to change the chosen buses back to plain wires
+  Returns:
+    Boolean - True when something changed
+  Notes:
+    Right click a wire > Change to bus; right click a bus > Change to wire. A wire becomes a bus of Wires conductors, the one that was drawn being the first (see UPhases); a bus
+    of several conductors given a new number has the others made or taken away; changing to a wire takes away all but the drawn conductor of each bus and ungroups it. One undo step.
+  =========================================================================== }
+function TSchematicView.ChangeSelectedToBus(Wires: Integer): Boolean;
+var
+  i: Integer;
+  L: TDrawLine;
+  Todo: TList;
+  AW, AB: Boolean;
+  W: Integer;
+begin
+  Result := False;
+  if (not BusSelection(AW, AB, W)) or ((Wires = 0) and (not AB)) or ((Wires > 0) and (not AW) and (W = Wires)) then
+    Exit;
+  Todo := TList.Create;
+  try
+    for i := 0 to FSelected.Count - 1 do
+      Todo.Add(FSelected[i]);
+    if Wires = 0 then
+      BeginChange(rsChangeToWire)
+    else
+      BeginChange(rsChangeToBus);
+    for i := 0 to Todo.Count - 1 do
+    begin
+      L := TDrawLine(Todo[i]);
+      if Wires = 0 then
+      begin
+        if L.Kind <> xBus then
+          Continue;
+        if L.Phase <> 0 then
+        begin
+          FSelected.Remove(L);
+          Sheet.Drawing.Remove(L);
+        end
+        else
+        begin
+          L.Kind := xWire; L.Group := 0; L.Phase := 0; L.Phases := 1;
+        end;
+      end
+      else
+      begin
+        if L.Kind = xWire then
+        begin
+          L.Kind := xBus; L.Group := 0; L.Phase := 0;
+          L.PhaseSpacing := DefaultPhaseSpacing;
+        end;
+        L.Phases := Wires;
+      end;
+    end;
+    CommitChange(True);
+    Result := True;
+  finally
+    Todo.Free;
+  end;
+end;
+
+{ ===========================================================================
+  TSchematicView.AddRungReference  (function)
+  Parameters:  none
+  Returns:
+    String - added, exists, nosel or noref
+  Notes:
+    Right click a symbol > Add Rung Reference: puts a cross reference text (TDrawRefText, mode 2) under the chosen symbol. On a coil it reads like "5 NO  7 NC" (the rung and form of each contact
+    with the same reference), on a contact it gives the rung of the coil. It follows the symbols as they are moved or renumbered. One undo step. A symbol that already has one under mode 2
+    gets no second: that one is chosen instead. Notes: the text is put 2 mm below the symbol's box, left aligned with it, on the grid.
+  =========================================================================== }
+function TSchematicView.AddRungReference: String;
+var
+  S: TDrawMethod;
+  X: TDrawRefText;
+  i: Integer;
+  P: TDPoint;
+begin
+  S := SelectedSymbol;
+  if (S = nil) or (Sheet = nil) then
+  begin
+    Result := 'nosel';
+    Exit;
+  end;
+  if S.GetRef = '' then
+  begin
+    Result := 'noref';
+    Exit;
+  end;
+  for i := 0 to Sheet.Drawing.Count - 1 do
+    if (Sheet.Drawing[i] is TDrawRefText) and ((Sheet.Drawing[i] as TDrawRefText).Mode = 2) and ((Sheet.Drawing[i] as TDrawRefText).TargetId = S.Id) then
+    begin
+      FSelected.Clear;
+      FSelected.Add(Sheet.Drawing[i]);
+      SelectionChanged;
+      Invalidate;
+      Result := 'exists';
+      Exit;
+    end;
+  BeginChange(rsAddRungReference);
+  X := TDrawRefText.Create(Sheet.Options);
+  X.TargetId := S.Id;
+  X.Mode := 2;
+  P := DPoint(Min(S.PointA.x, S.PointB.x), Max(S.PointA.y, S.PointB.y) + 2 * UNITS_PER_MM);
+  X.PointA := P;
+  AddNew(X);
+  UpdateLinks(Design);                    // (the text is known now: put its baseline one text height below the start)
+  X.PointA := SnapPoint(DPoint(P.x, P.y + (X.PointA.y - X.PointB.y)));
+  X.UpdateLayout;
+  FSelected.Clear;
+  FSelected.Add(X);
+  CommitChange(True);
+  SelectionChanged;
+  Result := 'added';
 end;
 
 { ===========================================================================

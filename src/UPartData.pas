@@ -44,9 +44,16 @@ type
   { what a symbol (the generic part) keeps }
   TPartCopy = record
     UID, LibraryUID, Name, ClassName: String;
+    ObjectName, ObjectKind, ObjectForm: String;   // what the symbol shows of the part: 'Coil', 'Pole 1', 'Contact 2' with its kind (Coil / Pole / Contact) and, for a contact, its Form (NO, NC ...); all '' = the whole device
     Needs: TRatingDataArray;
     function IsEmpty: Boolean;
   end;
+
+  { a contact of a part: its object name and its Form (NO, NC, CO ...; '' when none is given) }
+  TContactInfo = record
+    Name, Form: String;
+  end;
+  TContactInfoArray = array of TContactInfo;
 
   { what a placed part keeps of its chosen product }
   TProductChoice = record
@@ -57,6 +64,8 @@ type
 
 { the value a rating is judged by: Max, else Typ, else Min (0 when none is given) }
 function RatingValue(const R: TRatingData): Double;
+{ the first contact (in the order given) whose Form is Form (any when Form is '') and whose name is not in Used (ignoring case); -1 when there is none }
+function NextFreeContact(const Contacts: TContactInfoArray; const Used: array of String; const Form: String): Integer;
 function CheckFit(const Needs, Haves: TRatingDataArray): TFitLineArray;
 { does_not_fit (anything undersized, missing or mismatched), fits_oversized, fits, or no_requirements }
 function FitVerdict(const Lines: TFitLineArray): String;
@@ -300,6 +309,36 @@ begin
   Result.HasMax := R.GetAttribute('max', Result.Max);
 end;
 
+{ ===========================================================================
+  NextFreeContact  (function)
+  Parameters:
+    const Contacts: TContactInfoArray - the contacts of a part, in the order of the part
+    const Used: array of String - names of contacts already placed
+    const Form: String - NO, NC ... wanted; '' = any
+  Returns:
+    Integer - index in Contacts, or -1 when every contact of that form is used
+  Notes:
+    Names and forms are compared ignoring case.
+  =========================================================================== }
+function NextFreeContact(const Contacts: TContactInfoArray; const Used: array of String; const Form: String): Integer;
+var
+  i, k: Integer;
+  Taken: Boolean;
+begin
+  for i := 0 to High(Contacts) do
+  begin
+    if (Form <> '') and not SameText(Contacts[i].Form, Form) then
+      Continue;
+    Taken := False;
+    for k := 0 to High(Used) do
+      if SameText(Used[k], Contacts[i].Name) then
+        Taken := True;
+    if not Taken then
+      Exit(i);
+  end;
+  Result := -1;
+end;
+
 procedure SavePartCopyXml(W: TXMLWriter; const P: TPartCopy);
 var
   i: Integer;
@@ -309,6 +348,13 @@ begin
   W.AddAttribute('library', P.LibraryUID);
   W.AddAttribute('name', P.Name);
   W.AddAttribute('class', P.ClassName);
+  if P.ObjectName <> '' then
+  begin
+    W.AddAttribute('object', P.ObjectName);
+    W.AddAttribute('objectkind', P.ObjectKind);
+    if P.ObjectForm <> '' then
+      W.AddAttribute('form', P.ObjectForm);
+  end;
   for i := 0 to High(P.Needs) do
     SaveRatingXml(W, 'NEED', P.Needs[i]);
   W.CloseTag;
@@ -319,11 +365,15 @@ var
   Tag: String;
 begin
   P.UID := ''; P.LibraryUID := ''; P.Name := ''; P.ClassName := '';
+  P.ObjectName := ''; P.ObjectKind := ''; P.ObjectForm := '';
   SetLength(P.Needs, 0);
   R.GetAttribute('uid', P.UID);
   R.GetAttribute('library', P.LibraryUID);
   R.GetAttribute('name', P.Name);
   R.GetAttribute('class', P.ClassName);
+  R.GetAttribute('object', P.ObjectName);
+  R.GetAttribute('objectkind', P.ObjectKind);
+  R.GetAttribute('form', P.ObjectForm);
   R.IntoTag;
   while R.NextTag(Tag) do
     if Tag = 'NEED' then
