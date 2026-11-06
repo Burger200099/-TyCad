@@ -664,6 +664,8 @@ begin
   W.AddTag('OPTIONS');
   W.AddTag('GRID', GridShow);
   W.AddTag('UNITS', Units);
+  if MeasureScale <> 1 then
+    W.AddTag('MEASURESCALE', MeasureScale);
   Colors.WriteXML(W);
   W.CloseTag;
 end;
@@ -689,6 +691,12 @@ begin
       R.GetChildData(GridShow)
     else if Name = 'UNITS' then
       R.GetChildData(Units)
+    else if Name = 'MEASURESCALE' then
+    begin
+      R.GetChildData(MeasureScale);
+      if MeasureScale <= 0 then
+        MeasureScale := 1;
+    end
     else
       Colors.ReadXML(R, Name);
   end;

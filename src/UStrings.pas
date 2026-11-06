@@ -130,6 +130,8 @@ resourcestring
   rsTheTimeBetweenAutomaticSaves2 = 'The time between automatic saves must be from 1 to %d minutes.';
   rsTheSymbolFontNeedsA = 'The symbol font needs a name.';
   rsTheSymbolFontSizeMust = 'The symbol font size must be from %d to %d points.';
+  rsTheDefaultTextFontNeeds = 'The default text font needs a name.';
+  rsTheDefaultTextFontSize = 'The default text font size must be from %d to %d points.';
 
   { UPainter.pas }
   rsTitle = 'Title';
@@ -310,6 +312,7 @@ resourcestring
   rsSuffix = 'Suffix';
   rsLeftBusWireNo = 'Left bus wire no.';
   rsRightBusWireNo = 'Right bus wire no.';
+  rsBusTextAtBothEnds = 'Bus text at both ends';
   rsRows = 'Rows';
   rsFirstNumber = 'First number';
   rsIndentMm = 'Indent (mm)';
@@ -405,6 +408,10 @@ resourcestring
   rsClickToPlaceTheImported = 'Click to place the imported objects (right click or Esc to cancel)';
   rsImported = 'Imported';
   rsInsertPicture = 'Insert picture';
+  rsInsertTable = 'Insert table';
+  rsEditTable = 'Edit table';
+  rsClickToPlaceTheTable = 'Click to place the table (right click or Esc to cancel)';
+  rsTablePlaced = 'Table placed';
   rsClickToPlaceThePicture = 'Click to place the picture (right click or Esc to cancel)';
   rsPicturePlaced = 'Picture placed';
   rsRotateLeft = 'Rotate left';
@@ -436,10 +443,14 @@ resourcestring
   rsArcClickTheStartAnd = 'Arc: click the start and the end';
   rsNoteClickAndDragA = 'Note: click and drag a box';
   rsCloudClickAndDragA = 'Cloud: click and drag a box';
+  rsArrowClickPointAThen = 'Arrow: click the tail, then the point (hold Shift to make it level or plumb)';
   rsLabelClickOnAWire = 'Label: click on a wire';
   rsJunctionClickWhereWiresMeet = 'Junction: click where wires meet';
   rsHorizontalRulerClickToPlace = 'Horizontal ruler: click to place a guide line';
   rsVerticalRulerClickToPlace = 'Vertical ruler: click to place a guide line';
+  rsMeasureScaleChange = 'Measure scale';
+  rsMeasureScaleItem = 'Scale: %sx';
+  rsMeasureScaleDrawn = 'The ruler you drew is %s mm long on the sheet. How long is that really?';
   rsMeasureClickPointAThen = 'Measure: click point A, then point B';
   rsLadderRailsDragARectangle = 'Ladder rails: drag a rectangle for the two rails';
   rsLineNumberLinkClickThe = 'Line-number link: click the object to follow, then click where the text goes';
@@ -747,7 +758,13 @@ resourcestring
   rsCannotWriteTheSymbolDataFile = 'Cannot write the symbol data file.  Please try again with a different filename.';
   rsExportWires = 'Export Wires';
   rsCannotWriteTheWiresFile = 'Cannot write the wires file.  Please try again with a different filename.';
-  rsCSVFileCsvCsvAll = 'CSV file (*.csv)|*.csv|All files (*.*)|*.*';
+  rsAllFilesFilter = 'All files (*.*)|*.*';
+  rsCsvFileName = 'CSV file';
+  rsSymbolsSheet = 'Symbols';
+  rsSymbolDataSheet = 'Symbol data';
+  rsWiresSheet = 'Wires';
+  rsExcelWorkbookName = 'Excel workbook';
+  rsOpenDocumentSheetName = 'OpenDocument spreadsheet';
   rsCreateSpiceNetList = 'Create Spice Net List';
   rsSPICENetNetAllFiles = 'SPICE (*.net)|*.net|All files (*.*)|*.*';
   rsCreateVHDLFile = 'Create VHDL file';

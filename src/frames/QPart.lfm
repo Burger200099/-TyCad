@@ -1,0 +1,56 @@
+inherited fmPart: TfmPart
+  Height = 240
+  Width = 760
+  ClientHeight = 240
+  ClientWidth = 760
+  DesignLeft = 391
+  DesignTop = 176
+  inherited lbCaption: TLabel
+    Top = 225
+    Width = 760
+    Caption = 'Part'
+  end
+  object lbPartTitle: TLabel[1]
+    Left = 4
+    Height = 15
+    Top = 4
+    Width = 58
+    Caption = 'lbPartTitle'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object pbPartGlyph: TPaintBox[2]
+    Left = 4
+    Height = 54
+    Top = 28
+    Width = 56
+  end
+  object lbPartObject: TLabel[3]
+    Left = 74
+    Height = 15
+    Top = 28
+    Width = 66
+    Caption = 'lbPartObject'
+  end
+  object cbPartObjects: TComboBox[4]
+    Left = 74
+    Height = 23
+    Hint = 'Every object of the part, and where it is drawn'
+    Top = 50
+    Width = 100
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 0
+  end
+  object btnGoTo: TButton[5]
+    Left = 392
+    Height = 30
+    Hint = 'Show the object on its page'
+    Top = 49
+    Width = 80
+    Caption = 'Goto'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 1
+  end
+end

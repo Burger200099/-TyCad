@@ -35,7 +35,7 @@ function CopySelection(Sheet: TDesignSheet; Selected: TList; Dest: TStream): Int
 function PasteStream(Design: TDesignFile; Sheet: TDesignSheet; Src: TStream; Imported: TList): Boolean;
 { The point of a pasted block that follows the mouse: the snapped far corner (largest x and y of
   all the objects' points), as CDrawBlockImport::Import works it out. }
-function BlockReference(Sheet: TDesignSheet; Imported: TList): TDPoint;
+function BlockReference(Sheet: TDesignSheet; Imported: TList; ToGrid: Boolean = False): TDPoint;
 
 implementation
 
@@ -160,6 +160,7 @@ end;
   Parameters:
     Sheet: TDesignSheet - the sheet (its grid snaps the result)
     Imported: TList - the pasted objects
+    ToGrid: Boolean - True to leave the corner as it is (not snapped)
   Returns:
     TDPoint - the reference point
   Notes:
@@ -167,7 +168,7 @@ end;
     points, snapped to the grid (the block's bottom-right corner), as CDrawBlockImport::Import
     works it out.
   =========================================================================== }
-function BlockReference(Sheet: TDesignSheet; Imported: TList): TDPoint;
+function BlockReference(Sheet: TDesignSheet; Imported: TList; ToGrid: Boolean): TDPoint;
 var
   i: Integer;
   O: TDrawingObject;
@@ -181,7 +182,8 @@ begin
     Result.x := Max(Result.x, Max(O.PointA.x, O.PointB.x));
     Result.y := Max(Result.y, Max(O.PointA.y, O.PointB.y));
   end;
-  Result := Sheet.Snap.Snap(Result);
+  if not ToGrid then
+    Result := Sheet.Snap.Snap(Result);      { (Paste to grid keeps the corner where it is: the block is then moved so that it lands on the grid) }
 end;
 
 end.

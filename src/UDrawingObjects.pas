@@ -49,11 +49,15 @@ type
     SymbolFontName: String;      // the symbol font of a new design (Options > Fonts); '' leaves TinyCAD's own
     SymbolFontPoints: Integer;
     SymbolFontBold, SymbolFontItalic: Boolean;
+    TextFontName: String;        // the default text font (Options > Fonts): what the text and label tools start with, at start-up (it is not font number fTEXT, which the title block uses)
+    TextFontPoints: Integer;
+    TextFontBold, TextFontItalic: Boolean;
   end;
 
 var
   EditDefaults: TEditDefaults = (AutoDrag: True; AutoJunction: True; AutoSnap: True; AutoSnapRange: 15; Units: 0;
-    ShowGrid: True; SnapGrid: True; GridMm: 2.0; SymbolFontName: ''; SymbolFontPoints: 0; SymbolFontBold: False; SymbolFontItalic: False);
+    ShowGrid: True; SnapGrid: True; GridMm: 2.0; SymbolFontName: ''; SymbolFontPoints: 0; SymbolFontBold: False; SymbolFontItalic: False;
+    TextFontName: ''; TextFontPoints: 0; TextFontBold: False; TextFontItalic: False);
 
 type
   TDrawingObject = class;
@@ -92,6 +96,7 @@ type
     { Geometry context (the parts of the C++ document the objects ask for) }
     Snap: TSnapSettings;      // grid settings (owned)
     Metrics: TTextMetrics;    // measures text; owned. Default: DefaultTextMetrics (TApproxTextMetrics, or the real-font one in the program)
+    MeasureScale: Double;     // the Measure A-B ruler's scale of this sheet (drawn length x scale = the length shown; 1 when not set); saved with the sheet
     ZoomFactor: Double;       // view zoom, used for the click tolerance of some hit tests
     AutoJunction: Boolean;    // create/remove junctions and split wires automatically (default on)
     AutoSnap: Boolean;        // snap wires to pins and wires (default on)
@@ -116,6 +121,9 @@ type
     { the symbol font (TinyCAD's pin font, fPIN: the reference and the other fields of a symbol, and the names and numbers of pins) as Options > Fonts shows it }
     procedure GetSymbolFont(out AName: String; out APoints: Integer; out ABold, AItalic: Boolean);
     procedure SetSymbolFont(const AName: String; APoints: Integer; ABold, AItalic: Boolean);
+    { any font number as Options > Fonts shows it }
+    procedure GetFontNumber(ANumber: Integer; out AName: String; out APoints: Integer; out ABold, AItalic: Boolean);
+    procedure SetFontNumber(ANumber: Integer; const AName: String; APoints: Integer; ABold, AItalic: Boolean);
     { keep a picture in the design (identical pictures are kept once): returns its number }
     function AddImage(const AType: String; const AData: TBytes): Integer;
     { Symbol table hooks, implemented by TDocOptions (USymbols/UDesign) }
@@ -179,6 +187,10 @@ const
   { a field of a symbol is passed around as FIELD_BASE + its number, so it cannot be mistaken for a handle }
   FIELD_BASE = 1000;
 
+{ the rectangle of resize handle Handle (HANDLE_*) set just outside the box B (the same squares ResizeHandleRect gives one object); used for the handles round a
+  whole selection (Resize All) }
+function GroupHandleRect(const B: TDRect; Handle: Integer; HandleSize: Double): TDRect;
+
 type
   TDrawingObject = class
   protected
@@ -236,7 +248,7 @@ type
   { WIRE, BUS and LINE (CDrawLine) }
   TDrawLine = class(TDrawingObject)
   public
-    Kind: TObjType; // xWire, xBus, xLineEx2, xDash
+    Kind: TObjType; // xWire, xBus, xLineEx2, xDash, xArrow
     UseDefaultStyle: Boolean;
     Style: Integer;
     Network: Integer;   // net number assigned by the netlister (not saved)
@@ -411,6 +423,7 @@ type
     function CanResize: Boolean; override;
     procedure ResizeBy(Handle: Integer; const R: TDPoint); override;
     procedure PrepareResize; override;
+    constructor Create(AOpts: TDocOptionsBase); override;
     constructor CreateKind(AOpts: TDocOptionsBase; AKind: TObjType);
     function GetType: TObjType; override;
     function IsEmpty: Boolean; override;
@@ -537,6 +550,7 @@ type
     LineColor: Cardinal;            // colour of the rails
     FontStyle: Integer;             // font number for the bus labels
     FontColor: Cardinal;
+    BottomText: Boolean;            // the bus labels are drawn below the rails as well as above them
     constructor Create(AOpts: TDocOptionsBase); override;
     function GetType: TObjType; override;
     procedure LoadXML(R: TXMLReader); override;
@@ -552,6 +566,8 @@ type
     { ---- text boxes (need the text metrics) ---- }
     function LeftLabelBox: TDRect;
     function RightLabelBox: TDRect;
+    function LeftBottomBox: TDRect;
+    function RightBottomBox: TDRect;
     function DistanceFromPoint(const P: TDPoint): Double; override;
     function IsInside(Left, Right, Top, Bottom: Double): Boolean; override;
     procedure RotateAbout(const P: TDPoint; NewDir: Integer); override;
@@ -625,21 +641,33 @@ type
     function Clone: TDrawingObject; override;
   end;
 
+const
+  MEASURE_TEXT_FAR = 10;          // a Measure A-B text moved further than this (internal units) gets an arrow to the ruler
+  MEASURE_ARROW_GAP = 5;          // the arrow stops this far from the text centre and from the ruler centre
+
+type
   { MEASURE: a ruler from point A to point B that shows the distance between them }
   TDrawMeasure = class(TDrawingObject)
   public
-    UnitMode: Integer;    // 0 = millimetres, 1 = inches
+    UnitMode: Integer;    // 0 = millimetres, 1 = inches (decimal), 2 = inches in whole inches and 32nds (4 15/32"), 3 = feet and inches (3'-4 15/32")
     Ticks: Integer;       // BOOL: draw graduations along the line
+    Scale: Double;        // the distance shown is the drawn distance x Scale (1 when the file has none)
     LineWidth: Double;
     LineColor: Cardinal;
     FontStyle: Integer;
     FontColor: Cardinal;
+    TextOff: TDPoint;     // how far the text has been moved from beside the middle of the line (internal units; 0,0 when it has not been)
+    { where the text was last drawn (set by the painter, not saved): its centre, the unit vector along it and half its size, in design units }
+    TextShown: Boolean;
+    TextC, TextEx: TDPoint;
+    TextHW, TextHH: Double;
     constructor Create(AOpts: TDocOptionsBase); override;
     function GetType: TObjType; override;
     procedure LoadXML(R: TXMLReader); override;
     procedure SaveXML(W: TXMLWriter); override;
     procedure TagResources; override;
     function Clone: TDrawingObject; override;
+    function TextHit(const P: TDPoint; Pad: Double): Boolean;
     function LengthInUnits: Double;
     function DisplayText: String;
     function DistanceFromPoint(const P: TDPoint): Double; override;
@@ -842,6 +870,10 @@ var
 { does the object have corner points (PointA / PointB)? The rung grid has none (they stay not-a-number), so code that takes the extent of objects skips it }
 function HasCorners(Obj: TDrawingObject): Boolean;
 function CreateObjectForTag(const Tag: String; Opts: TDocOptionsBase): TDrawingObject;
+{ Objects kept in units of their own (UTable) register their tag here, so that this unit need not know them }
+type
+  TObjectFactory = function(Opts: TDocOptionsBase): TDrawingObject;
+procedure RegisterObjectTag(const Tag: String; Factory: TObjectFactory);
 
 { If Tag names an object: create it, load it from the reader and add it to List (unless it is
   empty). Origin objects: only the first is kept; Origin receives its position.
@@ -949,6 +981,7 @@ begin
   if EditDefaults.SymbolFontName <> '' then
     SetSymbolFont(EditDefaults.SymbolFontName, EditDefaults.SymbolFontPoints, EditDefaults.SymbolFontBold, EditDefaults.SymbolFontItalic);
   ZoomFactor := 1.0;
+  MeasureScale := 1.0;
   { the user's own choices (the Options dialog), as COption reads them from the registry }
   AutoJunction := EditDefaults.AutoJunction;
   AutoSnap := EditDefaults.AutoSnap;
@@ -1136,12 +1169,12 @@ end;
     is left alone, so that choosing the font TinyCAD starts with does not change it by a rounding (8 points is 11 units, the font has 10). The sign of the height is kept.
     Weight 700 is bold, 400 not; the width, underline, strike-out and character set are left as they are.
   =========================================================================== }
-procedure TDocOptionsBase.SetSymbolFont(const AName: String; APoints: Integer; ABold, AItalic: Boolean);
+procedure TDocOptionsBase.SetFontNumber(ANumber: Integer; const AName: String; APoints: Integer; ABold, AItalic: Boolean);
 var
   F: TFontResource;
   H: Integer;
 begin
-  F := Fonts.Get(fPIN) as TFontResource;
+  F := Fonts.Get(ANumber) as TFontResource;
   F.FaceName := AName;
   if APoints <> Round(Abs(F.Height) * 72 / 96) then
   begin
@@ -1156,6 +1189,22 @@ begin
   else
     F.Weight := 400;
   F.Italic := Ord(AItalic);
+end;
+
+procedure TDocOptionsBase.SetSymbolFont(const AName: String; APoints: Integer; ABold, AItalic: Boolean);
+begin
+  SetFontNumber(fPIN, AName, APoints, ABold, AItalic);
+end;
+
+procedure TDocOptionsBase.GetFontNumber(ANumber: Integer; out AName: String; out APoints: Integer; out ABold, AItalic: Boolean);
+var
+  F: TFontResource;
+begin
+  F := Fonts.Get(ANumber) as TFontResource;
+  AName := F.FaceName;
+  APoints := Round(Abs(F.Height) * 72 / 96);
+  ABold := F.Weight > 400;
+  AItalic := F.Italic <> 0;
 end;
 
 { ===========================================================================
@@ -1395,6 +1444,7 @@ begin
   case T of
     xBus: Result := 'BUS';
     xWire: Result := 'WIRE';
+    xArrow: Result := 'ARROW';
   else
     Result := 'LINE';
   end;
@@ -2234,6 +2284,19 @@ end;
     Creates a new TDrawText of the kind AKind (for example wire versus bus, or circle versus
     rectangle) belonging to the sheet options AOpts, with default properties.
   =========================================================================== }
+{ ===========================================================================
+  TDrawText.Create  (constructor)
+  Parameters:
+    AOpts: TDocOptionsBase - the sheet options
+  Notes:
+    A plain text (kind xTextEx2). Without this the inherited constructor left Kind at 0 for a text made with Create (the Text tool, the clipboard), so it was a
+    different kind from the texts read from a file, and Select All Alike took the two for different things.
+  =========================================================================== }
+constructor TDrawText.Create(AOpts: TDocOptionsBase);
+begin
+  CreateKind(AOpts, xTextEx2);
+end;
+
 constructor TDrawText.CreateKind(AOpts: TDocOptionsBase; AKind: TObjType);
 begin
   inherited Create(AOpts);
@@ -3002,6 +3065,39 @@ begin
 end;
 
 { ---- TDrawingObject defaults (CDrawingObject) ---- }
+
+{ ===========================================================================
+  GroupHandleRect  (function)
+  Parameters:
+    const B: TDRect - the box round the selection
+    Handle: Integer - HANDLE_TOPLEFT .. HANDLE_LEFT
+    HandleSize: Double - side of a handle square, in design units
+  Returns:
+    TDRect
+  Notes:
+    The eight squares just outside a box, as the tracker of one rectangle has them.
+  =========================================================================== }
+function GroupHandleRect(const B: TDRect; Handle: Integer; HandleSize: Double): TDRect;
+var
+  L, T, Rt, Bt, Cx, Cy, H: Double;
+begin
+  L := B.Left; Rt := B.Right; T := B.Top; Bt := B.Bottom;
+  Cx := (L + Rt) / 2;
+  Cy := (T + Bt) / 2;
+  H := HandleSize / 2;
+  case Handle of
+    HANDLE_TOPLEFT:     Result := DRect(L - HandleSize, T - HandleSize, L, T);
+    HANDLE_TOPRIGHT:    Result := DRect(Rt, T - HandleSize, Rt + HandleSize, T);
+    HANDLE_BOTTOMRIGHT: Result := DRect(Rt, Bt, Rt + HandleSize, Bt + HandleSize);
+    HANDLE_BOTTOMLEFT:  Result := DRect(L - HandleSize, Bt, L, Bt + HandleSize);
+    HANDLE_TOP:         Result := DRect(Cx - H, T - HandleSize, Cx + H, T);
+    HANDLE_RIGHT:       Result := DRect(Rt, Cy - H, Rt + HandleSize, Cy + H);
+    HANDLE_BOTTOM:      Result := DRect(Cx - H, Bt, Cx + H, Bt + HandleSize);
+    HANDLE_LEFT:        Result := DRect(L - HandleSize, Cy - H, L, Cy + H);
+  else
+    Result := DRect(0, 0, 0, 0);
+  end;
+end;
 
 { ===========================================================================
   TDrawingObject.CanResize  (function)
@@ -6823,7 +6919,7 @@ end;
 { ---- ladder rails (schematic version) ---- }
 
 const
-  LADDER_GAP = 12; // gap between the top of a rail and its bus label, internal units (clear of the corner resize handles)
+  LADDER_GAP = 5; // gap between the end of a rail and its bus label, internal units (about 4 pixels at 100%)
 
 { ===========================================================================
   TDrawLadder.Create  (constructor)
@@ -6844,6 +6940,7 @@ begin
   LineColor := cBLACK;
   FontStyle := 0;
   FontColor := cBLACK;
+  BottomText := False;
 end;
 
 { ===========================================================================
@@ -6892,6 +6989,8 @@ begin
   W.AddAttributeColor('railcolor', LineColor);
   W.AddAttribute('font', FontStyle);
   W.AddAttributeColor('color', FontColor);
+  if BottomText then
+    W.AddAttribute('bottom', 1);      // (only when on: files without it have the labels above the rails only)
   W.CloseTag;
 end;
 
@@ -6923,6 +7022,9 @@ begin
   R.GetAttribute('font', F);
   R.GetAttributeColor('color', FontColor);
   FontStyle := FOpts.Fonts.ConvertOld(ToInt16(F));
+  F := 0;
+  R.GetAttribute('bottom', F);
+  BottomText := F <> 0;
 end;
 
 { ===========================================================================
@@ -6944,6 +7046,7 @@ begin
   O.LeftWire := LeftWire; O.RightWire := RightWire;
   O.LineWidth := LineWidth; O.LineColor := LineColor;
   O.FontStyle := FontStyle; O.FontColor := FontColor;
+  O.BottomText := BottomText;
   Result := O;
 end;
 
@@ -7047,6 +7150,48 @@ begin
 end;
 
 { ===========================================================================
+  TDrawLadder.LeftBottomBox  (function)
+  Parameters:  none
+  Returns:
+    TDRect - the box
+  Notes:
+    The box of the left bus wire number under the left rail (drawn when BottomText is on; an empty box at the foot of the rail when it is off).
+  =========================================================================== }
+function TDrawLadder.LeftBottomBox: TDRect;
+var
+  Sz: TDSize;
+begin
+  if not BottomText then
+  begin
+    Result := DRect(RailLeft, RailBottom, RailLeft, RailBottom);
+    Exit;
+  end;
+  Sz := FOpts.TextExtent(LeftWire, FontStyle);
+  Result := DRect(RailLeft - Sz.cx / 2, RailBottom + LADDER_GAP, RailLeft + Sz.cx / 2, RailBottom + LADDER_GAP + Sz.cy);
+end;
+
+{ ===========================================================================
+  TDrawLadder.RightBottomBox  (function)
+  Parameters:  none
+  Returns:
+    TDRect - the box
+  Notes:
+    The box of the right bus wire number under the right rail (see LeftBottomBox).
+  =========================================================================== }
+function TDrawLadder.RightBottomBox: TDRect;
+var
+  Sz: TDSize;
+begin
+  if not BottomText then
+  begin
+    Result := DRect(RailRight, RailBottom, RailRight, RailBottom);
+    Exit;
+  end;
+  Sz := FOpts.TextExtent(RightWire, FontStyle);
+  Result := DRect(RailRight - Sz.cx / 2, RailBottom + LADDER_GAP, RailRight + Sz.cx / 2, RailBottom + LADDER_GAP + Sz.cy);
+end;
+
+{ ===========================================================================
   BoxContains  (function)
   Parameters:
     const B: TDRect - the box
@@ -7104,7 +7249,7 @@ begin
   if Best < 0 then
     Best := 0;
   { the bus labels count only when the point is on them }
-  if (Best > 0) and (BoxContains(LeftLabelBox, P) or BoxContains(RightLabelBox, P)) then
+  if (Best > 0) and (BoxContains(LeftLabelBox, P) or BoxContains(RightLabelBox, P) or (BottomText and (BoxContains(LeftBottomBox, P) or BoxContains(RightBottomBox, P)))) then
     Best := 0;
   { everything else, including the empty space between the rails, is "far away" }
   if Best > 100 then
@@ -7136,7 +7281,8 @@ begin
   Result := LineIsInside(DPoint(RailLeft, RailTop), DPoint(RailLeft, RailBottom), Left, Right, Top, Bottom) or
             LineIsInside(DPoint(RailRight, RailTop), DPoint(RailRight, RailBottom), Left, Right, Top, Bottom) or
             BoxesOverlap(LeftLabelBox, Left, Right, Top, Bottom) or
-            BoxesOverlap(RightLabelBox, Left, Right, Top, Bottom);
+            BoxesOverlap(RightLabelBox, Left, Right, Top, Bottom) or
+            (BottomText and (BoxesOverlap(LeftBottomBox, Left, Right, Top, Bottom) or BoxesOverlap(RightBottomBox, Left, Right, Top, Bottom)));
 end;
 
 { ===========================================================================
@@ -7934,10 +8080,13 @@ begin
   PointB := DPoint(0, 0);
   UnitMode := 0;
   Ticks := 1;
+  Scale := 1;
   LineWidth := 1;
   LineColor := RGB(0, 128, 128);
   FontStyle := 0;
   FontColor := RGB(0, 128, 128);
+  TextOff := DPoint(0, 0);
+  TextShown := False;
 end;
 
 { ===========================================================================
@@ -7980,10 +8129,14 @@ begin
   W.AddAttribute('b', PointB);
   W.AddAttribute('unit', UnitMode);
   W.AddAttribute('ticks', Ticks);
+  if Scale <> 1 then
+    W.AddAttribute('scale', Scale);
   W.AddAttribute('width', LineWidth);
   W.AddAttributeColor('linecolor', LineColor);
   W.AddAttribute('font', FontStyle);
   W.AddAttributeColor('color', FontColor);
+  if (TextOff.x <> 0) or (TextOff.y <> 0) then
+    W.AddAttribute('toff', TextOff);
   W.CloseTag;
 end;
 
@@ -8004,11 +8157,15 @@ begin
   R.GetAttribute('b', PointB);
   R.GetAttribute('unit', UnitMode);
   R.GetAttribute('ticks', Ticks);
+  R.GetAttribute('scale', Scale);      // (not in the file: 1)
+  if Scale <= 0 then
+    Scale := 1;
   R.GetAttribute('width', LineWidth);
   R.GetAttributeColor('linecolor', LineColor);
   F := FontStyle;
   R.GetAttribute('font', F);
   R.GetAttributeColor('color', FontColor);
+  R.GetAttribute('toff', TextOff);     // (not in the file: the text stays beside the line)
   FontStyle := FOpts.Fonts.ConvertOld(ToInt16(F));
 end;
 
@@ -8028,9 +8185,30 @@ var
 begin
   O := TDrawMeasure.Create(FOpts);
   CopyPoints(Self, O);
-  O.UnitMode := UnitMode; O.Ticks := Ticks; O.LineWidth := LineWidth; O.LineColor := LineColor;
-  O.FontStyle := FontStyle; O.FontColor := FontColor;
+  O.UnitMode := UnitMode; O.Ticks := Ticks; O.Scale := Scale; O.LineWidth := LineWidth; O.LineColor := LineColor;
+  O.FontStyle := FontStyle; O.FontColor := FontColor; O.TextOff := TextOff;
   Result := O;
+end;
+
+{ ===========================================================================
+  TDrawMeasure.TextHit  (function)
+  Parameters:
+    const P: TDPoint - a point, in design units
+    Pad: Double - how far outside the text box still counts
+  Returns:
+    Boolean - True if P is on the distance text as it was last drawn
+  =========================================================================== }
+function TDrawMeasure.TextHit(const P: TDPoint; Pad: Double): Boolean;
+var
+  Dx, Dy, U, V: Double;
+begin
+  Result := False;
+  if not TextShown then
+    Exit;
+  Dx := P.x - TextC.x; Dy := P.y - TextC.y;
+  U := Dx * TextEx.x + Dy * TextEx.y;
+  V := -Dx * TextEx.y + Dy * TextEx.x;
+  Result := (Abs(U) <= TextHW + Pad) and (Abs(V) <= TextHH + Pad);
 end;
 
 { ===========================================================================
@@ -8045,8 +8223,8 @@ function TDrawMeasure.LengthInUnits: Double;
 var
   Mm: Double;
 begin
-  Mm := Hypot(PointB.x - PointA.x, PointB.y - PointA.y) / 5.0; // 5 internal units per mm
-  if UnitMode = 1 then
+  Mm := Hypot(PointB.x - PointA.x, PointB.y - PointA.y) / 5.0 * Scale; // 5 internal units per mm; Scale turns the drawn length into the real one
+  if UnitMode >= 1 then
     Result := Mm / 25.4
   else
     Result := Mm;
@@ -8063,10 +8241,48 @@ end;
 function TDrawMeasure.DisplayText: String;
 var
   Fs: TFormatSettings;
+  Total, Whole, Feet: Int64;
+  Frac: Integer;
+
+  function InchText(AWhole: Int64; AFrac: Integer): String;
+  var
+    A, B, T: Integer;
+  begin
+    { whole inches and a fraction in lowest terms (the 32nds are reduced: 16/32 is 1/2), e.g. 4 15/32" }
+    if AFrac = 0 then
+      Exit(IntToStr(AWhole) + '"');
+    A := 32;
+    B := AFrac;
+    while B <> 0 do
+    begin
+      T := A mod B;
+      A := B;
+      B := T;
+    end;
+    if AWhole = 0 then
+      Result := Format('%d/%d"', [AFrac div A, 32 div A])
+    else
+      Result := Format('%d %d/%d"', [AWhole, AFrac div A, 32 div A]);
+  end;
+
 begin
   Fs := DefaultFormatSettings;
   Fs.DecimalSeparator := '.';
-  if UnitMode = 1 then
+  if UnitMode >= 2 then
+  begin
+    Total := Round(LengthInUnits * 32);      // the length in 32nds of an inch, to the nearest
+    Frac := Integer(Total mod 32);
+    Whole := Total div 32;
+    if UnitMode = 3 then
+    begin
+      Feet := Whole div 12;
+      Whole := Whole mod 12;
+      Result := IntToStr(Feet) + Chr(39) + '-' + InchText(Whole, Frac);
+    end
+    else
+      Result := InchText(Whole, Frac);
+  end
+  else if UnitMode = 1 then
     Result := FormatFloat('0.000', LengthInUnits, Fs) + ' in'
   else
     Result := FormatFloat('0.0', LengthInUnits, Fs) + ' mm';
@@ -8088,6 +8304,8 @@ var
   D: TDPoint;
 begin
   Result := LineDistance(PointA, PointB, P, D);
+  if (Result > 0) and TextHit(P, 0) then
+    Result := 0;       // (the text can be clicked too, wherever it has been moved to)
 end;
 
 { ===========================================================================
@@ -9049,9 +9267,33 @@ end;
   Notes:
     Makes an empty object for an XML element name (WIRE, JUNCTION, SYMBOL, LADDER ...).
   =========================================================================== }
+var
+  RegTags: array of String;
+  RegFactories: array of TObjectFactory;
+
+{ ===========================================================================
+  RegisterObjectTag  (procedure)
+  Parameters:
+    const Tag: String - the XML element name
+    Factory: TObjectFactory - makes an empty object of that kind
+  =========================================================================== }
+procedure RegisterObjectTag(const Tag: String; Factory: TObjectFactory);
+begin
+  SetLength(RegTags, Length(RegTags) + 1); SetLength(RegFactories, Length(RegFactories) + 1);
+  RegTags[High(RegTags)] := Tag; RegFactories[High(RegFactories)] := Factory;
+end;
+
 function CreateObjectForTag(const Tag: String; Opts: TDocOptionsBase): TDrawingObject;
+var
+  i: Integer;
 begin
   Result := nil;
+  for i := 0 to High(RegTags) do
+    if RegTags[i] = Tag then
+    begin
+      Result := RegFactories[i](Opts);
+      Exit;
+    end;
   if Tag = 'BUSSLASH' then
     Result := TDrawBusSlash.Create(Opts)
   else if Tag = 'JUNCTION' then
@@ -9062,6 +9304,8 @@ begin
     Result := TDrawLine.CreateKind(Opts, xWire)
   else if Tag = 'LINE' then
     Result := TDrawLine.CreateKind(Opts, xLineEx2)
+  else if Tag = 'ARROW' then
+    Result := TDrawLine.CreateKind(Opts, xArrow)
   else if Tag = 'SYMBOL' then
     Result := TDrawMethod.Create(Opts)
   else if Tag = 'SYMTEXT' then

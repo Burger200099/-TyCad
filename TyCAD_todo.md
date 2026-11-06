@@ -381,6 +381,37 @@ Order matters: each phase builds on the one before. Every item follows the stand
 - [x] Paste into the symbol editor: placed symbols come in as their lines/pins, wires become lines, circuit-only objects dropped; tests/run_symbolpaste.py.
 - [x] Select All Alike submenu for a right clicked symbol (All Symbols / Identical References / Identical Names), built in code; tests/run_selalike.py.
 - [ ] Linked text target: the Target ID property is a bare number now; it needs a drop-down window with a tree of every sheet and the symbols (objects) on it to choose from.
-- [ ] Move the Part ribbon page into a frame on the View ribbon tab (it is a page of its own now, shown while a symbol of a part is selected).
+- [x] The Part ribbon page is now a frame (QPart) on the View ribbon after the Properties panel.
 - [x] Virtual poles: a Form (standard / virtual) on the pole itself, a new pole starts virtual; the pole's own symbol (one contact with a line between the pins, or ladder-style vertical lines) is still just symbol design.
 - [x] Contact Form `virtual` (no symbol, not offered in the Part ribbon, the Objects menu or Shows); right click on a part symbol: Objects > every object (select / put on the pointer), Add Symbol Rung Text.
+2026-11-01: Table export done: UTableExport (model, TExportWriter, registry), UCSVExport, UXLSXExport, UODSExport; Symbol BoM, Symbol Data and Export Wires write .csv/.xlsx/.ods by extension (CSV bytes unchanged: run_symbom 35, run_symdata 31, run_wireexport 12, run_tableexport 13). Not seen on Windows. Open: move the parts list BoM (UPartsList) and products CSV onto the table writers; rename the menu captions 'Export ... (CSV)...' in mainform.lfm (yours).
+2026-11-01: Sheet tabs now an owner-drawn strip (src/comp/CSheetTabs.pas, in the tycad_components package) so the scroll position survives a change of sheet. tcSheetTabs removed from mainform.lfm (the form creates it). Not seen on Windows; SheetTabImage/ilSheetTabs index 1 no longer needed by the strip.
+2026-11-02: Zoom and pan are remembered per sheet when switching sheet tabs (run_sheetview 5 checks; memory is for the session, not saved in the file). Open: symbols that are reported shifted after copy/paste/flip/rotate: waiting for a sample file from the user.
+2026-11-02: Shift+arrow moves the selection one screen pixel ignoring snap to grid (NudgeSelection IgnoreSnap; run_arrownudge 15 checks). The shifted-symbols problem cannot be reproduced yet (user cannot pin down the steps).
+2026-11-02: After a middle-button pan the pointer returns to the one the tool had (SetWorkAreaCursor(ACursor, Last) in UView; run_pancursor 6 checks). The user's lost settings (Auto Snap off, MRU lists and loaded libraries gone) followed several crashes while the source was being updated: treated as a one-off, not a bug.
+2026-11-02: Default Text Font on Options > Fonts done (run_textfont 8 checks); gbTextFont was added to Foptions.lfm by me (caption and hint literal, not seen on Windows).
+2026-11-02: Wire end handle sticks to pins and wires (run_wireendstick 2). Not checked on a real symbol pin yet (the test uses an off-grid wire). run_wirecut (first menu item is Add wire cut here, got Change_to_bus) and run_wireghost (thicker ghost for wider width) each show one failure that this change does not touch: look at them.
+2026-11-02: Font group (QFontGroup) for mixed selections done (run_fontgroup 6 checks); hints in qfontgroup.lfm are literal. Next, as the user said: a better way to condense the other generic editors (colors, line width, style, text, direction ...).
+2026-11-02: The Default Text Font no longer changes font 0 (the title block's font): it is what the text and label tools start with (InitUserFont). run_textfont 9 checks. A design made while the earlier build was in use and saved with its title block in another font keeps that font in its file: set it back by hand (a new design is fine).
+- [x] Resize All (right click, several objects) and right click context commands on the Edit menu (2026-11-05)
+- [ ] Resize All: keep wires joined to symbols that are moved by it (the pin offsets do not scale)
+- [x] Show Text Alignment / Show Position Bars while moving (2026-11-05)
+- [ ] Text alignment: also line up right edges / centres of notes, and baselines of text
+- [x] Measure A-B: Shift level/plumb, per-sheet scale, split button with Scale/Set Scale/Reset Scale (2026-11-05)
+- [ ] Measure A-B: show the scale in the Properties panel of a ruler (and let it be edited per ruler)
+- [x] Shift locks the aspect ratio when resizing (single object and Resize All) (2026-11-05)
+- [x] Measure A-B units: in (dec), in (frac, 32nds), ft (2026-11-05)
+- [x] Measure A-B end handles (2026-11-05)
+- [x] Shift squares a rectangle / circle while drawing (2026-11-05)
+- DONE: Print window "Center to page" option.
+- DONE: View > Show Mouse Position Bars.
+- DONE: Measure A-B text offset + arrow. Note: the 10 and 20 are internal units (2 mm and 4 mm), not screen pixels - adjust MEASURE_TEXT_FAR / MEASURE_ARROW_GAP after trying it.
+- DONE: Arrow tool. Not done: arrow head size/style options (8 units fixed), arrow in the symbol editor untested.
+- DONE: Insert Table (UTable.pas, Ftable, QPropTable). Not done: new units Ftable/UTable/QPropTable are not in schematic.lpi (add them in the IDE); cell copy/paste between the grid and the sheet; per-column alignment; the table in exports is drawn by the painter like other objects but not checked.
+- DONE: table cells linked to object text. Note: only objects that have an id can be linked (every object placed or loaded in the current version has one); Bus names and pin text are not in the list yet; a linked cell that is a symbol field shows the raw field value.
+- DONE: table editor window bounds saved/restored and kept on screen; drop-down list position fixed; editor shown after mouse-up.
+- DONE: closing the program no longer shows the table editor; arrow list opens on mouse-up. (Not tested: the real mouse-up after the modal list on Windows.)
+- DONE: arrow list works again (editor-open case on release).
+- DONE: arrow list back under the cell (was at 0,0 because of a with-statement over TRect).
+- DONE: position bars follow the second anchor when a wire is taken there. (Bars still use PointA for other objects.)
+- DONE: position bars on the grabbed anchor with several wires chosen.

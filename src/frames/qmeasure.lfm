@@ -1,13 +1,13 @@
 inherited fmMeasure: TfmMeasure
   Height = 117
-  Width = 420
+  Width = 450
   ClientHeight = 117
-  ClientWidth = 420
+  ClientWidth = 450
   DesignLeft = 721
   DesignTop = 523
   inherited lbCaption: TLabel
     Top = 102
-    Width = 420
+    Width = 450
   end
   object plFont: TPanel[1]
     Left = 0
@@ -109,17 +109,17 @@ inherited fmMeasure: TfmMeasure
     Left = 208
     Height = 102
     Top = 0
-    Width = 208
+    Width = 240
     Align = alLeft
     BevelOuter = bvNone
     ClientHeight = 102
-    ClientWidth = 208
+    ClientWidth = 240
     TabOrder = 2
     object lbMeasure: TLabel
       Left = 0
       Height = 15
       Top = 87
-      Width = 208
+      Width = 240
       Align = alBottom
       Alignment = taCenter
       Caption = 'Measure'
@@ -162,12 +162,14 @@ inherited fmMeasure: TfmMeasure
       Left = 152
       Height = 23
       Top = 49
-      Width = 48
+      Width = 84
       ItemHeight = 15
       ItemIndex = 0
       Items.Strings = (
         'mm'
-        'in'
+        'in (dec)'
+        'in (frac)'
+        'ft'
       )
       Style = csDropDownList
       TabOrder = 1

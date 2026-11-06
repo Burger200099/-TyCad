@@ -56,6 +56,10 @@ begin
     SymbolFontPoints := 8;
     SymbolFontBold := False;
     SymbolFontItalic := False;
+    TextFontName := DEFAULT_FONT;          // the text font TinyCAD starts with: 13 design units high (10 points), upright
+    TextFontPoints := 10;
+    TextFontBold := False;
+    TextFontItalic := False;
     NewSheetBorder := True;                // a new sheet has a border 6.35 mm (a quarter inch) from the edge, no rulers, seven columns and five rows (what New Document always gave)
     NewSheetRulers := False;
     NewSheetCols := 7;
@@ -80,6 +84,7 @@ begin
     PrintBandW := False;
     PrintNoSymText := False;
     PrintNoSymFields := False;
+    PrintCenter := False;
     DarkMode := False;
     NewDocPaper := 'ISO A4';
     NewDocLandscape := True;
@@ -97,6 +102,9 @@ begin
     AutoJunction := True;
     AutoSnapRange := 15;
     AutoSaveMinutes := 10;                 // TinyCAD saves a copy every ten minutes unless it is turned off
+    ShowTextAlignment := False;
+    ShowPositionBars := False;
+    ShowMouseBars := False;
     ShowPosition := True;                  // the Position bar is shown to begin with
     LastPartsFile := '';
     PartsWarningOff := False;              // the warning about parts is shown until the person turns it off
@@ -294,6 +302,9 @@ begin
           AutoSnapRange := ReadIntSafe(R, REG_AUTOSNAPRANGE, AutoSnapRange);
           AutoSaveMinutes := ReadIntSafe(R, REG_AUTOSAVE, AutoSaveMinutes);
           ShowPosition := ReadBoolSafe(R, REG_SHOWPOSITION, ShowPosition);
+          ShowTextAlignment := ReadBoolSafe(R, REG_SHOWTEXTALIGN, ShowTextAlignment);
+          ShowPositionBars := ReadBoolSafe(R, REG_SHOWPOSBARS, ShowPositionBars);
+          ShowMouseBars := ReadBoolSafe(R, REG_SHOWMOUSEBARS, ShowMouseBars);
           LastPartsFile := ReadTextSafe(R, REG_PARTSFILE, LastPartsFile);
           PartsWarningOff := ReadBoolSafe(R, REG_PARTSWARNING, PartsWarningOff);
           RulerUnits := ReadIntSafe(R, REG_RULERUNITS, RulerUnits);
@@ -305,6 +316,10 @@ begin
           SymbolFontPoints := ReadIntSafe(R, REG_SYMFONTPOINTS, SymbolFontPoints);
           SymbolFontBold := ReadBoolSafe(R, REG_SYMFONTBOLD, SymbolFontBold);
           SymbolFontItalic := ReadBoolSafe(R, REG_SYMFONTITALIC, SymbolFontItalic);
+          TextFontName := ReadTextSafe(R, REG_TEXTFONTNAME, TextFontName);
+          TextFontPoints := ReadIntSafe(R, REG_TEXTFONTPOINTS, TextFontPoints);
+          TextFontBold := ReadBoolSafe(R, REG_TEXTFONTBOLD, TextFontBold);
+          TextFontItalic := ReadBoolSafe(R, REG_TEXTFONTITALIC, TextFontItalic);
           NewSheetBorder := ReadBoolSafe(R, REG_NEWSHEETBORDER, NewSheetBorder);
           NewSheetRulers := ReadBoolSafe(R, REG_NEWSHEETRULERS, NewSheetRulers);
           NewSheetCols := ReadIntSafe(R, REG_NEWSHEETCOLS, NewSheetCols);
@@ -331,6 +346,7 @@ begin
           PrintBandW := ReadBoolSafe(R, REG_PRINT_BANDW, PrintBandW);
           PrintNoSymText := ReadBoolSafe(R, REG_PRINT_NOSYMTEXT, PrintNoSymText);
           PrintNoSymFields := ReadBoolSafe(R, REG_PRINT_NOSYMFIELDS, PrintNoSymFields);
+          PrintCenter := ReadBoolSafe(R, REG_PRINT_CENTER, PrintCenter);
           DarkMode := ReadBoolSafe(R, REG_DARK_MODE, DarkMode);
           NewDocPaper := Trim(ReadTextSafe(R, REG_NEWDOC_PAPER, NewDocPaper));
           if NewDocPaper = '' then
@@ -437,6 +453,9 @@ begin
           R.WriteInteger(REG_AUTOSNAPRANGE, AutoSnapRange);
           R.WriteInteger(REG_AUTOSAVE, AutoSaveMinutes);
           R.WriteBool(REG_SHOWPOSITION, ShowPosition);
+          R.WriteBool(REG_SHOWTEXTALIGN, ShowTextAlignment);
+          R.WriteBool(REG_SHOWPOSBARS, ShowPositionBars);
+          R.WriteBool(REG_SHOWMOUSEBARS, ShowMouseBars);
           R.WriteString(REG_PARTSFILE, LastPartsFile);
           R.WriteBool(REG_PARTSWARNING, PartsWarningOff);
           R.WriteInteger(REG_RULERUNITS, RulerUnits);
@@ -446,6 +465,10 @@ begin
           R.WriteInteger(REG_SYMFONTPOINTS, SymbolFontPoints);
           R.WriteBool(REG_SYMFONTBOLD, SymbolFontBold);
           R.WriteBool(REG_SYMFONTITALIC, SymbolFontItalic);
+          R.WriteString(REG_TEXTFONTNAME, TextFontName);
+          R.WriteInteger(REG_TEXTFONTPOINTS, TextFontPoints);
+          R.WriteBool(REG_TEXTFONTBOLD, TextFontBold);
+          R.WriteBool(REG_TEXTFONTITALIC, TextFontItalic);
           R.WriteBool(REG_NEWSHEETBORDER, NewSheetBorder);
           R.WriteBool(REG_NEWSHEETRULERS, NewSheetRulers);
           R.WriteInteger(REG_NEWSHEETCOLS, NewSheetCols);
@@ -467,6 +490,7 @@ begin
           R.WriteBool(REG_PRINT_BANDW, PrintBandW);
           R.WriteBool(REG_PRINT_NOSYMTEXT, PrintNoSymText);
           R.WriteBool(REG_PRINT_NOSYMFIELDS, PrintNoSymFields);
+          R.WriteBool(REG_PRINT_CENTER, PrintCenter);
           R.WriteBool(REG_DARK_MODE, DarkMode);
           R.WriteString(REG_NEWDOC_PAPER, NewDocPaper);
           R.WriteBool(REG_NEWDOC_LANDSCAPE, NewDocLandscape);

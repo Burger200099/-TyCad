@@ -131,7 +131,7 @@ if 15 in mk:
     mb = blocks(out, "M15")[0]
     check("the measure frame shows font size 10 (13 pixels) and graduations on", shown(mb, "cbFontSize").endswith("text=10") and shown(mb, "cbGrads") == "1" and re.fullmatch(r"down=0 image=\d+", shown(mb, "sbBold")) is not None, mb["lines"])
     p = [l for l in out[mk[16]:mk[16] + 40] if l.startswith("PROPS ")][0]
-    check("size typed (22), bold, italic, graduations off, units Inches, width 4", prop(p, "font.height") == "22" and prop(p, "font.bold") == "1" and prop(p, "font.italic") == "1" and prop(p, "measure.ticks") == "0" and prop(p, "measure.unit") == "Inches" and prop(p, "line.width") == "4", p)
+    check("size typed (22), bold, italic, graduations off, units Inches, width 4", prop(p, "font.height") == "22" and prop(p, "font.bold") == "1" and prop(p, "font.italic") == "1" and prop(p, "measure.ticks") == "0" and prop(p, "measure.unit") == "Inches (decimal)" and prop(p, "line.width") == "4", p)
     mb2 = blocks(out, "M16")[0]
     check("the frame shows what was applied", re.fullmatch(r"down=1 image=\d+", shown(mb2, "sbBold")) is not None and shown(mb2, "cbGrads") == "0" and shown(mb2, "cbUnits").startswith("item=1") and shown(mb2, "seLineWidth") == "4", mb2["lines"])
     p = [l for l in out[mk[17]:mk[17] + 40] if l.startswith("PROPS ")][0]

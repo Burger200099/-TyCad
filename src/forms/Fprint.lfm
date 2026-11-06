@@ -69,7 +69,7 @@ inherited frmPrint: TfrmPrint
       Height = 29
       Hint = 'The printer to print on'
       Top = 9
-      Width = 229
+      Width = 265
       Font.Height = -16
       ItemHeight = 21
       ParentFont = False
@@ -78,7 +78,7 @@ inherited frmPrint: TfrmPrint
       OnChange = PrinterListChange
     end
     object btnPrinterSetup: TButton
-      Left = 307
+      Left = 340
       Height = 31
       Hint = 'Change the settings of the printer'
       Top = 8
@@ -173,11 +173,11 @@ inherited frmPrint: TfrmPrint
   end
   object gbOptions: TGroupBox[4]
     Left = 13
-    Height = 160
+    Height = 180
     Top = 320
     Width = 288
     Caption = 'Options'
-    ClientHeight = 140
+    ClientHeight = 160
     ClientWidth = 284
     TabOrder = 3
     object cbBW: TCheckBox
@@ -207,11 +207,21 @@ inherited frmPrint: TfrmPrint
       TabOrder = 1
       OnClick = cbFitClick
     end
+    object cbCenter: TCheckBox
+      Left = 13
+      Height = 19
+      Hint = 'Put the sheet in the middle of the page instead of printing it from the corner (when it is smaller than the page)'
+      Top = 62
+      Width = 200
+      Caption = 'Center to page'
+      TabOrder = 5
+      OnClick = cbCenterClick
+    end
     object cbNoSymText: TCheckBox
       Left = 13
       Height = 19
       Hint = 'Leave the symbol text objects (the designer''s notes) off the printout'
-      Top = 62
+      Top = 82
       Width = 200
       Caption = 'Do not print symbol text'
       TabOrder = 3
@@ -221,7 +231,7 @@ inherited frmPrint: TfrmPrint
       Left = 13
       Height = 19
       Hint = 'Leave the text of the symbols'' properties (reference, name, values) off the printout'
-      Top = 82
+      Top = 102
       Width = 250
       Caption = 'Do not print symbol properties'
       TabOrder = 4
@@ -230,7 +240,7 @@ inherited frmPrint: TfrmPrint
     object lbPages: TLabel
       Left = 13
       Height = 33
-      Top = 104
+      Top = 124
       Width = 235
       AutoSize = False
       Caption = 'lbPages'

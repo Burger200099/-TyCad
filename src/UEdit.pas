@@ -72,7 +72,7 @@ type
     { The point the cursor "sticks" to: a pin, a power or label connection point, or a point on a
       wire, when within the snap range; otherwise the grid point. IsJunction: sticking here would
       join three or more things. }
-    function StickyPoint(const NoSnap: TDPoint; Pins, Wires: Boolean; out IsStuck, IsJunction: Boolean): TDPoint;
+    function StickyPoint(const NoSnap: TDPoint; Pins, Wires: Boolean; out IsStuck, IsJunction: Boolean; Exclude: TDrawingObject = nil): TDPoint;
     function AddNewJunction(const Q: TDPoint): TDrawJunction;
     { Does a junction belong at Q? Adds, removes or (PerformSplit) splits wires to make it so. }
     procedure CheckJunctionRequirement(const Q: TDPoint; PerformSplit: Boolean); overload;
@@ -334,6 +334,7 @@ end;
     Pins: Boolean - consider connection points of symbols, power symbols and labels
     Wires: Boolean - consider points on existing wires
     out IsStuck: Boolean - set True when the result is a pin or wire point
+    Exclude: TDrawingObject - an object that is left out of the search (nil for none)
     out IsJunction: Boolean - set True when a junction would be needed there
   Returns:
     TDPoint - the point to use
@@ -344,7 +345,7 @@ end;
     is wanted. With auto-snap off it returns the grid point.
   =========================================================================== }
 function TWireEngine.StickyPoint(const NoSnap: TDPoint; Pins, Wires: Boolean;
-  out IsStuck, IsJunction: Boolean): TDPoint;
+  out IsStuck, IsJunction: Boolean; Exclude: TDrawingObject): TDPoint;
 var
   R, Q, QSnapX, QSnapY, D, D2, Dpt: TDPoint;
   First: Boolean;
@@ -379,6 +380,8 @@ begin
   for i := 0 to FSheet.Drawing.Count - 1 do
   begin
     Obj := FSheet.Drawing[i];
+    if (Exclude <> nil) and (Obj = Exclude) then
+      Continue;      // (the wire whose end is being dragged does not stick to itself)
     if Obj.GetType = xWire then
     begin
       if Wires then

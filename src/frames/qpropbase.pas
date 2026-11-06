@@ -19,7 +19,7 @@ type
   public
     procedure AfterCreate; virtual;
     procedure ControlsHidden(const AHidden: array of TControl); virtual;
-
+    procedure DoShow; virtual;
   end;
 
 implementation
@@ -51,6 +51,11 @@ end;
     nothing here.
   =========================================================================== }
 procedure TfmPropertyBase.ControlsHidden(const AHidden: array of TControl);
+begin
+
+end;
+
+procedure TfmPropertyBase.DoShow;
 begin
 
 end;

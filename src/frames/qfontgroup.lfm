@@ -1,0 +1,89 @@
+object fmFontGroup: TfmFontGroup
+  Left = 0
+  Height = 99
+  Top = 0
+  Width = 206
+  ClientHeight = 99
+  ClientWidth = 206
+  TabOrder = 0
+  DesignLeft = 793
+  DesignTop = 312
+  object lbFont: TLabel
+    Left = 0
+    Height = 15
+    Top = 84
+    Width = 206
+    Align = alBottom
+    Alignment = taCenter
+    Caption = 'Font'
+  end
+  object cbFontFace: TFontNameCombo
+    Left = 12
+    Height = 32
+    Hint = 'The font'
+    Top = 4
+    Width = 188
+    ItemHeight = 26
+    ParentShowHint = False
+    ShowHint = True
+    Style = csOwnerDrawFixed
+    TabOrder = 0
+  end
+  object cbFontHeight: TComboBox
+    Left = 12
+    Height = 23
+    Hint = 'The size in points'
+    Top = 45
+    Width = 52
+    ItemHeight = 15
+    Items.Strings = (
+      '8'
+      '9'
+      '10'
+      '11'
+      '12'
+      '14'
+      '16'
+      '18'
+      '20'
+      '22'
+      '24'
+      '26'
+      '28'
+      '32'
+      '38'
+      '48'
+      '72'
+    )
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 1
+    Text = '12'
+  end
+  object sbFontBold: TSpeedButton
+    Left = 72
+    Height = 32
+    Hint = 'Bold'
+    Top = 41
+    Width = 32
+    GroupIndex = 1
+    Images = frmSharedControls.ilFontGlyphs
+    ImageIndex = 2
+    ImageWidth = 24
+    ParentShowHint = False
+    ShowHint = True
+  end
+  object sbFontItalic: TSpeedButton
+    Left = 112
+    Height = 32
+    Hint = 'Italic'
+    Top = 41
+    Width = 32
+    GroupIndex = 2
+    Images = frmSharedControls.ilFontGlyphs
+    ImageIndex = 3
+    ImageWidth = 24
+    ParentShowHint = False
+    ShowHint = True
+  end
+end

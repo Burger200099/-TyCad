@@ -5,7 +5,10 @@ object frPartsEditor: TfrPartsEditor
   Width = 800
   ClientHeight = 480
   ClientWidth = 800
+  LCLVersion = '4.8.0.0'
   TabOrder = 0
+  DesignLeft = 866
+  DesignTop = 452
   object pnlInfo: TPanel
     Left = 0
     Height = 96
@@ -20,7 +23,7 @@ object frPartsEditor: TfrPartsEditor
       Left = 8
       Height = 15
       Top = 10
-      Width = 80
+      Width = 72
       Caption = 'Library name:'
     end
     object edLibName: TEdit
@@ -35,7 +38,7 @@ object frPartsEditor: TfrPartsEditor
       Left = 420
       Height = 15
       Top = 10
-      Width = 50
+      Width = 40
       Caption = 'Author:'
     end
     object edLibAuthor: TEdit
@@ -50,7 +53,7 @@ object frPartsEditor: TfrPartsEditor
       Left = 8
       Height = 15
       Top = 40
-      Width = 80
+      Width = 63
       Caption = 'Description:'
     end
     object edLibDesc: TEdit
@@ -76,30 +79,30 @@ object frPartsEditor: TfrPartsEditor
       Height = 19
       Hint = 'Also show the Classes and Products pages (the class tree, and the catalog products with their ratings, outlines and 3D models)'
       Top = 38
-      Width = 80
+      Width = 71
       Caption = 'Advanced'
-      OnChange = AdvancedChange
       ParentShowHint = False
       ShowHint = True
       TabOrder = 4
+      OnChange = AdvancedChange
     end
     object lblLibFile: TLabel
       Left = 8
       Height = 15
       Top = 70
-      Width = 780
+      Width = 3
       Caption = ' '
     end
   end
   object pcEditor: TPageControl
-    Hint = 'The pages of the parts library editor'
     Left = 0
     Height = 384
+    Hint = 'The pages of the parts library editor'
     Top = 96
     Width = 800
-    ActivePage = tsParts
+    ActivePage = tsProducts
     Align = alClient
-    TabIndex = 0
+    TabIndex = 6
     TabOrder = 1
     OnChange = PageChange
     object tsParts: TTabSheet
@@ -110,11 +113,11 @@ object frPartsEditor: TfrPartsEditor
         Left = 0
         Height = 36
         Top = 0
-        Width = 800
+        Width = 792
         Align = alTop
         BevelOuter = bvNone
         ClientHeight = 36
-        ClientWidth = 800
+        ClientWidth = 792
         TabOrder = 1
         object btnAdd: TButton
           Left = 8
@@ -162,33 +165,32 @@ object frPartsEditor: TfrPartsEditor
         Height = 320
         Hint = 'The generic parts of this library (double click to change one)'
         Top = 36
-        Width = 800
+        Width = 792
         Align = alClient
-        Columns = <    
+        Columns = <        
           item
             Caption = 'Name'
             Width = 220
-          end    
+          end        
           item
             Caption = 'Class'
             Width = 140
-          end    
+          end        
           item
             Caption = 'Ref'
-            Width = 50
-          end    
+          end        
           item
             Caption = 'Status'
             Width = 70
-          end    
+          end        
           item
             Caption = 'Rev'
             Width = 40
-          end    
+          end        
           item
             Caption = 'Modified (UTC)'
             Width = 130
-          end    
+          end        
           item
             Caption = 'Description'
             Width = 300
@@ -196,17 +198,17 @@ object frPartsEditor: TfrPartsEditor
         PopupMenu = pmParts
         ReadOnly = True
         RowSelect = True
-        TabOrder = 2
+        TabOrder = 0
         ViewStyle = vsReport
         OnDblClick = PartsDblClick
         OnSelectItem = PartsSelectItem
       end
     end
     object tsClasses: TTabSheet
-      TabVisible = False
       Caption = 'Classes'
       ClientHeight = 356
       ClientWidth = 792
+      TabVisible = False
       object pnlClassTools: TPanel
         Left = 0
         Height = 36
@@ -288,9 +290,9 @@ object frPartsEditor: TfrPartsEditor
         PopupMenu = pmClasses
         ReadOnly = True
         TabOrder = 1
+        Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips]
         OnChange = ClassTreeChange
         OnDblClick = ClassTreeDblClick
-        Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips]
       end
       object splClasses: TSplitter
         Left = 300
@@ -322,7 +324,7 @@ object frPartsEditor: TfrPartsEditor
             Left = 8
             Height = 15
             Top = 6
-            Width = 470
+            Width = 3
             Caption = ' '
           end
         end
@@ -330,30 +332,29 @@ object frPartsEditor: TfrPartsEditor
           Left = 0
           Height = 292
           Hint = 'The fields of the chosen class: the ones it inherits (grey, read-only) and its own'
-          Top = 30
+          Top = 28
           Width = 487
           Align = alClient
-          Columns = <            
+          Columns = <          
             item
               Caption = 'Field'
               Width = 150
-            end            
+            end          
             item
               Caption = 'Type'
               Width = 60
-            end            
+            end          
             item
               Caption = 'Unit'
-              Width = 50
-            end            
+            end          
             item
               Caption = 'Req'
               Width = 40
-            end            
+            end          
             item
               Caption = 'Declared by'
               Width = 130
-            end            
+            end          
             item
               Caption = 'Values / description'
               Width = 250
@@ -387,7 +388,7 @@ object frPartsEditor: TfrPartsEditor
           Left = 8
           Height = 15
           Top = 10
-          Width = 30
+          Width = 24
           Caption = '&Part:'
           FocusControl = cbObjPart
         end
@@ -398,9 +399,9 @@ object frPartsEditor: TfrPartsEditor
           Top = 6
           Width = 250
           ItemHeight = 15
-          OnChange = ObjPartChange
           Style = csDropDownList
           TabOrder = 0
+          OnChange = ObjPartChange
         end
         object btnObjAdd: TButton
           Left = 304
@@ -453,9 +454,9 @@ object frPartsEditor: TfrPartsEditor
         PopupMenu = pmObjects
         ReadOnly = True
         TabOrder = 1
+        Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw]
         OnChange = ObjChange
         OnDblClick = ObjDblClick
-        Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw]
       end
     end
     object tsRatings: TTabSheet
@@ -476,7 +477,7 @@ object frPartsEditor: TfrPartsEditor
           Left = 8
           Height = 15
           Top = 10
-          Width = 30
+          Width = 24
           Caption = '&Part:'
           FocusControl = cbRatPart
         end
@@ -487,9 +488,9 @@ object frPartsEditor: TfrPartsEditor
           Top = 6
           Width = 250
           ItemHeight = 15
-          OnChange = RatPartChange
           Style = csDropDownList
           TabOrder = 0
+          OnChange = RatPartChange
         end
         object btnRatAdd: TButton
           Left = 304
@@ -585,7 +586,7 @@ object frPartsEditor: TfrPartsEditor
           Left = 8
           Height = 15
           Top = 10
-          Width = 30
+          Width = 24
           Caption = '&Part:'
           FocusControl = cbValPart
         end
@@ -596,9 +597,9 @@ object frPartsEditor: TfrPartsEditor
           Top = 6
           Width = 250
           ItemHeight = 15
-          OnChange = ValPartChange
           Style = csDropDownList
           TabOrder = 0
+          OnChange = ValPartChange
         end
         object btnValEdit: TButton
           Left = 304
@@ -643,7 +644,6 @@ object frPartsEditor: TfrPartsEditor
           end        
           item
             Caption = 'Unit'
-            Width = 50
           end        
           item
             Caption = 'Value'
@@ -684,7 +684,7 @@ object frPartsEditor: TfrPartsEditor
           Left = 8
           Height = 15
           Top = 10
-          Width = 30
+          Width = 24
           Caption = '&Part:'
           FocusControl = cbSymPart
         end
@@ -695,9 +695,9 @@ object frPartsEditor: TfrPartsEditor
           Top = 6
           Width = 200
           ItemHeight = 15
-          OnChange = SymPartChange
           Style = csDropDownList
           TabOrder = 0
+          OnChange = SymPartChange
         end
         object btnSymNew: TButton
           Left = 250
@@ -767,27 +767,27 @@ object frPartsEditor: TfrPartsEditor
         Top = 36
         Width = 792
         Align = alClient
-        Columns = <
+        Columns = <        
           item
             Caption = 'Name'
             Width = 220
-          end
+          end        
           item
             Caption = 'Standard'
             Width = 90
-          end
+          end        
           item
             Caption = 'Purpose'
             Width = 90
-          end
+          end        
           item
             Caption = 'Default'
             Width = 70
-          end
+          end        
           item
             Caption = 'Size (bytes)'
             Width = 100
-          end
+          end        
           item
             Caption = 'Shows'
             Width = 140
@@ -802,10 +802,10 @@ object frPartsEditor: TfrPartsEditor
       end
     end
     object tsProducts: TTabSheet
-      TabVisible = False
       Caption = 'Products'
       ClientHeight = 356
       ClientWidth = 792
+      TabVisible = False
       object pnlProdTools: TPanel
         Left = 0
         Height = 70
@@ -820,7 +820,7 @@ object frPartsEditor: TfrPartsEditor
           Left = 8
           Height = 15
           Top = 10
-          Width = 70
+          Width = 58
           Caption = '&Fit for part:'
           FocusControl = cbProdPart
         end
@@ -831,9 +831,9 @@ object frPartsEditor: TfrPartsEditor
           Top = 6
           Width = 290
           ItemHeight = 15
-          OnChange = ProdPartChange
           Style = csDropDownList
           TabOrder = 0
+          OnChange = ProdPartChange
         end
         object btnProdSuggest: TButton
           Left = 390
@@ -906,36 +906,36 @@ object frPartsEditor: TfrPartsEditor
           ClientHeight = 36
           ClientWidth = 792
           TabOrder = 0
-        object btnProdRatAdd: TButton
-          Left = 8
-          Height = 26
-          Hint = 'Add a rating of the chosen product'
-          Top = 5
-          Width = 150
-          Caption = 'Add &Rating...'
-          TabOrder = 0
-          OnClick = ProdRatAddClick
-        end
-        object btnProdRatEdit: TButton
-          Left = 166
-          Height = 26
-          Hint = 'Change the chosen rating'
-          Top = 5
-          Width = 170
-          Caption = 'R&ating Properties...'
-          TabOrder = 1
-          OnClick = ProdRatEditClick
-        end
-        object btnProdRatDelete: TButton
-          Left = 344
-          Height = 26
-          Hint = 'Delete the chosen rating'
-          Top = 5
-          Width = 130
-          Caption = 'Delete Ra&ting'
-          TabOrder = 2
-          OnClick = ProdRatDeleteClick
-        end
+          object btnProdRatAdd: TButton
+            Left = 8
+            Height = 26
+            Hint = 'Add a rating of the chosen product'
+            Top = 5
+            Width = 150
+            Caption = 'Add &Rating...'
+            TabOrder = 0
+            OnClick = ProdRatAddClick
+          end
+          object btnProdRatEdit: TButton
+            Left = 166
+            Height = 26
+            Hint = 'Change the chosen rating'
+            Top = 5
+            Width = 170
+            Caption = 'R&ating Properties...'
+            TabOrder = 1
+            OnClick = ProdRatEditClick
+          end
+          object btnProdRatDelete: TButton
+            Left = 344
+            Height = 26
+            Hint = 'Delete the chosen rating'
+            Top = 5
+            Width = 130
+            Caption = 'Delete Ra&ting'
+            TabOrder = 2
+            OnClick = ProdRatDeleteClick
+          end
         end
         object lvProdRatings: TListView
           Left = 0
@@ -944,35 +944,35 @@ object frPartsEditor: TfrPartsEditor
           Top = 36
           Width = 792
           Align = alClient
-        Columns = <        
-          item
-            Caption = 'Applies to'
-            Width = 160
-          end        
-          item
-            Caption = 'Quantity'
-            Width = 200
-          end        
-          item
-            Caption = 'Min'
-            Width = 80
-          end        
-          item
-            Caption = 'Typ'
-            Width = 80
-          end        
-          item
-            Caption = 'Max'
-            Width = 80
-          end        
-          item
-            Caption = 'Unit'
-            Width = 60
-          end        
-          item
-            Caption = 'Condition'
-            Width = 200
-          end>
+          Columns = <          
+            item
+              Caption = 'Applies to'
+              Width = 160
+            end          
+            item
+              Caption = 'Quantity'
+              Width = 200
+            end          
+            item
+              Caption = 'Min'
+              Width = 80
+            end          
+            item
+              Caption = 'Typ'
+              Width = 80
+            end          
+            item
+              Caption = 'Max'
+              Width = 80
+            end          
+            item
+              Caption = 'Unit'
+              Width = 60
+            end          
+            item
+              Caption = 'Condition'
+              Width = 200
+            end>
           PopupMenu = pmProdRatings
           ReadOnly = True
           RowSelect = True

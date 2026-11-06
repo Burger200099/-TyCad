@@ -23,7 +23,16 @@
         <UnitName Value="CFontNameCombo"/>
       </Item>
       <Item>
+        <Filename Value="CSheetTabs.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="CSheetTabs"/>
+      </Item>
+      <Item>
         <Filename Value="CSplitButton.lrs"/>
+        <Type Value="LRS"/>
+      </Item>
+      <Item>
+        <Filename Value="CSheetTabs.lrs"/>
         <Type Value="LRS"/>
       </Item>
     </Files>

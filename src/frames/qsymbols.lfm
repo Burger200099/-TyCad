@@ -66,7 +66,7 @@ inherited fmSymbols: TfmSymbols
     ShowHint = True
     TabOrder = 0
   end
-  object edSymbolText: TEdit[7]
+  object edSymbolText: TEdit[6]
     Left = 168
     Height = 23
     Hint = 'The text of the symbol text (more fields are in the parameter list)'
@@ -76,7 +76,7 @@ inherited fmSymbols: TfmSymbols
     ShowHint = True
     TabOrder = 1
   end
-  object sbParameterList: TSplitButton[6]
+  object sbParameterList: TSplitButton[7]
     Left = 56
     Height = 28
     Hint = 'Show the parameters of a symbol when it is selected (pressed in: on). The arrow shows them once'
@@ -90,7 +90,7 @@ inherited fmSymbols: TfmSymbols
     OnClick = AutoShowClick
     OnDropDownClick = ParametersClick
   end
-  object pmRotate: TPopupMenu[7]
+  object pmRotate: TPopupMenu[8]
     Left = 176
     Top = 8
     object miUp: TMenuItem

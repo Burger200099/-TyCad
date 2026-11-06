@@ -15,8 +15,8 @@ const
    {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF}
 //  lCopyright   = lAppName + ' ' + lTarget + ' © Copyright 2022-2026' + sLineBreak + 'Eric Hoffman, HPL Software';
   lVerMajor    = 26;  //year
-  lVerMinor    = 10;  //month
-  lVerRev      = 27;  //day
+  lVerMinor    = 11;  //month
+  lVerRev      = 5;  //day
 
   // where the printer's own properties window is put in the Print dialog: this far from the dialog's left and top edges (pixels; see osver.PrinterDlgTryPlace)
   PrinterPropertiesOffsetLeft = 30;
@@ -151,6 +151,9 @@ const
   REG_AUTOSNAPRANGE = 'AutoDragRange';   // (TinyCAD's own name for the auto-snap range)
   REG_AUTOSAVE = 'AutoSave';        // minutes between automatic saves; 0 for none
   REG_SHOWPOSITION = 'ShowPosition';  // the Position bar is shown
+  REG_SHOWTEXTALIGN = 'ShowTextAlignment';  // alignment lines between text objects while one is moved
+  REG_SHOWMOUSEBARS = 'ShowMouseBars';        // the bars through the pointer
+  REG_SHOWPOSBARS = 'ShowPositionBars';      // the bars through the origin of a moving object
   REG_PARTSFILE = 'PartsFile';            // the parts library that was open last, opened again at start
   REG_PARTSWARNING = 'PartsWarningOff';   // the person asked not to be warned that a part from a parts library breaks TinyCAD compatibility
   REG_RULERUNITS = 'RulerUnits';           // the units of the rulers round the drawing area: 0 mm, 1 inches, -1 the units of the sheet
@@ -159,6 +162,10 @@ const
   REG_SYMFONTPOINTS = 'SymbolFontPoints';
   REG_SYMFONTBOLD = 'SymbolFontBold';
   REG_SYMFONTITALIC = 'SymbolFontItalic';
+  REG_TEXTFONTNAME = 'TextFontName';      // the default text font of Options > Fonts (text and wire labels of a new design)
+  REG_TEXTFONTPOINTS = 'TextFontPoints';
+  REG_TEXTFONTBOLD = 'TextFontBold';
+  REG_TEXTFONTITALIC = 'TextFontItalic';
   REG_NEWSHEETBORDER = 'NewSheetBorder';   // Options > Sheets: what a new design's sheet starts with
   REG_NEWSHEETRULERS = 'NewSheetRulers';
   REG_NEWSHEETCOLS = 'NewSheetCols';
@@ -194,6 +201,7 @@ const
   REG_SPLIT_LEFT = 'LeftPanelWidth';            // ... the width of the library panel (the splitter between it and the sheet)
   REG_SPLIT_PREVIEW = 'PreviewHeight';          // ... the height of the symbol preview in that panel (its splitter)
   REG_NEWDOC_LANDSCAPE = 'NewDocLandscape';     // ... and whether it was landscape, default on
+  REG_PRINT_CENTER = 'PrintCenter';              // Print: whether the sheet is centred on the page, default off
   REG_PRINT_NOSYMFIELDS = 'PrintNoSymFields';    // Print: whether the fields of the symbols (reference, name, values) are left off the printout, default off
   REG_PRINT_NOSYMTEXT = 'PrintNoSymText';        // Print: whether symbol text is left off the printout, default off
   REG_PRINT_BANDW = 'PrintBandW';               // ... and whether it prints in black and white, default off
@@ -210,6 +218,9 @@ type
     AutoDrag, AutoSnap, AutoJunction: Boolean;
     AutoSnapRange: Integer;            // how close counts as on a pin, in design units
     AutoSaveMinutes: Integer;          // 1 to 60 minutes between automatic saves; 0 for none
+    ShowTextAlignment: Boolean;        // View > Show Text Alignment
+    ShowPositionBars: Boolean;         // View > Show Position Bars
+    ShowMouseBars: Boolean;            // View > Show Mouse Position Bars
     ShowPosition: Boolean;             // the Position bar (pointer position, snap and grid size) is shown
     LastPartsFile: String;             // the parts library file that was open last ('' for none)
     PartsWarningOff: Boolean;          // do not warn before the first part of a parts library is placed
@@ -218,6 +229,9 @@ type
     SymbolFontName: String;            // Options > Fonts: the font of the text of symbols (TinyCAD's pin font), what a new design starts with
     SymbolFontPoints: Integer;         // ... its size in points
     SymbolFontBold, SymbolFontItalic: Boolean;
+    TextFontName: String;              // Options > Fonts: the default text font (text and wire labels), applied when a design is made (at start-up), not to the design that is open
+    TextFontPoints: Integer;           // ... its size in points
+    TextFontBold, TextFontItalic: Boolean;
     NewSheetBorder, NewSheetRulers: Boolean;   // Options > Sheets: a new design's sheet has a border / rulers
     NewSheetCols, NewSheetRows: Integer;       // ... the number of columns (1 to 26) and of rows (1 to 26, shown as the letter A to Z) of the rulers
     NewSheetMarginMm: Double;                  // ... the distance of the border from the edge of the page, millimetres
@@ -236,6 +250,7 @@ type
     AnnotateType: Integer;             // Generate Symbol References: 0 all references, 1 un-numbered, 2 matching
     AnnotateAllSheets: Boolean;        // ... and all the sheets
     PrintScale: Double;                // Print: the scale, per cent (100 = the sheet at its real size)
+    PrintCenter: Boolean;              // Print: the sheet is centred on the page instead of printed from the corner
     PrintNoSymFields: Boolean;         // ... and whether the fields of the symbols are left off
     PrintNoSymText: Boolean;           // ... and whether symbol text (reference notes of the designer) is left off
     PrintBandW: Boolean;               // ... and whether it prints everything in black

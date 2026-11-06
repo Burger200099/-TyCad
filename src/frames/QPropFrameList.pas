@@ -11,7 +11,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, QPropFrame,
-  QPropWire, QPropText, QPropWireLabel, QPropNote, QRectCircle, QPolygon, QArc, QBus, QCloudNote, QPowerSym, QMeasure, QLadder, QRungs, qsymbols, QPin;      // the frames; a new one is added here
+  QPropWire, QPropText, QPropWireLabel, QPropNote, QRectCircle, QPolygon, QArc, QBus, QCloudNote, QPowerSym, QMeasure, QPropTable, QLadder, QRungs, qsymbols, QPin;      // the frames; a new one is added here
 
 procedure RegisterAllPropFrames;
 
@@ -39,8 +39,8 @@ const
   PowerLinks: array[0..2] of String = ('cbTextDirection=power.type', 'edText=text', 'sbOrientation=dir');
   MeasureLinks: array[0..8] of String = ('cbFont=font.face', 'cbFontSize=font.height', 'sbBold=font.bold', 'sbItalic=font.italic', 'cbFontColor=font.color', 'cbLineColor=line.color',
     'seLineWidth=line.width', 'cbUnits=measure.unit', 'cbGrads=measure.ticks');
-  LadderLinks: array[0..8] of String = ('cbFont=font.face', 'cbFontSize=font.height', 'sbBold=font.bold', 'sbItalic=font.italic', 'cbFontColor=font.color', 'cbLineColor=line.color',
-    'seLineWidth=line.width', 'edLeft=ladder.left', 'edRight=ladder.right');
+  LadderLinks: array[0..9] of String = ('cbFont=font.face', 'cbFontSize=font.height', 'sbBold=font.bold', 'sbItalic=font.italic', 'cbFontColor=font.color', 'cbLineColor=line.color',
+    'seLineWidth=line.width', 'edLeft=ladder.left', 'edRight=ladder.right', 'cbBottomBusText=ladder.bottom');
   RungLinks: array[0..10] of String = ('cbFont=font.face', 'cbFontSize=font.height', 'sbBold=font.bold', 'sbItalic=font.italic', 'cbFontColor=font.color', 'seRows=rungs.rows',
     'seStart=rungs.start', 'fseMargin=rungs.margin', 'cbPages=rungs.pages', 'cbContinue=rungs.continue', 'cbShowHeight=rungs.showheight'); 
   SymbolLinks: array[0..6] of String = ('edRef=sym.ref', 'edSymbolText=symtext.text', 'sbShowRef=sym.showref', 'sbShowPowerPins=sym.showpower', 'sbAllowResize=sym.canscale', 'sbRotateSymbol=', 'sbParameterList=');
@@ -55,6 +55,7 @@ begin
   RegisterPropFrame('cloud', TfmCloudRect, CloudLinks);
   RegisterPropFrame('text', TfmPropText, TextLinks);
   RegisterPropFrame('label', TfmPropWireLabel, TextLinks);
+  RegisterPropFrame('table', TfmPropTable, TextLinks);
   RegisterPropFrame('note', TfmPropNote, NoteLinks);
   RegisterPropFrame('power', TfmPower, PowerLinks);
   RegisterPropFrame('measure', TfmMeasure, MeasureLinks);

@@ -19,7 +19,7 @@ type
     cbFont: TFontNameCombo;
     cbFontSize: TComboBox;
     cbTextColor: TColorButton;
-    edText: TEdit;
+    edText: TMemo;
     lbFont: TLabel;
     lbWire: TLabel;
     lbDirection: TLabel;

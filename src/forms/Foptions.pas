@@ -69,6 +69,13 @@ type
     tbSheets: TToggleBox;
     tsSheets: TTabSheet;
     gbSymbolFonts: TGroupBox;
+    gbTextFont: TGroupBox;
+    cbTextFont: TFontNameCombo;
+    cbTextSize: TComboBox;
+    lblTextSample: TLabel;
+    lblTextSize: TLabel;
+    sbTextBold: TSpeedButton;
+    sbTextItalic: TSpeedButton;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
@@ -125,6 +132,7 @@ type
     procedure SheetBorderClick(Sender: TObject);
     procedure SheetRulerClick(Sender: TObject);
     procedure SymbolFontChange(Sender: TObject);
+    procedure TextFontChange(Sender: TObject);
     procedure UnitsClick(Sender: TObject);
     procedure OptionsActivate(Sender: TObject);
     procedure ApplyClicked(Sender: TObject);
@@ -141,6 +149,7 @@ type
     procedure FillPresets;
     procedure ShowPresetFor(Mm: Double);
     procedure ShowSymbolSample;
+    procedure ShowTextSample;
     function RowLetter(N: Integer): String;
   public
     OnApplyRequest: TNotifyEvent;     // the Apply button: apply the dialog's values now
@@ -322,6 +331,10 @@ begin
     sbBold.Down := D.SymbolFontBold;
 //    cbSymbolBold.Checked := D.SymbolFontBold;
     sbItalic.Down := D.SymbolFontItalic;
+    cbTextFont.FontName := D.TextFontName;
+    cbTextSize.Text := IntToStr(D.TextFontPoints);
+    sbTextBold.Down := D.TextFontBold;
+    sbTextItalic.Down := D.TextFontItalic;
 //    cbSymbolItalic.Checked := D.SymbolFontItalic;
     cbSheetDetailsBorder.Checked := D.SheetBorder;
     FRulerRaw := D.RulerUnits;
@@ -343,6 +356,7 @@ begin
   end;
   ShowPresetFor(D.GridMm);
   ShowSymbolSample;
+  ShowTextSample;
 end;
 
 { ===========================================================================
@@ -406,6 +420,10 @@ begin
   D.SymbolFontPoints := StrToIntDef(Trim(cbSymbolSize.Text), 0);
   D.SymbolFontBold := sbBold.Down; //cbSymbolBold.Checked;
   D.SymbolFontItalic := sbItalic.Down;  //cbSymbolItalic.Checked;
+  D.TextFontName := Trim(cbTextFont.FontName);
+  D.TextFontPoints := StrToIntDef(Trim(cbTextSize.Text), 0);
+  D.TextFontBold := sbTextBold.Down;
+  D.TextFontItalic := sbTextItalic.Down;
   D.SheetBorder := cbSheetDetailsBorder.Checked;
   { the rulers keep following the sheet unless the choice was changed here }
   N := Ord(rbRulerIN.Checked);
@@ -796,6 +814,44 @@ begin
   if sbItalic.Down then
     Include(St, fsItalic);
   lblSymbolSample.Font.Style := St;
+end;
+
+{ ===========================================================================
+  TfrmOptions.ShowTextSample  (procedure)
+  Parameters:  none
+  Notes:
+    As ShowSymbolSample, for the default text font: a line of text in the face, size, bold and
+    italic now chosen.
+  =========================================================================== }
+procedure TfrmOptions.ShowTextSample;
+var
+  P: Integer;
+  St: TFontStyles;
+begin
+  if cbTextFont.FontName <> '' then
+    lblTextSample.Font.Name := cbTextFont.FontName;
+  P := StrToIntDef(Trim(cbTextSize.Text), 0);
+  if (P >= SYMBOL_FONT_MIN_POINTS) and (P <= SYMBOL_FONT_MAX_POINTS) then
+    lblTextSample.Font.Size := P;
+  St := [];
+  if sbTextBold.Down then
+    Include(St, fsBold);
+  if sbTextItalic.Down then
+    Include(St, fsItalic);
+  lblTextSample.Font.Style := St;
+end;
+
+{ ===========================================================================
+  TfrmOptions.TextFontChange  (procedure)
+  Parameters:
+    Sender: TObject - the font, size, bold or italic control of the default text font
+  Notes:
+    Any of them changed: the sample follows.
+  =========================================================================== }
+procedure TfrmOptions.TextFontChange(Sender: TObject);
+begin
+  if not FBusy then
+    ShowTextSample;
 end;
 
 { ===========================================================================

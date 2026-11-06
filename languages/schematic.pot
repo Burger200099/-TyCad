@@ -507,6 +507,17 @@ msgctxt "ustrings.rsthesymbolfontsizemust"
 msgid "The symbol font size must be from %d to %d points."
 msgstr ""
 
+#: ustrings.rsthedefaulttextfontneeds
+msgctxt "ustrings.rsthedefaulttextfontneeds"
+msgid "The default text font needs a name."
+msgstr ""
+
+#: ustrings.rsthedefaulttextfontsize
+#, object-pascal-format
+msgctxt "ustrings.rsthedefaulttextfontsize"
+msgid "The default text font size must be from %d to %d points."
+msgstr ""
+
 #: ustrings.rstitle
 msgctxt "ustrings.rstitle"
 msgid "Title"
@@ -1374,6 +1385,11 @@ msgctxt "ustrings.rsrightbuswireno"
 msgid "Right bus wire no."
 msgstr ""
 
+#: ustrings.rsbustextatbothends
+msgctxt "ustrings.rsbustextatbothends"
+msgid "Bus text at both ends"
+msgstr ""
+
 #: ustrings.rsrows
 msgctxt "ustrings.rsrows"
 msgid "Rows"
@@ -1850,6 +1866,26 @@ msgctxt "ustrings.rsinsertpicture"
 msgid "Insert picture"
 msgstr ""
 
+#: ustrings.rsinserttable
+msgctxt "ustrings.rsinserttable"
+msgid "Insert table"
+msgstr ""
+
+#: ustrings.rsedittable
+msgctxt "ustrings.rsedittable"
+msgid "Edit table"
+msgstr ""
+
+#: ustrings.rsclicktoplacethetable
+msgctxt "ustrings.rsclicktoplacethetable"
+msgid "Click to place the table (right click or Esc to cancel)"
+msgstr ""
+
+#: ustrings.rstableplaced
+msgctxt "ustrings.rstableplaced"
+msgid "Table placed"
+msgstr ""
+
 #: ustrings.rsclicktoplacethepicture
 msgctxt "ustrings.rsclicktoplacethepicture"
 msgid "Click to place the picture (right click or Esc to cancel)"
@@ -2005,6 +2041,11 @@ msgctxt "ustrings.rscloudclickanddraga"
 msgid "Cloud: click and drag a box"
 msgstr ""
 
+#: ustrings.rsarrowclickpointathen
+msgctxt "ustrings.rsarrowclickpointathen"
+msgid "Arrow: click the tail, then the point (hold Shift to make it level or plumb)"
+msgstr ""
+
 #: ustrings.rslabelclickonawire
 msgctxt "ustrings.rslabelclickonawire"
 msgid "Label: click on a wire"
@@ -2023,6 +2064,23 @@ msgstr ""
 #: ustrings.rsverticalrulerclicktoplace
 msgctxt "ustrings.rsverticalrulerclicktoplace"
 msgid "Vertical ruler: click to place a guide line"
+msgstr ""
+
+#: ustrings.rsmeasurescalechange
+msgctxt "ustrings.rsmeasurescalechange"
+msgid "Measure scale"
+msgstr ""
+
+#: ustrings.rsmeasurescaleitem
+#, object-pascal-format
+msgctxt "ustrings.rsmeasurescaleitem"
+msgid "Scale: %sx"
+msgstr ""
+
+#: ustrings.rsmeasurescaledrawn
+#, object-pascal-format
+msgctxt "ustrings.rsmeasurescaledrawn"
+msgid "The ruler you drew is %s mm long on the sheet. How long is that really?"
 msgstr ""
 
 #: ustrings.rsmeasureclickpointathen
@@ -3389,9 +3447,39 @@ msgctxt "ustrings.rscannotwritethewiresfile"
 msgid "Cannot write the wires file.  Please try again with a different filename."
 msgstr ""
 
-#: ustrings.rscsvfilecsvcsvall
-msgctxt "ustrings.rscsvfilecsvcsvall"
-msgid "CSV file (*.csv)|*.csv|All files (*.*)|*.*"
+#: ustrings.rsallfilesfilter
+msgctxt "ustrings.rsallfilesfilter"
+msgid "All files (*.*)|*.*"
+msgstr ""
+
+#: ustrings.rscsvfilename
+msgctxt "ustrings.rscsvfilename"
+msgid "CSV file"
+msgstr ""
+
+#: ustrings.rssymbolssheet
+msgctxt "ustrings.rssymbolssheet"
+msgid "Symbols"
+msgstr ""
+
+#: ustrings.rssymboldatasheet
+msgctxt "ustrings.rssymboldatasheet"
+msgid "Symbol data"
+msgstr ""
+
+#: ustrings.rswiressheet
+msgctxt "ustrings.rswiressheet"
+msgid "Wires"
+msgstr ""
+
+#: ustrings.rsexcelworkbookname
+msgctxt "ustrings.rsexcelworkbookname"
+msgid "Excel workbook"
+msgstr ""
+
+#: ustrings.rsopendocumentsheetname
+msgctxt "ustrings.rsopendocumentsheetname"
+msgid "OpenDocument spreadsheet"
 msgstr ""
 
 #: ustrings.rscreatespicenetlist
@@ -5646,6 +5734,46 @@ msgctxt "tfrmlibraries.btnupgrade.caption"
 msgid "&Upgrade"
 msgstr ""
 
+#: tfrmmeasurescale.caption
+msgctxt "tfrmmeasurescale.caption"
+msgid "Set Scale"
+msgstr ""
+
+#: tfrmmeasurescale.lbldrawn.caption
+msgctxt "tfrmmeasurescale.lbldrawn.caption"
+msgid "The ruler drawn is"
+msgstr ""
+
+#: tfrmmeasurescale.lblscale.caption
+msgctxt "tfrmmeasurescale.lblscale.caption"
+msgid "&Scale x:"
+msgstr ""
+
+#: tfrmmeasurescale.edscale.hint
+msgctxt "tfrmmeasurescale.edscale.hint"
+msgid "The shown distance is the drawn distance times this number"
+msgstr ""
+
+#: tfrmmeasurescale.lblactual.caption
+msgctxt "tfrmmeasurescale.lblactual.caption"
+msgid "&Actual distance:"
+msgstr ""
+
+#: tfrmmeasurescale.edactual.hint
+msgctxt "tfrmmeasurescale.edactual.hint"
+msgid "How long the ruler really is; the scale follows what is typed here"
+msgstr ""
+
+#: tfrmmeasurescale.cbunits.hint
+msgctxt "tfrmmeasurescale.cbunits.hint"
+msgid "The unit of the actual distance"
+msgstr ""
+
+#: tfrmmeasurescale.lblhint.caption
+msgctxt "tfrmmeasurescale.lblhint.caption"
+msgid "The distance a Measure A-B ruler shows is its drawn length times the scale."
+msgstr ""
+
 #: tfrmnetlist.caption
 msgctxt "tfrmnetlist.caption"
 msgid "PCB Export"
@@ -6283,6 +6411,41 @@ msgstr ""
 
 #: tfrmoptions.pcoptions.tabsheet1.gbsymbolfonts.sbitalic.hint
 msgctxt "tfrmoptions.pcoptions.tabsheet1.gbsymbolfonts.sbitalic.hint"
+msgid "Italic"
+msgstr ""
+
+#: tfrmoptions.pcoptions.tabsheet1.gbtextfont.caption
+msgctxt "tfrmoptions.pcoptions.tabsheet1.gbtextfont.caption"
+msgid "Default Text Font"
+msgstr ""
+
+#: tfrmoptions.pcoptions.tabsheet1.gbtextfont.cbtextfont.hint
+msgctxt "tfrmoptions.pcoptions.tabsheet1.gbtextfont.cbtextfont.hint"
+msgid "The font of text and wire labels in designs made from now on (it does not change the open design)"
+msgstr ""
+
+#: tfrmoptions.pcoptions.tabsheet1.gbtextfont.lbltextsize.caption
+msgctxt "tfrmoptions.pcoptions.tabsheet1.gbtextfont.lbltextsize.caption"
+msgid "pt"
+msgstr ""
+
+#: tfrmoptions.pcoptions.tabsheet1.gbtextfont.cbtextsize.hint
+msgctxt "tfrmoptions.pcoptions.tabsheet1.gbtextfont.cbtextsize.hint"
+msgid "The size in points"
+msgstr ""
+
+#: tfrmoptions.pcoptions.tabsheet1.gbtextfont.lbltextsample.caption
+msgctxt "tfrmoptions.pcoptions.tabsheet1.gbtextfont.lbltextsample.caption"
+msgid "Text and wire labels"
+msgstr ""
+
+#: tfrmoptions.pcoptions.tabsheet1.gbtextfont.sbtextbold.hint
+msgctxt "tfrmoptions.pcoptions.tabsheet1.gbtextfont.sbtextbold.hint"
+msgid "Bold"
+msgstr ""
+
+#: tfrmoptions.pcoptions.tabsheet1.gbtextfont.sbtextitalic.hint
+msgctxt "tfrmoptions.pcoptions.tabsheet1.gbtextfont.sbtextitalic.hint"
 msgid "Italic"
 msgstr ""
 
@@ -7016,6 +7179,16 @@ msgctxt "tfrmprint.gboptions.cbfit.caption"
 msgid "Fit on a single page"
 msgstr ""
 
+#: tfrmprint.gboptions.cbcenter.hint
+msgctxt "tfrmprint.gboptions.cbcenter.hint"
+msgid "Put the sheet in the middle of the page instead of printing it from the corner (when it is smaller than the page)"
+msgstr ""
+
+#: tfrmprint.gboptions.cbcenter.caption
+msgctxt "tfrmprint.gboptions.cbcenter.caption"
+msgid "Center to page"
+msgstr ""
+
 #: tfrmprint.gboptions.cbnosymtext.hint
 msgctxt "tfrmprint.gboptions.cbnosymtext.hint"
 msgid "Leave the symbol text objects (the designer's notes) off the printout"
@@ -7615,6 +7788,86 @@ msgstr ""
 #: tfrmsymbolprops.pctabs.tsspice.edepilogpri.hint
 msgctxt "tfrmsymbolprops.pctabs.tsspice.edepilogpri.hint"
 msgid "Where the epilog goes among the others, 0 to 10"
+msgstr ""
+
+#: tfrmtable.caption
+msgctxt "tfrmtable.caption"
+msgid "Table"
+msgstr ""
+
+#: tfrmtable.pltop.cbshowtitles.hint
+msgctxt "tfrmtable.pltop.cbshowtitles.hint"
+msgid "Show or hide the first row of the grid as the titles of the columns"
+msgstr ""
+
+#: tfrmtable.pltop.cbshowtitles.caption
+msgctxt "tfrmtable.pltop.cbshowtitles.caption"
+msgid "Show column titles"
+msgstr ""
+
+#: tfrmtable.pltop.lbgrid.caption
+msgctxt "tfrmtable.pltop.lbgrid.caption"
+msgid "Grid:"
+msgstr ""
+
+#: tfrmtable.pltop.cbgrid.hint
+msgctxt "tfrmtable.pltop.cbgrid.hint"
+msgid "The lines between the cells"
+msgstr ""
+
+#: tfrmtable.pltop.cbgrid.text
+msgctxt "tfrmtable.pltop.cbgrid.text"
+msgid "Solid"
+msgstr ""
+
+#: tfrmtable.pltop.cbalwaysontop.hint
+msgctxt "tfrmtable.pltop.cbalwaysontop.hint"
+msgid "Keep this window on top of every program, for entering data while working in another one"
+msgstr ""
+
+#: tfrmtable.pltop.cbalwaysontop.caption
+msgctxt "tfrmtable.pltop.cbalwaysontop.caption"
+msgid "Always on top"
+msgstr ""
+
+#: tfrmtable.pmgrid.miinsertrow.caption
+msgctxt "tfrmtable.pmgrid.miinsertrow.caption"
+msgid "Insert Row Above"
+msgstr ""
+
+#: tfrmtable.pmgrid.miaddrow.caption
+msgctxt "tfrmtable.pmgrid.miaddrow.caption"
+msgid "Add Row at End"
+msgstr ""
+
+#: tfrmtable.pmgrid.mideleterow.caption
+msgctxt "tfrmtable.pmgrid.mideleterow.caption"
+msgid "Delete Row"
+msgstr ""
+
+#: tfrmtable.pmgrid.miunlink.caption
+msgctxt "tfrmtable.pmgrid.miunlink.caption"
+msgid "Unlink Cell (keep its text)"
+msgstr ""
+
+#: tfrmtable.pmgrid.miinsertcolumn.caption
+msgctxt "tfrmtable.pmgrid.miinsertcolumn.caption"
+msgid "Insert Column Left"
+msgstr ""
+
+#: tfrmtable.pmgrid.miaddcolumn.caption
+msgctxt "tfrmtable.pmgrid.miaddcolumn.caption"
+msgid "Add Column at End"
+msgstr ""
+
+#: tfrmtable.pmgrid.mideletecolumn.caption
+msgctxt "tfrmtable.pmgrid.mideletecolumn.caption"
+msgid "Delete Column"
+msgstr ""
+
+#: tfrmtablepick.caption
+msgctxt "tfrmtablepick.caption"
+msgid "frmTablePick"
 msgstr ""
 
 #: tfrmvalueedit.caption
@@ -8372,6 +8625,11 @@ msgctxt "tfrmmain.fribbon.ftabdraw.pldrawshapes.sbdrawshapescloud.hint"
 msgid "Draw a revision cloud"
 msgstr ""
 
+#: tfrmmain.fribbon.ftabdraw.pldrawshapes.sbdrawshapesarrow.hint
+msgctxt "tfrmmain.fribbon.ftabdraw.pldrawshapes.sbdrawshapesarrow.hint"
+msgid "Draw an arrow"
+msgstr ""
+
 #: tfrmmain.fribbon.ftabdraw.pldrawmeasure.lbdrawmeasure.caption
 msgctxt "tfrmmain.fribbon.ftabdraw.pldrawmeasure.lbdrawmeasure.caption"
 msgid "Measurements"
@@ -8389,7 +8647,7 @@ msgstr ""
 
 #: tfrmmain.fribbon.ftabdraw.pldrawmeasure.sbdrawmeasurerulerab.hint
 msgctxt "tfrmmain.fribbon.ftabdraw.pldrawmeasure.sbdrawmeasurerulerab.hint"
-msgid "Measure the distance between two points"
+msgid "Measure the distance between two points (hold Shift to make the ruler level or plumb); the arrow: the scale"
 msgstr ""
 
 #: tfrmmain.fribbon.ftabdraw.pldrawladder.sbdrawladderadd.hint
@@ -8665,6 +8923,16 @@ msgstr ""
 #: tfrmmain.mmain.medit.mipaste.hint
 msgctxt "tfrmmain.mmain.medit.mipaste.hint"
 msgid "Paste from the clipboard, then click where it goes"
+msgstr ""
+
+#: tfrmmain.mmain.medit.mipastetogrid.caption
+msgctxt "tfrmmain.mmain.medit.mipastetogrid.caption"
+msgid "Paste to &Grid"
+msgstr ""
+
+#: tfrmmain.mmain.medit.mipastetogrid.hint
+msgctxt "tfrmmain.mmain.medit.mipastetogrid.hint"
+msgid "Paste, with the pasted objects moved onto the grid and keeping their spacing (needs Snap to Grid)"
 msgstr ""
 
 #: tfrmmain.mmain.medit.midupe.caption
@@ -9057,6 +9325,16 @@ msgctxt "tfrmmain.mmain.minsert.mishapes.midrawcloud.hint"
 msgid "Draw a revision cloud"
 msgstr ""
 
+#: tfrmmain.mmain.minsert.mishapes.midrawarrow.caption
+msgctxt "tfrmmain.mmain.minsert.mishapes.midrawarrow.caption"
+msgid "Arrow"
+msgstr ""
+
+#: tfrmmain.mmain.minsert.mishapes.midrawarrow.hint
+msgctxt "tfrmmain.mmain.minsert.mishapes.midrawarrow.hint"
+msgid "Draw an arrow"
+msgstr ""
+
 #: tfrmmain.mmain.minsert.mimeasure.caption
 msgctxt "tfrmmain.mmain.minsert.mimeasure.caption"
 msgid "&Measurements"
@@ -9145,6 +9423,16 @@ msgstr ""
 #: tfrmmain.mmain.minsert.mladder.miladderrungs.hint
 msgctxt "tfrmmain.mmain.minsert.mladder.miladderrungs.hint"
 msgid "Add or select the sheet's rung number grid"
+msgstr ""
+
+#: tfrmmain.mmain.minsert.miinserttable.caption
+msgctxt "tfrmmain.mmain.minsert.miinserttable.caption"
+msgid "Insert &Table..."
+msgstr ""
+
+#: tfrmmain.mmain.minsert.miinserttable.hint
+msgctxt "tfrmmain.mmain.minsert.miinserttable.hint"
+msgid "Insert a table of text into the sheet"
 msgstr ""
 
 #: tfrmmain.mmain.minsert.miinsertpicture.caption
@@ -9657,14 +9945,14 @@ msgctxt "tfrmmain.mmain.mparts.mpartsedit.hint"
 msgid "Open the parts library of the Parts tab for editing in a tab of its own"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsparts.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsparts.hint"
-msgid "Add, change, copy and delete parts"
-msgstr ""
-
 #: tfrmmain.mmain.mparts.mpartsparts.caption
 msgctxt "tfrmmain.mmain.mparts.mpartsparts.caption"
 msgid "&Parts"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartsparts.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsparts.hint"
+msgid "Add, change, copy and delete parts"
 msgstr ""
 
 #: tfrmmain.mmain.mparts.mpartsparts.mpartsadd.caption
@@ -9707,14 +9995,14 @@ msgctxt "tfrmmain.mmain.mparts.mpartsparts.mpartsdel.hint"
 msgid "Delete the chosen part from the library"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsclasses.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsclasses.hint"
-msgid "Add, change and delete part classes"
-msgstr ""
-
 #: tfrmmain.mmain.mparts.mpartsclasses.caption
 msgctxt "tfrmmain.mmain.mparts.mpartsclasses.caption"
 msgid "&Classes"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartsclasses.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsclasses.hint"
+msgid "Add, change and delete part classes"
 msgstr ""
 
 #: tfrmmain.mmain.mparts.mpartsclasses.mpartsclassadd.caption
@@ -9747,54 +10035,44 @@ msgctxt "tfrmmain.mmain.mparts.mpartsclasses.mpartsclassdel.hint"
 msgid "Delete the chosen class (it must have no subclasses, parts or products)"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsfields.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsfields.hint"
-msgid "Add, change and delete the fields of a class"
-msgstr ""
-
-#: tfrmmain.mmain.mparts.mpartsfields.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsfields.caption"
-msgid "&Fields"
-msgstr ""
-
-#: tfrmmain.mmain.mparts.mpartsfields.mpartsfieldadd.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsfields.mpartsfieldadd.caption"
+#: tfrmmain.mmain.mparts.mpartsclasses.mpartsfieldadd.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsclasses.mpartsfieldadd.caption"
 msgid "Add &Field..."
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsfields.mpartsfieldadd.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsfields.mpartsfieldadd.hint"
+#: tfrmmain.mmain.mparts.mpartsclasses.mpartsfieldadd.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsclasses.mpartsfieldadd.hint"
 msgid "Declare a field on the chosen class; its subclasses inherit it"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsfields.mpartsfieldprops.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsfields.mpartsfieldprops.caption"
+#: tfrmmain.mmain.mparts.mpartsclasses.mpartsfieldprops.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsclasses.mpartsfieldprops.caption"
 msgid "Fi&eld Properties..."
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsfields.mpartsfieldprops.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsfields.mpartsfieldprops.hint"
+#: tfrmmain.mmain.mparts.mpartsclasses.mpartsfieldprops.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsclasses.mpartsfieldprops.hint"
 msgid "Change the chosen field (only a field the class declares itself)"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsfields.mpartsfielddel.caption
-msgctxt "tfrmmain.mmain.mparts.mpartsfields.mpartsfielddel.caption"
+#: tfrmmain.mmain.mparts.mpartsclasses.mpartsfielddel.caption
+msgctxt "tfrmmain.mmain.mparts.mpartsclasses.mpartsfielddel.caption"
 msgid "Delete Fiel&d"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsfields.mpartsfielddel.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsfields.mpartsfielddel.hint"
+#: tfrmmain.mmain.mparts.mpartsclasses.mpartsfielddel.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsclasses.mpartsfielddel.hint"
 msgid "Delete the chosen field (no part may have a value for it)"
-msgstr ""
-
-#: tfrmmain.mmain.mparts.mpartsobjects.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsobjects.hint"
-msgid "Add, change and delete the objects inside a part"
 msgstr ""
 
 #: tfrmmain.mmain.mparts.mpartsobjects.caption
 msgctxt "tfrmmain.mmain.mparts.mpartsobjects.caption"
 msgid "&Objects"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartsobjects.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsobjects.hint"
+msgid "Add, change and delete the objects inside a part"
 msgstr ""
 
 #: tfrmmain.mmain.mparts.mpartsobjects.mpartsobjadd.caption
@@ -9827,14 +10105,14 @@ msgctxt "tfrmmain.mmain.mparts.mpartsobjects.mpartsobjdel.hint"
 msgid "Delete the chosen child object and what is inside it"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartsrequirements.hint
-msgctxt "tfrmmain.mmain.mparts.mpartsrequirements.hint"
-msgid "Add, change and delete the requirements of a part"
-msgstr ""
-
 #: tfrmmain.mmain.mparts.mpartsrequirements.caption
 msgctxt "tfrmmain.mmain.mparts.mpartsrequirements.caption"
 msgid "&Requirements"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartsrequirements.hint
+msgctxt "tfrmmain.mmain.mparts.mpartsrequirements.hint"
+msgid "Add, change and delete the requirements of a part"
 msgstr ""
 
 #: tfrmmain.mmain.mparts.mpartsrequirements.mpartsratadd.caption
@@ -9867,14 +10145,14 @@ msgctxt "tfrmmain.mmain.mparts.mpartsrequirements.mpartsratdel.hint"
 msgid "Delete the chosen requirement"
 msgstr ""
 
-#: tfrmmain.mmain.mparts.mpartssymbols.hint
-msgctxt "tfrmmain.mmain.mparts.mpartssymbols.hint"
-msgid "The symbols of a part"
-msgstr ""
-
 #: tfrmmain.mmain.mparts.mpartssymbols.caption
 msgctxt "tfrmmain.mmain.mparts.mpartssymbols.caption"
 msgid "&Symbols"
+msgstr ""
+
+#: tfrmmain.mmain.mparts.mpartssymbols.hint
+msgctxt "tfrmmain.mmain.mparts.mpartssymbols.hint"
+msgid "The symbols of a part"
 msgstr ""
 
 #: tfrmmain.mmain.mparts.mpartssymbols.mpartssymnew.caption
@@ -10125,6 +10403,36 @@ msgstr ""
 #: tfrmmain.mmain.mview.mshowposition.hint
 msgctxt "tfrmmain.mmain.mview.mshowposition.hint"
 msgid "Show or hide the position bar"
+msgstr ""
+
+#: tfrmmain.mmain.mview.mishowtextalignment.caption
+msgctxt "tfrmmain.mmain.mview.mishowtextalignment.caption"
+msgid "Show Text Alignment"
+msgstr ""
+
+#: tfrmmain.mmain.mview.mishowtextalignment.hint
+msgctxt "tfrmmain.mmain.mview.mishowtextalignment.hint"
+msgid "While text, wire text or a note is moved, draw a line where it lines up with another one"
+msgstr ""
+
+#: tfrmmain.mmain.mview.mishowobjectalignment.caption
+msgctxt "tfrmmain.mmain.mview.mishowobjectalignment.caption"
+msgid "Show Position Bars"
+msgstr ""
+
+#: tfrmmain.mmain.mview.mishowobjectalignment.hint
+msgctxt "tfrmmain.mmain.mview.mishowobjectalignment.hint"
+msgid "While an object is moved, draw a vertical and a horizontal bar through its origin across the whole view"
+msgstr ""
+
+#: tfrmmain.mmain.mview.mishowmousebars.caption
+msgctxt "tfrmmain.mmain.mview.mishowmousebars.caption"
+msgid "Show Mouse Position Bars"
+msgstr ""
+
+#: tfrmmain.mmain.mview.mishowmousebars.hint
+msgctxt "tfrmmain.mmain.mview.mishowmousebars.hint"
+msgid "Draw a vertical and a horizontal bar through the pointer across the whole view"
 msgstr ""
 
 #: tfrmmain.mmain.mview.migridsnap.caption
@@ -10577,6 +10885,16 @@ msgctxt "tfrmmain.pmsheet.pmsheetrungref.hint"
 msgid "Put a cross reference under this symbol: the rung and form of the contacts of a coil, or the rung of the coil of a contact"
 msgstr ""
 
+#: tfrmmain.pmsheet.pmsheetresizeall.caption
+msgctxt "tfrmmain.pmsheet.pmsheetresizeall.caption"
+msgid "Resize All"
+msgstr ""
+
+#: tfrmmain.pmsheet.pmsheetresizeall.hint
+msgctxt "tfrmmain.pmsheet.pmsheetresizeall.hint"
+msgid "Give the chosen objects eight handles to resize them all together"
+msgstr ""
+
 #: tfrmmain.pmsheet.pmsheetundo.caption
 msgctxt "tfrmmain.pmsheet.pmsheetundo.caption"
 msgid "Undo"
@@ -11027,6 +11345,36 @@ msgctxt "tfrmmain.pmalignmentoptions.mialign1pxgrid.hint"
 msgid "Draw the grid dots one pixel wide (symbol editing)"
 msgstr ""
 
+#: tfrmmain.pmmeasurescale.mimeasurescaleinfo.caption
+msgctxt "tfrmmain.pmmeasurescale.mimeasurescaleinfo.caption"
+msgid "Scale: 1x"
+msgstr ""
+
+#: tfrmmain.pmmeasurescale.mimeasurescaleinfo.hint
+msgctxt "tfrmmain.pmmeasurescale.mimeasurescaleinfo.hint"
+msgid "The scale of the Measure A-B ruler on this sheet"
+msgstr ""
+
+#: tfrmmain.pmmeasurescale.mimeasuresetscale.caption
+msgctxt "tfrmmain.pmmeasurescale.mimeasuresetscale.caption"
+msgid "Set Scale"
+msgstr ""
+
+#: tfrmmain.pmmeasurescale.mimeasuresetscale.hint
+msgctxt "tfrmmain.pmmeasurescale.mimeasuresetscale.hint"
+msgid "Draw a ruler over a distance you know, then say how long it really is"
+msgstr ""
+
+#: tfrmmain.pmmeasurescale.mimeasureresetscale.caption
+msgctxt "tfrmmain.pmmeasurescale.mimeasureresetscale.caption"
+msgid "Reset Scale"
+msgstr ""
+
+#: tfrmmain.pmmeasurescale.mimeasureresetscale.hint
+msgctxt "tfrmmain.pmmeasurescale.mimeasureresetscale.hint"
+msgid "Measure with no scale (1x) again"
+msgstr ""
+
 #: tfrmmain.pmrulerunits.mirulermm.caption
 msgctxt "tfrmmain.pmrulerunits.mirulermm.caption"
 msgid "Millimetres"
@@ -11375,6 +11723,36 @@ msgstr ""
 #: tfrlibrarypanel.dlgpartsopen.title
 msgctxt "tfrlibrarypanel.dlgpartsopen.title"
 msgid "Open a parts library"
+msgstr ""
+
+#: tfmpart.lbcaption.caption
+msgctxt "tfmpart.lbcaption.caption"
+msgid "Part"
+msgstr ""
+
+#: tfmpart.lbparttitle.caption
+msgctxt "tfmpart.lbparttitle.caption"
+msgid "lbPartTitle"
+msgstr ""
+
+#: tfmpart.lbpartobject.caption
+msgctxt "tfmpart.lbpartobject.caption"
+msgid "lbPartObject"
+msgstr ""
+
+#: tfmpart.cbpartobjects.hint
+msgctxt "tfmpart.cbpartobjects.hint"
+msgid "Every object of the part, and where it is drawn"
+msgstr ""
+
+#: tfmpart.btngoto.hint
+msgctxt "tfmpart.btngoto.hint"
+msgid "Show the object on its page"
+msgstr ""
+
+#: tfmpart.btngoto.caption
+msgctxt "tfmpart.btngoto.caption"
+msgid "Goto"
 msgstr ""
 
 #: tfrpartseditor.pnlinfo.lbllibname.caption
@@ -12532,6 +12910,31 @@ msgctxt "tfmcloudrect.lbscallop.caption"
 msgid "Scallop:"
 msgstr ""
 
+#: tfmfontgroup.lbfont.caption
+msgctxt "tfmfontgroup.lbfont.caption"
+msgid "Font"
+msgstr ""
+
+#: tfmfontgroup.cbfontface.hint
+msgctxt "tfmfontgroup.cbfontface.hint"
+msgid "The font"
+msgstr ""
+
+#: tfmfontgroup.cbfontheight.hint
+msgctxt "tfmfontgroup.cbfontheight.hint"
+msgid "The size in points"
+msgstr ""
+
+#: tfmfontgroup.sbfontbold.hint
+msgctxt "tfmfontgroup.sbfontbold.hint"
+msgid "Bold"
+msgstr ""
+
+#: tfmfontgroup.sbfontitalic.hint
+msgctxt "tfmfontgroup.sbfontitalic.hint"
+msgid "Italic"
+msgstr ""
+
 #: tfmladder.plfont.lbfont.caption
 msgctxt "tfmladder.plfont.lbfont.caption"
 msgid "Font"
@@ -12600,6 +13003,11 @@ msgstr ""
 #: tfmladder.plladder.edright.hint
 msgctxt "tfmladder.plladder.edright.hint"
 msgid "Wire number of the right bus, shown above the right rail"
+msgstr ""
+
+#: tfmladder.plladder.cbbottombustext.caption
+msgctxt "tfmladder.plladder.cbbottombustext.caption"
+msgid "Both Ends"
 msgstr ""
 
 #: tfmmeasure.plfont.lbfont.caption
@@ -12702,14 +13110,14 @@ msgctxt "tfmpropnote.pnlnote.lbstyle.caption"
 msgid "Style"
 msgstr ""
 
+#: tfmproptable.lbcaption.caption
+msgctxt "tfmproptable.lbcaption.caption"
+msgid "Table"
+msgstr ""
+
 #: tfmproptext.lbcaption.caption
 msgctxt "tfmproptext.lbcaption.caption"
 msgid "WireLabel"
-msgstr ""
-
-#: tfmproptext.pltext.edtext.text
-msgctxt "tfmproptext.pltext.edtext.text"
-msgid "edText"
 msgstr ""
 
 #: tfmproptext.pltext.lbdirection.caption

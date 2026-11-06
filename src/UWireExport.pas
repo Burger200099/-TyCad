@@ -13,23 +13,16 @@ unit UWireExport;
 interface
 
 uses
-  Classes, SysUtils, UDPoint, UDrawTypes, UDrawingObjects, UDesign;
+  Classes, SysUtils, UDPoint, UDrawTypes, UDrawingObjects, UDesign, UTableExport;
 
+{ the table as a sheet of T ('Wires', bold heading first; the sheet number is a whole number, the position two decimals of mm); Count gets the number of rows written }
+procedure WireTextTable(Design: TDesignFile; T: TExportTable; out Count: Integer);
 { the table as CSV (header line first), lines ended with EOL; Count gets the number of rows written }
 function WireTextCsv(Design: TDesignFile; out Count: Integer; const EOL: String = LineEnding): String;
 
 implementation
 
-uses UPaper;
-
-{ CSV text: quoted when it holds a comma, a quote or a line end, with the quotes in it doubled (RFC 4180) }
-function CsvText(const S: String): String;
-begin
-  if (Pos(',', S) = 0) and (Pos('"', S) = 0) and (Pos(#10, S) = 0) and (Pos(#13, S) = 0) then
-    Result := S
-  else
-    Result := '"' + StringReplace(S, '"', '""', [rfReplaceAll]) + '"';
-end;
+uses UPaper, UCSVExport, UStrings;
 
 { ===========================================================================
   LabelStyleName  (function)
@@ -66,25 +59,27 @@ begin
 end;
 
 { ===========================================================================
-  WireTextCsv  (function)
+  WireTextTable  (procedure)
   Parameters:
     Design: TDesignFile - the design
-    out Count: Integer - the number of rows written (not counting the header)
-    const EOL: String - the line end
-  Returns:
-    String - the CSV text
+    T: TExportTable - gets the sheet 'Wires'
+    out Count: Integer - the number of rows written (not counting the heading)
   Notes:
-    Reads every sheet's wire labels (TDrawLabel) and bus names (a TDrawText of the bus name kind). A value is quoted when it holds a comma, a quote or a line end.
+    Reads every sheet's wire labels (TDrawLabel) and bus names (a TDrawText of the bus name kind). A label or bus name with no text is left out.
   =========================================================================== }
-function WireTextCsv(Design: TDesignFile; out Count: Integer; const EOL: String): String;
+procedure WireTextTable(Design: TDesignFile; T: TExportTable; out Count: Integer);
 var
   s, i: Integer;
   Obj: TDrawingObject;
   Kind, Style, Txt: String;
   P: TDPoint;
+  Sh: TExportSheet;
 begin
   Count := 0;
-  Result := 'Sheet,Sheet name,Kind,Style,Text,X (mm),Y (mm)' + EOL;
+  Sh := T.AddSheet(rsWiresSheet);
+  Sh.AddHeaderRow(['Sheet', 'Sheet name', 'Kind', 'Style', 'Text', 'X (mm)', 'Y (mm)']);
+  Sh.SetColWidth(1, 20);
+  Sh.SetColWidth(4, 30);
   if Design = nil then
     Exit;
   for s := 0 to Design.SheetCount - 1 do
@@ -111,9 +106,38 @@ begin
         Continue;
       if Txt = '' then
         Continue;
-      Result := Result + IntToStr(s + 1) + ',' + CsvText(Design.Sheets[s].SheetName) + ',' + Kind + ',' + Style + ',' + CsvText(Txt) + ',' + MmText(P.x) + ',' + MmText(P.y) + EOL;
+      Sh.AddCells([IntCell(s + 1), TextCell(Design.Sheets[s].SheetName), TextCell(Kind), TextCell(Style), TextCell(Txt), FloatCell(P.x / UNITS_PER_MM, 2), FloatCell(P.y / UNITS_PER_MM, 2)]);
       Inc(Count);
     end;
+end;
+
+{ ===========================================================================
+  WireTextCsv  (function)
+  Parameters:
+    Design: TDesignFile - the design
+    out Count: Integer - the number of rows written (not counting the header)
+    const EOL: String - the line end
+  Returns:
+    String - the CSV text (WireTextTable through the CSV writer)
+  =========================================================================== }
+function WireTextCsv(Design: TDesignFile; out Count: Integer; const EOL: String): String;
+var
+  T: TExportTable;
+  W: TCSVExport;
+begin
+  T := TExportTable.Create;
+  try
+    WireTextTable(Design, T, Count);
+    W := TCSVExport.Create(T);
+    try
+      W.EOL := EOL;
+      Result := W.SaveToString;
+    finally
+      W.Free;
+    end;
+  finally
+    T.Free;
+  end;
 end;
 
 end.

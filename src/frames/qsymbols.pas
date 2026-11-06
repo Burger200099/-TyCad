@@ -83,6 +83,7 @@ type
     property OnParameterChange: TSymbolChangeEvent read FOnParameterChange write FOnParameterChange;
     { the drop-down list of the symbol's parameters (nil until it was first opened) }
     property ParameterList: TfrmSymbolPropList read FList;
+    procedure ControlsHidden(const AHidden: array of TControl); override;
   end;
 
 implementation
@@ -298,6 +299,13 @@ begin
   if ADirName <> '' then
     sbRotateSymbol.Hint := Format(rsNow, [sbRotateSymbol.Hint, ADirName, MirrorWords(AMirror)]);
   sbRotateSymbol.ShowHint := True;
+end;
+
+procedure TfmSymbols.ControlsHidden(const AHidden: array of TControl);
+begin
+  inherited;
+  if not edSymbolText.Visible then
+    Self.Width := edRef.Left + edRef.Width + Scale96toForm(8);
 end;
 
 end.

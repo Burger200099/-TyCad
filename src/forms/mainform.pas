@@ -16,14 +16,14 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ComCtrls, ExtCtrls, StdCtrls, Buttons,
   LCLType, LCLProc, TypInfo, Math, Spin, UDPoint, UDrawTypes, UGeometry, UResources, UDrawingObjects, USymbols, UDesign, UDsnBinary, ULibrary, ULibXML, UPaper,
-  UProps, UUndo, UView, UDialogs, consts, Fnewdoc, Fabout, QLibPanel, QFindPanel, UDocs, USettings, UOptions, Foptions, {Fcolors,}
+  UProps, UUndo, UView, UDialogs, consts, Fnewdoc, Fmeasurescale, Ftable, UTable, Fabout, QLibPanel, QFindPanel, UDocs, USettings, UOptions, Foptions, {Fcolors,}
   UFind, Fdetails, Fpagesetup, Fpartslist, UPartsList, USymbolBom, UWireExport, UContacts, ULinks, UPartPreview, Fnetlist, UNetWriters,
   USpiceVhdl, UErc, UPartCheck, Fercopts, Fercwin, UAnnotate, Fannotate, Types, Finput,
-  Fbase, Fsymbolinfo, QPropFrame, QPropFrameList, StrUtils, Printers, PrintersDlgs, UPrint,
+  Fbase, Fsymbolinfo, QPropFrame, QPropFrameList, QFontGroup, StrUtils, Printers, PrintersDlgs, UPrint,
   UPrintRun, Fprint, Fpreview, UExport, Fexport, Flibraries, ULibManager,
   USymEdit, Fsymprops, Fsymparts, FPropTester, QPropBase, FFillDropDown,
-  FDropDownBase, FBusDropDown, osver, UDocTabs, URibbon, UViewRulers,
-  CSplitButton, FDetailsDropDown, UPartsDb, UPartData, Fproductpick, qsymbols, FSymDDD, QPartsEditor;
+  FDropDownBase, FBusDropDown, osver, UDocTabs, CSheetTabs, URibbon, UViewRulers,
+  CSplitButton, FDetailsDropDown, UPartsDb, UPartData, Fproductpick, qsymbols, FSymDDD, QPartsEditor, QPart;
 
 const
   PROPS_TAB = 'View';          // the ribbon page that holds the Properties panel of the selection (there is no Properties page)
@@ -132,6 +132,8 @@ type
     pmSheetHierSep: TMenuItem;
     pmSheetReplaceSym: TMenuItem;
     pmSheetSymSep: TMenuItem;
+    pmSheetResizeAll: TMenuItem;
+    mEditCtxSep: TMenuItem;
     miGrid500: TMenuItem;
     miGrid1000: TMenuItem;
     miGrid1270: TMenuItem;
@@ -181,6 +183,7 @@ type
     sbSheetSheetsRemove: TSpeedButton;
     sbSheetSheetsRename: TSpeedButton;
     sbSheetSheetsRight: TSpeedButton;
+    Separator15: TMenuItem;
     Separator7: TMenuItem;
     miRotateL: TMenuItem;
     miRotateR: TMenuItem;
@@ -200,6 +203,7 @@ type
     miZoomIn: TMenuItem;
     miObjProps: TMenuItem;
     miInsertPicture: TMenuItem;
+    miInsertTable: TMenuItem;
     Separator11: TMenuItem;
     miCopyTo: TMenuItem;
     miFindPrev: TMenuItem;
@@ -218,6 +222,9 @@ type
     miExportImage: TMenuItem;
     Separator2: TMenuItem;
     miShowPositionBar: TMenuItem;
+    miShowTextAlignment: TMenuItem;
+    miShowObjectAlignment: TMenuItem;
+    miShowMouseBars: TMenuItem;
     miShowViewRulers: TMenuItem;
     miLadderRails: TMenuItem;
     miLadderRungs: TMenuItem;
@@ -225,6 +232,8 @@ type
     miDrawRulerH: TMenuItem;
     miDrawRulerV: TMenuItem;
     miDrawCloud: TMenuItem;
+    miDrawArrow: TMenuItem;
+    sbDrawShapesArrow: TSpeedButton;
     miDrawNote: TMenuItem;
     miDrawArc: TMenuItem;
     miDrawCircle: TMenuItem;
@@ -267,7 +276,11 @@ type
     sbDrawShapesRect: TSpeedButton;
     sbDrawShapesPoly: TSpeedButton;
     sbDrawShapesCircle: TSpeedButton;
-    sbDrawMeasureRulerAB: TSpeedButton;
+    sbDrawMeasureRulerAB: TSplitButton;
+    pmMeasureScale: TPopupMenu;
+    miMeasureScaleInfo: TMenuItem;
+    miMeasureSetScale: TMenuItem;
+    miMeasureResetScale: TMenuItem;
     sbDrawWiresText: TSpeedButton;
     sbDrawWiresSymbolText: TSpeedButton;
     sbDrawWiresJunction: TSpeedButton;
@@ -292,6 +305,7 @@ type
     Separator6: TMenuItem;
     miDupe: TMenuItem;
     miPaste: TMenuItem;
+    miPasteToGrid: TMenuItem;
     miCopy: TMenuItem;
     miCut: TMenuItem;
     mTheme: TMenuItem;
@@ -387,7 +401,7 @@ type
     mPartsProps: TMenuItem;
     mPartsDup: TMenuItem;
     mPartsDel: TMenuItem;
-    mPartsParts, mPartsClasses, mPartsFields, mPartsObjects, mPartsRequirements, mPartsSymbols: TMenuItem;     // the submenus the Parts menu is condensed into
+    mPartsParts, mPartsClasses, mPartsObjects, mPartsRequirements, mPartsSymbols: TMenuItem;     // the submenus the Parts menu is condensed into
     mPartsClassAdd: TMenuItem;
     mPartsClassProps: TMenuItem;
     mPartsClassDel: TMenuItem;
@@ -494,9 +508,9 @@ type
     FTabView: TTabSheet;
     FTabDraw: TTabSheet;
     pnlPropsSep: TPanel;
-    tcSheetTabs: TTabControl;
     pmSheetTabs: TPopupMenu;
     pmTabInsert, pmTabDelete, pmTabRename, pmTabSep1, pmTabMoveLeft, pmTabMoveRight, pmTabSep2, pmTabHier: TMenuItem;
+    tcSheetTabs: TSheetTabStrip;     // the sheet tabs along the bottom of the drawing area (CSheetTabs)
     tvLib: TTreeView;
     procedure Panel1Click(Sender: TObject);
     procedure rpSheetSheetsClick(Sender: TObject);
@@ -646,6 +660,7 @@ type
     procedure DoCut(Sender: TObject);
     procedure DoCopy(Sender: TObject);
     procedure DoPaste(Sender: TObject);
+    procedure DoPasteToGrid(Sender: TObject);
     procedure DoDuplicate(Sender: TObject);
     procedure DoDesignDetails(Sender: TObject);
     procedure DoPageSetup(Sender: TObject);
@@ -662,6 +677,13 @@ type
     procedure DoOptions(Sender: TObject);
     procedure DoColors(Sender: TObject);
     procedure DoShowPosition(Sender: TObject);
+    procedure MeasureScalePopup(Sender: TObject);
+    procedure DoMeasureSetScale(Sender: TObject);
+    procedure DoMeasureResetScale(Sender: TObject);
+    procedure ViewMeasureCalibrated(Sender: TObject; MmLength: Double);
+    procedure DoShowTextAlignment(Sender: TObject);
+    procedure DoShowPositionBars(Sender: TObject);
+    procedure DoShowMouseBars(Sender: TObject);
     procedure DoShowViewRulers(Sender: TObject);
     procedure DoRulerUnits(Sender: TObject);
     procedure RulerUnitsPopup(Sender: TObject);
@@ -675,6 +697,10 @@ type
     procedure DoCopyTo(Sender: TObject);
     procedure DoImport(Sender: TObject);
     procedure DoInsertPicture(Sender: TObject);
+    procedure DoInsertTable(Sender: TObject);
+    procedure TableBeforeChange(Sender: TObject);
+    procedure TableAfterChange(Sender: TObject);
+    procedure TableLiveChange(Sender: TObject);
     procedure DoFindReplace(Sender: TObject);
     procedure DoFindNext(Sender: TObject);
     procedure DoFindPrevious(Sender: TObject);
@@ -687,6 +713,8 @@ type
     procedure ContextPoleSnapClick(Sender: TObject);
     procedure ContextRungClick(Sender: TObject);
     procedure ContextRungRefClick(Sender: TObject);
+    procedure ContextResizeAllClick(Sender: TObject);
+    procedure RefreshEditContext;
     procedure BuildRungMenu(Sym: Boolean);
     procedure PolyDrawMenuClick(Sender: TObject);
     procedure ArcDrawMenuClick(Sender: TObject);
@@ -723,6 +751,8 @@ type
     procedure DoGridSize(Sender: TObject);
     procedure DoGridCustom(Sender: TObject);
     procedure ViewSelection(Sender: TObject);
+    procedure ViewMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure TableEditorLater(Data: PtrInt);
     procedure DoDesignDetailsBorder(Sender: TObject);
     procedure DoDesignDetailsExtended(Sender: TObject);
     procedure DoDetailsDropDown(Sender: TObject);
@@ -775,6 +805,9 @@ type
     FindPromptScripted: Boolean;     // for tests: no box is shown, a question not answered by the script is answered with Cancel
     FAutoSaveTimer: TTimer;          // saves a copy of every named design now and then (Options)
     FPrinterPicked: Integer;         // the printer last chosen in the Print dialog's drop down (for tests), -1 before
+    FClosingProgram: Boolean;        // the program is being closed (the question about unsaved designs is open): no table editor then
+    FTableWait: Boolean;             // the table editor is to be shown when the mouse button is up (showing it earlier takes the mouse release away from the sheet)
+    FTableForm: TfrmTable;           // the table editor window, nil until a table has been inserted or chosen
     FErcForm: TfrmErcList;           // the Design Markers window (the result list of the design rules check), nil until a check has shown it
     FAnnotate: TAnnotateSetup;       // Generate Symbol References: the choices of the last time
     FErcDoc: TDocument;              // the document the markers and the list belong to, nil if the window is not showing
@@ -799,8 +832,9 @@ type
     FAutoShowParams: Boolean;      // the parameter button of the symbol frames is on: the list opens whenever a symbol is selected
     FPropTimer: TTimer;            // applies a number box a moment after its last change (PropSpinDelay)
     FSpinPending: TControl;        // the number box waiting for it
-    FPartPage: TTabSheet;            // the Part page of the ribbon (made in code; its tab shows while a part is the one being worked on)
-    FPartTitle, FPartObjLabel, FPartCaption: TLabel;
+    FPartFrame: TfmPart;             // the Part pane on the View ribbon, right of the selection's Properties panel (shown while a symbol of a part is selected)
+    FPartSep: TPanel;                // the 2 pixel separator between the Properties panel and the Part pane
+    FPartTitle, FPartObjLabel: TLabel;   // (these are the frame's own controls, kept under their old names)
     FPartGlyph: TPaintBox;
     FPartObjects: TComboBox;
     FPartGo: TButton;
@@ -808,6 +842,7 @@ type
     FPartCtx: TPartCtx;
     FPartItems: TPartItemArray;
     FPartUpdating: Boolean;
+    FEditCtxOwner: TComponent;      // owns the copies of the right click commands at the top of the Edit menu
     FObjectsMenu: TMenuItem;        // right click on a part symbol: Objects > every object of the part (made in BuildContextMenu)
     FRungTextItem: TMenuItem;       // right click on a symbol: Add Symbol Rung Text
     FTabBeforeProps: String;       // the ribbon tab that was showing when selecting brought the Properties tab forward ("" when none to go back to)
@@ -892,7 +927,8 @@ type
     function FillColorOf(ATag: Integer): String;
     procedure CommitNamed(ATag: Integer; const AName, AValue: String);
     procedure ShowFillGlyph(AButton: TSpeedButton; AChoice: Integer; AColor: TColor);
-    function BuildEditors(APanel: TPanel; const Defs: TPropDefArray; ATagBase: Integer; var Items: TPropEditorArray): Integer;
+    function BuildEditors(APanel: TPanel; const Defs: TPropDefArray; ATagBase: Integer; var Items: TPropEditorArray; ALeft: Integer = 0): Integer;
+    procedure AttachFrameEditors(const ABind: TFrameBindings; var Items: TPropEditorArray; ATagBase, First: Integer);
     procedure RebuildProps;
     procedure UpdateToolPanel;
     procedure FreeToolPanel;
@@ -900,9 +936,11 @@ type
     procedure CommitToolProp(Index: Integer; const Value: String);
     procedure CommitAny(Index: Integer; const Value: String);
     procedure SizePropsPanel(ANeeded: Integer);
+    procedure PlacePartPane;
     procedure ClearPropEditors;
     procedure ShowPropValues;
     procedure PropEditDone(Sender: TObject);
+    function TextBoxHasLines(AControl: TControl): Boolean;
     procedure PropEditChange(Sender: TObject);
     procedure FocusToolText;
     procedure FocusPropEditor(const AName: String);
@@ -1140,6 +1178,9 @@ type
     function ImportDesign(const AFileName: String): Integer;
     { Insert picture: a PNG, JPEG or BMP file becomes a picture that follows the mouse until it is placed; False if it cannot be inserted }
     function InsertPicture(const AFileName: String): Boolean;
+    procedure UpdateTableEditor;
+    function CloseQueryForScript: Boolean;     // the self-test script: the start of closing the program (FClosingProgram stays set)
+    property TableForm: TfrmTable read FTableForm;
     { Special > Insert another design as symbol: reads the design and starts placing it on this sheet; False (with a message) when it cannot be read }
     function InsertDesign(const AFileName: String): Boolean;
     { Special > Add hierarchical symbol: adds the sheet that draws this design as a symbol, in front, and shows it; False when the design has one }
@@ -1237,12 +1278,13 @@ type
 //    property LibPanel: TfrLibraryPanel read FLibPanel;
     property Design: TDesignFile read GetDesign;
     property RibbonTabs: TPageControl read FRibbon;
+    function PasteToGridEnabled: Boolean;
     property Theme: TLDTheme read FTheme write SetRibbonTheme;
   end;
 
 implementation
 
-uses UStrings, LazUTF8, FSharedCtls{$IFDEF WINDOWS}, OSPrinters{$ENDIF};
+uses UStrings, LazUTF8, UTableExport, UCSVExport, UXLSXExport, UODSExport, FSharedCtls{$IFDEF WINDOWS}, OSPrinters{$ENDIF};
 
 { ===========================================================================
   RadioChoice  (function)
@@ -1335,6 +1377,7 @@ begin
         FDocs[i].View.OnUndoChanged := nil;
         FDocs[i].View.OnObjectPlaced := nil;
         FDocs[i].View.OnContext := nil;
+        FDocs[i].View.OnMeasureCalibrated := nil;
         FDocs[i].View.OnViewMoved := nil;
         FDocs[i].View.OnArcTypeChanged := nil;
       end;
@@ -1422,6 +1465,14 @@ begin
   FRulerTop.PopupMenu := pmRulerUnits;      // (the rulers are only there to click on while they are shown)
   FRulerLeft.PopupMenu := pmRulerUnits;
   tcDocs.PopupMenu := pmDocTabs;
+  tcSheetTabs := TSheetTabStrip.Create(Self);
+  tcSheetTabs.Parent := pnlMain;
+  tcSheetTabs.Align := alBottom;
+  tcSheetTabs.Images := frmSharedControls.ilSheetTabs;
+  tcSheetTabs.Font.Size := 11;
+  tcSheetTabs.PopupMenu := pmSheetTabs;
+  tcSheetTabs.OnChange := @SheetTabChange;
+  tcSheetTabs.OnMouseDown := @tcSheetTabsMouseDown;
   frameLibraryPanel.OnPlace := @LibPlace;
   frameLibraryPanel.OnPartPlace := @PartPlace;
   frameLibraryPanel.OnPartsFileChanged := @PartsFileChanged;
@@ -1435,7 +1486,7 @@ begin
   mSpecial.OnClick := @HierarchyMenuOpen;
   mSheet.OnClick := @HierarchyMenuOpen;
   MakeSheetTabMarks;
-  TCrackControl(tcSheetTabs).OnDblClick := @DoRenameSheet;      // double-click a sheet tab to rename the sheet     // a symbol chosen in the library tree starts placing it
+  tcSheetTabs.OnDblClick := @DoRenameSheet;      // double-click a sheet tab to rename the sheet     // a symbol chosen in the library tree starts placing it
 end;
 
 { ------------------------------------------------------------------ the ribbon }
@@ -1647,13 +1698,20 @@ begin
   SetToolButton(sbDrawShapesNote, vtNote, miDrawNote);
 //  AddToolButton(FTabDraw, X, vtCloud, 'Cloud');
   SetToolButton(sbDrawShapesCloud, vtCloud, miDrawCloud);
+  SetToolButton(sbDrawShapesArrow, vtArrow, miDrawArrow);
 //  Gap(X);
 //  AddToolButton(FTabDraw, X, vtRulerH, 'Ruler ---');
   SetToolButton(sbDrawMeasureRulerH, vtRulerH, miDrawRulerH);
 //  AddToolButton(FTabDraw, X, vtRulerV, 'Ruler |');
   SetToolButton(sbDrawMeasureRulerV, vtRulerV, miDrawRulerV);
 //  AddToolButton(FTabDraw, X, vtMeasure, 'Measure A-B');
-  SetToolButton(sbDrawmeasureRulerAB, vtMeasure, miDrawRulerAB);
+  { (a split button, not a speed button: it is pressed by UpdateRibbonState through its Checked) }
+  sbDrawMeasureRulerAB.Tag := Ord(vtMeasure);
+  miDrawRulerAB.GroupIndex := 2;
+  miDrawRulerAB.AutoCheck := False;
+  miDrawRulerAB.Tag := Ord(vtMeasure);
+  miDrawRulerAB.RadioItem := True;
+  FToolMenus[vtMeasure] := miDrawRulerAB;
 
   { Ladder }
 //  X := 4;
@@ -1726,6 +1784,7 @@ begin
   else
     sbHomeEditRedo.Hint := rsRedoCtrlY;
   sbViewGridSnapTo.Down := FView.SnapEnabled;
+  miPasteToGrid.Enabled := FView.SnapEnabled;
   mPartsList.Enabled := FDesign <> nil;
   mSymbolBom.Enabled := FDesign <> nil;
   mSymbolData.Enabled := FDesign <> nil;
@@ -1754,6 +1813,7 @@ begin
       FToolMenus[T].Checked := T = FView.Tool;     // the Insert menu's tools are one group over all its submenus
   end;
   miExportImage.Enabled := FDesign <> nil;
+  sbDrawMeasureRulerAB.Checked := FView.Tool = vtMeasure;
   sbHomeSelectOne.Down := FView.Tool = vtSelect;
   sbDrawSelect.Down := FView.Tool = vtSelect;
   UpdateToolPanel;           // the Properties panel of the draw tool in use
@@ -2062,6 +2122,7 @@ begin
     vtCircle: Result := 'circle';
     vtNote: Result := 'note';
     vtCloud: Result := 'cloud';
+    vtArrow: Result := 'arrow';
     vtMeasure: Result := 'measure';
     vtText: Result := 'text';
     vtSymbolText: Result := 'symboltext';
@@ -2096,6 +2157,119 @@ begin
     K := PropFrameKeyOfObject(FView.SelectedObject(i));
     if K <> Result then
       Exit('');
+  end;
+end;
+
+{ ===========================================================================
+  TfrmMain.AttachFrameEditors  (procedure)
+  Parameters:
+    const ABind: TFrameBindings - the editors of a frame that BindPropFrame linked
+    var Items: TPropEditorArray - in/out: the editors of the panel; the new ones are put from First on
+    ATagBase: Integer - the Tag of the editor number 0
+    First: Integer - the number of the first of these editors in Items
+  Notes:
+    Gives each editor of a frame what BuildEditors gives its own: the entry in Items, a Tag (ATagBase + its number), the event that applies a change and the choices of a
+    drop-down. ShowFrame does it for the editors of a registered frame; BuildEditors for the font group of a selection that has no frame of its own.
+  =========================================================================== }
+procedure TfrmMain.AttachFrameEditors(const ABind: TFrameBindings; var Items: TPropEditorArray; ATagBase, First: Integer);
+var
+  i, j, Groups: Integer;
+  C: TControl;
+  Sl: TStringList;
+  Cb: TComboBox;
+begin
+  SetLength(Items, First + Length(ABind));
+  for j := 0 to High(ABind) do
+  begin
+    i := First + j;
+    C := ABind[j].Control;
+    Items[i].Def := ABind[j].Def;
+    Items[i].Control := C;
+    Items[i].Mixed := False;
+    Items[i].Mode := ABind[j].Mode;
+    Items[i].OldClick := nil;
+    C.Tag := ATagBase + i;
+    if C is TCustomFloatSpinEdit then
+    begin
+      TCustomFloatSpinEdit(C).OnChange := @PropNumberChange;
+      if C is TSpinEdit then
+        TSpinEdit(C).OnEditingDone := @PropNumberDone
+      else if C is TFloatSpinEdit then
+        TFloatSpinEdit(C).OnEditingDone := @PropNumberDone;
+    end
+    else if C is TColorButton then
+      begin
+        TColorButton(C).OnColorChanged := @PropColorChanged;
+        TColorButton(C).OnClick := @ColorButtonClick;
+      end
+    else if C is TComboBox then
+    begin
+      Cb := TComboBox(C);
+      if ABind[j].Def.Kind = pkChoice then
+      begin
+        { the list is the choices of the property, unless the frame made one of its own of the right length (blank items drawn as pictures, say) }
+        Sl := TStringList.Create;
+        try
+          Sl.Delimiter := '|'; Sl.StrictDelimiter := True; Sl.DelimitedText := ABind[j].Def.Choices;
+          if Cb.Items.Count <> Sl.Count then
+          begin
+            if Assigned(Cb.OnDrawItem) then
+            begin
+              Sl.Clear;
+              for Groups := 1 to ChoiceCount(ABind[j].Def.Choices) do Sl.Add('');      { (the frame draws pictures, not words) }
+            end;
+            Cb.Items.Assign(Sl);
+          end;
+        finally
+          Sl.Free;
+        end;
+        if (ABind[j].Def.Choices = DashChoices) and not Assigned(Cb.OnDrawItem) then
+        begin
+          Cb.Style := csOwnerDrawFixed;
+          Cb.ItemHeight := ilListBoxImages.Height;
+          Cb.OnDrawItem := @LineStyleDrawItem;
+        end;
+        Cb.OnSelect := @PropChoiceChange;
+      end
+      else
+      begin
+        Cb.OnSelect := @PropComboDone;      { a font name or a size: chosen from the list or typed }
+        Cb.OnCloseUp := @PropComboDone;     { (the list closed with Enter after typing, which selects nothing) }
+        Cb.OnKeyDown := @PropComboKeyDown;
+        Cb.OnExit := @PropComboDone;
+      end;
+    end
+    else if C is TRadioButton then
+      TRadioButton(C).OnClick := @PropBoolClick      { (one of the radio buttons of a choice) }
+    else if C is TCheckBox then
+    begin
+      TCheckBox(C).AllowGrayed := False;
+      TCheckBox(C).OnClick := @PropBoolClick;
+    end
+    else if (C is TSpeedButton) and (ABind[j].Mode = bmDrop) then
+      TSpeedButton(C).OnClick := @PropBusClick      { (the phases of the bus: the picture, and the panel it drops down) }
+    else if (C is TSpeedButton) and (ABind[j].Mode = bmFill) then
+      TSpeedButton(C).OnClick := @PropFillClick      { (the whole fill editor: the picture of the fill, and the menu it drops down) }
+    else if C is TSpeedButton then
+    begin
+      Items[i].OldClick := TSpeedButton(C).OnClick;
+      if ABind[j].Mode = bmNormal then
+      begin
+        if TSpeedButton(C).GroupIndex = 0 then
+          TSpeedButton(C).GroupIndex := 100 + i;      { a button that stays down }
+        TSpeedButton(C).AllowAllUp := True;
+      end;
+      TSpeedButton(C).OnClick := @PropSpeedClick;
+    end
+    else if C is TCustomEdit then      { (a text box, or the memo of a note: several lines) }
+      begin
+        if C is TEdit then
+          TEdit(C).OnEditingDone := @PropEditDone
+        else if C is TMemo then
+          TMemo(C).OnEditingDone := @PropEditDone;
+        TCustomEdit(C).OnKeyDown := @PropEditKeyDown;
+        TCustomEdit(C).OnChange := @PropEditChange;
+      end;
   end;
 end;
 
@@ -2140,99 +2314,13 @@ begin
   if AFrame is TfmPropertyBase then
     TfmPropertyBase(AFrame).AfterCreate;      { (the frame's own set-up: the font list, the pictures of a list) }
   BindPropFrame(AFrame, Defs, PropFrameAliases(AKey), ABind, AProblems);
+  if AFrame is TfmPropertyBase then
+    TfmPropertyBase(AFrame).DoShow;      { (the frame is on the ribbon, bound to the tool or selection: it may size itself now) }
   Result := Result + (AFrame.Width - Chosen);      { (ControlsHidden of the frame may have resized it; it is not aligned yet, so the panel is not what sets its width) }
   AFrame.Align := alClient;
   if AFrame is TfmSymbols then
     HookSymbolFrame(TfmSymbols(AFrame));
-  SetLength(Items, Length(ABind));
-  for i := 0 to High(ABind) do
-  begin
-    C := ABind[i].Control;
-    Items[i].Def := ABind[i].Def;
-    Items[i].Control := C;
-    Items[i].Mixed := False;
-    Items[i].Mode := ABind[i].Mode;
-    Items[i].OldClick := nil;
-    C.Tag := ATagBase + i;
-    if C is TCustomFloatSpinEdit then
-    begin
-      TCustomFloatSpinEdit(C).OnChange := @PropNumberChange;
-      if C is TSpinEdit then
-        TSpinEdit(C).OnEditingDone := @PropNumberDone
-      else if C is TFloatSpinEdit then
-        TFloatSpinEdit(C).OnEditingDone := @PropNumberDone;
-    end
-    else if C is TColorButton then
-      begin
-        TColorButton(C).OnColorChanged := @PropColorChanged;
-        TColorButton(C).OnClick := @ColorButtonClick;
-      end
-    else if C is TComboBox then
-    begin
-      Cb := TComboBox(C);
-      if ABind[i].Def.Kind = pkChoice then
-      begin
-        { the list is the choices of the property, unless the frame made one of its own of the right length (blank items drawn as pictures, say) }
-        Sl := TStringList.Create;
-        try
-          Sl.Delimiter := '|'; Sl.StrictDelimiter := True; Sl.DelimitedText := ABind[i].Def.Choices;
-          if Cb.Items.Count <> Sl.Count then
-          begin
-            if Assigned(Cb.OnDrawItem) then
-            begin
-              Sl.Clear;
-              for Groups := 1 to ChoiceCount(ABind[i].Def.Choices) do Sl.Add('');      { (the frame draws pictures, not words) }
-            end;
-            Cb.Items.Assign(Sl);
-          end;
-        finally
-          Sl.Free;
-        end;
-        if (ABind[i].Def.Choices = DashChoices) and not Assigned(Cb.OnDrawItem) then
-        begin
-          Cb.Style := csOwnerDrawFixed;
-          Cb.ItemHeight := ilListBoxImages.Height;
-          Cb.OnDrawItem := @LineStyleDrawItem;
-        end;
-        Cb.OnSelect := @PropChoiceChange;
-      end
-      else
-      begin
-        Cb.OnSelect := @PropComboDone;      { a font name or a size: chosen from the list or typed }
-        Cb.OnCloseUp := @PropComboDone;     { (the list closed with Enter after typing, which selects nothing) }
-        Cb.OnKeyDown := @PropComboKeyDown;
-        Cb.OnExit := @PropComboDone;
-      end;
-    end
-    else if C is TRadioButton then
-      TRadioButton(C).OnClick := @PropBoolClick      { (one of the radio buttons of a choice) }
-    else if C is TCheckBox then
-    begin
-      TCheckBox(C).AllowGrayed := False;
-      TCheckBox(C).OnClick := @PropBoolClick;
-    end
-    else if (C is TSpeedButton) and (ABind[i].Mode = bmDrop) then
-      TSpeedButton(C).OnClick := @PropBusClick      { (the phases of the bus: the picture, and the panel it drops down) }
-    else if (C is TSpeedButton) and (ABind[i].Mode = bmFill) then
-      TSpeedButton(C).OnClick := @PropFillClick      { (the whole fill editor: the picture of the fill, and the menu it drops down) }
-    else if C is TSpeedButton then
-    begin
-      Items[i].OldClick := TSpeedButton(C).OnClick;
-      if ABind[i].Mode = bmNormal then
-      begin
-        if TSpeedButton(C).GroupIndex = 0 then
-          TSpeedButton(C).GroupIndex := 100 + i;      { a button that stays down }
-        TSpeedButton(C).AllowAllUp := True;
-      end;
-      TSpeedButton(C).OnClick := @PropSpeedClick;
-    end
-    else if C is TEdit then
-      begin
-        TEdit(C).OnEditingDone := @PropEditDone;
-        TEdit(C).OnKeyDown := @PropEditKeyDown;
-        TEdit(C).OnChange := @PropEditChange;
-      end;
-  end;
+  AttachFrameEditors(ABind, Items, ATagBase, 0);
 end;
 
 { ===========================================================================
@@ -2303,15 +2391,36 @@ var
   Fr: TFrame;
   C: TComponent;
   Kc: Word;
+  Pnl: TPanel;
+  k: Integer;
 begin
   Result := False;
   if ATool then
     Fr := FToolFrame
   else
     Fr := FPropFrame;
-  if Fr = nil then
-    Exit;
-  C := Fr.FindComponent(AName);
+  C := nil;
+  if Fr <> nil then
+    C := Fr.FindComponent(AName);
+  if C = nil then
+  begin
+    { the font group of a selection that has no frame of its own (QFontGroup, put on the panel by BuildEditors) }
+    if ATool then
+      Pnl := FToolPanel
+    else
+      Pnl := plPropsProperties;
+    if Pnl <> nil then
+      for k := 0 to Pnl.ControlCount - 1 do
+        if (C = nil) and (Pnl.Controls[k] is TfmFontGroup) then
+          C := Pnl.Controls[k].FindComponent(AName);
+  end;
+  if (C = nil) and (Copy(AName, 1, 5) = 'prop:') then
+  begin
+    { an editor the panel made itself (no frame): 'prop:<property name>' }
+    for k := 0 to High(FProps) do
+      if (C = nil) and (FProps[k].Def.Name = Copy(AName, 6, MaxInt)) then
+        C := FProps[k].Control;
+  end;
   if not (C is TControl) then
     Exit;
   if (AAction = 'click') and (C is TRadioButton) then
@@ -2372,16 +2481,21 @@ begin
       TComboBox(C).OnExit(C);
     Result := True;
   end
-  else if (AAction = 'type') and (C is TEdit) then
+  else if (AAction = 'type') and (C is TCustomEdit) then
   begin
-    TEdit(C).Text := AValue;       // (the box's OnChange runs, as with each keystroke)
+    TCustomEdit(C).Text := AValue;       // (the box's OnChange runs, as with each keystroke)
     Result := True;
   end
-  else if (AAction = 'text') and (C is TEdit) then
+  else if (AAction = 'text') and (C is TCustomEdit) then
   begin
-    TEdit(C).Text := AValue;
-    if Assigned(TEdit(C).OnEditingDone) then
-      TEdit(C).OnEditingDone(C);
+    if C is TMemo then
+      TMemo(C).Text := StringReplace(StringReplace(AValue, '\n', LineEnding, [rfReplaceAll]), '\t', #9, [rfReplaceAll])      { (a script writes a line break as \n and a tab as \t) }
+    else
+      TCustomEdit(C).Text := AValue;
+    if (C is TEdit) and Assigned(TEdit(C).OnEditingDone) then
+      TEdit(C).OnEditingDone(C)
+    else if (C is TMemo) and Assigned(TMemo(C).OnEditingDone) then
+      TMemo(C).OnEditingDone(C);
     Result := True;
   end
   else if (AAction = 'text') and (C is TSpinEdit) then
@@ -2485,6 +2599,17 @@ begin
   end;
 end;
 
+{ the number of the property of that name in a list, -1 for none }
+function PropIndex(const Defs: TPropDefArray; const AName: String): Integer;
+var
+  i: Integer;
+begin
+  Result := -1;
+  for i := 0 to High(Defs) do
+    if Defs[i].Name = AName then
+      Exit(i);
+end;
+
 { ===========================================================================
   TfrmMain.BuildEditors  (function)
   Parameters:
@@ -2500,11 +2625,12 @@ end;
     5 and the second at 5, 56 (36 pixel rows, a shorter control centred on the row), PropGap
     pixels between columns. The values are filled in by the caller.
   =========================================================================== }
-function TfrmMain.BuildEditors(APanel: TPanel; const Defs: TPropDefArray; ATagBase: Integer; var Items: TPropEditorArray): Integer;
+function TfrmMain.BuildEditors(APanel: TPanel; const Defs: TPropDefArray; ATagBase: Integer; var Items: TPropEditorArray; ALeft: Integer): Integer;
 var
   i, Row, Col, X, LabW, CtlW, CtlH, RightEnd: Integer;
   Lab: TLabel;
   Ed: TEdit;
+  Mm: TMemo;
   Cb: TComboBox;
   Ck: TCheckBox;
   Bt: TColorButton;
@@ -2514,7 +2640,44 @@ var
   W: array of Integer;      // the widest of each column (caption, gap and editor)
   Ctl: array of TControl;
   Cap: array of TLabel;
+  FontDefs, Rest: TPropDefArray;
+  Fg: TfmFontGroup;
+  FBind: TFrameBindings;
+  FProblems: TStringList;
+  n: Integer;
 begin
+  { the font properties the objects share are one group (the face, size, bold and italic as the designed frames lay them out), not four captions and editors }
+  if (ALeft = 0) and (PropIndex(Defs, 'font.face') >= 0) and (PropIndex(Defs, 'font.height') >= 0) and (PropIndex(Defs, 'font.bold') >= 0) and (PropIndex(Defs, 'font.italic') >= 0) then
+  begin
+    SetLength(FontDefs, 0);
+    SetLength(Rest, 0);
+    for i := 0 to High(Defs) do
+      if (Defs[i].Name = 'font.face') or (Defs[i].Name = 'font.height') or (Defs[i].Name = 'font.bold') or (Defs[i].Name = 'font.italic') then
+      begin
+        SetLength(FontDefs, Length(FontDefs) + 1);
+        FontDefs[High(FontDefs)] := Defs[i];
+      end
+      else
+      begin
+        SetLength(Rest, Length(Rest) + 1);
+        Rest[High(Rest)] := Defs[i];
+      end;
+    Fg := TfmFontGroup.Create(APanel);
+    Fg.Parent := APanel;
+    Fg.SetBounds(PropLeft, 0, Fg.Width, Fg.Height);
+    FProblems := TStringList.Create;
+    try
+      BindPropFrame(Fg, FontDefs, nil, FBind, FProblems);
+    finally
+      FProblems.Free;
+    end;
+    Result := BuildEditors(APanel, Rest, ATagBase, Items, PropLeft + Fg.Width + PropGap);
+    n := Length(Items);
+    AttachFrameEditors(FBind, Items, ATagBase, n);
+    if Length(Rest) = 0 then
+      Result := PropLeft + Fg.Width + PropLeft;
+    Exit;
+  end;
   SetLength(Items, Length(Defs));
   SetLength(Ctl, Length(Defs));
   SetLength(Cap, Length(Defs));
@@ -2610,6 +2773,21 @@ begin
           Items[i].Control := Fl;
         end;
     else
+      if Defs[i].Kind = pkMemo then
+      begin
+        { a note's text: several lines (Enter starts a line, Tab indents); it is applied when the box is left }
+        Mm := TMemo.Create(APanel);
+        Mm.Parent := APanel;
+        Mm.Tag := ATagBase + i;
+        Mm.WantTabs := True;
+        Mm.ScrollBars := ssAutoVertical;
+        Mm.OnEditingDone := @PropEditDone;
+        Mm.OnKeyDown := @PropEditKeyDown;
+        Mm.OnChange := @PropEditChange;
+        Mm.SetBounds(0, 0, PropTextWidth, PropRowHeight - 2);
+        Items[i].Control := Mm;
+      end
+      else
       begin
         Ed := TEdit.Create(APanel);
         Ed.Parent := APanel;
@@ -2628,7 +2806,7 @@ begin
   end;
   { place them: two rows (the first starts at 5, 5 and the second at 5, 56, in 36 pixel high rows); a control
     shorter than that is centred on the row's middle; PropGap pixels between the columns }
-  X := PropLeft;
+  X := PropLeft + ALeft;
   RightEnd := X;
   for Col := 0 to High(W) do
   begin
@@ -2678,8 +2856,7 @@ begin
       Exit;
     end;
     Defs := CommonProps(FView.SelectedList);
-    pnlPropsSep.Left := 5000;             { alLeft controls line up by Left: the separator first (after Position), then the panel }
-    plPropsProperties.Left := 5002;
+    PlacePartPane;                        { alLeft controls line up by Left: the separator, the panel, then the Part pane }
     pnlPropsSep.Visible := True;          { the properties are shown: a 2 pixel separator and then the panel, at the right of the View ribbon }
     plPropsProperties.Visible := True;
     FPropLabel.Caption := DescribeSelection;
@@ -3100,6 +3277,8 @@ begin
     begin
       if AMixed then
         AEditor.ShownText := ''
+      else if C is TCustomMemo then
+        AEditor.ShownText := StringReplace(AValue, #10, LineEnding, [rfReplaceAll])      { (a memo shows the lines as they are) }
       else
         AEditor.ShownText := StringReplace(AValue, #10, '\n', [rfReplaceAll]);
       if C is TCustomComboBox then
@@ -3112,7 +3291,10 @@ begin
       else if C is TCustomEdit then
       begin
         TCustomEdit(C).Text := AEditor.ShownText;
-        TCustomEdit(C).TextHint := rsMixed2;
+        if C is TCustomMemo then
+          AEditor.ShownText := TCustomEdit(C).Text      { (as the memo holds it, so that an untouched box is known by what it shows) }
+        else
+          TCustomEdit(C).TextHint := rsMixed2;
       end;
     end;
   end;
@@ -3160,7 +3342,7 @@ begin
     Exit;
   if (FToolEditors[I - TOOLPROP_BASE].Def.Name <> 'text') or not (FView.Tool in [vtText, vtLabel, vtNote, vtPower]) then
     Exit;
-  FView.SetToolDefault(FToolOf, 'text', (Sender as TEdit).Text);
+  FView.SetToolDefault(FToolOf, 'text', StringReplace((Sender as TCustomEdit).Text, LineEnding, #10, [rfReplaceAll]));
   FView.Invalidate;
 end;
 
@@ -3191,15 +3373,15 @@ var
   i: Integer;
 begin
   for i := 0 to High(FToolEditors) do
-    if ((FToolEditors[i].Def.Name = 'text') or (FToolEditors[i].Def.Name = 'symtext.text')) and (FToolEditors[i].Control is TEdit) and FToolEditors[i].Control.Visible then
+    if ((FToolEditors[i].Def.Name = 'text') or (FToolEditors[i].Def.Name = 'symtext.text')) and (FToolEditors[i].Control is TCustomEdit) and FToolEditors[i].Control.Visible then
     begin
       { CanFocus is asked first: SetFocus on a box that cannot take it (its tab is not showing, the window is not shown yet) raises an exception,
         which stops the program in the debugger even though it is caught here }
-      if (FToolEditors[i].Control as TEdit).CanFocus then
+      if (FToolEditors[i].Control as TCustomEdit).CanFocus then
       begin
         try
-          (FToolEditors[i].Control as TEdit).SetFocus;
-          (FToolEditors[i].Control as TEdit).SelectAll;
+          (FToolEditors[i].Control as TCustomEdit).SetFocus;
+          (FToolEditors[i].Control as TCustomEdit).SelectAll;
         except
           // (still not focusable)
         end;
@@ -3224,7 +3406,9 @@ begin
   if FUpdatingProps then
     Exit;
   I := (Sender as TControl).Tag;
-  V := StringReplace((Sender as TEdit).Text, '\n', #10, [rfReplaceAll]);
+  V := StringReplace(StringReplace((Sender as TCustomEdit).Text, LineEnding, #10, [rfReplaceAll]), '\n', #10, [rfReplaceAll]);
+  if (Sender is TMemo) and not TextBoxHasLines(Sender as TControl) then
+    V := StringReplace(StringReplace(V, #13, '', [rfReplaceAll]), #10, ' ', [rfReplaceAll]);      { (one line only: a break pasted in becomes a space) }
   if I >= TOOLPROP_BASE then begin
     CommitToolProp(I - TOOLPROP_BASE, V);
     Exit;
@@ -3232,7 +3416,7 @@ begin
   if (I < 0) or (I > High(FProps)) then
     Exit;
   { a box that still shows what it was given applies nothing (the box takes the focus when a text is selected, and gives it up again at the next click) }
-  if (Sender as TEdit).Text = FProps[I].ShownText then
+  if (Sender as TCustomEdit).Text = FProps[I].ShownText then
     Exit;
   { an untouched "mixed" field stays as it is }
   if FProps[I].Mixed and (V = '') then
@@ -4273,6 +4457,7 @@ begin
   Result.Align := alClient;
   Result.Visible := False;
   Result.OnSelectionChange := @ViewSelection;
+  Result.OnMouseUp := @ViewMouseUp;
   Result.OnStatus := @ViewStatus;
   Result.OnPosition := @ViewPosition;
   Result.OnModified := @ViewModified;
@@ -4283,6 +4468,7 @@ begin
   Result.OnMarkerClick := @FindMarkerClicked;
   Result.OnObjectPlaced := @ViewPlaced;
   Result.OnContext := @ViewContext;
+  Result.OnMeasureCalibrated := @ViewMeasureCalibrated;
   Result.OnDblClick := @ViewDblClick;
   Result.OnViewMoved := @ViewMovedForRulers;
   Result.OnArcTypeChanged := @ArcTypeChangedByView;
@@ -4492,6 +4678,7 @@ begin
   RebuildProps;
   UpdateDocTabs;
   UpdateViewRulers;
+  UpdateTableEditor;
 end;
 
 { ===========================================================================
@@ -4930,6 +5117,16 @@ begin
   begin
     Key := 0;
     FView.CancelTool;
+    Exit;
+  end;
+  { F2 with a text, wire label or note chosen: the focus goes to its text box on the ribbon, with the text selected }
+  if (Key = VK_F2) and (Shift = []) and (FView <> nil) and (FView.Tool = vtSelect) and (FView.SelectedCount = 1) and
+     ((ActiveControl = nil) or (ActiveControl = FView) or not (ActiveControl is TCustomEdit)) and
+     ((FView.SelectedObject(0) is TDrawText) or (FView.SelectedObject(0) is TDrawLabel) or (FView.SelectedObject(0) is TDrawNoteText)) then
+  begin
+    Key := 0;
+    ShowRibbonTab(PROPS_TAB);
+    FocusTextEditor;
     Exit;
   end;
   { Ctrl+F is Find (the panel that lists everything found), Ctrl+H is Find and Replace; F3 finds the next, Shift+F3 the previous }
@@ -5567,6 +5764,110 @@ begin
 end;
 
 { ===========================================================================
+  TfrmMain.DoInsertTable  (procedure)
+  Parameters:
+    Sender: TObject - the menu item
+  Notes:
+    Insert > Insert Table: a table of 3 columns follows the pointer until a click places it; the table editor window opens on it at once.
+  =========================================================================== }
+procedure TfrmMain.DoInsertTable(Sender: TObject);
+begin
+  if FDesign = nil then
+    Exit;
+  FView.BeginTool(vtSelect);
+  FView.ClearSelection;
+  FView.InsertTable;
+  UpdateTableEditor;
+end;
+
+{ ===========================================================================
+  TfrmMain.UpdateTableEditor  (procedure)
+  Parameters:  none
+  Notes:
+    The table editor window is shown, always on top, while exactly one table is chosen (or floating on the pointer) in the current view, and hidden otherwise.
+  =========================================================================== }
+procedure TfrmMain.UpdateTableEditor;
+var
+  T: TDrawTable;
+begin
+  if FDestroying then
+    Exit;
+  T := nil;
+  if (FView <> nil) and (FView.Sheet <> nil) and (FView.SelectedCount = 1) and (FView.SelectedObject(0) is TDrawTable) then
+    T := FView.SelectedObject(0) as TDrawTable;
+  if T = nil then
+  begin
+    FTableWait := False;
+    if FTableForm <> nil then
+    begin
+      FTableForm.SetTable(nil);
+      FTableForm.Hide;
+    end;
+    Exit;
+  end;
+  if FTableForm = nil then
+  begin
+    FTableForm := TfrmTable.Create(Self);
+    FTableForm.PopupParent := Self;           { on top of this window only (not of other programs) }
+    FTableForm.OnBeforeChange := @TableBeforeChange;
+    FTableForm.OnAfterChange := @TableAfterChange;
+    FTableForm.OnLiveChange := @TableLiveChange;
+  end;
+  if FTableForm.Table <> T then
+    FTableForm.SetTable(T, FView.Sheet);
+  { (not while the program is being closed: asking about unsaved designs switches between them, which must not bring the window up) }
+  if (not FTableForm.Visible) and (not FClosingProgram) then
+  begin
+    if FView.Dragging then
+    begin
+      FTableWait := True;        { the window would take the mouse release: shown when the button is up }
+      Exit;
+    end;
+    FTableWait := False;
+    FTableForm.Show;
+  end;
+end;
+
+procedure TfrmMain.ViewMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  if FTableWait then
+    Application.QueueAsyncCall(@TableEditorLater, 0);
+end;
+
+procedure TfrmMain.TableEditorLater(Data: PtrInt);
+begin
+  if FTableWait then
+  begin
+    FTableWait := False;
+    UpdateTableEditor;
+  end;
+end;
+
+{ the table editor is about to change the table: the undo snapshot is taken (not while the table is still floating: placing it is the one step) }
+procedure TfrmMain.TableBeforeChange(Sender: TObject);
+begin
+  if (FView <> nil) and (not FView.Pasting) then
+    FView.BeginChange(rsEditTable);
+end;
+
+{ the change is done: kept as an undo step, and the sheet redrawn }
+procedure TfrmMain.TableAfterChange(Sender: TObject);
+begin
+  if FView = nil then
+    Exit;
+  if FView.Pasting then
+    FView.Invalidate
+  else
+    FView.CommitChange(True);
+end;
+
+procedure TfrmMain.TableLiveChange(Sender: TObject);
+begin
+  if FView <> nil then
+    FView.Invalidate;
+end;
+
+{ ===========================================================================
   TfrmMain.InsertPicture  (function)
   Parameters:
     const AFileName: String - the picture file
@@ -5650,6 +5951,143 @@ begin
     SaveSettings;
   end;
   UpdatePositionBar;
+end;
+
+{ ===========================================================================
+  TfrmMain.MeasureScalePopup  (procedure)
+  Parameters:
+    Sender: TObject - the component that raised the event
+  Notes:
+    The drop down of the Measure A-B button is about to open: its first item (it only shows, it does nothing) tells the scale of this sheet.
+  =========================================================================== }
+procedure TfrmMain.MeasureScalePopup(Sender: TObject);
+begin
+  if (FView <> nil) and (FView.Sheet <> nil) then
+    miMeasureScaleInfo.Caption := Format(rsMeasureScaleItem, [FormatFloat('0.#####', FView.Sheet.Options.MeasureScale)])
+  else
+    miMeasureScaleInfo.Caption := Format(rsMeasureScaleItem, ['1']);
+  miMeasureSetScale.Enabled := (FView <> nil) and (FView.Sheet <> nil);
+  miMeasureResetScale.Enabled := (FView <> nil) and (FView.Sheet <> nil) and (FView.Sheet.Options.MeasureScale <> 1);
+end;
+
+{ ===========================================================================
+  TfrmMain.DoMeasureSetScale  (procedure)
+  Parameters:
+    Sender: TObject - the component that raised the event
+  Notes:
+    Set Scale: starts the Measure A-B tool; when the ruler has been drawn (the ruler is not kept) the Set Scale dialog asks how long it really is.
+  =========================================================================== }
+procedure TfrmMain.DoMeasureSetScale(Sender: TObject);
+begin
+  if FView.Sheet = nil then
+  begin
+    ShowMessage(rsCreateOrOpenADocument);
+    Exit;
+  end;
+  FView.BeginMeasureCalibration;
+  UpdateRibbonState;
+end;
+
+{ ===========================================================================
+  TfrmMain.DoMeasureResetScale  (procedure)
+  Parameters:
+    Sender: TObject - the component that raised the event
+  Notes:
+    Reset Scale: the Measure A-B tool of this sheet measures with scale 1 again.
+  =========================================================================== }
+procedure TfrmMain.DoMeasureResetScale(Sender: TObject);
+begin
+  if (FView.Sheet = nil) or (FView.Sheet.Options.MeasureScale = 1) then
+    Exit;
+  FView.SetMeasureScale(1);
+end;
+
+{ ===========================================================================
+  TfrmMain.ViewMeasureCalibrated  (procedure)
+  Parameters:
+    Sender: TObject - the view
+    MmLength: Double - the length of the ruler that was drawn, in millimetres
+  Notes:
+    The ruler of Set Scale is drawn: the Set Scale dialog is shown with the scale now and the length that scale gives; OK keeps its Scale x as the scale of this sheet's
+    Measure A-B tool (rulers drawn from now on use it). For tests MeasureTestActualMm >= 0 stands for the dialog: that actual distance (mm) is what was entered.
+  =========================================================================== }
+procedure TfrmMain.ViewMeasureCalibrated(Sender: TObject; MmLength: Double);
+var
+  Dlg: TfrmMeasureScale;
+  NewScale: Double;
+begin
+  if (FView.Sheet = nil) or (MmLength <= 0) then
+    Exit;
+  NewScale := 0;
+  if MeasureTestActualMm > 0 then
+  begin
+    NewScale := MeasureTestActualMm / MmLength;
+    MeasureTestActualMm := 0;
+  end
+  else
+  begin
+    Dlg := TfrmMeasureScale.Create(Self);
+    try
+      Dlg.Setup(MmLength, FView.Sheet.Options.MeasureScale);
+      if (Dlg.ShowModal = mrOk) and (Dlg.Scale > 0) then
+        NewScale := Dlg.Scale;
+    finally
+      Dlg.Free;
+    end;
+  end;
+  if NewScale > 0 then
+  begin
+    FView.SetMeasureScale(NewScale);
+  end;
+  UpdateRibbonState;
+end;
+
+{ ===========================================================================
+  TfrmMain.DoShowTextAlignment  (procedure)
+  Parameters:
+    Sender: TObject - the component that raised the event
+  Notes:
+    View > Show Text Alignment: turns the alignment lines between text objects (shown while one is moved) on or off; kept in the settings.
+  =========================================================================== }
+procedure TfrmMain.DoShowTextAlignment(Sender: TObject);
+begin
+  ViewShowTextAlignment := not ViewShowTextAlignment;
+  miShowTextAlignment.Checked := ViewShowTextAlignment;
+  ProgramSettings.ShowTextAlignment := ViewShowTextAlignment;
+  SaveSettings;
+  FView.Invalidate;
+end;
+
+{ ===========================================================================
+  TfrmMain.DoShowPositionBars  (procedure)
+  Parameters:
+    Sender: TObject - the component that raised the event
+  Notes:
+    View > Show Position Bars: turns the bars through the origin of a moving object on or off; kept in the settings.
+  =========================================================================== }
+procedure TfrmMain.DoShowPositionBars(Sender: TObject);
+begin
+  ViewShowPositionBars := not ViewShowPositionBars;
+  miShowObjectAlignment.Checked := ViewShowPositionBars;
+  ProgramSettings.ShowPositionBars := ViewShowPositionBars;
+  SaveSettings;
+  FView.Invalidate;
+end;
+
+{ ===========================================================================
+  TfrmMain.DoShowMouseBars  (procedure)
+  Parameters:
+    Sender: TObject - the component that raised the event
+  Notes:
+    View > Show Mouse Position Bars: turns the bars through the pointer on or off; kept in the settings.
+  =========================================================================== }
+procedure TfrmMain.DoShowMouseBars(Sender: TObject);
+begin
+  ViewShowMouseBars := not ViewShowMouseBars;
+  miShowMouseBars.Checked := ViewShowMouseBars;
+  ProgramSettings.ShowMouseBars := ViewShowMouseBars;
+  SaveSettings;
+  FView.Invalidate;
 end;
 
 { ===========================================================================
@@ -6039,6 +6477,7 @@ begin
     sbPosSnap.Down := FView.SnapEnabled;
     sbViewGridSnapTo.Down := FView.SnapEnabled;
     miGridSnap.Checked := FView.SnapEnabled;
+    miPasteToGrid.Enabled := FView.SnapEnabled;
     SyncGridSizeMenus;
     mShowGrid.Checked := FView.ShowGrid;
     sbViewGridShow.Down := FView.ShowGrid;
@@ -6216,6 +6655,10 @@ begin
     EditDefaults.SymbolFontPoints := SymbolFontPoints;
     EditDefaults.SymbolFontBold := SymbolFontBold;
     EditDefaults.SymbolFontItalic := SymbolFontItalic;
+    EditDefaults.TextFontName := TextFontName;
+    EditDefaults.TextFontPoints := TextFontPoints;
+    EditDefaults.TextFontBold := TextFontBold;
+    EditDefaults.TextFontItalic := TextFontItalic;
   end;
 end;
 
@@ -7064,12 +7507,20 @@ procedure TfrmMain.RebuildSheetTabs;
 var
   i: Integer;
 begin
-  tcSheetTabs.Tabs.Clear;
+  tcSheetTabs.Tabs.BeginUpdate;      // one relayout, and the strip keeps where it is scrolled to
+  try
+    tcSheetTabs.Tabs.Clear;
+    if FDesign <> nil then
+    begin
+      for i := 0 to FDesign.SheetCount - 1 do tcSheetTabs.Tabs.Add(SheetTabCaption(i));
+      if not IsSymbolDoc then
+        tcSheetTabs.Tabs.Add(ADD_SHEET_TAB);          // the last tab adds a sheet (a symbol has the sheets of its parts only)
+    end;
+  finally
+    tcSheetTabs.Tabs.EndUpdate;
+  end;
   if FDesign <> nil then
   begin
-    for i := 0 to FDesign.SheetCount - 1 do tcSheetTabs.Tabs.Add(SheetTabCaption(i));
-    if not IsSymbolDoc then
-      tcSheetTabs.Tabs.Add(ADD_SHEET_TAB);          // the last tab adds a sheet (a symbol has the sheets of its parts only)
     tcSheetTabs.TabIndex := Min(FView.SheetIndex, FDesign.SheetCount - 1);
   end;
   tcSheetTabs.Visible := (FDesign <> nil) and ((not IsSymbolDoc) or (FDesign.SheetCount > 1));
@@ -7650,6 +8101,73 @@ begin
 end;
 
 { ===========================================================================
+  WriteTableFile  (function)
+  Parameters:
+    const AFileName: String - the file to write; the extension chooses the format (.csv, .xlsx, .ods; anything else is written as CSV)
+    T: TExportTable - what to write
+  Returns:
+    Boolean - True when the file was written
+  =========================================================================== }
+function WriteTableFile(const AFileName: String; T: TExportTable): Boolean;
+var
+  W: TExportWriter;
+begin
+  Result := False;
+  W := ExportWriterFor(AFileName, T);
+  if W = nil then
+    W := TCSVExport.Create(T);
+  try
+    try
+      W.SaveToFile(AFileName);
+      Result := True;
+    except
+      on E: Exception do Result := False;
+    end;
+  finally
+    W.Free;
+  end;
+end;
+
+{ ===========================================================================
+  AskTableFile  (function)
+  Parameters:
+    ADlg: TSaveDialog - the dialog
+    const ATitle, ADefName: String - its title and the file name to start with (.csv)
+  Returns:
+    String - the file chosen ('' when cancelled); a format chosen in the file type list that the name does not agree with gives the name that format's extension
+  =========================================================================== }
+function AskTableFile(ADlg: TSaveDialog; const ATitle, ADefName: String): String;
+const
+  Exts: array[0..2] of String = ('.csv', '.xlsx', '.ods');
+var
+  OldFilter, OldTitle, OldExt, OldName: String;
+  OldOptions: TOpenOptions;
+  Idx: Integer;
+begin
+  Result := '';
+  OldFilter := ADlg.Filter; OldTitle := ADlg.Title; OldExt := ADlg.DefaultExt;
+  OldName := ADlg.FileName; OldOptions := ADlg.Options;
+  try
+    ADlg.Title := ATitle;
+    ADlg.Filter := ExportFilter('.csv;.xlsx;.ods');
+    ADlg.DefaultExt := 'csv';
+    ADlg.FileName := ADefName;
+    ADlg.Options := ADlg.Options + [ofHideReadOnly] - [ofOverwritePrompt];
+    if ADlg.Execute then
+    begin
+      Result := ADlg.FileName;
+      Idx := ADlg.FilterIndex - 1;
+      { a different type chosen in the list while the name still has the extension it was offered with: the name follows the list }
+      if (Idx >= 1) and (Idx <= High(Exts)) and SameText(ExtractFileExt(Result), ExtractFileExt(ADefName)) then
+        Result := ChangeFileExt(Result, Exts[Idx]);
+    end;
+  finally
+    ADlg.Filter := OldFilter; ADlg.Title := OldTitle; ADlg.DefaultExt := OldExt;
+    ADlg.FileName := OldName; ADlg.Options := OldOptions;
+  end;
+end;
+
+{ ===========================================================================
   TfrmMain.WriteSymbolBom  (function)
   Parameters:
     const AFileName: String - the file to write
@@ -7662,26 +8180,19 @@ end;
 function TfrmMain.WriteSymbolBom(const AFileName: String): Boolean;
 var
   S: TSymbolSurvey;
-  FS: TFileStream;
-  Csv: String;
+  T: TExportTable;
   Warn: String;
 begin
   Result := False;
   if FDesign = nil then
     Exit;
   S := TSymbolSurvey.Create;
+  T := TExportTable.Create;
   try
     S.Collect(FDesign);
-    Csv := S.WriteCsv;
-    try
-      FS := TFileStream.Create(AFileName, fmCreate);
-      try
-        if Csv <> '' then
-          FS.WriteBuffer(Csv[1], Length(Csv));
-      finally
-        FS.Free;
-      end;
-    except
+    S.FillTable(T);
+    if not WriteTableFile(AFileName, T) then
+    begin
       ReportProblem(rsCannotWriteTheBoMFile);
       Exit;
     end;
@@ -7694,6 +8205,7 @@ begin
     if Warn <> '' then
       ReportProblem(Format(rsTheQuantitiesInTheBoM, [Warn]));
   finally
+    T.Free;
     S.Free;
   end;
 end;
@@ -7703,7 +8215,7 @@ end;
   Parameters:
     Sender: TObject - the menu item
   Notes:
-    Special > Export Symbol BoM (CSV)...: asks for a file (the design's name with .csv to start with) and writes the table of the symbols used.
+    Special > Export Symbol BoM (CSV)...: asks for a file (the design's name with .csv to start with; the file type list also offers Excel .xlsx and OpenDocument .ods) and writes the table of the symbols used.
   =========================================================================== }
 procedure TfrmMain.DoSymbolBom(Sender: TObject);
 var
@@ -7717,7 +8229,7 @@ begin
     Def := 'bom'
   else
     Def := Def + '_bom';
-  Target := AskFileToWrite(SaveDlg, rsExportSymbolBoM, rsCSVFileCsvCsvAll, 'csv', Def + '.csv');
+  Target := AskTableFile(SaveDlg, rsExportSymbolBoM, Def + '.csv');
   if Target <> '' then
     WriteSymbolBom(Target);
 end;
@@ -7764,17 +8276,21 @@ end;
 function TfrmMain.WriteSymbolData(const AFileName: String): Boolean;
 var
   R: TSymbolDataReport;
+  T: TExportTable;
 begin
   Result := False;
   if FDesign = nil then
     Exit;
   R := TSymbolDataReport.Create;
+  T := TExportTable.Create;
   try
     R.Collect(FDesign);
-    Result := SaveTextFile(AFileName, R.WriteCsv);
+    R.FillTable(T);
+    Result := WriteTableFile(AFileName, T);
     if not Result then
       ReportProblem(rsCannotWriteTheSymbolDataFile);
   finally
+    T.Free;
     R.Free;
   end;
 end;
@@ -7798,7 +8314,7 @@ begin
     Def := 'symbols'
   else
     Def := Def + '_symbols';
-  Target := AskFileToWrite(SaveDlg, rsExportSymbolData, rsCSVFileCsvCsvAll, 'csv', Def + '.csv');
+  Target := AskTableFile(SaveDlg, rsExportSymbolData, Def + '.csv');
   if Target <> '' then
     WriteSymbolData(Target);
 end;
@@ -7814,12 +8330,20 @@ end;
     Writes the text on the wires of the current design (UWireExport.WireTextCsv), UTF-8. A file that cannot be written gives a message and False.
   =========================================================================== }
 function TfrmMain.WriteWires(const AFileName: String; out Count: Integer): Boolean;
+var
+  T: TExportTable;
 begin
   Count := 0;
   Result := False;
   if FDesign = nil then
     Exit;
-  Result := SaveTextFile(AFileName, WireTextCsv(FDesign, Count));
+  T := TExportTable.Create;
+  try
+    WireTextTable(FDesign, T, Count);
+    Result := WriteTableFile(AFileName, T);
+  finally
+    T.Free;
+  end;
   if not Result then
     ReportProblem(rsCannotWriteTheWiresFile);
 end;
@@ -7844,7 +8368,7 @@ begin
     Def := 'wires'
   else
     Def := Def + '_wires';
-  Target := AskFileToWrite(SaveDlg, rsExportWires, rsCSVFileCsvCsvAll, 'csv', Def + '.csv');
+  Target := AskTableFile(SaveDlg, rsExportWires, Def + '.csv');
   if Target <> '' then
     WriteWires(Target, N);
 end;
@@ -8459,7 +8983,7 @@ begin
     else
       PName := '';
     Result.SetPrint(Sink.Device, Sheet.Details.PageWidth, Sheet.Details.PageHeight, FDesign.SheetCount, PName, PName <> '', ProgramSettings.PrintScale,
-      ProgramSettings.PrintBandW, ProgramSettings.PrintNoSymText, ProgramSettings.PrintNoSymFields);
+      ProgramSettings.PrintBandW, ProgramSettings.PrintNoSymText, ProgramSettings.PrintNoSymFields, ProgramSettings.PrintCenter);
     Result.SetRange(0, 0, 1, False);
     Names := PrinterNames(PIdx);
     try
@@ -8666,7 +9190,7 @@ procedure TfrmMain.PrintDialogPaintPage(Sender: TObject; const L: TPrintLayout; 
 begin
   if (FDesign = nil) or (FView.Sheet = nil) then
     Exit;
-  RenderPrintPage(FDesign, FView.SheetIndex, L, Dev, PageNo, ACanvas, PxW, PxH, Black, Factor, ProgramSettings.PrintNoSymText, ProgramSettings.PrintNoSymFields);
+  RenderPrintPage(FDesign, FView.SheetIndex, L, Dev, PageNo, ACanvas, PxW, PxH, Black, Factor, ProgramSettings.PrintNoSymText, ProgramSettings.PrintNoSymFields, ProgramSettings.PrintCenter);
 end;
 
 { ===========================================================================
@@ -8856,7 +9380,7 @@ var
   function Describe: String;
   begin
     O := F.GetOptions;
-    Result := Format('printer=%s scale=%s bw=%d nosymtext=%d nosymfields=%d sheets=%s fit=%d edit=%d range=[%s] pages=[%s] ok=%d', [F.PrinterName, F.edScale.Text, Ord(F.cbBW.Checked), Ord(F.cbNoSymText.Checked), Ord(F.cbNoSymFields.Checked),
+    Result := Format('printer=%s scale=%s bw=%d nosymtext=%d nosymfields=%d center=%d sheets=%s fit=%d edit=%d range=[%s] pages=[%s] ok=%d', [F.PrinterName, F.edScale.Text, Ord(F.cbBW.Checked), Ord(F.cbNoSymText.Checked), Ord(F.cbNoSymFields.Checked), Ord(F.cbCenter.Checked),
       IfThen(O.AllSheets, 'all', 'current'), Ord(F.cbFit.Checked), Ord(F.edScale.Enabled), F.RangeText, F.PagesText, Ord(F.btnOK.Enabled)]);
     Result := Result + Format(' list=[%s] box=[%s] printers=[%s] sel=%d listenabled=%d setupenabled=%d picked=%d shown=%d pageof=[%s] slider=%d..%d@%d slideron=%d back=%d fwd=%d ' +
       'status=[%s]', [PageListOf(O.Pages), F.edPageRange.Text, StringReplace(F.cbPrinterList.Items.Text, LineEnding, '|', [rfReplaceAll]), F.cbPrinterList.ItemIndex,
@@ -8893,6 +9417,8 @@ begin
         F.cbNoSymText.Checked := Val = '1'
       else if Key = 'nosymfields' then
         F.cbNoSymFields.Checked := Val = '1'
+      else if Key = 'center' then
+        F.cbCenter.Checked := Val = '1'
       else if Key = 'sheets' then begin
         F.rbAll.Checked := Val = 'all';
         F.rbCurrent.Checked := Val <> 'all';
@@ -9015,6 +9541,7 @@ begin
   O.BlackWhite := ProgramSettings.PrintBandW;
   O.NoSymbolText := ProgramSettings.PrintNoSymText;
   O.NoSymbolFields := ProgramSettings.PrintNoSymFields;
+  O.Center := ProgramSettings.PrintCenter;
   O.AllSheets := True;
   Result := TfrmPreview.Create(Self);
   Result.SetPreview(FDesign, FView.SheetIndex, MakePrintSink(SheetIsPortrait(FDesign.Sheets[FView.SheetIndex])), O);
@@ -10959,10 +11486,12 @@ begin
   Ed := PartsEditorOfCurrent;
   OnParts := (Ed <> nil) and (Ed.PageName = 'parts');
   OnClasses := (Ed <> nil) and (Ed.PageName = 'classes');
+  mPartsParts.Enabled := OnParts;
   mPartsAdd.Enabled := OnParts;
   mPartsProps.Enabled := OnParts and Ed.CanChangeSelected;
   mPartsDup.Enabled := mPartsProps.Enabled;
   mPartsDel.Enabled := mPartsProps.Enabled;
+  mPartsClasses.Enabled := OnClasses;
   mPartsClassAdd.Enabled := OnClasses;
   mPartsClassProps.Enabled := OnClasses and (Ed.SelectedClassID <> 0);
   mPartsClassDel.Enabled := mPartsClassProps.Enabled;
@@ -10970,6 +11499,7 @@ begin
   mPartsFieldProps.Enabled := OnClasses and Ed.SelectedFieldIsOwn;
   mPartsFieldDel.Enabled := mPartsFieldProps.Enabled;
   OnObjects := (Ed <> nil) and (Ed.PageName = 'objects');
+  mPartsObjects.Enabled := OnObjects;
   mPartsObjAdd.Enabled := OnObjects and (Ed.CurrentObjPartID <> 0);
   mPartsObjProps.Enabled := OnObjects and (Ed.SelectedObjectID <> 0);
   mPartsObjDel.Enabled := mPartsObjProps.Enabled;
@@ -10988,6 +11518,7 @@ begin
   mPartsProdImport.Enabled := OnProducts;
   mPartsProdExport.Enabled := OnProducts;
   OnSymbols := (Ed <> nil) and (Ed.PageName = 'symbols');
+  mPartsSymbols.Enabled := OnSymbols;
   mPartsSymNew.Enabled := OnSymbols and Ed.btnSymNew.Enabled;
   mPartsSymEdit.Enabled := OnSymbols and Ed.btnSymEdit.Enabled;
   mPartsSymImport.Enabled := OnSymbols and Ed.btnSymImport.Enabled;
@@ -10995,6 +11526,7 @@ begin
   mPartsSymDefault.Enabled := OnSymbols and Ed.btnSymDefault.Enabled;
   mPartsSymDel.Enabled := OnSymbols and Ed.btnSymDelete.Enabled;
   OnRatings := (Ed <> nil) and (Ed.PageName = 'requirements');
+  mPartsRequirements.Enabled := OnRatings;
   mPartsRatAdd.Enabled := OnRatings and (Ed.CurrentRatPartID <> 0);
   mPartsRatProps.Enabled := OnRatings and (Ed.SelectedRatingID <> 0);
   mPartsRatDel.Enabled := mPartsRatProps.Enabled;
@@ -11745,8 +12277,8 @@ begin
   if FDelKeyInEdit and (ActiveControl <> nil) then
   begin
     FDelKeyInEdit := False;
-    if (ActiveControl is TEdit) and (TEdit(ActiveControl).Text = '') and (TEdit(ActiveControl).Tag >= 0) and (TEdit(ActiveControl).Tag <= High(FProps)) and
-       (FProps[TEdit(ActiveControl).Tag].Def.Name = 'text') then
+    if (ActiveControl is TCustomEdit) and (TCustomEdit(ActiveControl).Text = '') and (TCustomEdit(ActiveControl).Tag >= 0) and (TCustomEdit(ActiveControl).Tag <= High(FProps)) and
+       (FProps[TCustomEdit(ActiveControl).Tag].Def.Name = 'text') then
     begin
       { the empty text box of a selected text, label or power symbol: Del deletes the object }
       if (FView <> nil) and (FView.SelectedCount = 1) then
@@ -12080,6 +12612,26 @@ begin
   if EditShortcutInBox('V') then
     Exit;
   FView.PasteFromClipboard;
+end;
+
+{ ===========================================================================
+  TfrmMain.DoPasteToGrid  (procedure)
+  Parameters:
+    Sender: TObject - the menu item
+  Notes:
+    Handler (Ctrl+Shift+V, only while Snap to Grid is on): pastes like Paste, but the block's corner is moved onto a grid point at once and follows the grid from there, the
+    objects keeping their spacing from each other, so what was copied off the grid (or from another grid size) lands on this sheet's grid.
+  =========================================================================== }
+function TfrmMain.PasteToGridEnabled: Boolean;
+begin
+  Result := miPasteToGrid.Enabled;
+end;
+
+procedure TfrmMain.DoPasteToGrid(Sender: TObject);
+begin
+  if (FView = nil) or not FView.SnapEnabled then
+    Exit;
+  FView.PasteFromClipboard(True);
 end;
 
 { ===========================================================================
@@ -12964,6 +13516,12 @@ begin
   ApplyTheme(ProgramSettings.DarkMode);                       // the light or dark theme as it was left
   ShowPositionBar(ProgramSettings.ShowPosition, False);       // the Position bar as it was left
   ShowViewRulers(ProgramSettings.ShowViewRulers, False);      // the rulers as they were left
+  ViewShowTextAlignment := ProgramSettings.ShowTextAlignment;
+  ViewShowPositionBars := ProgramSettings.ShowPositionBars;
+  ViewShowMouseBars := ProgramSettings.ShowMouseBars;
+  miShowMouseBars.Checked := ViewShowMouseBars;
+  miShowTextAlignment.Checked := ViewShowTextAlignment;
+  miShowObjectAlignment.Checked := ViewShowPositionBars;
   SetupAutoSave;
   RebuildRecentMenu;
   OnShow := @FormShow;       // the window and its splitters are put as they were left once the window is shown (the form is scaled to the screen before that)
@@ -13274,6 +13832,7 @@ begin
   FView.SnapEnabled := not FView.SnapEnabled;
   sbViewGridSnapTo.Down := FView.SnapEnabled;
   miGridSnap.Checked := FView.SnapEnabled;
+  miPasteToGrid.Enabled := FView.SnapEnabled;
   UpdatePositionBar;
   if FView.SnapEnabled then
     sbMainBar.Panels[0].Text := rsSnapToGridOn
@@ -13468,10 +14027,14 @@ begin
     FErcForm.SetSelect((FView.SelectedObject(0) as TDrawError).ErrorNumber);
   RebuildProps;
   UpdatePartRibbon;
+  RefreshEditContext;
+  UpdateTableEditor;
   { one text object (text, wire label or note) selected: its text box takes the focus with the whole text selected }
   if (FView.SelectedCount = 1) and (FView.Tool = vtSelect) and
      ((FView.SelectedObject(0) is TDrawText) or (FView.SelectedObject(0) is TDrawLabel) or (FView.SelectedObject(0) is TDrawNoteText)) then
   begin
+    if not SameText(RibbonTabTitle, PROPS_TAB) then
+      FTabBeforeProps := RibbonTabTitle;      { (remembered before the tab changes, so that it is gone back to when the selection goes) }
     ShowRibbonTab(PROPS_TAB);
     FocusTextEditor;
   end;
@@ -13523,6 +14086,8 @@ begin
     Exit;
   FDocs[At].Modified := True;
   UpdateDocTabs;
+  if (FTableForm <> nil) and FTableForm.Visible and (At = FCurrent) then
+    FTableForm.RefreshCells;           // (a text a table cell follows may have changed)
   if At = FCurrent then
   begin
     UpdateFormTitle;
@@ -13605,18 +14170,18 @@ procedure TfrmMain.FocusPropEditor(const AName: String);
   function TryFocus(C: TControl): Boolean;
   begin
     Result := False;
-    if not ((C is TEdit) and C.Visible) then
+    if not ((C is TCustomEdit) and C.Visible) then
       Exit;
     Result := True;
-    if (C as TEdit).CanFocus then
+    if (C as TCustomEdit).CanFocus then
     begin
       try
-        (C as TEdit).SetFocus;
-        (C as TEdit).SelectAll;
+        (C as TCustomEdit).SetFocus;
+        (C as TCustomEdit).SelectAll;
         if AName = 'sym.ref' then
         begin
-          FRefAutoEdit := C as TEdit;
-          FRefAutoText := (C as TEdit).Text;
+          if C is TEdit then FRefAutoEdit := C as TEdit;
+          FRefAutoText := (C as TCustomEdit).Text;
         end;
       except
         // (still not focusable)
@@ -13636,6 +14201,32 @@ begin
 end;
 
 { ===========================================================================
+  TfrmMain.TextBoxHasLines  (function)
+  Parameters:
+    AControl: TControl - a text box of the Properties panel or the tool panel
+  Returns:
+    Boolean - True when the box may hold several lines
+  Notes:
+    Only a note's text has lines: True when every selected object is a note (a selection box) or the tool in use is the note tool (a tool box).
+  =========================================================================== }
+function TfrmMain.TextBoxHasLines(AControl: TControl): Boolean;
+var
+  I, K: Integer;
+begin
+  I := AControl.Tag;
+  if I >= TOOLPROP_BASE then
+    Result := (FView <> nil) and (FView.Tool = vtNote)
+  else
+  begin
+    Result := (FView <> nil) and (FView.SelectedCount > 0);
+    if Result then
+      for K := 0 to FView.SelectedCount - 1 do
+        if not (FView.SelectedObject(K) is TDrawNoteText) then
+          Result := False;
+  end;
+end;
+
+{ ===========================================================================
   TfrmMain.PropEditKeyDown  (procedure)
   Parameters:
     Sender: TObject - the component that raised the event
@@ -13644,18 +14235,33 @@ end;
   Notes:
     Key handling of the text box of a single selected text, label or power symbol. Del works on
     the text in the box (the usual editing of a box) as long as there is text in it; pressing
-    Del when the box is empty deletes the selected object instead.
+    Del when the box is empty deletes the selected object instead. In the memo of a text or label Enter applies the text and Tab moves on (only a note has lines).
   =========================================================================== }
 procedure TfrmMain.PropEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 var
   I: Integer;
 begin
+  { the text box of the text, label and note frame is a memo, but only a note has lines: for the others Enter applies the text (as it does in a single line box) and Tab moves on }
+  if (Sender is TMemo) and (Shift - [ssShift] = []) and ((Key = VK_RETURN) or (Key = VK_TAB)) and not TextBoxHasLines(Sender as TControl) then
+  begin
+    if Key = VK_RETURN then
+    begin
+      Key := 0;
+      (Sender as TMemo).EditingDone;
+    end
+    else
+    begin
+      Key := 0;
+      (Sender as TMemo).Parent.SelectNext(Sender as TMemo, Shift = [], True);
+    end;
+    Exit;
+  end;
   if (Key <> VK_DELETE) or (Shift <> []) then
     Exit;
   I := (Sender as TControl).Tag;
   if (I < 0) or (I > High(FProps)) or (FProps[I].Def.Name <> 'text') then
     Exit;
-  if (Sender as TEdit).Text <> '' then
+  if (Sender as TCustomEdit).Text <> '' then
     Exit;
   if (FView <> nil) and (FView.SelectedCount = 1) then
   begin
@@ -13676,8 +14282,17 @@ end;
 procedure TfrmMain.ViewPlaced(Sender: TObject; Obj: TDrawingObject);
 begin
   { shapes are one-shot: back to the select tool, with the new object selected and its properties showing }
-  if FView.Tool in [vtPolygon, vtRect, vtCircle, vtArc, vtNote, vtCloud, vtMeasure, vtLadder, vtRulerH, vtRulerV, vtXRefLine, vtXRefContacts] then
+  if FView.Tool in [vtPolygon, vtRect, vtCircle, vtArc, vtNote, vtCloud, vtArrow, vtMeasure, vtLadder, vtRulerH, vtRulerV, vtXRefLine, vtXRefContacts] then
+  begin
     FView.CancelTool;
+    { the new object was selected while its tool was still in use, so the Properties tab was not brought forward then: do it now the select tool is back
+      (the ribbon's Draw tab, where the tool was chosen, would otherwise stay) }
+    if (FView.SelectedCount > 0) and (FView.Tool = vtSelect) and not SameText(RibbonTabTitle, PROPS_TAB) then
+    begin
+      FTabBeforeProps := RibbonTabTitle;
+      ShowRibbonTab(PROPS_TAB);
+    end;
+  end;
   { a text placed with the Text tool: the tool's text box shows the next one }
   if ((Obj is TDrawText) and (FView.Tool = vtText)) or ((Obj is TDrawLabel) and (FView.Tool = vtLabel)) then
   begin
@@ -13816,9 +14431,8 @@ end;
   =========================================================================== }
 procedure TfrmMain.RefreshSheetTabs(Data: PtrInt);
 begin
-  FTabRefreshQueued := False;
-  if (FDesign <> nil) and (FView <> nil) then
-    RebuildSheetTabs;
+  FTabRefreshQueued := False;      { the strip draws the arrow on the current tab itself, so nothing is rebuilt (and the scroll position stays) }
+  tcSheetTabs.Invalidate;
 end;
 
 { ===========================================================================
@@ -14039,7 +14653,8 @@ begin
   pmSheetRungRef.Visible := Sym and (FView.SelectedSymbol.GetRef <> '');
   { Insert Next Free Contact (the same command as Special > Insert Next Free Contact of Selected Coil) for a symbol that is a generic part from a parts library }
   pmSheetInsertContact.Visible := Sym and (FView.SelectedSymbol.GetSymbolData is TDesignFileSymbol) and (not TDesignFileSymbol(FView.SelectedSymbol.GetSymbolData).PartInfo.IsEmpty);
-  pmSheetSymSep.Visible := Sym;
+  pmSheetResizeAll.Visible := FView.SelectedCount > 1;
+  pmSheetSymSep.Visible := Sym or pmSheetResizeAll.Visible;
   { the commands of every object are the items of pmSheet; here only what can be done now is set }
   Sel := FView.SelectedCount > 0;
   Any := (FView.Sheet <> nil) and (FView.Sheet.Drawing.Count > 0);
@@ -14269,6 +14884,73 @@ procedure TfrmMain.ContextRungTextClick(Sender: TObject);
 begin
   if FView.SelectedSymbol <> nil then
     FView.BeginSymbolRungText(FView.SelectedSymbol);
+end;
+
+{ ===========================================================================
+  TfrmMain.ContextResizeAllClick  (procedure)
+  Parameters:
+    Sender: TObject - the component that raised the event
+  Notes:
+    Resize All: the box round the chosen objects gets eight handles that resize them all together.
+  =========================================================================== }
+procedure TfrmMain.ContextResizeAllClick(Sender: TObject);
+begin
+  FView.BeginGroupResize;
+end;
+
+{ ===========================================================================
+  TfrmMain.RefreshEditContext  (procedure)
+  Parameters:  none
+  Notes:
+    The commands the right click menu has for the chosen objects (everything above Undo in pmSheet) are also put at the top of the
+    Edit menu, above Undo, with a separator under them. The items are made again each time the selection changes (mEditCtxSep, in
+    the designer, is the separator; it is hidden when there are none). Add handle, Delete handle and Add wire cut here act at the
+    place that was clicked, so they stay in the right click menu.
+  =========================================================================== }
+procedure TfrmMain.RefreshEditContext;
+var
+  i, n: Integer;
+  Src: TMenuItem;
+
+  function CopyOf(AOwner: TComponent; S: TMenuItem): TMenuItem;
+  var
+    k: Integer;
+  begin
+    Result := TMenuItem.Create(AOwner);
+    Result.Caption := S.Caption;
+    Result.Hint := S.Hint;
+    Result.Tag := S.Tag;
+    Result.Enabled := S.Enabled;
+    Result.Checked := S.Checked;
+    Result.ShortCut := S.ShortCut;
+    Result.OnClick := S.OnClick;
+    for k := 0 to S.Count - 1 do
+      if S[k].Visible then
+        Result.Add(CopyOf(AOwner, S[k]));
+  end;
+
+begin
+  if FDestroying or (FView = nil) or (mEditCtxSep = nil) then
+    Exit;
+  { the items of the last time are taken away }
+  FreeAndNil(FEditCtxOwner);
+  FEditCtxOwner := TComponent.Create(Self);
+  n := 0;
+  if (FView.Sheet <> nil) and (FView.SelectedCount > 0) and (FView.Tool = vtSelect) then
+  begin
+    BuildContextMenu(FView.SelectedObject(0).PointA);
+    for i := 0 to pmSheet.Items.Count - 1 do
+    begin
+      Src := pmSheet.Items[i];
+      if Src = pmSheetUndo then
+        Break;
+      if (not Src.Visible) or (Src.Caption = '-') or (Src = pmSheetAddHandle) or (Src = pmSheetDelHandle) or (Src = pmSheetWireCut) then
+        Continue;
+      mEdit.Insert(n, CopyOf(FEditCtxOwner, Src));
+      Inc(n);
+    end;
+  end;
+  mEditCtxSep.Visible := n > 0;
 end;
 
 { ===========================================================================
@@ -15132,58 +15814,68 @@ end;
 { ===========================================================================
   TfrmMain.BuildPartRibbon  (procedure)
   Notes:
-    Makes the Part page of the ribbon in code: the name of the part with the reference of its symbol (CB? until it is numbered), a picture of the symbol that shows the chosen
-    object and the object's name, the list of all the objects of the part with where each is drawn, and the Goto / Place button. Its tab shows only while a part is the one being worked
-    on (UpdatePartRibbon).
+    Puts the Part pane (the TfmPart frame) on the View ribbon after the selection's Properties panel, with a 2 pixel separator in front of it.
+    It shows the name of the part with the reference of its symbol (CB? until it is numbered), a picture of the symbol that shows the chosen object
+    and the object's name, the list of all the objects of the part with where each is drawn, and the Goto / Place button. Both are hidden until a
+    symbol of a part is selected (UpdatePartRibbon).
   =========================================================================== }
 procedure TfrmMain.BuildPartRibbon;
-var
-  Pn: TPanel;
 begin
   FPartPicture := TSymbolPreview.Create;
-  FPartPage := TTabSheet.Create(FRibbon);
-  FPartPage.PageControl := FRibbon;
-  FPartPage.Caption := rsPartRibbon;
-  Pn := TPanel.Create(FPartPage);
-  Pn.Parent := FPartPage;
-  Pn.Align := alLeft;
-  Pn.Width := 480;
-  Pn.BevelOuter := bvNone;
-  Pn.Caption := '';
-  FPartCaption := TLabel.Create(Pn);
-  FPartCaption.Parent := Pn;
-  FPartCaption.Align := alBottom;
-  FPartCaption.Alignment := taCenter;
-  FPartCaption.Caption := rsPartRibbon;
-  FPartTitle := TLabel.Create(Pn);
-  FPartTitle.Parent := Pn;
-  FPartTitle.SetBounds(8, 4, 460, 18);
-  FPartTitle.Font.Style := [fsBold];
-  FPartTitle.AutoSize := False;
-  FPartGlyph := TPaintBox.Create(Pn);
-  FPartGlyph.Parent := Pn;
-  FPartGlyph.SetBounds(8, 26, 56, 54);
+  FPartSep := TPanel.Create(Self);
+  FPartSep.Caption := '';
+  FPartSep.Width := 2;
+  FPartSep.Align := alLeft;
+  FPartSep.Visible := False;
+  FPartSep.Parent := FTabView;
+  FPartFrame := TfmPart.Create(Self);
+  FPartFrame.Align := alLeft;
+  FPartFrame.Visible := False;
+  FPartFrame.Parent := FTabView;
+  FPartFrame.AfterCreate;
+  FPartFrame.lbCaption.Caption := rsPartRibbon;
+  { the old names point at the frame's controls }
+  FPartTitle := FPartFrame.lbPartTitle;
+  FPartObjLabel := FPartFrame.lbPartObject;
+  FPartGlyph := FPartFrame.pbPartGlyph;
+  FPartObjects := FPartFrame.cbPartObjects;
+  FPartGo := FPartFrame.btnGoTo;
+  FPartTitle.Caption := '';
+  FPartObjLabel.Caption := '';
   FPartGlyph.OnPaint := @PartGlyphPaint;
   FPartGlyph.Hint := rsThePictureOfThe;
   FPartGlyph.ShowHint := True;
-  FPartObjLabel := TLabel.Create(Pn);
-  FPartObjLabel.Parent := Pn;
-  FPartObjLabel.SetBounds(74, 28, 390, 18);
-  FPartObjLabel.AutoSize := False;
-  FPartObjects := TComboBox.Create(Pn);
-  FPartObjects.Parent := Pn;
-  FPartObjects.SetBounds(74, 50, 310, 28);
   FPartObjects.Style := csDropDownList;
+  FPartObjects.Width := Scale96ToForm(310);
   FPartObjects.OnChange := @PartObjectChange;
   FPartObjects.Hint := rsEveryObjectOfThePart;
   FPartObjects.ShowHint := True;
-  FPartGo := TButton.Create(Pn);
-  FPartGo.Parent := Pn;
-  FPartGo.SetBounds(392, 49, 80, 30);
   FPartGo.Caption := rsGoto;
   FPartGo.OnClick := @PartGoClick;
   FPartGo.ShowHint := True;
-  FPartPage.TabVisible := False;
+  FPartFrame.DoShow;      { (puts the button after the list and sizes the frame to end after it) }
+end;
+
+{ ===========================================================================
+  TfrmMain.PlacePartPane  (procedure)
+  Notes:
+    alLeft panels line up by their Left: the Properties separator and panel go after everything else on the View ribbon, then the Part
+    separator and pane after them. Done with the aligning held off, so the four land in that order whichever of them were already shown.
+  =========================================================================== }
+procedure TfrmMain.PlacePartPane;
+begin
+  FTabView.DisableAlign;
+  try
+    pnlPropsSep.Left := 5000;
+    plPropsProperties.Left := 5002;
+    if FPartSep <> nil then
+    begin
+      FPartSep.Left := 5004;
+      FPartFrame.Left := 5006;
+    end;
+  finally
+    FTabView.EnableAlign;
+  end;
 end;
 
 { ===========================================================================
@@ -15265,7 +15957,7 @@ var
   Idx, i, Sel, q: Integer;
   Known: Boolean;
 begin
-  if FDestroying or (FPartPage = nil) or FPartUpdating then
+  if FDestroying or (FPartFrame = nil) or FPartUpdating then
     Exit;
   FPartUpdating := True;
   try
@@ -15298,14 +15990,14 @@ begin
       Idx := PL.FindPart(FPartCtx.UID)
     else
       Idx := -1;
-    FPartPage.TabVisible := FPartCtx.Valid;
-    pbRibbonDisplay.Invalidate;
+    if FPartCtx.Valid then
+      PlacePartPane;
+    FPartSep.Visible := FPartCtx.Valid;
+    FPartFrame.Visible := FPartCtx.Valid;
     if not FPartCtx.Valid then
     begin
       SetLength(FPartItems, 0);
       FPartObjects.Items.Clear;
-      if SameText(RibbonTabTitle, rsPartRibbon) then
-        ShowRibbonTab(IfThen(FTabBeforeProps <> '', FTabBeforeProps, 'Home'));
       Exit;
     end;
     FPartTitle.Caption := FPartCtx.Name + '   ' + FPartCtx.Ref;
@@ -15324,6 +16016,7 @@ begin
       FPartObjects.ItemIndex := Sel;
     end;
     FPartObjects.Enabled := Idx >= 0;
+    FPartFrame.DoShow;      { (the list is filled: the frame sizes itself to it) }
     ShowChosenPartObject;
   finally
     FPartUpdating := False;
@@ -15476,7 +16169,7 @@ begin
   L := '';
   for i := 0 to FPartObjects.Items.Count - 1 do
     L := L + IfThen(i > 0, '|', '') + FPartObjects.Items[i];
-  Result := 'visible=' + IntToStr(Ord(FPartPage.TabVisible)) + ' title=[' + FPartTitle.Caption + '] object=[' + FPartObjLabel.Caption + '] button=[' + FPartGo.Caption +
+  Result := 'visible=' + IntToStr(Ord(FPartFrame.Visible)) + ' title=[' + FPartTitle.Caption + '] object=[' + FPartObjLabel.Caption + '] button=[' + FPartGo.Caption +
     '] enabled=' + IntToStr(Ord(FPartGo.Enabled)) + ' index=' + IntToStr(FPartObjects.ItemIndex) + ' glyph=' + IntToStr(Ord(FPartPicture.HasSymbol)) + ' items=[' + L + ']';
 end;
 
@@ -15892,15 +16585,28 @@ end;
     Event handler: asks about the unsaved changes of every document before the program closes;
     the close is cancelled if the user cancels for any of them.
   =========================================================================== }
+function TfrmMain.CloseQueryForScript: Boolean;
+begin
+  { what FormCloseQuery does before it asks about the designs (the question itself is left out: it would wait for an answer) }
+  FClosingProgram := True;
+  if FTableForm <> nil then
+    FTableForm.Hide;
+  Result := True;
+end;
+
 procedure TfrmMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 var
   i: Integer;
 begin
   CanClose := True;
+  FClosingProgram := True;
+  if FTableForm <> nil then
+    FTableForm.Hide;
   for i := FDocs.Count - 1 downto 0 do
     if not ConfirmCloseDocument(i) then
     begin
       CanClose := False;
+      FClosingProgram := False;
       Exit;
     end;
   SaveSession;                // (the program is going: remember which designs were open)

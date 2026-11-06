@@ -1,0 +1,20 @@
+inherited fmPropTable: TfmPropTable
+  Width = 207
+  ClientWidth = 207
+  DesignLeft = 529
+  DesignTop = 338
+  inherited lbCaption: TLabel
+    Width = 207
+    Caption = 'Table'
+  end
+  inherited lbSep1: TPanel
+    Left = 0
+    Visible = False
+  end
+  inherited plText: TPanel
+    Visible = False
+  end
+  inherited plFont: TPanel
+    Left = 0
+  end
+end

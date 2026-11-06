@@ -1,0 +1,93 @@
+inherited frmMeasureScale: TfrmMeasureScale
+  Left = 700
+  Height = 240
+  Top = 300
+  Width = 420
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'Set Scale'
+  ClientHeight = 240
+  ClientWidth = 420
+  Position = poOwnerFormCenter
+  inherited pnlButtons: TPanel
+    Top = 182
+    Width = 420
+    ClientWidth = 416
+    inherited btnOK: TButton
+      Left = 160
+    end
+    inherited btnCancel: TButton
+      Left = 290
+    end
+    inherited btnApply: TButton
+      Visible = False
+    end
+  end
+  object lblDrawn: TLabel[1]
+    Left = 12
+    Height = 15
+    Top = 14
+    Width = 396
+    AutoSize = False
+    Caption = 'The ruler drawn is'
+    WordWrap = True
+  end
+  object lblScale: TLabel[2]
+    Left = 12
+    Height = 15
+    Top = 54
+    Width = 130
+    Caption = '&Scale x:'
+    FocusControl = edScale
+  end
+  object edScale: TEdit[3]
+    Left = 150
+    Height = 23
+    Hint = 'The shown distance is the drawn distance times this number'
+    Top = 50
+    Width = 120
+    TabOrder = 0
+    OnChange = ScaleChange
+  end
+  object lblActual: TLabel[4]
+    Left = 12
+    Height = 15
+    Top = 94
+    Width = 130
+    Caption = '&Actual distance:'
+    FocusControl = edActual
+  end
+  object edActual: TEdit[5]
+    Left = 150
+    Height = 23
+    Hint = 'How long the ruler really is; the scale follows what is typed here'
+    Top = 90
+    Width = 120
+    TabOrder = 1
+    OnChange = ActualChange
+  end
+  object cbUnits: TComboBox[6]
+    Left = 280
+    Height = 23
+    Hint = 'The unit of the actual distance'
+    Top = 90
+    Width = 80
+    ItemHeight = 15
+    Items.Strings = (
+      'mm'
+      'in'
+    )
+    Style = csDropDownList
+    TabOrder = 2
+    OnChange = ActualChange
+  end
+  object lblHint: TLabel[7]
+    Left = 12
+    Height = 30
+    Top = 130
+    Width = 396
+    AutoSize = False
+    Caption = 'The distance a Measure A-B ruler shows is its drawn length times the scale.'
+    WordWrap = True
+  end
+end

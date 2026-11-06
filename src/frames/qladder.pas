@@ -18,6 +18,7 @@ type
     cbLineColor: TColorButton;
     cbFontSize: TComboBox;
     cbFontColor: TColorButton;
+    cbBottomBusText: TCheckBox;
     edLeft: TEdit;
     edRight: TEdit;
     lbLeft: TLabel;

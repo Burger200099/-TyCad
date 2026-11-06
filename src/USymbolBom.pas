@@ -19,7 +19,7 @@ unit USymbolBom;
 interface
 
 uses
-  Classes, SysUtils, Types, UDrawTypes, UDrawingObjects, USymbols, UDesign;
+  Classes, SysUtils, Types, UDrawTypes, UDrawingObjects, USymbols, UDesign, UTableExport, UCSVExport, UStrings;
 
 type
   TSymbolRow = record
@@ -52,6 +52,8 @@ type
     function UnnumberedCount: Integer;
     { the table as CSV (comma separated, quoted where needed, header line first), lines ended with EOL }
     function WriteCsv(const EOL: String = LineEnding): String;
+    { the same table as a sheet of T (whole numbers for Item and Quantity) }
+    procedure FillTable(T: TExportTable);
     property Count: Integer read GetCount;
     property Rows[Index: Integer]: TSymbolRow read GetRow;
     property AttrCount: Integer read GetAttrCount;
@@ -88,6 +90,8 @@ type
     function Value(Row, Head: Integer): String;
     { the table as CSV (header line first), lines ended with EOL }
     function WriteCsv(const EOL: String = LineEnding): String;
+    { the same table as a sheet of T (whole numbers for Item and Quantity) }
+    procedure FillTable(T: TExportTable);
     property Count: Integer read GetCount;
     property Rows[Index: Integer]: TSymbolDataRow read GetRow;
     property HeadCount: Integer read GetHeadCount;
@@ -109,15 +113,6 @@ end;
 function CompareKinds(List: TStringList; Index1, Index2: Integer): Integer;
 begin
   Result := CompareStr(List[Index1], List[Index2]);
-end;
-
-{ CSV text: quoted when it holds a comma, a quote or a line end, with the quotes in it doubled (RFC 4180) }
-function CsvText(const S: String): String;
-begin
-  if (Pos(',', S) = 0) and (Pos('"', S) = 0) and (Pos(#10, S) = 0) and (Pos(#13, S) = 0) then
-    Result := S
-  else
-    Result := '"' + StringReplace(S, '"', '""', [rfReplaceAll]) + '"';
 end;
 
 { ===========================================================================
@@ -366,16 +361,52 @@ end;
   =========================================================================== }
 function TSymbolSurvey.WriteCsv(const EOL: String): String;
 var
+  T: TExportTable;
+  W: TCSVExport;
+begin
+  T := TExportTable.Create;
+  try
+    FillTable(T);
+    W := TCSVExport.Create(T);
+    try
+      W.EOL := EOL;
+      Result := W.SaveToString;
+    finally
+      W.Free;
+    end;
+  finally
+    T.Free;
+  end;
+end;
+
+{ ===========================================================================
+  TSymbolSurvey.FillTable  (procedure)
+  Parameters:
+    T: TExportTable - the table that gets the sheet 'Symbols'
+  Notes:
+    See WriteCsv for the rows. Item and Quantity are whole numbers, the rest text; the heading row is bold.
+  =========================================================================== }
+procedure TSymbolSurvey.FillTable(T: TExportTable);
+var
   Kinds: TStringList;
   i, j, k, Item, Qty: Integer;
   Refs: TStringList;
   First: Integer;
   Line: String;
+  Sh: TExportSheet;
+  Cells: TExportCellArray;
+  HeadRow: array of String;
 begin
-  Result := 'Item,Quantity,References,Value,Symbol,Description';
+  Sh := T.AddSheet(rsSymbolsSheet);
+  SetLength(HeadRow, 6 + FAttrNames.Count);
+  HeadRow[0] := 'Item'; HeadRow[1] := 'Quantity'; HeadRow[2] := 'References'; HeadRow[3] := 'Value'; HeadRow[4] := 'Symbol'; HeadRow[5] := 'Description';
   for j := 0 to FAttrNames.Count - 1 do
-    Result := Result + ',' + CsvText(FAttrNames[j]);
-  Result := Result + EOL;
+    HeadRow[6 + j] := FAttrNames[j];
+  Sh.AddHeaderRow(HeadRow);
+  Sh.SetColWidth(2, 40);
+  Sh.SetColWidth(3, 20);
+  Sh.SetColWidth(4, 24);
+  Sh.SetColWidth(5, 40);
   Kinds := TStringList.Create;
   try
     Kinds.Sorted := False;
@@ -421,11 +452,12 @@ begin
             Line := Line + ', ';
           Line := Line + Refs[i];
         end;
-        Result := Result + IntToStr(Item) + ',' + IntToStr(Qty) + ',' + CsvText(Line) + ',' + CsvText(FRows[First].Name) + ',' + CsvText(FRows[First].SymName) + ',' +
-          CsvText(FRows[First].Description);
+        SetLength(Cells, 6 + FAttrNames.Count);
+        Cells[0] := IntCell(Item); Cells[1] := IntCell(Qty); Cells[2] := TextCell(Line); Cells[3] := TextCell(FRows[First].Name);
+        Cells[4] := TextCell(FRows[First].SymName); Cells[5] := TextCell(FRows[First].Description);
         for j := 0 to FAttrNames.Count - 1 do
-          Result := Result + ',' + CsvText(FRows[First].Attrs[j]);
-        Result := Result + EOL;
+          Cells[6 + j] := TextCell(FRows[First].Attrs[j]);
+        Sh.AddCells(Cells);
       finally
         Refs.Free;
       end;
@@ -616,18 +648,56 @@ end;
   =========================================================================== }
 function TSymbolDataReport.WriteCsv(const EOL: String): String;
 var
-  i, j: Integer;
+  T: TExportTable;
+  W: TCSVExport;
 begin
-  Result := 'Reference';
+  T := TExportTable.Create;
+  try
+    FillTable(T);
+    W := TCSVExport.Create(T);
+    try
+      W.EOL := EOL;
+      Result := W.SaveToString;
+    finally
+      W.Free;
+    end;
+  finally
+    T.Free;
+  end;
+end;
+
+{ ===========================================================================
+  TSymbolDataReport.FillTable  (procedure)
+  Parameters:
+    T: TExportTable - the table that gets the sheet 'Symbol data'
+  Notes:
+    The rows of WriteCsv; the sheet number is a whole number, the rest text; the heading row is bold.
+  =========================================================================== }
+procedure TSymbolDataReport.FillTable(T: TExportTable);
+var
+  i, j: Integer;
+  Sh: TExportSheet;
+  Cells: TExportCellArray;
+  HeadRow: array of String;
+begin
+  Sh := T.AddSheet(rsSymbolDataSheet);
+  SetLength(HeadRow, FHeads.Count + 5);
+  HeadRow[0] := 'Reference';
   for j := 0 to FHeads.Count - 1 do
-    Result := Result + ',' + CsvText(FHeads[j]);
-  Result := Result + ',Sheet,Sheet name,Kind,Symbol' + EOL;
+    HeadRow[1 + j] := FHeads[j];
+  HeadRow[FHeads.Count + 1] := 'Sheet'; HeadRow[FHeads.Count + 2] := 'Sheet name'; HeadRow[FHeads.Count + 3] := 'Kind'; HeadRow[FHeads.Count + 4] := 'Symbol';
+  Sh.AddHeaderRow(HeadRow);
   for i := 0 to High(FRows) do
   begin
-    Result := Result + CsvText(FRows[i].Ref);
+    SetLength(Cells, FHeads.Count + 5);
+    Cells[0] := TextCell(FRows[i].Ref);
     for j := 0 to FHeads.Count - 1 do
-      Result := Result + ',' + CsvText(Value(i, j));
-    Result := Result + ',' + IntToStr(FRows[i].Sheet) + ',' + CsvText(FRows[i].SheetName) + ',' + CsvText(FRows[i].Kind) + ',' + CsvText(FRows[i].SymName) + EOL;
+      Cells[1 + j] := TextCell(Value(i, j));
+    Cells[FHeads.Count + 1] := IntCell(FRows[i].Sheet);
+    Cells[FHeads.Count + 2] := TextCell(FRows[i].SheetName);
+    Cells[FHeads.Count + 3] := TextCell(FRows[i].Kind);
+    Cells[FHeads.Count + 4] := TextCell(FRows[i].SymName);
+    Sh.AddCells(Cells);
   end;
 end;
 

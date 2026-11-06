@@ -28,13 +28,14 @@ inherited fmPropText: TfmPropText
     ClientHeight = 99
     ClientWidth = 270
     TabOrder = 1
-    object edText: TEdit
+    object edText: TMemo
       Left = 5
-      Height = 23
-      Top = 8
+      Height = 28
+      Top = 4
       Width = 259
+      ScrollBars = ssAutoVertical
       TabOrder = 0
-      Text = 'edText'
+      WantTabs = True
     end
     object lbDirection: TLabel
       Left = 5

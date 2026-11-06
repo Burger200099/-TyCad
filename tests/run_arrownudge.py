@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Arrow keys move the chosen objects: one grid step with snap to grid on, one screen pixel (1 / zoom design units, 5 per mm) with it off. The real program under Xvfb.
+"""Arrow keys move the chosen objects (Shift+arrow ignores the grid): one grid step with snap to grid on, one screen pixel (1 / zoom design units, 5 per mm) with it off. The real program under Xvfb.
 Oracles: the positions are read from the saved design file (XML) and the expected steps are plain arithmetic - the grid spacing set with gridmm (2.5 mm; the file is in mm) and 1 / (5 x the zoom factor the program reports) mm.
   - snap on: left, right, up, down move the group by exactly the grid spacing in that direction; several objects move together
   - snap off: the same keys move it by 1 / zoom
@@ -35,9 +35,9 @@ def pts(path):
 def zoom(o):
     for l in o:
         if l.startswith("ZOOMFACTOR"): return float(l.split()[1])
-def go(snap, keys, select=True):
+def go(snap, keys, select=True, mod=""):
     out = os.path.join(tmp, "o%d.dsn" % k[0])
-    cmds = ["open " + SRC, "gridmm 2.5", "snap " + snap, "zoomfactor"] + (["selectall"] if select else []) + ["arrowkey " + x for x in keys] + ["save " + out]
+    cmds = ["open " + SRC, "gridmm 2.5", "snap " + snap, "zoomfactor"] + (["selectall"] if select else []) + ["arrowkey " + x + mod for x in keys] + ["save " + out]
     o = run(cmds)
     return o, (pts(out) if os.path.exists(out) else None)
 base = pts(SRC) if False else [([100.0, 100.0], [300.0, 100.0]), ([100.0, 500.0], [300.0, 500.0])]
@@ -52,6 +52,10 @@ for key, dx, dy in (("left", -1, 0), ("right", 1, 0), ("up", 0, -1), ("down", 0,
     o, p = go("off", [key] * 3)
     z = zoom(o)
     check("snap off, %s x3: three screen pixels (zoom %s)" % (key, z), z and near(p, shifted(dx * 3 / (5 * z), dy * 3 / (5 * z))), (z, p))
+for key, dx, dy in (("left", -1, 0), ("right", 1, 0), ("up", 0, -1), ("down", 0, 1)):
+    o, p = go("on", [key] * 3, mod=" shift")
+    z = zoom(o)
+    check("snap ON, Shift+%s x3: three screen pixels, not grid steps (zoom %s)" % (key, z), z and near(p, shifted(dx * 3 / (5 * z), dy * 3 / (5 * z))), (z, p))
 o, p = go("on", ["right"], select=False)
 check("nothing chosen: nothing moves", near(p, shifted(0, 0)) if p else False, p)
 out = os.path.join(tmp, "u.dsn")

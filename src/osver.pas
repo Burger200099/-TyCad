@@ -6,7 +6,7 @@ unit osver;
 interface
 
 //uses FMX.StdCtrls, System.Classes;
-uses  Graphics, Types {$IFDEF WINDOWS}, Windows{$ENDIF};
+uses  Graphics, Types {$IFDEF WINDOWS}, Windows{$ENDIF}, FileInfo, StrUtils;
 
 //const
 
@@ -83,6 +83,7 @@ const
 function GetVer(lVerMajor, lVerMinor, lVerRev: integer): string;
 function GetVerEx(lVerMajor, lVerMinor, lVerRev: integer): string;
 function GetOsVer: string;
+function GetBuild: integer;
 
 {$IFDEF WINDOWS}
 const
@@ -213,6 +214,28 @@ begin
   Result := OSString;
 end;
 
+function GetBuild: integer;
+var
+  Info: TFileVersionInfo;
+  Version: string;
+begin
+  Info := TFileVersionInfo.Create(nil);
+  try
+    Info.FileName := ParamStr(0);
+    Info.ReadFileInfo;
+
+    Version := Info.VersionStrings.Values['FileVersion'];
+
+    // FileVersion format: Major.Minor.Revision.Build
+    try
+      Result := strtoint(ExtractWord(4, Version, ['.']));
+    except
+      Result := 0;
+    end;
+  finally
+    Info.Free;
+  end;
+end;
 {$IFDEF WINDOWS}
 
 const

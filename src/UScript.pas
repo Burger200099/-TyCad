@@ -33,8 +33,8 @@ unit UScript;
 interface
 
 uses
-  Classes, SysUtils, TypInfo, UStrings, QPropFrame, LMessages, Math, Menus, LCLProc, StdCtrls, ExtCtrls, Dialogs, Forms, Controls, LCLType, Graphics, StrUtils, UDPoint, UDrawTypes, UGeometry, UResources, UDrawingObjects, UDesign, UPaper, ULinks,
-  UView, UPainter, MainForm, UDialogs, Fnewdoc, Fdetails, Fpagesetup, Finput, Fbase, USettings, UProps, UUndo, UEdit, Foptions, Fpartslist, UPartsList, Fnetlist, UNetWriters, USpiceVhdl, Fercopts, UErc, UAnnotate, Fannotate, Fprint, Fpreview, Fexport, Flibraries, ULibManager, USymEdit, Fsymprops, Fsymparts, ULibrary, QLibPanel, UDocs, UTextMetrics, UViewRulers, UPrintRun, UOptions, URepeat, UOrient, FSharedCtls, QPropFrameList, QDemoWireProps, QDemoBadProps, consts, UDocTabs, UPartsDb, UPartData, Fproductpick, USymbols, CFontNameCombo, ComCtrls, crc, QPartsEditor, Fpartedit, Fclassedit, Ffieldedit, Fratingedit, Fobjectedit, Fswitching, Fpartwizard, UPartPresets, Fproductedit, Fvalueedit, Fsymbolinfo;
+  Classes, SysUtils, TypInfo, UStrings, QPropFrame, LMessages, Math, Menus, LCLProc, StdCtrls, ExtCtrls, Dialogs, Forms, Controls, LCLType, Graphics, StrUtils, UDPoint, UDrawTypes, UGeometry, UResources, UDrawingObjects, UTable, UTableLinks, UDesign, UPaper, ULinks,
+  UView, UPainter, MainForm, UDialogs, Fnewdoc, Fdetails, Fpagesetup, Finput, Fbase, USettings, UProps, UUndo, UEdit, Foptions, Fpartslist, UPartsList, Fnetlist, UNetWriters, USpiceVhdl, Fercopts, UErc, UAnnotate, Fannotate, Fprint, Fpreview, Fexport, Flibraries, ULibManager, USymEdit, Fsymprops, Fsymparts, ULibrary, QLibPanel, UDocs, UTextMetrics, UViewRulers, UPrintRun, UOptions, URepeat, UOrient, FSharedCtls, QPropFrameList, QDemoWireProps, QDemoBadProps, consts, UDocTabs, UPartsDb, UPartData, Fproductpick, USymbols, CFontNameCombo, ComCtrls, crc, QPartsEditor, Fpartedit, Fclassedit, Ffieldedit, Fratingedit, Fobjectedit, Fswitching, Fpartwizard, UPartPresets, Fproductedit, Fvalueedit, Fmeasurescale, Ftable, FtablePick, Fsymbolinfo, UTableExport, UCSVExport, UXLSXExport, UODSExport;
 
 procedure RunScript(Form: TfrmMain; const FileName: String);
 
@@ -702,6 +702,48 @@ begin
     end;
   finally
     Dlg.Free;
+  end;
+end;
+
+procedure TableExportDemo(const AFile: String);
+var
+  T: TExportTable;
+  Sh: TExportSheet;
+  W: TExportWriter;
+begin
+  T := TExportTable.Create;
+  try
+    Sh := T.AddSheet('Parts & <things>');
+    Sh.AddHeaderRow(['Name', 'Qty', 'Value', 'Note']);
+    Sh.SetColWidth(0, 20);
+    Sh.SetColWidth(3, 40);
+    Sh.AddRow(['plain', 3, 1.5, 'ok']);
+    Sh.AddRow(['a,b', 10, 0.1, 'say "hi"']);
+    Sh.AddRow(['two' + LineEnding + 'lines', -4, 1234567.125, '  leading and  double']);
+    Sh.AddRow(['Ω µ é 日本', 0, 2, 'tab' + #9 + 'here']);
+    Sh.AddCells([TextCell('fixed'), IntCell(7), FloatCell(3.14159, 2), TextCell('')]);
+    Sh.AddRow(['<&>', 1, 1e-7, 'semi;colon']);
+    Sh := T.AddSheet('Sheet/2?');
+    Sh.AddHeaderRow(['A', 'B']);
+    Sh.AddRow(['x', 1]);
+    W := ExportWriterFor(AFile, T);
+    if W = nil then
+    begin
+      WriteLn('TABLEEXPORT error no writer for ', ExtractFileExt(AFile));
+      Exit;
+    end;
+    try
+      try
+        W.SaveToFile(AFile);
+        WriteLn('TABLEEXPORT ok ', W.SaveToString.Length);
+      except
+        on E: Exception do WriteLn('TABLEEXPORT error ', E.Message);
+      end;
+    finally
+      W.Free;
+    end;
+  finally
+    T.Free;
   end;
 end;
 
@@ -1569,6 +1611,7 @@ var
   RgR: TDRect;
   P, Fp, Fq: TPoint;
   Before, After: TDPoint;
+  GBox: TDRect;
   F: TfrmNewDoc;
   LF: TLadderForm;
   O: TDrawingObject;
@@ -1611,7 +1654,9 @@ var
   FitOk: Boolean;
   Src, Dst: TFileStream;
   OptOk: Boolean;
-  OptI: Integer;
+  OptI, OptPts: Integer;
+  OptFace: String;
+  OptB, OptIt: Boolean;
   GmJ: Integer;
   GmS: String;
   FontB, FontI: Boolean;
@@ -1815,6 +1860,12 @@ begin
             WriteLn('LIBXML ', T[1], ' ok=', Ord(OptOk), ' msg=[', StringReplace(OptKey, LineEnding, ' / ', [rfReplaceAll]), ']');
             Settle;
           end
+        else if Cmd = 'tableexport' then
+          begin
+            { tableexport <file> : writes a test table (two sheets, awkward text, numbers, a bold heading, column widths) with the writer the file's extension names (.csv .xlsx .ods):
+              TABLEEXPORT ok <bytes> or TABLEEXPORT error <message> }
+            TableExportDemo(T[1]);
+          end
         else if Cmd = 'ctxmenu' then
           begin
             { ctxmenu <x mm> <y mm> : right click at a point of the sheet: the object there is chosen, and the menu that would open is listed:
@@ -1823,6 +1874,75 @@ begin
             Form.View.ContextSelectAt(Before);
             ScriptMenu(Form.BuildContextMenu(Before).Items, 0);
             WriteLn('CTX done sel=', Form.View.SelectedCount);
+          end
+        else if Cmd = 'editctx' then
+          begin
+            { editctx : the right click commands copied to the top of the Edit menu for the chosen objects: EDITCTX <caption> for each item above Undo, then EDITCTX sep=<0|1> count=<n> }
+            k := 0;
+            while (k < Form.mEdit.Count) and (Form.mEdit[k] <> Form.mEditCtxSep) do
+            begin
+              WriteLn('EDITCTX ', Form.mEdit[k].Caption);
+              Inc(k);
+            end;
+            WriteLn('EDITCTX sep=', Ord(Form.mEditCtxSep.Visible), ' count=', k);
+          end
+        else if Cmd = 'editctxclick' then
+          begin
+            { editctxclick <caption> : does one of those Edit menu commands (_ for a space) }
+            OptKey := StringReplace(T[1], '_', ' ', [rfReplaceAll]);
+            WriteLn('EDITCTXCLICK ', T[1], ' ok=', Ord(ScriptMenuClick(Form.mEdit, OptKey)));
+            Settle;
+          end
+        else if Cmd = 'viewopt' then
+          begin
+            { viewopt textalign|posbars on|off : View > Show Text Alignment / Show Position Bars }
+            if SameText(T[1], 'textalign') and (ViewShowTextAlignment <> SameText(T[2], 'on')) then
+              Form.DoShowTextAlignment(nil)
+            else if SameText(T[1], 'posbars') and (ViewShowPositionBars <> SameText(T[2], 'on')) then
+              Form.DoShowPositionBars(nil)
+            else if SameText(T[1], 'mousebars') and (ViewShowMouseBars <> SameText(T[2], 'on')) then
+              Form.DoShowMouseBars(nil);
+            WriteLn('VIEWOPT textalign=', Ord(ViewShowTextAlignment), ' posbars=', Ord(ViewShowPositionBars), ' mousebars=', Ord(ViewShowMouseBars));
+          end
+        else if Cmd = 'measure' then
+          begin
+            { measure shift on|off | setscale <actual mm> | reset | info : the Measure A-B ruler. shift: counts Shift as held while it is drawn; setscale: starts Set Scale, and the next
+              ruler drawn is taken to be <actual mm> long (instead of the dialog); reset: Reset Scale; info: MEASURE scale=<n> (this sheet's) and the last ruler's text }
+            S := LowerCase(T[1]);
+            if S = 'shift' then
+              Form.View.TestShift := SameText(T[2], 'on')
+            else if S = 'setscale' then
+            begin
+              MeasureTestActualMm := Num(T[2]);
+              Form.DoMeasureSetScale(nil);
+            end
+            else if S = 'reset' then
+              Form.DoMeasureResetScale(nil)
+            else if S = 'popup' then
+            begin
+              Form.MeasureScalePopup(nil);
+              WriteLn('MEASUREMENU ', Form.miMeasureScaleInfo.Caption, ' | set=', Ord(Form.miMeasureSetScale.Enabled), ' reset=', Ord(Form.miMeasureResetScale.Enabled));
+            end;
+            if S = 'text' then
+              for k := Form.View.Sheet.Drawing.Count - 1 downto 0 do
+                if Form.View.Sheet.Drawing[k] is TDrawMeasure then
+                begin
+                  WriteLn('MEASURETEXT ', TDrawMeasure(Form.View.Sheet.Drawing[k]).DisplayText);
+                  with TDrawMeasure(Form.View.Sheet.Drawing[k]) do
+                    WriteLn('MEASURETEXTPOS shown=', Ord(TextShown), ' cx=', FormatFloat('0.###', TextC.x / 5), ' cy=', FormatFloat('0.###', TextC.y / 5),
+                            ' offx=', FormatFloat('0.###', TextOff.x / 5), ' offy=', FormatFloat('0.###', TextOff.y / 5));
+                  Break;
+                end;
+            if Form.View.Sheet <> nil then
+              WriteLn('MEASURE scale=', FormatFloat('0.#####', Form.View.Sheet.Options.MeasureScale), ' tool=', Ord(Form.View.Tool = vtMeasure), ' ab=', Ord(Form.sbDrawMeasureRulerAB.Checked));
+          end
+        else if Cmd = 'grp' then
+          begin
+            { grp : Resize All state: GRP on=<0|1> left top right bottom (mm) }
+            if Form.View.GroupBounds(GBox) then
+              WriteLn('GRP on=', Ord(Form.View.GroupResizing), ' ', FormatFloat('0.###', GBox.Left / 5), ' ', FormatFloat('0.###', GBox.Top / 5), ' ', FormatFloat('0.###', GBox.Right / 5), ' ', FormatFloat('0.###', GBox.Bottom / 5))
+            else
+              WriteLn('GRP on=', Ord(Form.View.GroupResizing), ' none');
           end
         else if Cmd = 'ctxclick' then
           begin
@@ -2509,6 +2629,117 @@ begin
           Settle;
           WriteLn('SELECTALIKE ', Form.View.SelectedCount);
         end
+        else if Cmd = 'table' then
+          begin
+            { table new : Insert > Insert Table (the table floats; a mouse click places it)
+              table cell <row> <col> <text...> : types the text into a cell of the table editor (row 0 holds the titles)
+              table row ins|del <n> / table col ins|del <n> / table titles on|off / table grid solid|dashed|hidden
+              table info : TABLE editor=<0|1> cols= rows= titles= grid= auto= w= h= (mm) font=<n>, then TABLECELL r c text for each cell }
+            if SameText(T[1], 'new') then
+              Form.DoInsertTable(nil)
+            else if Form.TableForm <> nil then
+              with Form.TableForm do
+              begin
+                if SameText(T[1], 'cell') then
+                  begin
+                    S := '';
+                    for k := 4 to T.Count - 1 do
+                      S := S + IfThen(k > 4, ' ', '') + T[k];
+                    EditCell(Round(Num(T[2])), Round(Num(T[3])), S);
+                    FinishEdit;
+                  end
+                else if SameText(T[1], 'row') then
+                  begin
+                    if SameText(T[2], 'ins') then DoInsertRow(Round(Num(T[3]))) else DoDeleteRow(Round(Num(T[3])));
+                  end
+                else if SameText(T[1], 'col') then
+                  begin
+                    if SameText(T[2], 'ins') then DoInsertColumn(Round(Num(T[3]))) else DoDeleteColumn(Round(Num(T[3])));
+                  end
+                else if SameText(T[1], 'titles') then
+                  DoShowTitles(SameText(T[2], 'on'))
+                else if SameText(T[1], 'sources') then
+                  begin
+                    for k := 0 to High(Sources) do
+                      WriteLn('TABLESOURCE ', k, ' ', Sources[k].Caption);
+                  end
+                else if SameText(T[1], 'link') then
+                  begin
+                    { table link <row> <col> <number in the list, or the start of its caption...> }
+                    S := '';
+                    for k := 4 to T.Count - 1 do
+                      S := S + IfThen(k > 4, ' ', '') + T[k];
+                    for k := 0 to High(Sources) do
+                      if (S = IntToStr(k)) or ((Length(S) > 0) and (not (S[1] in ['0'..'9'])) and (Pos(LowerCase(StringReplace(S, '"', '', [rfReplaceAll])), LowerCase(StringReplace(Sources[k].Caption, '"', '', [rfReplaceAll]))) = 1)) then
+                      begin
+                        DoLinkCell(Round(Num(T[2])), Round(Num(T[3])), Sources[k]);
+                        Break;
+                      end;
+                  end
+                else if SameText(T[1], 'unlink') then
+                  DoUnlinkCell(Round(Num(T[2])), Round(Num(T[3])))
+                else if SameText(T[1], 'close') then
+                  Close
+                else if SameText(T[1], 'closequery') then
+                  begin
+                    { the start of closing the program: while the question about the designs is open the editor must not come up }
+                    Form.CloseQueryForScript;
+                    Form.UpdateTableEditor;
+                    Form.ViewSelection(nil);
+                  end
+                else if SameText(T[1], 'pickauto') then
+                  TablePickAuto := Round(Num(T[2]))
+                else if SameText(T[1], 'arrow') then
+                  begin
+                    { table arrow <row> <col> [editor]: the press and release on the arrow of that cell (with 'editor' the grid has opened its cell editor by the release) }
+                    sgTable.Row := Round(Num(T[2]));
+                    sgTable.Col := Round(Num(T[3]));
+                    k := sgTable.CellRect(sgTable.Col, sgTable.Row).Right - 4;
+                    sgTableMouseDown(nil, mbLeft, [], k, sgTable.CellRect(sgTable.Col, sgTable.Row).Top + 4);
+                    if (T.Count > 4) then
+                      sgTable.EditorMode := True;
+                    sgTableMouseUp(nil, mbLeft, [], k, sgTable.CellRect(sgTable.Col, sgTable.Row).Top + 4);
+                    Settle;
+                    WriteLn('TABLEPICK ', TablePickShown, ' ', TablePickX, ' ', TablePickY, ' ',
+                      ClientToScreen(Point(0, 0)).x + sgTable.ClientToParent(Point(sgTable.CellRect(sgTable.Col, sgTable.Row).Left, sgTable.CellRect(sgTable.Col, sgTable.Row).Bottom)).x, ' ',
+                      ClientToScreen(Point(0, 0)).y + sgTable.ClientToParent(Point(sgTable.CellRect(sgTable.Col, sgTable.Row).Left, sgTable.CellRect(sgTable.Col, sgTable.Row).Bottom)).y);
+                  end
+                else if SameText(T[1], 'bounds') then
+                  begin
+                    { table bounds l t w h: the editor window is hidden, given that place, shown again (it is moved back on screen) }
+                    Form.UpdateTableEditor;
+                    Hide;
+                    SetBounds(Round(Num(T[2])), Round(Num(T[3])), Round(Num(T[4])), Round(Num(T[5])));
+                    Show;
+                    WriteLn('TABLEBOUNDS ', Left, ' ', Top, ' ', Width, ' ', Height);
+                  end
+                else if SameText(T[1], 'ontop') then
+                  DoAlwaysOnTop(SameText(T[2], 'on'))
+                else if SameText(T[1], 'grid') then
+                  DoGridStyle(IfThen(SameText(T[2], 'dashed'), 1, IfThen(SameText(T[2], 'hidden'), 2, 0)));
+              end;
+            Settle;
+            if SameText(T[1], 'info') then
+              begin
+                Form.UpdateTableEditor;
+                if (Form.TableForm <> nil) and (Form.TableForm.Table <> nil) then
+                  with Form.TableForm.Table do
+                  begin
+                    WriteLn('TABLE editor=', Ord(Form.TableForm.Visible), ' system=', Ord(Form.TableForm.FormStyle = fsSystemStayOnTop), ' ontop=', Ord((Form.TableForm.PopupParent = Form) and (Form.TableForm.PopupMode = pmExplicit) and not (Form.TableForm.FormStyle in [fsStayOnTop, fsSystemStayOnTop])), ' cols=', Cols, ' rows=', Rows, ' titles=', ShowTitles, ' grid=', GridStyle,
+                            ' auto=', Ord(AutoSize), ' w=', FormatFloat('0.##', Abs(PointB.x - PointA.x) / 5), ' h=', FormatFloat('0.##', Abs(PointB.y - PointA.y) / 5), ' font=', FontStyle,
+                            ' pasting=', Ord(Form.View.Pasting));
+                    for k := 0 to Rows - 1 do
+                      for m := 0 to Cols - 1 do
+                      begin
+                        WriteLn('TABLECELL ', k, ' ', m, ' ', Cells[k][m]);
+                        if IsLinked(k, m) then
+                          WriteLn('TABLELINK ', k, ' ', m, ' ', LinkAt(k, m).ObjId, ' ', LinkAt(k, m).Field);
+                      end;
+                  end
+                else
+                  WriteLn('TABLE editor=', Ord((Form.TableForm <> nil) and Form.TableForm.Visible), ' none');
+              end;
+          end
         else if Cmd = 'selectall' then begin
           Form.View.SelectAll;
           Settle;
@@ -2570,7 +2801,7 @@ begin
           end
         else if Cmd = 'arrowkey' then
           begin
-            { arrowkey left|right|up|down : the key pressed on the sheet; prints ARROWKEY <name> moved=<0|1> }
+            { arrowkey left|right|up|down [shift] : the key pressed on the sheet (with Shift the grid is ignored); prints ARROWKEY <name> moved=<0|1> }
             Kc := 0;
             if T[1] = 'left' then
               Kc := VK_LEFT else if T[1] = 'right' then
@@ -2578,12 +2809,34 @@ begin
             else if T[1] = 'up' then
               Kc := VK_UP else if T[1] = 'down' then
               Kc := VK_DOWN;
-            Form.View.ArrowKey(Kc, []);
+            if (T.Count >= 3) and (T[2] = 'shift') then
+              Form.View.ArrowKey(Kc, [ssShift])
+            else
+              Form.View.ArrowKey(Kc, []);
             Settle;
             WriteLn('ARROWKEY ', T[1], ' moved=', Ord(Kc = 0));
           end
+        else if Cmd = 'formkey' then
+          begin
+            { formkey f2 [onsheet] : a key pressed with the focus where it is (on the sheet, say), as the form gets it; prints FORMKEY <key> handled=<0|1> active=<class of the control with the focus> text=<its text> }
+            Kc := 0;
+            if LowerCase(T[1]) = 'f2' then
+              Kc := VK_F2;
+            if (T.Count >= 3) and (T[2] = 'onsheet') and Form.View.CanFocus then
+              Form.View.SetFocus;      { (the sheet has the focus, as after a click on it) }
+            Form.FormKeyDown(Form, Kc, []);
+            Settle;
+            if (Form.ActiveControl is TCustomEdit) then
+              WriteLn('FORMKEY ', T[1], ' handled=', Ord(Kc = 0), ' active=', Form.ActiveControl.ClassName, ' sel=[', TCustomEdit(Form.ActiveControl).SelText, ']')
+            else if Form.ActiveControl <> nil then
+              WriteLn('FORMKEY ', T[1], ' handled=', Ord(Kc = 0), ' active=', Form.ActiveControl.ClassName)
+            else
+              WriteLn('FORMKEY ', T[1], ' handled=', Ord(Kc = 0), ' active=none');
+          end
         else if Cmd = 'zoomfactor' then
           WriteLn('ZOOMFACTOR ', FormatFloat('0.#####', Form.View.Zoom, FmtDot))
+        else if Cmd = 'viewpos' then
+          WriteLn('VIEWPOS zoom=', FormatFloat('0.####', Form.View.Zoom, FmtDot), ' x=', FormatFloat('0.##', Form.View.Origin.x, FmtDot), ' y=', FormatFloat('0.##', Form.View.Origin.y, FmtDot))
         else if Cmd = 'zoompercent' then
           WriteLn('ZOOMPERCENT ', Form.View.ZoomPercent)
         else if Cmd = 'save' then
@@ -2647,6 +2900,8 @@ begin
             Form.View.BeginTool(vtNote)
           else if S = 'cloud' then
             Form.View.BeginTool(vtCloud)
+          else if S = 'arrow' then
+            Form.View.BeginTool(vtArrow)
           else if S = 'label' then
             Form.View.BeginTool(vtLabel)
           else if S = 'junction' then
@@ -2698,6 +2953,10 @@ begin
                 { mouse move <x> <y> [ctrl] : the pointer moves (with the Ctrl key held if asked) }
                 if (T.Count > 4) and (LowerCase(T[4]) = 'ctrl') then
                   Form.View.SimMouse(1, P.x, P.y, [ssCtrl], mbLeft)
+                else if (T.Count > 4) and (LowerCase(T[4]) = 'plain') then
+                  Form.View.SimMouse(1, P.x, P.y, [ssLeft], mbLeft)      { (the button held) }
+                else if (T.Count > 4) and (LowerCase(T[4]) = 'shift') then
+                  Form.View.SimMouse(1, P.x, P.y, [ssLeft, ssShift], mbLeft)
                 else
                   Form.View.SimMouse(1, P.x, P.y, [], mbLeft);
               end
@@ -3060,7 +3319,8 @@ begin
           WriteLn('UNDOINFO undo=', Form.View.Undo.UndoCount, ' redo=', Form.View.Undo.RedoCount, ' next="', Form.View.Undo.UndoCaption, '"')
         else if Cmd = 'snap' then
           begin
-            Form.View.SnapEnabled := LowerCase(T[1]) = 'on';
+            if Form.View.SnapEnabled <> (LowerCase(T[1]) = 'on') then
+              Form.DoToggleSnap(nil);      { (as the Snap to Grid button does: it also sets what depends on snap, such as Paste to Grid) }
             WriteLn('SNAP ', Ord(Form.View.SnapEnabled));
           end
         else if Cmd = 'gridmm' then
@@ -3161,7 +3421,10 @@ begin
               else if O.GetType = xJunction then
                 WriteLn('OBJ junction ', O.PointA.x:0:3, ' ', O.PointA.y:0:3)
               else
-                WriteLn('OBJ ', O.ClassName, ' id=', O.Id);
+                if O is TDrawText then
+                  WriteLn('OBJ ', O.ClassName, ' id=', O.Id, ' kind=', Ord(O.GetType))
+                else
+                  WriteLn('OBJ ', O.ClassName, ' id=', O.Id);
             end;
             WriteLn('OBJ end ', Form.View.Sheet.Drawing.Count);
           end
@@ -3681,7 +3944,7 @@ begin
           begin
             { options <name>=<value> ... : the Options dialog is filled in the way a person would and then OK is pressed (nothing is applied if what is
               typed cannot be used). Names: grid (a number, in the units the dialog shows), units (mm or in), showgrid, snap, autodrag, autosnap, autojunction
-              (0 or 1), range (design units), autosave (minutes; 0 for none), symfont (a font name), symsize (points), symbold, symitalic (0 or 1), sheetborder, sheetrulers (0 or 1), sheetcols (a number), sheetrows (a letter), sheetmargin (mm: what the sheet of a new design starts with) }
+              (0 or 1), range (design units), autosave (minutes; 0 for none), symfont (a font name), symsize (points), symbold, symitalic (0 or 1), textfont, textsize, textbold, textitalic (the default text font, for designs made from now on), sheetborder, sheetrulers (0 or 1), sheetcols (a number), sheetrows (a letter), sheetmargin (mm: what the sheet of a new design starts with) }
             OptF := TfrmOptions.Create(Form);
             try
               OptF.LoadFromData(Form.CurrentOptions);
@@ -3721,6 +3984,16 @@ begin
                     OptF.cbSymbolSize.Text := OptVal;
                     OptF.SymbolFontChange(nil);
                   end
+                else if OptKey = 'textfont' then
+                  begin
+                    OptF.cbTextFont.FontName := OptVal;
+                    OptF.TextFontChange(nil);
+                  end
+                else if OptKey = 'textsize' then
+                  begin
+                    OptF.cbTextSize.Text := OptVal;
+                    OptF.TextFontChange(nil);
+                  end
                 else if OptKey = 'rulerunits' then
                 begin
                   OptF.rbRulerMM.Checked := LowerCase(OptVal) <> 'in';
@@ -3730,6 +4003,10 @@ begin
                   OptF.sbBold.Down := OptVal = '1'
                 else if OptKey = 'symitalic' then
                   OptF.sbItalic.Down := OptVal = '1'
+                else if OptKey = 'textbold' then
+                  OptF.sbTextBold.Down := OptVal = '1'
+                else if OptKey = 'textitalic' then
+                  OptF.sbTextItalic.Down := OptVal = '1'
                 else if OptKey = 'reopen' then
                   OptF.cbReopen.Checked := OptVal = '1'
                 else if OptKey = 'sheetborder' then
@@ -4934,9 +5211,13 @@ begin
               ' autodrag=', Ord(OptD.AutoDrag), ' autosnap=', Ord(OptD.AutoSnap), ' autojunction=', Ord(OptD.AutoJunction), ' range=', OptD.AutoSnapRange);
             if Form.Design <> nil then
               for OptI := 0 to Form.Design.SheetCount - 1 do
+              begin
+                Form.Design.Sheets[OptI].Options.GetFontNumber(fTEXT, OptFace, OptPts, OptB, OptIt);
+                WriteLn('OPTIONSINFO titlefont sheet ', OptI, ' ', OptFace, '/', OptPts, '/', Ord(OptB), '/', Ord(OptIt));      { font number 0, the one the title block is drawn in }
                 with Form.Design.Sheets[OptI] do
                   WriteLn('OPTIONSINFO sheet ', OptI, ' grid=', NumberText(Snap.Grid / 5), ' snap=', Snap.GridSnap, ' show=', Options.GridShow, ' units=', Options.Units,
                     ' autodrag=', Ord(Options.AutoDrag), ' autosnap=', Ord(Options.AutoSnap), ' autojunction=', Ord(Options.AutoJunction), ' range=', Options.AutoSnapRange);
+              end;
             with ProgramSettings do
               WriteLn('OPTIONSINFO settings showgrid=', Ord(ShowGrid), ' snap=', Ord(SnapGrid), ' grid=', NumberText(GridMm), ' units=', Units, ' autodrag=', Ord(AutoDrag),
                 ' autosnap=', Ord(AutoSnap), ' autojunction=', Ord(AutoJunction), ' range=', AutoSnapRange, ' autosave=', AutoSaveMinutes, ' reopen=', Ord(ReopenDesigns),
@@ -5328,6 +5609,14 @@ begin
             Form.View.PasteFromClipboard;
             Settle;
             WriteLn('PASTE pasting=', Ord(Form.View.Pasting), ' selected=', Form.View.SelectedCount, ' objects=', Form.View.Sheet.Drawing.Count);
+          end
+        else if Cmd = 'pastetogrid' then
+          begin
+            { pastetogrid : Ctrl+Shift+V (the menu item is enabled only while snap is on: PASTETOGRID enabled=<0|1>) }
+            WriteLn('PASTETOGRID enabled=', Ord(Form.PasteToGridEnabled));
+            Form.DoPasteToGrid(nil);
+            Settle;
+            WriteLn('PASTETOGRID pasting=', Ord(Form.View.Pasting), ' selected=', Form.View.SelectedCount);
           end
         else if Cmd = 'duplicate' then
           begin

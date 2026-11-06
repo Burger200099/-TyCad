@@ -27,6 +27,7 @@ type
     Scale: Double;                 // per cent
     BlackWhite: Boolean;
     NoSymbolText: Boolean;         // symbol text (the designer's notes) is left off
+    Center: Boolean;               // the sheet is centred on the page (when it is smaller than the page) instead of printed from the corner
     NoSymbolFields: Boolean;       // the fields of the symbols (reference, name, values) are left off
     AllSheets: Boolean;
     FromPage, ToPage: Integer;     // 0 and 0 for every page
@@ -103,7 +104,7 @@ function SheetIsPortrait(Sheet: TDesignSheet): Boolean;
 function PrintLayoutOf(Design: TDesignFile; ActiveSheet: Integer; Sink: TPrintSink; const Opt: TPrintOptions): TPrintLayout;
 { draw page PageNo of the layout onto a canvas PxW by PxH; Factor scales the whole page (1 for the printer itself, less for a preview) }
 procedure RenderPrintPage(Design: TDesignFile; ActiveSheet: Integer; const L: TPrintLayout; const Dev: TPrintDevice; PageNo: Integer; ACanvas: TCanvas;
-  PxW, PxH: Integer; Black: Boolean; Factor: Double = 1.0; NoSymText: Boolean = False; NoSymFields: Boolean = False);
+  PxW, PxH: Integer; Black: Boolean; Factor: Double = 1.0; NoSymText: Boolean = False; NoSymFields: Boolean = False; Center: Boolean = False);
 { print a design on a sink; returns the number of pages sent (not counting copies the printer makes) }
 function RunPrintJob(Design: TDesignFile; ActiveSheet: Integer; const Opt: TPrintOptions; Sink: TPrintSink; const Title: String): Integer;
 function DefaultPrintOptions: TPrintOptions;
@@ -584,6 +585,7 @@ begin
   Result.BlackWhite := False;
   Result.NoSymbolText := False;
   Result.NoSymbolFields := False;
+  Result.Center := False;
   Result.AllSheets := False;
   Result.FromPage := 0;
   Result.ToPage := 0;
@@ -632,9 +634,10 @@ end;
     print zoom). Nothing is drawn outside the page. The canvas is not cleared.
   =========================================================================== }
 procedure RenderPrintPage(Design: TDesignFile; ActiveSheet: Integer; const L: TPrintLayout; const Dev: TPrintDevice; PageNo: Integer; ACanvas: TCanvas;
-  PxW, PxH: Integer; Black: Boolean; Factor: Double; NoSymText: Boolean; NoSymFields: Boolean);
+  PxW, PxH: Integer; Black: Boolean; Factor: Double; NoSymText: Boolean; NoSymFields: Boolean; Center: Boolean);
 var
   Pg: TPrintPage;
+  Gap: Double;
   Idx: Integer;
   T: TTransform;
   Painter: TSchematicPainter;
@@ -646,6 +649,16 @@ begin
   else
     Idx := ActiveSheet;
   Sheet := Design.Sheets[Idx];
+  { Center: a sheet that is smaller than the page (one page holds all of it) is moved to the middle of the page }
+  if Center and (L.Cols = 1) and (L.Rows = 1) and (L.Zoom * Factor > 0) then
+  begin
+    Gap := (PxW / (L.Zoom * Factor) - Sheet.Details.PageWidth) / 2;
+    if Gap > 0 then
+      Pg.OriginX := Pg.OriginX - Round(Gap);
+    Gap := (PxH / (L.Zoom * Factor) - Sheet.Details.PageHeight) / 2;
+    if Gap > 0 then
+      Pg.OriginY := Pg.OriginY - Round(Gap);
+  end;
   Sheet.UpdateLayout;       { a sheet nobody has shown yet has no text boxes (a label's text would not be drawn) }
   T := TTransform.Create;
   try
@@ -744,7 +757,7 @@ begin
           if not FirstPage then
             Sink.NewPage;
           FirstPage := False;
-          RenderPrintPage(Design, ActiveSheet, L, Dev, P, Sink.Canvas, Sink.PageWidth, Sink.PageHeight, Opt.BlackWhite, 1.0, Opt.NoSymbolText, Opt.NoSymbolFields);
+          RenderPrintPage(Design, ActiveSheet, L, Dev, P, Sink.Canvas, Sink.PageWidth, Sink.PageHeight, Opt.BlackWhite, 1.0, Opt.NoSymbolText, Opt.NoSymbolFields, Opt.Center);
         end;
     Sink.EndDoc;
     Started := False;

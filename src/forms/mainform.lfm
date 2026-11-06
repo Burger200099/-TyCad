@@ -215,27 +215,8 @@ object frmMain: TfrmMain
     Width = 1389
     Align = alClient
     Caption = 'Center'
-    ClientHeight = 507
-    ClientWidth = 1389
     TabOrder = 2
     OnClick = pnlMainClick
-    object tcSheetTabs: TTabControl
-      Left = 1
-      Height = 26
-      Top = 480
-      Width = 1387
-      Images = frmSharedControls.ilSheetTabs
-      OnChange = SheetTabChange
-      OnGetImageIndex = SheetTabImage
-      TabPosition = tpBottom
-      Align = alBottom
-      Font.Height = -16
-      Options = [nboShowAddTabButton]
-      ParentFont = False
-      PopupMenu = pmSheetTabs
-      TabOrder = 0
-      OnMouseDown = tcSheetTabsMouseDown
-    end
   end
   object Splitter1: TSplitter
     Left = 220
@@ -1458,6 +1439,20 @@ object frmMain: TfrmMain
           ParentShowHint = False
           OnClick = DoToolButton
         end
+        object sbDrawShapesArrow: TSpeedButton
+          Left = 68
+          Height = 28
+          Hint = 'Draw an arrow'
+          Top = 4
+          Width = 28
+          Flat = True
+          Images = frmSharedControls.ilSpeedBtn
+          ImageIndex = 76
+          ImageWidth = 24
+          ShowHint = True
+          ParentShowHint = False
+          OnClick = DoToolButton
+        end
       end
       object plDrawMeasure: TPanel
         Left = 373
@@ -1506,18 +1501,20 @@ object frmMain: TfrmMain
           ParentShowHint = False
           OnClick = DoToolButton
         end
-        object sbDrawMeasureRulerAB: TSpeedButton
+        object sbDrawMeasureRulerAB: TSplitButton
           Left = 4
           Height = 28
-          Hint = 'Measure the distance between two points'
+          Hint = 'Measure the distance between two points (hold Shift to make the ruler level or plumb); the arrow: the scale'
           Top = 36
-          Width = 28
-          Flat = True
-          Images = frmSharedControls.ilSpeedBtn
+          Width = 44
+          DownArrowPopup = pmMeasureScale
           ImageIndex = 57
+          Images = frmSharedControls.ilSpeedBtn
           ImageWidth = 24
-          ShowHint = True
+          Flat = True
+          AutoCheck = True
           ParentShowHint = False
+          ShowHint = True
           OnClick = DoToolButton
         end
       end
@@ -1795,6 +1792,10 @@ object frmMain: TfrmMain
     object mEdit: TMenuItem
       Caption = '&Edit'
       Hint = 'Editing commands'
+      object mEditCtxSep: TMenuItem
+        Caption = '-'
+        Visible = False
+      end
       object mUndo: TMenuItem
         Caption = '&Undo'
         Hint = 'Take back the last change'
@@ -1833,6 +1834,12 @@ object frmMain: TfrmMain
         Hint = 'Paste from the clipboard, then click where it goes'
         ShortCut = 16470
         OnClick = DoPaste
+      end
+      object miPasteToGrid: TMenuItem
+        Caption = 'Paste to &Grid'
+        Hint = 'Paste, with the pasted objects moved onto the grid and keeping their spacing (needs Snap to Grid)'
+        ShortCut = 24662
+        OnClick = DoPasteToGrid
       end
       object miDupe: TMenuItem
         Caption = 'Duplica&te'
@@ -2065,6 +2072,11 @@ object frmMain: TfrmMain
           Hint = 'Draw a revision cloud'
           OnClick = DoToolMenu
         end
+        object miDrawArrow: TMenuItem
+          Caption = 'Arrow'
+          Hint = 'Draw an arrow'
+          OnClick = DoToolMenu
+        end
       end
       object miMeasure: TMenuItem
         Caption = '&Measurements'
@@ -2114,6 +2126,11 @@ object frmMain: TfrmMain
       end
       object Separator11: TMenuItem
         Caption = '-'
+      end
+      object miInsertTable: TMenuItem
+        Caption = 'Insert &Table...'
+        Hint = 'Insert a table of text into the sheet'
+        OnClick = DoInsertTable
       end
       object miInsertPicture: TMenuItem
         Caption = '&Insert Picture...'
@@ -2422,8 +2439,8 @@ object frmMain: TfrmMain
         Caption = '-'
       end
       object mPartsParts: TMenuItem
-        Hint = 'Add, change, copy and delete parts'
         Caption = '&Parts'
+        Hint = 'Add, change, copy and delete parts'
         object mPartsAdd: TMenuItem
           Caption = '&Add Part...'
           Hint = 'Add a generic part to the library being edited'
@@ -2446,8 +2463,8 @@ object frmMain: TfrmMain
         end
       end
       object mPartsClasses: TMenuItem
-        Hint = 'Add, change and delete part classes'
         Caption = '&Classes'
+        Hint = 'Add, change and delete part classes'
         object mPartsClassAdd: TMenuItem
           Caption = 'Add &Class...'
           Hint = 'Add a class under the chosen one (Classes page of the parts library editor)'
@@ -2463,10 +2480,9 @@ object frmMain: TfrmMain
           Hint = 'Delete the chosen class (it must have no subclasses, parts or products)'
           OnClick = DoClassDelete
         end
-      end
-      object mPartsFields: TMenuItem
-        Hint = 'Add, change and delete the fields of a class'
-        Caption = '&Fields'
+        object Separator15: TMenuItem
+          Caption = '-'
+        end
         object mPartsFieldAdd: TMenuItem
           Caption = 'Add &Field...'
           Hint = 'Declare a field on the chosen class; its subclasses inherit it'
@@ -2484,8 +2500,8 @@ object frmMain: TfrmMain
         end
       end
       object mPartsObjects: TMenuItem
-        Hint = 'Add, change and delete the objects inside a part'
         Caption = '&Objects'
+        Hint = 'Add, change and delete the objects inside a part'
         object mPartsObjAdd: TMenuItem
           Caption = 'Add Ob&ject...'
           Hint = 'Add a terminal, pole, channel ... to the chosen part (Objects page of the parts library editor)'
@@ -2503,8 +2519,8 @@ object frmMain: TfrmMain
         end
       end
       object mPartsRequirements: TMenuItem
-        Hint = 'Add, change and delete the requirements of a part'
         Caption = '&Requirements'
+        Hint = 'Add, change and delete the requirements of a part'
         object mPartsRatAdd: TMenuItem
           Caption = 'Add Re&quirement...'
           Hint = 'Add a rating the chosen part must have (Requirements page of the parts library editor)'
@@ -2522,8 +2538,8 @@ object frmMain: TfrmMain
         end
       end
       object mPartsSymbols: TMenuItem
-        Hint = 'The symbols of a part'
         Caption = '&Symbols'
+        Hint = 'The symbols of a part'
         object mPartsSymNew: TMenuItem
           Caption = '&New Part Symbol...'
           Hint = 'Draw a new symbol for the part (Symbols page of the parts library editor)'
@@ -2664,6 +2680,21 @@ object frmMain: TfrmMain
         Checked = True
         Hint = 'Show or hide the position bar'
         OnClick = DoShowPosition
+      end
+      object miShowTextAlignment: TMenuItem
+        Caption = 'Show Text Alignment'
+        Hint = 'While text, wire text or a note is moved, draw a line where it lines up with another one'
+        OnClick = DoShowTextAlignment
+      end
+      object miShowObjectAlignment: TMenuItem
+        Caption = 'Show Position Bars'
+        Hint = 'While an object is moved, draw a vertical and a horizontal bar through its origin across the whole view'
+        OnClick = DoShowPositionBars
+      end
+      object miShowMouseBars: TMenuItem
+        Caption = 'Show Mouse Position Bars'
+        Hint = 'Draw a vertical and a horizontal bar through the pointer across the whole view'
+        OnClick = DoShowMouseBars
       end
       object Separator13: TMenuItem
         Caption = '-'
@@ -2977,6 +3008,12 @@ object frmMain: TfrmMain
       Hint = 'Put a cross reference under this symbol: the rung and form of the contacts of a coil, or the rung of the coil of a contact'
       Visible = False
       OnClick = ContextRungRefClick
+    end
+    object pmSheetResizeAll: TMenuItem
+      Caption = 'Resize All'
+      Hint = 'Give the chosen objects eight handles to resize them all together'
+      Visible = False
+      OnClick = ContextResizeAllClick
     end
     object pmSheetSymSep: TMenuItem
       Caption = '-'
@@ -3314,6 +3351,25 @@ object frmMain: TfrmMain
       Enabled = False
       Hint = 'Draw the grid dots one pixel wide (symbol editing)'
       OnClick = DoOnePxGrid
+    end
+  end
+  object pmMeasureScale: TPopupMenu
+    OnPopup = MeasureScalePopup
+    Left = 472
+    Top = 192
+    object miMeasureScaleInfo: TMenuItem
+      Caption = 'Scale: 1x'
+      Hint = 'The scale of the Measure A-B ruler on this sheet'
+    end
+    object miMeasureSetScale: TMenuItem
+      Caption = 'Set Scale'
+      Hint = 'Draw a ruler over a distance you know, then say how long it really is'
+      OnClick = DoMeasureSetScale
+    end
+    object miMeasureResetScale: TMenuItem
+      Caption = 'Reset Scale'
+      Hint = 'Measure with no scale (1x) again'
+      OnClick = DoMeasureResetScale
     end
   end
   object pmRulerUnits: TPopupMenu

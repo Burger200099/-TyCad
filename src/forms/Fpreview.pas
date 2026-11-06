@@ -278,7 +278,7 @@ begin
     Result.Canvas.Brush.Color := clWhite;
     Result.Canvas.Brush.Style := bsSolid;
     Result.Canvas.FillRect(0, 0, W, H);
-    RenderPrintPage(FDesign, FActive, FLayout, FSink.Device, PageNo, Result.Canvas, W, H, FOpt.BlackWhite, FFactor, FOpt.NoSymbolText, FOpt.NoSymbolFields);
+    RenderPrintPage(FDesign, FActive, FLayout, FSink.Device, PageNo, Result.Canvas, W, H, FOpt.BlackWhite, FFactor, FOpt.NoSymbolText, FOpt.NoSymbolFields, FOpt.Center);
     FCache[PageNo] := Result;
   end;
   Result := FCache[PageNo];

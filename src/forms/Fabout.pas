@@ -80,7 +80,7 @@ var
 begin
   lbCopyright.Caption := lCopyright;
   lbAppName.Caption := lAppName + ' ' + lTarget;
-  lbVer.Caption := GetVerEx(lVerMajor, lVerMinor, lVerRev);
+  lbVer.Caption := GetVerEx(lVerMajor, lVerMinor, lVerRev) + '  Build ' + inttostr(GetBuild);
   lbOS.Caption := GetOsVer;
 
   LargeIcon := TIcon.Create;

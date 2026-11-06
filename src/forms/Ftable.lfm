@@ -1,0 +1,149 @@
+object frmTable: TfrmTable
+  Left = 900
+  Height = 320
+  Top = 240
+  Width = 460
+  BorderStyle = bsSizeToolWin
+  Caption = 'Table'
+  ClientHeight = 320
+  ClientWidth = 460
+  FormStyle = fsNormal
+  KeyPreview = True
+  PopupMenu = pmGrid
+  PopupMode = pmExplicit
+  Position = poDesigned
+  ShowInTaskBar = stNever
+  LCLVersion = '4.8.0.0'
+  OnClose = FormClose
+  OnDestroy = FormDestroy
+  OnHide = FormHide
+  OnShow = FormShow
+  object plTop: TPanel
+    Left = 0
+    Height = 36
+    Top = 0
+    Width = 460
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 36
+    ClientWidth = 460
+    TabOrder = 0
+    object cbShowTitles: TCheckBox
+      Left = 8
+      Height = 19
+      Hint = 'Show or hide the first row of the grid as the titles of the columns'
+      Top = 9
+      Width = 132
+      Caption = 'Show column titles'
+      Checked = True
+      ParentShowHint = False
+      ShowHint = True
+      State = cbChecked
+      TabOrder = 0
+      OnChange = cbShowTitlesChange
+    end
+    object lbGrid: TLabel
+      Left = 168
+      Height = 15
+      Top = 11
+      Width = 26
+      Caption = 'Grid:'
+      ParentColor = False
+    end
+    object cbGrid: TComboBox
+      Left = 200
+      Height = 23
+      Hint = 'The lines between the cells'
+      Top = 6
+      Width = 100
+      ItemHeight = 15
+      ItemIndex = 0
+      Items.Strings = (
+        'Solid'
+        'Dashed'
+        'Hidden'
+      )
+      ParentShowHint = False
+      ShowHint = True
+      Style = csDropDownList
+      TabOrder = 1
+      Text = 'Solid'
+      OnChange = cbGridChange
+    end
+    object cbAlwaysOnTop: TCheckBox
+      Left = 316
+      Height = 19
+      Hint = 'Keep this window on top of every program, for entering data while working in another one'
+      Top = 9
+      Width = 110
+      Caption = 'Always on top'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+      OnChange = cbAlwaysOnTopChange
+    end
+  end
+  object sgTable: TStringGrid
+    Left = 0
+    Height = 284
+    Top = 36
+    Width = 460
+    Align = alClient
+    AutoFillColumns = False
+    ColCount = 3
+    DefaultColWidth = 100
+    FixedCols = 0
+    FixedRows = 0
+    MouseWheelOption = mwGrid
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goTabs, goColSizing, goEditing, goAutoAddRows, goThumbTracking, goSmoothScroll]
+    PopupMenu = pmGrid
+    RowCount = 4
+    TabOrder = 1
+    OnDrawCell = sgTableDrawCell
+    OnExit = sgTableExit
+    OnMouseDown = sgTableMouseDown
+    OnMouseUp = sgTableMouseUp
+    OnKeyDown = sgTableKeyDown
+    OnPrepareCanvas = sgTablePrepareCanvas
+    OnSelectCell = sgTableSelectCell
+    OnSetEditText = sgTableSetEditText
+  end
+  object pmGrid: TPopupMenu
+    Left = 328
+    Top = 120
+    object miInsertRow: TMenuItem
+      Caption = 'Insert Row Above'
+      OnClick = miInsertRowClick
+    end
+    object miAddRow: TMenuItem
+      Caption = 'Add Row at End'
+      OnClick = miAddRowClick
+    end
+    object miDeleteRow: TMenuItem
+      Caption = 'Delete Row'
+      OnClick = miDeleteRowClick
+    end
+    object miUnlink: TMenuItem
+      Caption = 'Unlink Cell (keep its text)'
+      OnClick = miUnlinkClick
+    end
+    object miSepLink: TMenuItem
+      Caption = '-'
+    end
+    object miSepRows: TMenuItem
+      Caption = '-'
+    end
+    object miInsertColumn: TMenuItem
+      Caption = 'Insert Column Left'
+      OnClick = miInsertColumnClick
+    end
+    object miAddColumn: TMenuItem
+      Caption = 'Add Column at End'
+      OnClick = miAddColumnClick
+    end
+    object miDeleteColumn: TMenuItem
+      Caption = 'Delete Column'
+      OnClick = miDeleteColumnClick
+    end
+  end
+end

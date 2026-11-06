@@ -14,7 +14,7 @@ unit UProps;
 interface
 
 uses
-  Classes, SysUtils, Math, UDPoint, UDrawTypes, UResources, UDrawingObjects, UDesign, UPaper, USymbols, UPartData;
+  Classes, SysUtils, Math, UDPoint, UDrawTypes, UResources, UDrawingObjects, UTable, UDesign, UPaper, USymbols, UPartData;
 
 const
   { the choices of a line style property; any list showing them is drawn with pictures (ilListBoxImages) }
@@ -27,7 +27,7 @@ const
   PagesChoices = '1 page|2 pages';         // pages of rungs on a sheet
   DirChoices = 'Up|Down|Left|Right';      // the directions of a text, label, power symbol, note or pin
   { Every property key ObjectProps can give (the names a property editor in a frame is recognised by: see QPropFrame) }
-  PropKeys: array[0..56] of String = (
+  PropKeys: array[0..57] of String = (
     'text', 'dir', 'label.style', 'power.type', 'font.face',
     'font.height', 'font.bold', 'font.italic', 'font.color', 'line.color',
     'line.width', 'line.style', 'fill.type', 'fill.color', 'poly.closed',
@@ -37,7 +37,7 @@ const
     'rungs.showheight', 'rungs.aboveblock', 'sym.ref', 'sym.name', 'symtext.text', 'sym.canscale', 'sym.scalex',
     'sym.scaley', 'sym.dir', 'sym.mirror', 'sym.showref', 'sym.showpower', 'sym.mfr', 'sym.model', 'pin.name', 'pin.number', 'pin.length', 'pin.numpos',
     'pin.dir', 'pin.shape', 'pin.elec', 'pin.showname', 'pin.shownumber',
-    'pin.centre', 'arc.type', 'bus.phases', 'bus.spacing');
+    'pin.centre', 'arc.type', 'bus.phases', 'bus.spacing', 'ladder.bottom');
 
 type
   TPropKind = (pkText, pkMemo, pkInt, pkFloat, pkColor, pkChoice, pkBool);
@@ -90,7 +90,7 @@ const
   LabelChoices = 'Normal|Input|Output|Input/Output';
   PowerChoices = 'Bar|Circle|Wave|Arrow|Earth';
 
-  UnitChoices = 'Millimetres|Inches';
+  UnitChoices = 'Millimetres|Inches (decimal)|Inches (fractional)|Feet and inches';
   ModeChoices = 'Line number|Contact line numbers|Contact types and rungs';
   PinShapeChoices = 'Normal|Dot|Clock|Dot Clock|Power|Hidden|Cross';                           // TinyCAD's pin types (CEditDlgPinEdit)
   PinElecChoices = 'Input|Output|Tristate|Open Collector|Passive|Input/Output|Not Connected';   // ... and electrical types
@@ -551,7 +551,9 @@ begin
   else if Obj is TDrawRefText then
     Result := (Obj as TDrawRefText).FontStyle
   else if Obj is TDrawMeasure then
-    Result := (Obj as TDrawMeasure).FontStyle;
+    Result := (Obj as TDrawMeasure).FontStyle
+  else if Obj is TDrawTable then
+    Result := (Obj as TDrawTable).FontStyle;
 end;
 
 { ===========================================================================
@@ -577,7 +579,9 @@ begin
   else if Obj is TDrawRefText then
     (Obj as TDrawRefText).FontStyle := N
   else if Obj is TDrawMeasure then
-    (Obj as TDrawMeasure).FontStyle := N;
+    (Obj as TDrawMeasure).FontStyle := N
+  else if Obj is TDrawTable then
+    (Obj as TDrawTable).FontStyle := N;
 end;
 
 { ===========================================================================
@@ -607,6 +611,8 @@ begin
     C := (Obj as TDrawRefText).FontColor
   else if Obj is TDrawMeasure then
     C := (Obj as TDrawMeasure).FontColor
+  else if Obj is TDrawTable then
+    C := (Obj as TDrawTable).FontColor
   else
     Result := False;
 end;
@@ -634,7 +640,9 @@ begin
   else if Obj is TDrawRefText then
     (Obj as TDrawRefText).FontColor := C
   else if Obj is TDrawMeasure then
-    (Obj as TDrawMeasure).FontColor := C;
+    (Obj as TDrawMeasure).FontColor := C
+  else if Obj is TDrawTable then
+    (Obj as TDrawTable).FontColor := C;
 end;
 
 { ===========================================================================
@@ -1020,6 +1028,7 @@ begin
   begin
     Add(Result, Def('ladder.left', rsLeftBusWireNo, pkText));
     Add(Result, Def('ladder.right', rsRightBusWireNo, pkText));
+    Add(Result, Def('ladder.bottom', rsBusTextAtBothEnds, pkBool));
   end;
   if Obj is TDrawRungGrid then
   begin
@@ -1337,6 +1346,8 @@ begin
         Value := LeftWire
       else if Name = 'ladder.right' then
         Value := RightWire
+      else if Name = 'ladder.bottom' then
+        Value := BoolText(BottomText)
       else
         Result := False;
   end
@@ -1527,6 +1538,8 @@ begin
     (Obj as TDrawLadder).LeftWire := Value
   else if Name = 'ladder.right' then
     (Obj as TDrawLadder).RightWire := Value
+  else if Name = 'ladder.bottom' then
+    (Obj as TDrawLadder).BottomText := Value = '1'
   else if Name = 'rungs.rows' then
     (Obj as TDrawRungGrid).Rows := Max(1, Min(200, StrToIntDef(Trim(Value), (Obj as TDrawRungGrid).Rows)))
   else if Name = 'rungs.start' then

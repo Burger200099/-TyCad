@@ -31,7 +31,7 @@ inherited fmPropWireLabel: TfmPropWireLabel
     object edText: TEdit
       Left = 5
       Height = 23
-      Top = 9
+      Top = 8
       Width = 259
       TabOrder = 0
       Text = 'edText'
@@ -45,10 +45,10 @@ inherited fmPropWireLabel: TfmPropWireLabel
     end
     object cbTextDirection: TComboBox
       Left = 64
-      Height = 23
-      Top = 45
+      Height = 30
+      Top = 42
       Width = 56
-      ItemHeight = 15
+      ItemHeight = 24
       ItemIndex = 3
       Items.Strings = (
         'Up'
@@ -56,10 +56,11 @@ inherited fmPropWireLabel: TfmPropWireLabel
         'Left'
         'Right'
       )
-      Style = csDropDownList
+      Style = csOwnerDrawFixed
       TabOrder = 1
       Text = 'Right'
       OnChange = cbTextDirectionChange
+      OnDrawItem = cbTextDirectionDrawItem
     end
     object lbType: TLabel
       Left = 133

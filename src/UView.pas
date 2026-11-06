@@ -18,14 +18,30 @@ unit UView;
 interface
 
 uses
-  Classes, SysUtils, Controls, Forms, StdCtrls, Graphics, Math, Types, LCLType, ExtCtrls, Menus, UDPoint, UDrawTypes,
+  Classes, SysUtils, Controls, Forms, StdCtrls, Graphics, Math, Types, LCLType, ExtCtrls, Menus, LCLIntf, UDPoint, UDrawTypes, UTable,
   UGeometry, UResources, UDrawingObjects, USymbols, UDesign, UPaper, UPainter, UEdit, UUndo, ULinks,
   UProps, UClip, UDocVars, UImageInfo, UImageLoad, UOptions, URepeat, UAnnotate, UPhases, UBusSnap, Clipbrd;
 
+var
+  { View > Show Text Alignment and Show Position Bars (one setting for every sheet and design) }
+  ViewShowTextAlignment: Boolean = False;
+  ViewShowPositionBars: Boolean = False;
+  ViewShowMouseBars: Boolean = False;     // View > Show Mouse Position Bars
+  MeasureTestActualMm: Double = 0;      // for tests: the actual distance (mm) the Set Scale dialog stands in for
+
 type
+  { the view of one sheet as it was left: zoom, pan (top left of the window in design units) and whether the page was kept fitted }
+  PSheetViewMemo = ^TSheetViewMemo;
+  TSheetViewMemo = record
+    Sheet: TDesignSheet;
+    Zoom: Double;
+    Origin: TDPoint;
+    AutoFit: Boolean;
+  end;
+
   TViewTool = (vtSelect, vtWire, vtLine, vtPolygon, vtRect, vtCircle, vtArc, vtNote, vtCloud,
     vtLabel, vtJunction, vtRulerH, vtRulerV, vtMeasure, vtLadder, vtXRefLine, vtXRefContacts, vtPlace,
-    vtBus, vtBusSlash, vtNoConnect, vtPower, vtText, vtRefPainter, vtPin, vtOrigin, vtRungs, vtSymbolText);
+    vtBus, vtBusSlash, vtNoConnect, vtPower, vtText, vtRefPainter, vtPin, vtOrigin, vtRungs, vtSymbolText, vtArrow);
 
 const
   { the tools a symbol cannot be drawn with: the ones that make a circuit (wires, buses, labels, junctions, power, ladders, cross references) and placing other symbols }
@@ -47,6 +63,7 @@ type
   end;
   TMarkerEvent = procedure(Sender: TObject; Index: Integer) of object;
   { a right click on the sheet with nothing being drawn: where (window position and sheet point) so the owner can show its menu }
+  TMeasureEvent = procedure(Sender: TObject; MmLength: Double) of object;
   TContextEvent = procedure(Sender: TObject; X, Y: Integer; const P: TDPoint) of object;
 
   TSchematicView = class(TCustomControl)
@@ -71,6 +88,8 @@ type
     FShapeScreen: TPoint;
     FXTarget: TDrawingObject;
     FMouseDesign: TDPoint;
+    FPasteSource: TObject;     // the sheet the objects being pasted were copied from (nil: not known, as for an import)
+    FTextOffStart: TDPoint;    // the text offset of the chosen Measure A-B ruler when its text was picked up (drag mode 10)
     FUserFont: TFont;          // the font the person last asked for: what the next text, label or power symbol starts with (carried from object to object)
     FOnViewMoved: TNotifyEvent;
     FOnArcTypeChanged: TNotifyEvent;
@@ -78,12 +97,21 @@ type
     FHasPointer: Boolean;
     FHaveMouse: Boolean;       // the pointer has been over the view (so a floating text can be shown)
     FDownButton: TMouseButton;  // the button that began the drag in progress (a press or release of another button meanwhile is ignored)
+    FLastCursor: TCursor;       // the work area's cursor before SetWorkAreaCursor changed it (a pan shows the arrows; the cursor of the tool comes back after it)
+    FCursorSaved: Boolean;
     FMidPan: Boolean;           // the middle button is held to move the viewport while another button's drag (a move, a rubber band ...) goes on
     FPanFocus: TWinControl;     // the text box that had the focus when a pan began (the sheet takes the focus for the pan); it gets it back when the pan is over, or nil
     FMidLast: TPoint;           // where the pointer was at the last step of that pan (pixels)
+    FGrabObj: TDrawLine;        // the wire whose anchor the press was on (or nil)
+    FGrabSecond: Boolean;       // the single wire being moved was taken at its second anchor (the position bars go through that one)
+    FButtonHeld: Boolean;       // a mouse button is down on the sheet (set before the selection a press makes, unlike FDragMode)
     FDragMode: Integer;         // 0 none, 1 move selection, 2 rubber band, 3 pan, 4 two-corner shape, 5 polygon handle, 6 resize handle, 7 a field of a symbol
     FEndFirst: Boolean;         // which end of FEndLine is being pulled: the first (PointA) or the second
     FEndLine: TDrawLine;        // a chosen wire whose end is being pulled (only that wire and end move), or nil
+    FMeasureCalibrate: Boolean; // the next Measure A-B ruler is drawn to set the scale: it is not kept, its length goes to OnMeasureCalibrated
+    FTestShift: Boolean;        // for tests: Shift counts as held while drawing a Measure A-B ruler
+    FOnMeasureCalibrated: TMeasureEvent;
+    FGroupResize: Boolean;      // Resize All is on: the whole selection has eight handles
     FResizeRatio: Double;       // height / width of the rectangle being resized, for keeping its shape with Ctrl
     FDragStart, FDragLast: TDPoint;
     FDragScreen: TPoint;
@@ -100,6 +128,7 @@ type
     FOnPlaced: TObjectEvent;
     FOnLadder: TLadderEvent;
     FDragEng: TWireEngine;       // moves the selection and stretches the wires attached to it
+    FSheetViews: TList;          // the zoom and pan each sheet was left at (PSheetViewMemo), restored when its tab is chosen again
     FAutoFit: Boolean;           // the page is kept fitted to the window until the user zooms or scrolls
     FFieldCode: Integer;         // the polygon handle (1000 + n) or control point (5000 + n) being dragged
     FPolyArc: Integer;           // the arc type given to the next segments of a polygon being drawn
@@ -124,10 +153,12 @@ type
     procedure CancelPaste;
     function ExplodePlacedSymbols(Imp: TList): Integer;
     function MakeFitSymbol(Imp: TList): Integer;
-    function BeginPasteFrom(Src: TStream; const UndoName, FailMsg, PlaceMsg, DoneMsg: String): Integer;
-    function StartBlock(Imp: TList; const PlaceMsg, DoneMsg: String): Integer;
+    function BeginPasteFrom(Src: TStream; const UndoName, FailMsg, PlaceMsg, DoneMsg: String; ToGrid: Boolean = False): Integer;
+    function StartBlock(Imp: TList; const PlaceMsg, DoneMsg: String; ToGrid: Boolean = False): Integer;
     procedure ClipboardToStream(S: TStream);
     function GetSheet: TDesignSheet;
+    procedure SetWorkAreaCursor(ACursor: TCursor; Last: Boolean = False);
+    function SheetInDesign(ASheet: TDesignSheet): Boolean;
     procedure SetZoomAt(NewZoom: Double; const Focus: TPoint);
     procedure ApplyTransform;
     function SnapPoint(const P: TDPoint): TDPoint;
@@ -160,6 +191,9 @@ type
     procedure WireDown(const P: TDPoint; Shift: TShiftState);
     procedure WireUp(const P: TDPoint);
     procedure PaintPreview(C: TCanvas);
+    procedure PaintMoveGuides(C: TCanvas);
+    procedure PaintMouseBars(C: TCanvas);
+    function MeasureEnd(const P: TDPoint; Shift: TShiftState): TDPoint;
     procedure RenderTo(ABitmap: TBitmap);
     function ToolIsTwoCorner: Boolean;
   protected
@@ -170,6 +204,7 @@ type
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     function DoMouseWheel(Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint): Boolean; override;
     procedure KeyDown(var Key: Word; Shift: TShiftState); override;
+    procedure KeyUp(var Key: Word; Shift: TShiftState); override;
     procedure Resize; override;
     procedure MouseLeave; override;
     function SelectedPolygon: TDrawPolygon;
@@ -206,12 +241,27 @@ type
     { ---- resizing with handles ---- }
     { the one selected object that has resize handles (rectangle, ellipse, picture, note), or nil: handles are for a single object }
     function SelectedResizable: TDrawingObject;
+    { Resize All (right click with several objects chosen): the box round the chosen objects gets eight handles that resize all of them together }
+    procedure BeginGroupResize;
+    { Set Scale: starts the Measure A-B tool; the ruler drawn is not kept, its length (mm) goes to OnMeasureCalibrated }
+    procedure BeginMeasureCalibration;
+    { the scale of this sheet's Measure A-B tool (an undoable change that marks the design changed) }
+    procedure SetMeasureScale(AScale: Double);
+    property OnMeasureCalibrated: TMeasureEvent read FOnMeasureCalibrated write FOnMeasureCalibrated;
+    property TestShift: Boolean read FTestShift write FTestShift;
+    function GroupBounds(out B: TDRect): Boolean;
+    property GroupResizing: Boolean read FGroupResize;
     { the side of a handle in design units (a handle is 6 pixels on the screen at any zoom) }
     function ResizeHandleSize: Double;
+    { ---- Resize All: the handles of the whole selection ---- }
+    function GroupHandleAt(const P: TDPoint): Integer;
+    function MeasureEndAt(const P: TDPoint): Integer;
+    procedure ScaleSelection(const Old, New: TDRect);
     { is the whole wire in the area the selection was picked with? (then its end handles move it, otherwise they stretch it) }
     function WireWhollyPicked(L: TDrawLine): Boolean;
     { the chosen wire (not wholly picked) that has an end at P, or nil; End1 says which end }
     function WholeWireEndAt(const P: TDPoint): Boolean;
+    procedure FindGrabbedAnchor(const P: TDPoint);
     function WireEndAt(const P: TDPoint; out End1: Boolean): TDrawLine;
     { where a pointer at that point of the sheet would snap to: the point is turned into a window position (whole pixels) and back, then snapped }
     function ProbeSnap(const P: TDPoint): TDPoint;
@@ -279,6 +329,7 @@ type
     property PlaceGhost: TDrawMethod read FGhost;
     property DragMode: Integer read FDragMode;      // for tests: 0 none, 1 move, 2 rubber band, 3 pan ...
     property OnSelectionChange: TViewEvent read FOnSelection write FOnSelection;
+    property OnMouseUp;
     property OnStatus: TStatusEvent read FOnStatus write FOnStatus;
     property OnPosition: TStatusEvent read FOnPosition write FOnPosition;
     { Repeat Directions: +1 or -1 }
@@ -315,13 +366,14 @@ type
     { Copy to: write the selected objects to a design file (what Copy puts on the clipboard); returns how many objects were written }
     function CopySelectionToFile(const AFileName: String): Integer;
     procedure CutSelection;
-    procedure PasteFromClipboard;
+    procedure PasteFromClipboard(ToGrid: Boolean = False);
     { Import: read another design (its first sheet) into this sheet; its objects follow the mouse until a click places them.
       Returns how many objects were read, 0 if the file holds no TinyCAD design. Errors opening the file are raised. }
     function ImportFromFile(const AFileName: String): Integer;
     { Insert picture: a picture file becomes an object of the sheet that follows the mouse until a click places it. False, with Err
       saying why, if the file cannot be inserted (nothing is changed then). }
     function InsertPictureFile(const AFileName: String; out Err: String): Boolean;
+    procedure InsertTable;
     procedure DuplicateSelection;
     { ---- the Edit menu's rotate, flip and Z-order (CTinyCadView::ChangeDir, CTinyCadDoc::BringToFront / SendToBack) ---- }
     procedure RotateSelection(NewDir: Integer);
@@ -333,6 +385,7 @@ type
     function ClipboardText: String;
     procedure SetClipboardText(const Data: String);
     property Pasting: Boolean read FPasting;
+    function Dragging: Boolean;      // a mouse drag is in progress (the button is down)
     { ---- editing a polygon: its handles can be dragged and its segments changed from a menu ---- }
     { do one of the polygon menu's actions on the selected polygon, at the clicked point, as one undo step }
     function PolygonAction(PolyAct: TPolyAction; const P: TDPoint): Boolean;
@@ -361,7 +414,7 @@ type
     function AddRungReference: String;
     function SelectedLine: TDrawLine;
     function LineMakeStraight(Vertical: Boolean; const P: TDPoint): Boolean;
-    function NudgeSelection(DX, DY: Integer): Boolean;
+    function NudgeSelection(DX, DY: Integer; IgnoreSnap: Boolean = False): Boolean;
     procedure PressKey(Key: Word; Shift: TShiftState);
     function ArrowKey(var Key: Word; Shift: TShiftState): Boolean;
     function WireCanCut(const P: TDPoint): Boolean;
@@ -414,6 +467,7 @@ begin
     vtArc: Result := rsArcClickTheStartAnd;
     vtNote: Result := rsNoteClickAndDragA;
     vtCloud: Result := rsCloudClickAndDragA;
+    vtArrow: Result := rsArrowClickPointAThen;
     vtLabel: Result := rsLabelClickOnAWire;
     vtJunction: Result := rsJunctionClickWhereWiresMeet;
     vtRulerH: Result := rsHorizontalRulerClickToPlace;
@@ -452,6 +506,7 @@ begin
   inherited Create(AOwner);
   FT := TTransform.Create;
   FSelected := TList.Create;
+  FSheetViews := TList.Create;
   FMarkerSel := -1;
   FArcToolType := Arc_in;
   FZoom := 0.5;
@@ -476,7 +531,12 @@ end;
     and the transform.
   =========================================================================== }
 destructor TSchematicView.Destroy;
+var
+  k: Integer;
 begin
+  for k := 0 to FSheetViews.Count - 1 do
+    Dispose(PSheetViewMemo(FSheetViews[k]));
+  FSheetViews.Free;
   FUserFont.Free;
   FreeTool;
   FGhost.Free;
@@ -495,6 +555,46 @@ end;
   Notes:
     The sheet being shown (design plus sheet index).
   =========================================================================== }
+{ ===========================================================================
+  TSchematicView.SetWorkAreaCursor  (procedure)
+  Parameters:
+    ACursor: TCursor - the cursor to show (ignored when Last is True)
+    Last: Boolean = False - True: go back to the cursor there was before the last change
+  Notes:
+    Shows a cursor for a while (the arrows of a pan): the cursor in use is remembered, then
+    replaced by ACursor. With Last the remembered cursor comes back (nothing is changed when none
+    was remembered). Asking twice before Last remembers the first one only.
+  =========================================================================== }
+procedure TSchematicView.SetWorkAreaCursor(ACursor: TCursor; Last: Boolean);
+begin
+  if Last then
+  begin
+    if FCursorSaved then
+      Cursor := FLastCursor
+    else
+      Cursor := crDefault;
+    FCursorSaved := False;
+    Exit;
+  end;
+  if not FCursorSaved then
+  begin
+    FLastCursor := Cursor;
+    FCursorSaved := True;
+  end;
+  Cursor := ACursor;
+end;
+
+function TSchematicView.SheetInDesign(ASheet: TDesignSheet): Boolean;
+var
+  i: Integer;
+begin
+  Result := False;
+  if FDesign <> nil then
+    for i := 0 to FDesign.SheetCount - 1 do
+      if FDesign.Sheets[i] = ASheet then
+        Exit(True);
+end;
+
 function TSchematicView.GetSheet: TDesignSheet;
 begin
   if (FDesign <> nil) and (FSheetIndex >= 0) and (FSheetIndex < FDesign.SheetCount) then
@@ -659,6 +759,7 @@ end;
   =========================================================================== }
 procedure TSchematicView.SelectionChanged;
 begin
+  FGroupResize := False;
   ExpandPhaseGroups;
   { an object that is the only one selected notes what it needs for being resized by its handles (TinyCAD does this in BeginEdit) }
   if (FSelected.Count = 1) and (not FPasting) then
@@ -1192,13 +1293,50 @@ end;
     Switches to another sheet of the same design: drops tools and selection and fits the page.
   =========================================================================== }
 procedure TSchematicView.SetSheetIndex(AIndex: Integer);
+var
+  k: Integer;
+  M: PSheetViewMemo;
 begin
   FreeTool;
   FTool := vtSelect;
   FSelected.Clear;
+  { remember the zoom and pan of the sheet being left (forgetting sheets that are gone) }
+  for k := FSheetViews.Count - 1 downto 0 do
+  begin
+    M := PSheetViewMemo(FSheetViews[k]);
+    if (M^.Sheet = Sheet) or (FDesign = nil) or (not SheetInDesign(M^.Sheet)) then
+    begin
+      Dispose(M);
+      FSheetViews.Delete(k);
+    end;
+  end;
+  if (Sheet <> nil) and (AIndex <> FSheetIndex) then
+  begin
+    New(M);
+    M^.Sheet := Sheet;
+    M^.Zoom := FZoom;
+    M^.Origin := FOrigin;
+    M^.AutoFit := FAutoFit;
+    FSheetViews.Add(M);
+  end;
   FSheetIndex := AIndex;
   RelayoutAll;
-  ZoomFit;
+  M := nil;
+  for k := 0 to FSheetViews.Count - 1 do
+    if PSheetViewMemo(FSheetViews[k])^.Sheet = Sheet then
+      M := PSheetViewMemo(FSheetViews[k]);
+  if (M <> nil) and (Sheet <> nil) and (AIndex <> -1) and (not M^.AutoFit) then
+  begin
+    { this sheet was left zoomed or panned by hand: bring that back }
+    FZoom := M^.Zoom;
+    FOrigin := M^.Origin;
+    FAutoFit := False;
+    Invalidate;
+    if Assigned(FOnZoomChanged) then
+      FOnZoomChanged(Self);
+  end
+  else
+    ZoomFit;
   SelectionChanged;
 end;
 
@@ -1427,13 +1565,13 @@ begin
           end;
         end;
       end;
-    vtRect, vtCircle, vtNote, vtCloud, vtMeasure, vtLadder:
+    vtRect, vtCircle, vtNote, vtCloud, vtMeasure, vtLadder, vtArrow:
       if FStage = 1 then
       begin
         P1 := FT.Scale(FShapeStart);
         P2 := FT.Scale(FShapeEnd);
         C.Pen.Style := psDot; C.Pen.Width := 1; C.Pen.Color := TColor($0080FF);
-        if FTool = vtMeasure then
+        if FTool in [vtMeasure, vtArrow] then
         begin
           C.MoveTo(P1.x, P1.y); C.LineTo(P2.x, P2.y);
         end
@@ -1557,6 +1695,7 @@ procedure TSchematicView.RenderTo(ABitmap: TBitmap);
 var
   Painter: TSchematicPainter;
   i: Integer;
+  GBox: TDRect;
 begin
   ABitmap.SetSize(Max(1, ClientWidth), Max(1, ClientHeight));
   ABitmap.Canvas.Brush.Color := Color;
@@ -1574,10 +1713,12 @@ begin
       Painter.PaintPolygonHandles(SelectedPolygon);
     if (FTool = vtSelect) and (not FPasting) then
       for i := 0 to FSelected.Count - 1 do
-        if TObject(FSelected[i]) is TDrawLine then
-          Painter.PaintLineHandles(TDrawLine(FSelected[i]));      { the small squares at the two ends of a chosen wire, bus or line }
+        if (TObject(FSelected[i]) is TDrawLine) or ((TObject(FSelected[i]) is TDrawMeasure) and (FSelected.Count = 1)) then
+          Painter.PaintLineHandles(TDrawingObject(FSelected[i]));      { the small squares at the two ends of a chosen wire, bus or line }
     if SelectedResizable <> nil then
       Painter.PaintResizeHandles(SelectedResizable, ResizeHandleSize);
+    if FGroupResize and (FTool = vtSelect) and (not FPasting) and GroupBounds(GBox) then
+      Painter.PaintGroupHandles(GBox, ResizeHandleSize);
     if Sheet.Options.EditLibrary and Sheet.Options.HasOrigin then
       Painter.PaintOriginMarker(Sheet.Options.Origin);
     for i := 0 to High(FMarkers) do
@@ -1587,6 +1728,8 @@ begin
     Painter.Free;
   end;
   PaintPreview(ABitmap.Canvas);
+  PaintMouseBars(ABitmap.Canvas);
+  PaintMoveGuides(ABitmap.Canvas);
   { rubber band for the select tool }
   if FDragMode = 2 then
   begin
@@ -1597,6 +1740,117 @@ begin
     ABitmap.Canvas.Rectangle(Min(FT.Scale(FDragStart).x, FT.Scale(FDragLast).x), Min(FT.Scale(FDragStart).y, FT.Scale(FDragLast).y),
                              Max(FT.Scale(FDragStart).x, FT.Scale(FDragLast).x), Max(FT.Scale(FDragStart).y, FT.Scale(FDragLast).y));
   end;
+end;
+
+{ ===========================================================================
+  TSchematicView.PaintMouseBars  (procedure)
+  Parameters:
+    C: TCanvas - the canvas the view is drawn on
+  Notes:
+    With View > Show Mouse Position Bars on and the pointer over the view: a vertical and a horizontal line, one pixel wide at any zoom, are drawn across the whole
+    view through the pointer (where the pointer is on the sheet, not where it would snap to).
+  =========================================================================== }
+procedure TSchematicView.PaintMouseBars(C: TCanvas);
+var
+  P: TPoint;
+begin
+  if (Sheet = nil) or (not ViewShowMouseBars) or (not FHasPointer) or (not FHaveMouse) then
+    Exit;
+  P := FT.Scale(FMouseDesign);
+  C.Pen.Width := 1;
+  C.Pen.Style := psSolid;
+  C.Pen.Color := TColor($808080);
+  C.MoveTo(P.x, 0);
+  C.LineTo(P.x, ClientHeight);
+  C.MoveTo(0, P.y);
+  C.LineTo(ClientWidth, P.y);
+end;
+
+{ ===========================================================================
+  TSchematicView.PaintMoveGuides  (procedure)
+  Parameters:
+    C: TCanvas - the canvas the view is drawn on
+  Notes:
+    While the chosen objects are being moved (or a block is being placed): with Show Position Bars on, a vertical and a horizontal line, one pixel wide at any zoom,
+    are drawn across the whole view through the 0,0 point of the first chosen object (to line it up with the rulers). Then, with Show Text Alignment on, a line is
+    drawn through the point of each chosen text, wire text or note that is level with that of another text, wire text or note (same x or same y, to within a pixel).
+    The bars are drawn first and the text lines over them.
+  =========================================================================== }
+procedure TSchematicView.PaintMoveGuides(C: TCanvas);
+var
+  i, j: Integer;
+  O, Q: TDrawingObject;
+  Tol: Double;
+  Pt: TDPoint;
+
+  function IsTextObj(X: TObject): Boolean;
+  begin
+    Result := (X is TDrawText) or (X is TDrawLabel) or (X is TDrawNoteText);
+  end;
+
+  procedure VLine(X: Double);
+  var
+    Px: Integer;
+  begin
+    Px := FT.Scale(DPoint(X, 0)).x;
+    C.MoveTo(Px, 0);
+    C.LineTo(Px, ClientHeight);
+  end;
+
+  procedure HLine(Y: Double);
+  var
+    Py: Integer;
+  begin
+    Py := FT.Scale(DPoint(0, Y)).y;
+    C.MoveTo(0, Py);
+    C.LineTo(ClientWidth, Py);
+  end;
+
+begin
+  if (Sheet = nil) or (FSelected.Count = 0) or (not (((FDragMode = 1) and FMoved) or FPasting)) then
+    Exit;
+  C.Pen.Width := 1;
+  C.Brush.Style := bsClear;
+  if ViewShowPositionBars then
+  begin
+    O := TDrawingObject(FSelected[0]);
+    Pt := O.PointA;
+    { wires taken by an anchor (the second one, or one of several chosen wires): the bars are on that anchor }
+    if (FDragMode = 1) and (FGrabObj <> nil) and (FSelected.IndexOf(FGrabObj) >= 0) and (FEndLine = nil) then
+    begin
+      if FGrabSecond then Pt := FGrabObj.PointB else Pt := FGrabObj.PointA;
+    end
+    else if (FDragMode = 1) and (FEndLine <> nil) then
+    begin
+      if FEndFirst then Pt := FEndLine.PointA else Pt := FEndLine.PointB;
+    end;
+    C.Pen.Style := psSolid;
+    C.Pen.Color := TColor($C08000);
+    VLine(Pt.x);
+    HLine(Pt.y);
+  end;
+  if ViewShowTextAlignment then
+  begin
+    Tol := 0.5 / Max(FZoom, 0.01);
+    C.Pen.Style := psDash;
+    C.Pen.Color := TColor($B000B0);
+    for i := 0 to FSelected.Count - 1 do
+      if IsTextObj(TObject(FSelected[i])) then
+      begin
+        O := TDrawingObject(FSelected[i]);
+        for j := 0 to Sheet.Drawing.Count - 1 do
+        begin
+          Q := Sheet.Drawing[j];
+          if (FSelected.IndexOf(Q) >= 0) or (not IsTextObj(Q)) then
+            Continue;
+          if Abs(Q.PointA.x - O.PointA.x) <= Tol then
+            VLine(O.PointA.x);
+          if Abs(Q.PointA.y - O.PointA.y) <= Tol then
+            HLine(O.PointA.y);
+        end;
+      end;
+  end;
+  C.Pen.Style := psSolid;
 end;
 
 { ===========================================================================
@@ -1630,6 +1884,8 @@ procedure TSchematicView.MouseLeave;
 begin
   inherited MouseLeave;
   FHasPointer := False;
+  if ViewShowMouseBars then
+    Invalidate;
   if Assigned(FOnViewMoved) then
     FOnViewMoved(Self);
 end;
@@ -1772,6 +2028,16 @@ end;
     there, no undo step is made (a selection is not a change).
   =========================================================================== }
 procedure TSchematicView.SelectAllAlike;
+
+  { the kind objects are compared by: every text object is one kind (a text and a bus name are both TDrawText, whose type code differs, but they look and edit alike) }
+  function AlikeKind(O: TDrawingObject): TObjType;
+  begin
+    if O is TDrawText then
+      Result := xTextEx2
+    else
+      Result := O.GetType;
+  end;
+
 var
   i: Integer;
   Kinds: set of TObjType;
@@ -1780,10 +2046,10 @@ begin
     Exit;
   Kinds := [];
   for i := 0 to FSelected.Count - 1 do
-    Include(Kinds, TDrawingObject(FSelected[i]).GetType);
+    Include(Kinds, AlikeKind(TDrawingObject(FSelected[i])));
   FSelected.Clear;
   for i := 0 to Sheet.Drawing.Count - 1 do
-    if (Sheet.Drawing[i].GetType in Kinds) and (Sheet.Drawing[i].GetType <> xOrigin) then
+    if (AlikeKind(Sheet.Drawing[i]) in Kinds) and (Sheet.Drawing[i].GetType <> xOrigin) then
       FSelected.Add(Sheet.Drawing[i]);
   FAreaA := DPoint(0, 0);
   FAreaB := DPoint(Sheet.Details.PageWidth, Sheet.Details.PageHeight);
@@ -2210,6 +2476,7 @@ end;
   =========================================================================== }
 procedure TSchematicView.CancelTool;
 begin
+  FMeasureCalibrate := False;
   FreeTool;
   FTool := vtSelect;
   Cursor := crDefault;
@@ -2229,7 +2496,7 @@ end;
   =========================================================================== }
 function TSchematicView.ToolIsTwoCorner: Boolean;
 begin
-  Result := FTool in [vtRect, vtCircle, vtNote, vtCloud, vtMeasure, vtLadder];
+  Result := FTool in [vtRect, vtCircle, vtNote, vtCloud, vtMeasure, vtLadder, vtArrow];
 end;
 
 { ===========================================================================
@@ -2364,10 +2631,29 @@ begin
         Obj.PointA := DPoint(Min(A.x, B.x), Min(A.y, B.y));
         Obj.PointB := DPoint(Max(A.x, B.x), Max(A.y, B.y));
       end;
+    vtArrow:
+      begin
+        Obj := TDrawLine.CreateKind(Sheet.Options, xArrow);
+        Obj.PointA := A; Obj.PointB := B;
+      end;
     vtMeasure:
       begin
+        if FMeasureCalibrate then
+        begin
+          { Set Scale: the ruler only shows how long the known distance is drawn; it is not kept, and the tool ends }
+          FMeasureCalibrate := False;
+          FStage := 0;
+          if Hypot(B.x - A.x, B.y - A.y) >= 1 then
+          begin
+            CancelTool;
+            if Assigned(FOnMeasureCalibrated) then
+              FOnMeasureCalibrated(Self, Hypot(B.x - A.x, B.y - A.y) / 5.0);
+          end;
+          Exit;
+        end;
         Obj := TDrawMeasure.Create(Sheet.Options);
         Obj.PointA := A; Obj.PointB := B;
+        TDrawMeasure(Obj).Scale := Sheet.Options.MeasureScale;
       end;
     vtLadder:
       begin
@@ -2814,6 +3100,9 @@ var
   i: Integer;
 begin
   inherited MouseDown(Button, Shift, X, Y);
+  FButtonHeld := True;
+  FGrabObj := nil;
+  FGrabSecond := False;
   { a drag is under way with another button held (a rubber band, a move): this press does not cancel it or start a pan }
   if (FDragMode <> 0) and (Button <> FDownButton) then
   begin
@@ -2864,7 +3153,7 @@ begin
   begin
     FDragMode := 3;
     FOriginAtDrag := FOrigin;
-    Cursor := crSizeAll;
+    SetWorkAreaCursor(crSizeAll);
     Exit;
   end;
   if (Button = mbRight) and (FTool = vtPolygon) and (Length(FPoly) >= 1) and (not SuppressMenus) then
@@ -2940,7 +3229,7 @@ begin
         FShapeEnd := FPoly[High(FPoly)];
         Invalidate;
       end;
-    vtRect, vtCircle, vtNote, vtCloud, vtMeasure, vtLadder:
+    vtRect, vtCircle, vtNote, vtCloud, vtMeasure, vtLadder, vtArrow:
       begin
         if FStage = 0 then
         begin
@@ -2953,7 +3242,7 @@ begin
         end
         else
         begin
-          FShapeEnd := SnapPoint(P);
+          FShapeEnd := MeasureEnd(P, Shift);
           CommitShape(FShapeStart, FShapeEnd);
         end;
       end;
@@ -2994,9 +3283,43 @@ begin
           Exit;
         end;
       end;
+      { an end of the one chosen Measure A-B ruler: dragging it moves that end only }
+      if (Button = mbLeft) and (FSelected.Count = 1) and (TObject(FSelected[0]) is TDrawMeasure) then
+      begin
+        i := MeasureEndAt(P);
+        if i >= 0 then
+        begin
+          FDragMode := 9;
+          FFieldCode := i;
+          FDragStart := P;
+          FDragLast := SnapPoint(P);
+          Exit;
+        end;
+        { its distance text: dragging it moves the text only (and past MEASURE_TEXT_FAR an arrow leads back to the ruler) }
+        if TDrawMeasure(FSelected[0]).TextHit(P, 2 / Max(FZoom, 0.01)) then
+        begin
+          FDragMode := 10;
+          FTextOffStart := TDrawMeasure(FSelected[0]).TextOff;
+          FDragStart := P;
+          FDragLast := P;
+          Exit;
+        end;
+      end;
+      { a handle of the box round the whole selection (Resize All) }
+      if (Button = mbLeft) and FGroupResize then
+      begin
+        FFieldCode := GroupHandleAt(P);
+        if FFieldCode >= 0 then
+        begin
+          FDragMode := 8;
+          FDragStart := P;
+          FDragLast := SnapPoint(P);
+          Exit;
+        end;
+      end;
       { a handle of the one selected rectangle, ellipse, picture or note: dragging it resizes the object (these handles are outside the
         rectangle, so they are tried before anything under them) }
-      if (Button = mbLeft) and (not (ssShift in Shift)) and (SelectedResizable <> nil) then
+      if (Button = mbLeft) and (SelectedResizable <> nil) then
       begin
         FFieldCode := SelectedResizable.ResizeHandleAt(P, ResizeHandleSize);
         if FFieldCode >= 0 then
@@ -3055,6 +3378,7 @@ begin
       { a handle of a wholly picked wire also wins over whatever lies under it (a junction dot, a symbol): the press moves the selection }
       if (Button = mbLeft) and (not (ssShift in Shift)) and WholeWireEndAt(P) then
       begin
+        FindGrabbedAnchor(P);
         FDragMode := 1;
         FDragStart := P;
         FDragLast := SnapPoint(P);
@@ -3075,6 +3399,7 @@ begin
           end;
           if not (Hit is TDrawRungGrid) then       // the rung grid covers the sheet and stays where it is: a press on its numbers only selects it
           begin
+            FindGrabbedAnchor(P);
             FDragMode := 1;
             FDragStart := P;
             FDragLast := SnapPoint(P);   // moves are measured between snapped points, so objects stay on the grid
@@ -3106,7 +3431,15 @@ end;
 procedure TSchematicView.MouseMove(Shift: TShiftState; X, Y: Integer);
 var
   P, S, Delta: TDPoint;
+  GOld, GNew: TDRect;
+  GOther: TDPoint;
+  Keep: Boolean;
+  Extra: TDPoint;
+  ExtraHandle: Integer;
+  GScale, GW, GH: Double;
   i: Integer;
+  Eng: TWireEngine;
+  Stuck, Junc: Boolean;
 begin
   inherited MouseMove(Shift, X, Y);
   FPointerPixel := Point(X, Y);
@@ -3134,6 +3467,8 @@ begin
   P := ScreenToDesign(Point(X, Y));
   FMouseDesign := P;
   FHaveMouse := True;
+  if ViewShowMouseBars then
+    Invalidate;
   ReportPosition(P);
   if FPasting and (FDragMode <> 3) then       // (while the middle button pans the sheet the block stays where it is)
   begin
@@ -3151,7 +3486,13 @@ begin
   { over a handle of the selected rectangle the pointer shows which way it will resize }
   if (FDragMode = 0) and (FTool = vtSelect) then
   begin
-    if (SelectedResizable <> nil) and (SelectedResizable.ResizeHandleAt(P, ResizeHandleSize) >= 0) then
+    if MeasureEndAt(P) >= 0 then
+      Cursor := crSizeAll
+    else if (FSelected.Count = 1) and (TObject(FSelected[0]) is TDrawMeasure) and TDrawMeasure(FSelected[0]).TextHit(P, 2 / Max(FZoom, 0.01)) then
+      Cursor := crSizeAll
+    else if FGroupResize and (GroupHandleAt(P) >= 0) then
+      Cursor := CursorForHandle(GroupHandleAt(P))
+    else if (SelectedResizable <> nil) and (SelectedResizable.ResizeHandleAt(P, ResizeHandleSize) >= 0) then
       Cursor := CursorForHandle(SelectedResizable.ResizeHandleAt(P, ResizeHandleSize))
     else if (FSelected.Count = 1) and (TObject(FSelected[0]) is TDrawMethod) and (not FPasting) then
     begin
@@ -3190,14 +3531,114 @@ begin
           Invalidate;
         end;
       end;
+    9:
+      begin
+        { an end of a Measure A-B ruler is moved; with Shift the ruler is made level or plumb about the other end }
+        S := SnapPoint(P);
+        if ((S.x <> FDragLast.x) or (S.y <> FDragLast.y)) and (FSelected.Count = 1) and (TObject(FSelected[0]) is TDrawMeasure) then
+        begin
+          if FFieldCode = 0 then
+            GOther := TDrawingObject(FSelected[0]).PointB
+          else
+            GOther := TDrawingObject(FSelected[0]).PointA;
+          if (ssShift in Shift) or FTestShift or (GetKeyState(VK_SHIFT) < 0) then
+          begin
+            if Abs(S.x - GOther.x) >= Abs(S.y - GOther.y) then
+              S.y := GOther.y
+            else
+              S.x := GOther.x;
+          end;
+          if not FMoved then
+            BeginChange(rsResize);
+          FMoved := True;
+          if FFieldCode = 0 then
+            TDrawingObject(FSelected[0]).PointA := S
+          else
+            TDrawingObject(FSelected[0]).PointB := S;
+          FDragLast := S;
+          Invalidate;
+        end;
+      end;
+    10:
+      begin
+        { the distance text of a Measure A-B ruler follows the pointer }
+        if ((P.x <> FDragLast.x) or (P.y <> FDragLast.y)) and (FSelected.Count = 1) and (TObject(FSelected[0]) is TDrawMeasure) then
+        begin
+          if not FMoved then
+            BeginChange(rsMove);
+          FMoved := True;
+          TDrawMeasure(FSelected[0]).TextOff := DPoint(FTextOffStart.x + P.x - FDragStart.x, FTextOffStart.y + P.y - FDragStart.y);
+          FDragLast := P;
+          Invalidate;
+        end;
+      end;
+    8:
+      begin
+        S := SnapPoint(P);
+        if ((S.x <> FDragLast.x) or (S.y <> FDragLast.y)) and GroupBounds(GOld) then
+        begin
+          GNew := GOld;
+          case FFieldCode of
+            HANDLE_TOPLEFT, HANDLE_LEFT, HANDLE_BOTTOMLEFT: GNew.Left := S.x;
+            HANDLE_TOPRIGHT, HANDLE_RIGHT, HANDLE_BOTTOMRIGHT: GNew.Right := S.x;
+          end;
+          case FFieldCode of
+            HANDLE_TOPLEFT, HANDLE_TOP, HANDLE_TOPRIGHT: GNew.Top := S.y;
+            HANDLE_BOTTOMLEFT, HANDLE_BOTTOM, HANDLE_BOTTOMRIGHT: GNew.Bottom := S.y;
+          end;
+          { Shift: the box keeps its shape; a corner follows the larger of the two movements, the opposite side or corner stays }
+          if (ssShift in Shift) and (GOld.Right - GOld.Left > 0.001) and (GOld.Bottom - GOld.Top > 0.001) then
+          begin
+            GW := (GNew.Right - GNew.Left) / (GOld.Right - GOld.Left);
+            GH := (GNew.Bottom - GNew.Top) / (GOld.Bottom - GOld.Top);
+            case FFieldCode of
+              HANDLE_LEFT, HANDLE_RIGHT: GScale := GW;
+              HANDLE_TOP, HANDLE_BOTTOM: GScale := GH;
+            else
+              if Abs(GW - 1) >= Abs(GH - 1) then GScale := GW else GScale := GH;
+            end;
+            GW := (GOld.Right - GOld.Left) * GScale;
+            GH := (GOld.Bottom - GOld.Top) * GScale;
+            GNew := GOld;
+            if FFieldCode in [HANDLE_TOPLEFT, HANDLE_LEFT, HANDLE_BOTTOMLEFT] then
+              GNew.Left := GOld.Right - GW
+            else
+              GNew.Right := GOld.Left + GW;
+            if FFieldCode in [HANDLE_TOPLEFT, HANDLE_TOP, HANDLE_TOPRIGHT] then
+              GNew.Top := GOld.Bottom - GH
+            else
+              GNew.Bottom := GOld.Top + GH;
+          end;
+          { a side is not taken through the opposite one: the box keeps a little size }
+          if GNew.Right - GNew.Left < 0.5 then
+            GNew.Left := GOld.Left;
+          if GNew.Right - GNew.Left < 0.5 then
+            GNew.Right := GOld.Right;
+          if GNew.Bottom - GNew.Top < 0.5 then
+            GNew.Top := GOld.Top;
+          if GNew.Bottom - GNew.Top < 0.5 then
+            GNew.Bottom := GOld.Bottom;
+          if not FMoved then
+            BeginChange(rsResize);
+          FMoved := True;
+          ScaleSelection(GOld, GNew);
+          FDragLast := S;
+          Sheet.UpdateLayout;
+          Invalidate;
+        end;
+      end;
     6:
       begin
         S := SnapPoint(P);
         Delta := DPoint(S.x - FDragLast.x, S.y - FDragLast.y);
         if ((Delta.x <> 0) or (Delta.y <> 0)) and (SelectedResizable <> nil) then
         begin
-          { with Ctrl held a corner keeps the shape of the rectangle (CDrawEditItem::Move) }
-          if (ssCtrl in Shift) and (FResizeRatio > 0) then
+          { with Ctrl (TinyCAD) or Shift held the rectangle keeps its shape: a corner follows the larger of the two movements; a side moves the
+            perpendicular side too (CDrawEditItem::Move) }
+          Keep := (Shift * [ssCtrl, ssShift] <> []) and (FResizeRatio > 0);
+          Extra := DPoint(0, 0);
+          ExtraHandle := -1;
+          if Keep then
             case FFieldCode of
               HANDLE_TOPRIGHT, HANDLE_BOTTOMLEFT:
                 if Abs(Delta.x) > Abs(Delta.y) then
@@ -3209,11 +3650,17 @@ begin
                   Delta.y := Delta.x * FResizeRatio
                 else
                   Delta.x := Delta.y / FResizeRatio;
+              HANDLE_RIGHT:  begin ExtraHandle := HANDLE_BOTTOM; Extra := DPoint(0, Delta.x * FResizeRatio); end;
+              HANDLE_LEFT:   begin ExtraHandle := HANDLE_BOTTOM; Extra := DPoint(0, -Delta.x * FResizeRatio); end;
+              HANDLE_BOTTOM: begin ExtraHandle := HANDLE_RIGHT; Extra := DPoint(Delta.y / FResizeRatio, 0); end;
+              HANDLE_TOP:    begin ExtraHandle := HANDLE_RIGHT; Extra := DPoint(-Delta.y / FResizeRatio, 0); end;
             end;
           if not FMoved then
             BeginChange(rsResize);
           FMoved := True;
           SelectedResizable.ResizeBy(FFieldCode, Delta);
+          if ExtraHandle >= 0 then
+            SelectedResizable.ResizeBy(ExtraHandle, Extra);
           FDragLast := S;
           Sheet.UpdateLayout;
           Invalidate;
@@ -3237,6 +3684,22 @@ begin
       begin
         S := SnapPoint(P);
         Delta := DPoint(S.x - FDragLast.x, S.y - FDragLast.y);
+        if (FEndLine <> nil) and ((FEndLine.GetType = xWire) or (FEndLine.GetType = xBus)) and (FMoved or (Abs(X - FDragScreen.x) + Abs(Y - FDragScreen.y) >= 4)) then
+        begin
+          { the end of a wire being pulled sticks to a pin or to another wire as the wire tool does (a pin is often off the grid, and an end that
+            only snapped to the grid would stop short of it: the wire would not follow the symbol when it is moved); the end goes to that point,
+            wherever it is now }
+          Eng := TWireEngine.Create(FDesign, Sheet);
+          try
+            S := Eng.StickyPoint(P, True, True, Stuck, Junc, FEndLine);
+          finally
+            Eng.Free;
+          end;
+          if FEndFirst then
+            Delta := DPoint(S.x - FEndLine.PointA.x, S.y - FEndLine.PointA.y)
+          else
+            Delta := DPoint(S.x - FEndLine.PointB.x, S.y - FEndLine.PointB.y);
+        end;
         if (Delta.x <> 0) or (Delta.y <> 0) then
         begin
           if (not FMoved) and (Abs(X - FDragScreen.x) + Abs(Y - FDragScreen.y) < 4) then
@@ -3290,10 +3753,10 @@ begin
         FShapeEnd := SnapPoint(P);
         Invalidate;
       end;
-    vtRect, vtCircle, vtNote, vtCloud, vtMeasure, vtLadder:
+    vtRect, vtCircle, vtNote, vtCloud, vtMeasure, vtLadder, vtArrow:
       if FStage = 1 then
       begin
-        FShapeEnd := SnapPoint(P);
+        FShapeEnd := MeasureEnd(P, Shift);
         Invalidate;
       end;
     vtPlace:
@@ -3319,6 +3782,11 @@ end;
     Handles the release: finishes a pan, a move or a rubber-band selection, lets the wire tool
     place a dragged wire, or finishes a two-corner shape that was press-dragged.
   =========================================================================== }
+function TSchematicView.Dragging: Boolean;
+begin
+  Result := FButtonHeld or (FDragMode <> 0);
+end;
+
 procedure TSchematicView.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
   L, R, T, B: Double;
@@ -3326,6 +3794,7 @@ var
   P: TDPoint;
 begin
   inherited MouseUp(Button, Shift, X, Y);
+  FButtonHeld := False;
   { the release of a button that did not start the drag in progress does not end it }
   if (FDragMode <> 0) and (Button <> FDownButton) then
   begin
@@ -3345,7 +3814,7 @@ begin
   case FDragMode of
     3:
       begin
-        Cursor := crDefault;
+        SetWorkAreaCursor(crDefault, True);      // the cursor the tool had before the pan (the cross for a wire)
         { a pan that moved the sheet gives the focus back to the text box that had it (a click that did not move anything leaves it on the sheet, as before) }
         if FMoved and (FPanFocus <> nil) and FPanFocus.CanFocus then
           FPanFocus.SetFocus;
@@ -3360,6 +3829,12 @@ begin
     5: if FMoved then
          CommitChange(True);
     6: if FMoved then
+         CommitChange(True);
+    8: if FMoved then
+         CommitChange(True);
+    9: if FMoved then
+         CommitChange(True);
+    10: if FMoved then
          CommitChange(True);
     7: if FMoved then
          CommitChange(True);
@@ -3398,7 +3873,7 @@ begin
         { press, drag, release finishes a two-corner shape; a plain click leaves the first corner placed }
         if (FStage = 1) and (Abs(X - FShapeScreen.x) + Abs(Y - FShapeScreen.y) > 6) then
         begin
-          FShapeEnd := SnapPoint(P);
+          FShapeEnd := MeasureEnd(P, Shift);
           FDragMode := 0;
           CommitShape(FShapeStart, FShapeEnd);
         end;
@@ -3673,8 +4148,9 @@ end;
   TSchematicView.InitUserFont  (procedure)
   Parameters:  none
   Notes:
-    Gives FUserFont the default font of a new text of this design (face, height, bold, italic):
-    done whenever a design is loaded or made, so every design starts from its own defaults.
+    Gives FUserFont the font a new text starts with (face, height, bold, italic): the default text
+    font of Options > Fonts when there is one, otherwise the font of the design. Done whenever a
+    design is loaded or made.
   =========================================================================== }
 procedure TSchematicView.InitUserFont;
 var
@@ -3698,6 +4174,18 @@ begin
       FUserFont.Style := FUserFont.Style + [fsItalic];
   finally
     Sample.Free;
+  end;
+  { the default text font of Options > Fonts is what the text and label tools start with (font number 0, which the title block is drawn in, is not touched) }
+  if (EditDefaults.TextFontName <> '') and not (SameText(EditDefaults.TextFontName, DEFAULT_FONT) and (EditDefaults.TextFontPoints = 10) and (not EditDefaults.TextFontBold) and
+    (not EditDefaults.TextFontItalic)) then      // (the setting as it starts, Arial 10, leaves the design's own font alone)
+  begin
+    FUserFont.Name := EditDefaults.TextFontName;
+    FUserFont.Height := EditDefaults.TextFontPoints;
+    FUserFont.Style := [];
+    if EditDefaults.TextFontBold then
+      FUserFont.Style := FUserFont.Style + [fsBold];
+    if EditDefaults.TextFontItalic then
+      FUserFont.Style := FUserFont.Style + [fsItalic];
   end;
 end;
 
@@ -3908,6 +4396,24 @@ begin
 end;
 
 { ===========================================================================
+  TSchematicView.KeyUp  (procedure)
+  Parameters:
+    var Key: Word - the key code (var)
+    Shift: TShiftState - modifier keys
+  Notes:
+    Letting go of Shift frees the Measure A-B ruler being drawn to follow the pointer again.
+  =========================================================================== }
+procedure TSchematicView.KeyUp(var Key: Word; Shift: TShiftState);
+begin
+  inherited KeyUp(Key, Shift);
+  if (Key = VK_SHIFT) and (FTool in [vtMeasure, vtRect, vtCircle, vtArrow]) and (FStage = 1) then
+  begin
+    FShapeEnd := MeasureEnd(ScreenToDesign(FPointerPixel), Shift - [ssShift]);
+    Invalidate;
+  end;
+end;
+
+{ ===========================================================================
   TSchematicView.KeyDown  (procedure)
   Parameters:
     var Key: Word - the key code (var)
@@ -3920,9 +4426,20 @@ procedure TSchematicView.KeyDown(var Key: Word; Shift: TShiftState);
 begin
   inherited KeyDown(Key, Shift);
   case Key of
+    VK_SHIFT:
+      if (FTool in [vtMeasure, vtRect, vtCircle, vtArrow]) and (FStage = 1) then
+      begin
+        FShapeEnd := MeasureEnd(ScreenToDesign(FPointerPixel), Shift + [ssShift]);      // the ruler turns level or plumb at once
+        Invalidate;
+      end;
     VK_ESCAPE:
       begin
-        if FPasting then
+        if FGroupResize then
+        begin
+          FGroupResize := False;
+          Invalidate;
+        end
+        else if FPasting then
           CancelPaste
         else if (FTool in [vtWire, vtLine, vtBus]) and (FWire <> nil) and (FWire.Segment = 0) then
         begin
@@ -4089,6 +4606,7 @@ begin
     finally
       Clipboard.Close;
     end;
+    TableClipSheet := Sheet;                     // (tables pasted anywhere else lose their links)
     Status(Format(rsCopiedObjectS, [FSelected.Count]));
   finally
     MS.Free;
@@ -4210,7 +4728,7 @@ end;
     pointer) until a click drops it. Data that is not a TinyCAD drawing leaves everything
     unchanged and says so in the status line.
   =========================================================================== }
-procedure TSchematicView.PasteFromClipboard;
+procedure TSchematicView.PasteFromClipboard(ToGrid: Boolean);
 var
   MS: TMemoryStream;
 begin
@@ -4219,8 +4737,9 @@ begin
   MS := TMemoryStream.Create;
   try
     ClipboardToStream(MS);
+    FPasteSource := TableClipSheet;
     BeginPasteFrom(MS, rsPaste, rsTheClipboardDoesNotHold,
-      rsClickToPlaceThePasted, rsPasted);
+      rsClickToPlaceThePasted, rsPasted, ToGrid and SnapEnabled);
   finally
     MS.Free;
   end;
@@ -4250,6 +4769,7 @@ begin
   MS := TMemoryStream.Create;
   try
     MS.LoadFromFile(AFileName);
+    FPasteSource := nil;
     Result := BeginPasteFrom(MS, rsImport, rsThatFileIsNotA,
       rsClickToPlaceTheImported, rsImported);
   finally
@@ -4273,7 +4793,7 @@ end;
     corner under the pointer) until a click drops it. A block that was still following the mouse
     is placed first.
   =========================================================================== }
-function TSchematicView.BeginPasteFrom(Src: TStream; const UndoName, FailMsg, PlaceMsg, DoneMsg: String): Integer;
+function TSchematicView.BeginPasteFrom(Src: TStream; const UndoName, FailMsg, PlaceMsg, DoneMsg: String; ToGrid: Boolean): Integer;
 var
   Imp: TList;
   i: Integer;
@@ -4299,7 +4819,12 @@ begin
       ExplodePlacedSymbols(Imp);
       MakeFitSymbol(Imp);
     end;
-    Result := StartBlock(Imp, PlaceMsg, DoneMsg);
+    { a table brought to a sheet other than the one it was copied from cannot show the objects it was linked to: its links are cut and the linked cells are blank }
+    if FPasteSource <> Sheet then
+      for i := 0 to Imp.Count - 1 do
+        if TObject(Imp[i]) is TDrawTable then
+          TDrawTable(Imp[i]).BreakLinks(True);
+    Result := StartBlock(Imp, PlaceMsg, DoneMsg, ToGrid);
   finally
     Imp.Free;
   end;
@@ -4417,8 +4942,9 @@ end;
     Shared by paste, import and insert picture (CDrawBlockImport). The 3-phase buses among the
     objects get group numbers of their own, so a copy is not part of the bus it was copied from.
   =========================================================================== }
-function TSchematicView.StartBlock(Imp: TList; const PlaceMsg, DoneMsg: String): Integer;
+function TSchematicView.StartBlock(Imp: TList; const PlaceMsg, DoneMsg: String; ToGrid: Boolean): Integer;
 var
+  GridDelta: TDPoint;
   i, k: Integer;
   Olds, News: array of Integer;
   L: TDrawLine;
@@ -4443,12 +4969,20 @@ begin
   FSelected.Clear;
   for i := 0 to Imp.Count - 1 do FSelected.Add(Imp[i]);
   Result := Imp.Count;
-  FBlockRef := BlockReference(Sheet, Imp);
+  FBlockRef := BlockReference(Sheet, Imp, ToGrid);
   FPasting := True;
   FPasteDone := DoneMsg;
   FAreaA := FBlockRef;
   FAreaB := FBlockRef;
   StartDragEngine;
+  { Paste to grid: the block moves at once so that its corner is on a grid point, the objects keeping their spacing from each other }
+  if ToGrid then
+  begin
+    GridDelta := DPoint(Sheet.Snap.Snap(FBlockRef).x - FBlockRef.x, Sheet.Snap.Snap(FBlockRef).y - FBlockRef.y);
+    if (GridDelta.x <> 0) or (GridDelta.y <> 0) then
+      FDragEng.MoveBy(GridDelta);
+    FBlockRef := Sheet.Snap.Snap(FBlockRef);
+  end;
   { as in TinyCAD the block first stands exactly where it was copied from (so it shows at once, and a copy to the same place on the next page is
     just a click); it follows the pointer from the first mouse move }
   Sheet.UpdateLayout;
@@ -4506,6 +5040,36 @@ begin
     Imp.Free;
   end;
   Result := True;
+end;
+
+{ ===========================================================================
+  TSchematicView.InsertTable  (procedure)
+  Parameters:  none
+  Notes:
+    Insert > Insert Table: a new table (3 columns, a titles row and three rows) is added and follows the mouse until a click places it, like a picture. One undo step
+    named Insert table; a right click or Esc cancels it.
+  =========================================================================== }
+procedure TSchematicView.InsertTable;
+var
+  Obj: TDrawTable;
+  Imp: TList;
+begin
+  if Sheet = nil then
+    Exit;
+  if FPasting then
+    DropPaste;
+  CancelTool;
+  BeginChange(rsInsertTable);
+  Obj := TDrawTable.Create(Sheet.Options);
+  Obj.Fit;
+  AddNew(Obj);
+  Imp := TList.Create;
+  try
+    Imp.Add(Obj);
+    StartBlock(Imp, rsClickToPlaceTheTable, rsTablePlaced);
+  finally
+    Imp.Free;
+  end;
 end;
 
 { ===========================================================================
@@ -5374,15 +5938,16 @@ end;
   Parameters:
     DX: Integer - -1 for left, 1 for right, 0 for no horizontal move
     DY: Integer - -1 for up, 1 for down, 0 for no vertical move
+    IgnoreSnap: Boolean - move one screen pixel even when snap to grid is on (Shift + arrow)
   Returns:
     Boolean - True if the selection was moved
   Notes:
     An arrow key with the select tool: the chosen objects move one grid step when snap to grid
-    is on, one screen pixel (1 / zoom design units) when it is off, as one undo step. It moves
+    is on, one screen pixel (1 / zoom design units) when it is off or Shift is held (a fine move that ignores the grid), as one undo step. It moves
     like a drag does - the wires attached to the objects follow, and junctions are checked
     afterwards. Differences from TinyCAD: this command is new.
   =========================================================================== }
-function TSchematicView.NudgeSelection(DX, DY: Integer): Boolean;
+function TSchematicView.NudgeSelection(DX, DY: Integer; IgnoreSnap: Boolean): Boolean;
 var
   Step: Double;
   Delta: TDPoint;
@@ -5393,7 +5958,7 @@ begin
   Result := False;
   if (Sheet = nil) or (FTool <> vtSelect) or (FSelected.Count = 0) or (FZoom <= 0) or (FDragMode <> 0) or FPasting then
     Exit;
-  if SnapEnabled and (Sheet.Snap.Grid > 0) then
+  if SnapEnabled and (Sheet.Snap.Grid > 0) and (not IgnoreSnap) then
     Step := Sheet.Snap.Grid
   else
     Step := 1 / FZoom;
@@ -5435,7 +6000,7 @@ end;
   Returns:
     Boolean - True if the key moved the selection
   Notes:
-    An arrow key on the sheet, alone or with Shift: NudgeSelection in that direction. Ctrl and Alt
+    An arrow key on the sheet: NudgeSelection in that direction (one grid step); with Shift it ignores the grid and moves one screen pixel. Ctrl and Alt
     with an arrow are left to whoever uses them.
   =========================================================================== }
 function TSchematicView.ArrowKey(var Key: Word; Shift: TShiftState): Boolean;
@@ -5445,7 +6010,7 @@ begin
     Exit;
   if (Shift - [ssShift]) <> [] then
     Exit;
-  Result := NudgeSelection(Ord(Key = VK_RIGHT) - Ord(Key = VK_LEFT), Ord(Key = VK_DOWN) - Ord(Key = VK_UP));
+  Result := NudgeSelection(Ord(Key = VK_RIGHT) - Ord(Key = VK_LEFT), Ord(Key = VK_DOWN) - Ord(Key = VK_UP), ssShift in Shift);
   if Result then
     Key := 0;
 end;
@@ -5736,6 +6301,284 @@ begin
 end;
 
 { ===========================================================================
+  TSchematicView.MeasureEnd  (function)
+  Parameters:
+    const P: TDPoint - the pointer, in design units
+    Shift: TShiftState - the modifier keys of the event
+  Returns:
+    TDPoint - the end of the shape
+  Notes:
+    The pointer snapped to the grid. While the Measure A-B ruler is being drawn and either Shift key is down, the end is moved onto the horizontal or the vertical
+    line through the first point, whichever the pointer is nearer to (the ruler is made level or plumb). While a rectangle or circle is being drawn, Shift makes
+    it a square (or a round circle): both sides are the longer of the two. Letting go of Shift gives the pointer's own shape back.
+  =========================================================================== }
+function TSchematicView.MeasureEnd(const P: TDPoint; Shift: TShiftState): TDPoint;
+var
+  Side: Double;
+begin
+  Result := SnapPoint(P);
+  if (FTool in [vtMeasure, vtRect, vtCircle, vtArrow]) and (FStage = 1) and
+     (FTestShift or (ssShift in Shift) or (GetKeyState(VK_SHIFT) < 0)) then
+  begin
+    if FTool in [vtMeasure, vtArrow] then
+    begin
+      if Abs(Result.x - FShapeStart.x) >= Abs(Result.y - FShapeStart.y) then
+        Result.y := FShapeStart.y
+      else
+        Result.x := FShapeStart.x;
+    end
+    else
+    begin
+      { a rectangle or circle with Shift held is a square (a circle round): the longer side is used for both, towards where the pointer is }
+      Side := Max(Abs(Result.x - FShapeStart.x), Abs(Result.y - FShapeStart.y));
+      if Result.x < FShapeStart.x then
+        Result.x := FShapeStart.x - Side
+      else
+        Result.x := FShapeStart.x + Side;
+      if Result.y < FShapeStart.y then
+        Result.y := FShapeStart.y - Side
+      else
+        Result.y := FShapeStart.y + Side;
+    end;
+  end;
+end;
+
+{ ===========================================================================
+  TSchematicView.BeginMeasureCalibration  (procedure)
+  Parameters:  none
+  Notes:
+    Set Scale: starts the Measure A-B tool, whose ruler is not kept; its length is handed to OnMeasureCalibrated when it is drawn.
+  =========================================================================== }
+procedure TSchematicView.BeginMeasureCalibration;
+begin
+  if Sheet = nil then
+    Exit;
+  BeginTool(vtMeasure);
+  FMeasureCalibrate := FTool = vtMeasure;
+end;
+
+{ ===========================================================================
+  TSchematicView.SetMeasureScale  (procedure)
+  Parameters:
+    AScale: Double - the scale (above 0)
+  =========================================================================== }
+procedure TSchematicView.SetMeasureScale(AScale: Double);
+begin
+  if (Sheet = nil) or (AScale <= 0) or (Sheet.Options.MeasureScale = AScale) then
+    Exit;
+  BeginChange(rsMeasureScaleChange);
+  Sheet.Options.MeasureScale := AScale;
+  CommitChange(True);
+end;
+
+{ ===========================================================================
+  TSchematicView.GroupBounds  (function)
+  Parameters:
+    out B: TDRect - the box
+  Returns:
+    Boolean - False if fewer than two objects are chosen
+  Notes:
+    The box round the points of the chosen objects (the ends of a line, the corners of a rectangle, the points of a polygon, the
+    reference point of a symbol or text).
+  =========================================================================== }
+function TSchematicView.GroupBounds(out B: TDRect): Boolean;
+var
+  i, k: Integer;
+  O: TDrawingObject;
+  First: Boolean;
+
+  procedure Add(const Q: TDPoint);
+  begin
+    if First then
+    begin
+      B := DRect(Q.x, Q.y, Q.x, Q.y);
+      First := False;
+    end
+    else
+    begin
+      B.Left := Min(B.Left, Q.x);
+      B.Right := Max(B.Right, Q.x);
+      B.Top := Min(B.Top, Q.y);
+      B.Bottom := Max(B.Bottom, Q.y);
+    end;
+  end;
+
+begin
+  B := DRect(0, 0, 0, 0);
+  Result := FSelected.Count > 1;
+  if not Result then
+    Exit;
+  First := True;
+  for i := 0 to FSelected.Count - 1 do
+  begin
+    O := TDrawingObject(FSelected[i]);
+    Add(O.PointA);
+    if (O is TDrawLine) or (O.CanResize and not (O is TDrawRungGrid)) then
+      Add(O.PointB);
+    if O is TDrawPolygon then
+      for k := 0 to High(TDrawPolygon(O).Points) do
+        Add(DPoint(TDrawPolygon(O).Points[k].x + O.PointA.x, TDrawPolygon(O).Points[k].y + O.PointA.y));
+  end;
+end;
+
+{ ===========================================================================
+  TSchematicView.BeginGroupResize  (procedure)
+  Parameters:  none
+  Notes:
+    Resize All: with two or more objects chosen the box round them gets the eight handles of a rectangle. It ends when the selection
+    changes or Esc is pressed.
+  =========================================================================== }
+procedure TSchematicView.BeginGroupResize;
+begin
+  if (Sheet = nil) or (FTool <> vtSelect) or (FSelected.Count < 2) then
+    Exit;
+  FGroupResize := True;
+  Invalidate;
+end;
+
+{ ===========================================================================
+  TSchematicView.MeasureEndAt  (function)
+  Parameters:
+    const P: TDPoint - a point, in design units
+  Returns:
+    Integer - 0 for end A, 1 for end B of the one chosen Measure A-B ruler, -1 if P is on neither
+  =========================================================================== }
+function TSchematicView.MeasureEndAt(const P: TDPoint): Integer;
+var
+  M: TDrawingObject;
+  Tol: Double;
+begin
+  Result := -1;
+  if (Sheet = nil) or FPasting or (FTool <> vtSelect) or (FSelected.Count <> 1) or (not (TObject(FSelected[0]) is TDrawMeasure)) then
+    Exit;
+  M := TDrawingObject(FSelected[0]);
+  Tol := 6 / Max(FZoom, 0.01);
+  if Hypot(P.x - M.PointB.x, P.y - M.PointB.y) <= Tol then
+    Result := 1
+  else if Hypot(P.x - M.PointA.x, P.y - M.PointA.y) <= Tol then
+    Result := 0;
+end;
+
+{ ===========================================================================
+  TSchematicView.GroupHandleAt  (function)
+  Parameters:
+    const P: TDPoint - a point, in design units
+  Returns:
+    Integer - HANDLE_* or HANDLE_NONE
+  =========================================================================== }
+function TSchematicView.GroupHandleAt(const P: TDPoint): Integer;
+var
+  i: Integer;
+  B, R: TDRect;
+  HS, Slack: Double;
+begin
+  Result := HANDLE_NONE;
+  if (not FGroupResize) or (not GroupBounds(B)) then
+    Exit;
+  HS := ResizeHandleSize;
+  Slack := HS / 3;
+  for i := HANDLE_TOPLEFT to HANDLE_LEFT do
+  begin
+    R := GroupHandleRect(B, i, HS);
+    if (P.x >= R.Left - Slack) and (P.x <= R.Right + Slack) and (P.y >= R.Top - Slack) and (P.y <= R.Bottom + Slack) then
+      Exit(i);
+  end;
+end;
+
+{ ===========================================================================
+  TSchematicView.ScaleSelection  (procedure)
+  Parameters:
+    const Old: TDRect - the box round the selection now
+    const New: TDRect - the box it is to fill
+  Notes:
+    Every chosen object is carried from the old box to the new one. Lines, wires, buses and polygons are stretched point by point;
+    rectangles, ellipses, pictures and notes get the new size of their rectangle; symbols, text, labels and the rest keep their
+    size and are moved to where their reference point falls (a symbol stretched would no longer fit its pins). A wire that ends at
+    a symbol is not tied to it by this, so a stretch may leave the two apart.
+  =========================================================================== }
+procedure TSchematicView.ScaleSelection(const Old, New: TDRect);
+var
+  Sx, Sy: Double;
+  i, k: Integer;
+  O: TDrawingObject;
+  Poly: TDrawPolygon;
+  L, T, Rt, B: Double;
+  A, NB: TDPoint;
+
+  function Map(const Q: TDPoint): TDPoint;
+  begin
+    Result := DPoint(New.Left + (Q.x - Old.Left) * Sx, New.Top + (Q.y - Old.Top) * Sy);
+  end;
+
+begin
+  if Old.Right - Old.Left > 0.001 then
+    Sx := (New.Right - New.Left) / (Old.Right - Old.Left)
+  else
+    Sx := 1;
+  if Old.Bottom - Old.Top > 0.001 then
+    Sy := (New.Bottom - New.Top) / (Old.Bottom - Old.Top)
+  else
+    Sy := 1;
+  for i := 0 to FSelected.Count - 1 do
+  begin
+    O := TDrawingObject(FSelected[i]);
+    if O is TDrawLine then
+    begin
+      O.PointA := Map(O.PointA);
+      O.PointB := Map(O.PointB);
+    end
+    else if O is TDrawPolygon then
+    begin
+      Poly := TDrawPolygon(O);
+      A := Map(O.PointA);
+      for k := 0 to High(Poly.Handles) do
+      begin
+        Poly.Handles[k].X := Poly.Handles[k].X * Sx;
+        Poly.Handles[k].Y := Poly.Handles[k].Y * Sy;
+        if Poly.Handles[k].Arc = Arc_control then
+          Poly.Handles[k].Control := DPoint(Poly.Handles[k].Control.x * Sx, Poly.Handles[k].Control.y * Sy);
+      end;
+      O.PointA := A;
+      Poly.FlattenPath;
+      Poly.CalcBoundingRect;
+    end
+    else if O.CanResize and not (O is TDrawRungGrid) then
+    begin
+      L := Min(O.PointA.x, O.PointB.x); Rt := Max(O.PointA.x, O.PointB.x);
+      T := Min(O.PointA.y, O.PointB.y); B := Max(O.PointA.y, O.PointB.y);
+      { one edge at a time, the one that would pass the other edge last (a side taken past the opposite one turns the rectangle inside out) }
+      A := Map(DPoint(L, T));
+      NB := Map(DPoint(Rt, B));
+      if A.x > Rt then
+      begin
+        O.ResizeBy(HANDLE_RIGHT, DPoint(NB.x - Rt, 0));
+        O.ResizeBy(HANDLE_LEFT, DPoint(A.x - L, 0));
+      end
+      else
+      begin
+        O.ResizeBy(HANDLE_LEFT, DPoint(A.x - L, 0));
+        O.ResizeBy(HANDLE_RIGHT, DPoint(NB.x - Rt, 0));
+      end;
+      if A.y > B then
+      begin
+        O.ResizeBy(HANDLE_BOTTOM, DPoint(0, NB.y - B));
+        O.ResizeBy(HANDLE_TOP, DPoint(0, A.y - T));
+      end
+      else
+      begin
+        O.ResizeBy(HANDLE_TOP, DPoint(0, A.y - T));
+        O.ResizeBy(HANDLE_BOTTOM, DPoint(0, NB.y - B));
+      end;
+    end
+    else
+    begin
+      A := Map(O.PointA);
+      O.Shift(DPoint(A.x - O.PointA.x, A.y - O.PointA.y));
+    end;
+  end;
+end;
+
+{ ===========================================================================
   TSchematicView.SelectedResizable  (function)
   Parameters:  none
   Returns:
@@ -5811,6 +6654,33 @@ begin
          (((Abs(L.PointA.x - P.x) <= Tol) and (Abs(L.PointA.y - P.y) <= Tol)) or
           ((Abs(L.PointB.x - P.x) <= Tol) and (Abs(L.PointB.y - P.y) <= Tol))) then
         Exit(True);
+    end;
+end;
+
+{ finds the anchor of a chosen wire that the press at P is on (the nearest end of any of them, within a few pixels): FGrabObj and FGrabSecond; the position bars go through it }
+procedure TSchematicView.FindGrabbedAnchor(const P: TDPoint);
+var
+  i: Integer;
+  L: TDrawLine;
+  Best, d: Double;
+begin
+  FGrabObj := nil;
+  FGrabSecond := False;
+  Best := 8 / Max(FZoom, 0.01);
+  for i := 0 to FSelected.Count - 1 do
+    if TObject(FSelected[i]) is TDrawLine then
+    begin
+      L := TDrawLine(FSelected[i]);
+      d := Hypot(P.x - L.PointA.x, P.y - L.PointA.y);
+      if d < Best then
+      begin
+        Best := d; FGrabObj := L; FGrabSecond := False;
+      end;
+      d := Hypot(P.x - L.PointB.x, P.y - L.PointB.y);
+      if d < Best then
+      begin
+        Best := d; FGrabObj := L; FGrabSecond := True;
+      end;
     end;
 end;
 

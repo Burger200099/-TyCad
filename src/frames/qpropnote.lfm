@@ -61,17 +61,17 @@ inherited fmPropNote: TfmPropNote
     Left = 480
     Height = 120
     Top = 0
-    Width = 376
+    Width = 248
     Align = alLeft
     BevelOuter = bvNone
     ClientHeight = 120
-    ClientWidth = 376
+    ClientWidth = 248
     TabOrder = 4
     object lbNote: TLabel
       Left = 0
       Height = 15
       Top = 105
-      Width = 376
+      Width = 248
       Align = alBottom
       Alignment = taCenter
       Caption = 'Note'

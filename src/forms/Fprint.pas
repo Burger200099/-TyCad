@@ -34,6 +34,7 @@ type
     cbBW: TCheckBox;
     cbNoSymText: TCheckBox;
     cbNoSymFields: TCheckBox;
+    cbCenter: TCheckBox;
     cbFit: TCheckBox;
     cbPrinterList: TComboBox;
     edScale: TEdit;
@@ -62,6 +63,7 @@ type
     procedure cbBWClick(Sender: TObject);
     procedure cbNoSymTextClick(Sender: TObject);
     procedure cbNoSymFieldsClick(Sender: TObject);
+    procedure cbCenterClick(Sender: TObject);
     procedure cbFitClick(Sender: TObject);
     procedure FastPreviewPaint(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -122,7 +124,7 @@ type
     { CSpecialPrintDlg::OnInitDialog and CTinyCadView::DoPreparePrinting: the printer's page, the sheet's size, how many sheets there are, the name of the printer
       (empty when there is none, and then OK is dimmed), and the scale and black and white of the settings }
     procedure SetPrint(const ADev: TPrintDevice; ASheetW, ASheetH, ASheetCount: Integer; const APrinterName: String; AAvailable: Boolean; AScale: Double; BW: Boolean;
-      NoSymText: Boolean = False; NoSymFields: Boolean = False);
+      NoSymText: Boolean = False; NoSymFields: Boolean = False; Center: Boolean = False);
     procedure SetRange(AFrom, ATo, ACopies: Integer; ACollate: Boolean);
     { the printer's page and name after the printer was changed }
     procedure SetDevice(const ADev: TPrintDevice; const APrinterName: String);
@@ -241,7 +243,7 @@ end;
     (TinyCAD's radio buttons start at the first), no Fit.
   =========================================================================== }
 procedure TfrmPrint.SetPrint(const ADev: TPrintDevice; ASheetW, ASheetH, ASheetCount: Integer; const APrinterName: String; AAvailable: Boolean; AScale: Double;
-  BW: Boolean; NoSymText: Boolean = False; NoSymFields: Boolean = False);
+  BW: Boolean; NoSymText: Boolean = False; NoSymFields: Boolean = False; Center: Boolean = False);
 begin
   FStarting := True;
   try
@@ -254,6 +256,7 @@ begin
     cbBW.Checked := BW;
     cbNoSymText.Checked := NoSymText;
     cbNoSymFields.Checked := NoSymFields;
+    cbCenter.Checked := Center;
     edScale.Text := PrintScaleText(AScale);
     cbFit.Checked := False;
     edScale.Enabled := True;
@@ -393,6 +396,7 @@ begin
   Result.BlackWhite := cbBW.Checked;
   Result.NoSymbolText := cbNoSymText.Checked;
   Result.NoSymbolFields := cbNoSymFields.Checked;
+  Result.Center := cbCenter.Checked;
   Result.AllSheets := rbAll.Checked;
   Result.FromPage := GetFromPage;
   Result.ToPage := GetToPage;
@@ -619,6 +623,22 @@ begin
 end;
 
 { ===========================================================================
+  TfrmPrint.cbCenterClick  (procedure)
+  Parameters:
+    Sender: TObject - the check box
+  Notes:
+    "Center to page": the choice is kept in the settings at once and the preview is drawn again with the sheet in the middle of the page (or from the corner).
+  =========================================================================== }
+procedure TfrmPrint.cbCenterClick(Sender: TObject);
+begin
+  if FStarting then
+    Exit;
+  ProgramSettings.PrintCenter := cbCenter.Checked;
+  SaveSettings;
+  RefreshPreview;
+end;
+
+{ ===========================================================================
   TfrmPrint.cbNoSymFieldsClick  (procedure)
   Parameters:
     Sender: TObject - the check box
@@ -763,6 +783,7 @@ begin
   ProgramSettings.PrintBandW := cbBW.Checked;
   ProgramSettings.PrintNoSymFields := cbNoSymFields.Checked;
   ProgramSettings.PrintNoSymText := cbNoSymText.Checked;
+  ProgramSettings.PrintCenter := cbCenter.Checked;
   SaveSettings;
 end;
 
@@ -990,7 +1011,7 @@ begin
     Exit;
   W := Max(1, Round(PgW * F));
   H := Max(1, Round(PgH * F));
-  Key := Format('%d|%s|%d|%d|%d|%d|%d|%d|%d|%d', [FShown, edScale.Text, Ord(cbBW.Checked) + 2 * Ord(cbNoSymText.Checked) + 4 * Ord(cbNoSymFields.Checked), Ord(rbAll.Checked), FDev.HorzMm, FDev.VertMm, FDev.Dpi, W, H, FSheetCount]);
+  Key := Format('%d|%s|%d|%d|%d|%d|%d|%d|%d|%d', [FShown, edScale.Text, Ord(cbBW.Checked) + 2 * Ord(cbNoSymText.Checked) + 4 * Ord(cbNoSymFields.Checked) + 8 * Ord(cbCenter.Checked), Ord(rbAll.Checked), FDev.HorzMm, FDev.VertMm, FDev.Dpi, W, H, FSheetCount]);
   if (Key <> FPreviewKey) or (FPreviewBmp.Width <> W) or (FPreviewBmp.Height <> H) then
   begin
     FPreviewBmp.SetSize(W, H);

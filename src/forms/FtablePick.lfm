@@ -1,0 +1,32 @@
+object frmTablePick: TfrmTablePick
+  Left = 600
+  Height = 240
+  Top = 300
+  Width = 360
+  BorderStyle = bsNone
+  Caption = 'frmTablePick'
+  ClientHeight = 240
+  ClientWidth = 360
+  KeyPreview = True
+  PopupMode = pmAuto
+  Position = poDesigned
+  ShowInTaskBar = stNever
+  LCLVersion = '4.8.0.0'
+  OnDeactivate = FormDeactivate
+  OnKeyDown = FormKeyDown
+  OnShow = FormShow
+  object lbItems: TListBox
+    Left = 0
+    Height = 240
+    Top = 0
+    Width = 360
+    Align = alClient
+    BorderStyle = bsSingle
+    ItemHeight = 0
+    OnClick = lbItemsClick
+    OnDblClick = lbItemsClick
+    ScrollWidth = 358
+    TabOrder = 0
+    TopIndex = -1
+  end
+end

@@ -18,7 +18,7 @@ interface
 
 uses
   Classes, SysUtils, Graphics, Math, Types, UDPoint, UDrawTypes, UGeometry, UResources,
-  UDrawingObjects, USymbols, UDesign, UPaper, UImageLoad, URevisions, UTitleBlock, UOrient;
+  UDrawingObjects, UTable, USymbols, UDesign, UPaper, UImageLoad, URevisions, UTitleBlock, UOrient;
 
 { The width in pixels of a grid dot: one screen pixel in the 1 px grid mode, else as many as the zoom is hundreds of per cent (at least 1) }
 function GridDotSize(Zoom: Double; OnePx: Boolean): Integer;
@@ -54,6 +54,7 @@ type
     procedure TextBox(const Str: String; const A, B: TDPoint; Rotated: Boolean; FontNumber: Integer; Color: Cardinal);
     procedure TextAt(const Str: String; const Anchor: TDPoint; Rotated: Boolean; FontNumber: Integer; Color: Cardinal);
     procedure PaintLine(O: TDrawLine);
+    procedure ArrowHead(const Tip: TDPoint; Ux, Uy: Double);
     function MinDotRadius: Integer;
     procedure PaintJunction(O: TDrawJunction);
     procedure PaintNoConnect(O: TDrawNoConnect);
@@ -76,6 +77,7 @@ type
     procedure PaintRuler(O: TDrawRuler);
     procedure PaintMeasure(O: TDrawMeasure);
     procedure PaintCloud(O: TDrawCloud);
+    procedure PaintTable(O: TDrawTable);
     procedure PaintRefText(O: TDrawRefText);
   private
     FOnePxDots: Boolean;
@@ -91,10 +93,11 @@ type
     procedure PaintExtendedBlock(Sheet: TDesignSheet);
     procedure PaintRulers(Sheet: TDesignSheet);
     procedure PaintPolygonHandles(Pg: TDrawPolygon);
-    procedure PaintLineHandles(L: TDrawLine);
+    procedure PaintLineHandles(L: TDrawingObject);
     procedure PaintMetaFile(O: TDrawMetaFile);
     function ContextOrient: TOrient;
     procedure PaintResizeHandles(O: TDrawingObject; HandleSize: Double);
+    procedure PaintGroupHandles(const B: TDRect; HandleSize: Double);
     procedure PaintErrorMarker(const P: TDPoint; Selected: Boolean);
     procedure PaintOriginMarker(const P: TDPoint);
     procedure DetailsText(Sheet: TDesignSheet; const Str: String; X, Y: Double; Centre, Vertical: Boolean; FontNumber: Integer; MaxWidth: Double = 0);
@@ -629,6 +632,27 @@ begin
     C := FForcedColor;
   SetPen(C, T, Ps);
   Ln(O.PointA, O.PointB);
+  if (O.Kind = xArrow) and (Hypot(O.PointB.x - O.PointA.x, O.PointB.y - O.PointA.y) > 0.001) then
+    ArrowHead(O.PointB, (O.PointB.x - O.PointA.x) / Hypot(O.PointB.x - O.PointA.x, O.PointB.y - O.PointA.y),
+              (O.PointB.y - O.PointA.y) / Hypot(O.PointB.x - O.PointA.x, O.PointB.y - O.PointA.y));
+end;
+
+{ ===========================================================================
+  TSchematicPainter.ArrowHead  (procedure)
+  Parameters:
+    const Tip: TDPoint - the point of the arrow
+    Ux, Uy: Double - the unit vector the arrow points along
+  Notes:
+    Draws the two barbs of an arrow head (8 units long, 0.45 radian either side of the shaft) in the pen as it is. The Arrow tool and the arrow from a moved Measure A-B
+    text to its ruler both use it, so they look alike.
+  =========================================================================== }
+procedure TSchematicPainter.ArrowHead(const Tip: TDPoint; Ux, Uy: Double);
+var
+  i: Integer;
+begin
+  for i := -1 to 1 do
+    if i <> 0 then
+      Ln(Tip, DPoint(Tip.x - (Ux * Cos(0.45) - i * Uy * Sin(0.45)) * 8, Tip.y - (Uy * Cos(0.45) + i * Ux * Sin(0.45)) * 8));
 end;
 
 { ===========================================================================
@@ -1152,7 +1176,7 @@ function TSchematicPainter.WrapText(const S: String; Width: Integer): TStringLis
 var
   Paras: TStringList;
   p, k: Integer;
-  Cur, Word, Test: String;
+  Cur, Word, Test, Lead: String;
 begin
   Result := TStringList.Create;
   Paras := TStringList.Create;
@@ -1162,6 +1186,12 @@ begin
     begin
       Cur := '';
       Test := Paras[p];
+      { the spaces a line starts with (a tab makes four) are kept: they indent the line }
+      k := 0;
+      while (k < Length(Test)) and (Test[k + 1] = ' ') do
+        Inc(k);
+      Lead := Copy(Test, 1, k);
+      Test := Copy(Test, k + 1, MaxInt);
       while Test <> '' do
       begin
         k := Pos(' ', Test);
@@ -1181,7 +1211,8 @@ begin
         if Cur <> '' then
           Cur := Cur + ' ' + Word
         else
-          Cur := Word;
+          Cur := Lead + Word;
+        Lead := '';
         while (Length(Cur) > 1) and (FCanvas.TextWidth(Cur) > Width) do
         begin
           { a single word that is too wide: as many letters as fit, the rest goes on }
@@ -1216,7 +1247,7 @@ var
   Pts: TPxArray;
   Dashed: Boolean;
   Lines: TStringList;
-  LineH, Y, i: Integer;
+  LineH, Y, i, Dir: Integer;
 begin
   St := FOpts.Styles.Get(O.Style) as TLineStyleResource;
   SetPen(St.Color, St.Thickness, St.Style);
@@ -1249,14 +1280,42 @@ begin
   if (NoteBox.Right <= NoteBox.Left) or (NoteBox.Bottom <= NoteBox.Top) then
     NoteBox := Rect(L, T, R, B);
   SetFont(O.FontStyle, O.FontColor, H);
-  Lines := WrapText(StringReplace(O.Str, '`', '', [rfReplaceAll]), NoteBox.Right - NoteBox.Left);
+  Dir := FT.RotateDir(O.Dir);      { 0 reads up, 1 down, 2 upside down, 3 (the usual) across }
+  if Dir in [0, 1] then
+    Lines := WrapText(StringReplace(StringReplace(O.Str, '`', '', [rfReplaceAll]), #9, '    ', [rfReplaceAll]), NoteBox.Bottom - NoteBox.Top)
+  else
+    Lines := WrapText(StringReplace(StringReplace(O.Str, '`', '', [rfReplaceAll]), #9, '    ', [rfReplaceAll]), NoteBox.Right - NoteBox.Left);      // (a tab is four spaces)
   try
     LineH := FCanvas.TextHeight('Ag');
-    Y := NoteBox.Top;
-    for i := 0 to Lines.Count - 1 do
+    if Dir = 3 then
     begin
-      FCanvas.TextRect(NoteBox, NoteBox.Left, Y, Lines[i]);      // (clipped to the box)
-      Inc(Y, LineH);
+      Y := NoteBox.Top;
+      for i := 0 to Lines.Count - 1 do
+      begin
+        FCanvas.TextRect(NoteBox, NoteBox.Left, Y, Lines[i]);      // (clipped to the box)
+        Inc(Y, LineH);
+      end;
+    end
+    else
+    begin
+      { turned text: each line is its own line of letters turned with the font (Orientation), the lines following each other across the box; one that would start outside the box is not drawn }
+      case Dir of
+        0: FCanvas.Font.Orientation := 900;
+        1: FCanvas.Font.Orientation := 2700;
+      else
+        FCanvas.Font.Orientation := 1800;
+      end;
+      for i := 0 to Lines.Count - 1 do
+        case Dir of
+          0: if NoteBox.Left + (i + 1) * LineH <= NoteBox.Right + 1 then
+               FCanvas.TextOut(NoteBox.Left + i * LineH, NoteBox.Bottom, Lines[i]);
+          1: if NoteBox.Right - (i + 1) * LineH >= NoteBox.Left - 1 then
+               FCanvas.TextOut(NoteBox.Right - i * LineH, NoteBox.Top, Lines[i]);
+        else
+          if NoteBox.Bottom - (i + 1) * LineH >= NoteBox.Top - 1 then
+            FCanvas.TextOut(NoteBox.Right, NoteBox.Bottom - i * LineH, Lines[i]);
+        end;
+      FCanvas.Font.Orientation := 0;
     end;
   finally
     Lines.Free;
@@ -1358,6 +1417,13 @@ begin
   TextBox(O.LeftWire, DPoint(R.Left, R.Top), DPoint(R.Right, R.Bottom), False, O.FontStyle, O.FontColor);
   R := O.RightLabelBox;
   TextBox(O.RightWire, DPoint(R.Left, R.Top), DPoint(R.Right, R.Bottom), False, O.FontStyle, O.FontColor);
+  if O.BottomText then
+  begin
+    R := O.LeftBottomBox;
+    TextBox(O.LeftWire, DPoint(R.Left, R.Top), DPoint(R.Right, R.Bottom), False, O.FontStyle, O.FontColor);
+    R := O.RightBottomBox;
+    TextBox(O.RightWire, DPoint(R.Left, R.Top), DPoint(R.Right, R.Bottom), False, O.FontStyle, O.FontColor);
+  end;
   { when selected, outline the rails' rectangle so the object is visible as one thing }
   if FSel then
   begin
@@ -1495,6 +1561,7 @@ var
   Txt: String;
   H, Cnt, i: Integer;
   Ang: Integer;
+  Th, Ex, Ey, Tw, Tht, Cx, Cy, Mx, My, Dl, Ax, Ay: Double;
 begin
   SetPen(O.LineColor, O.LineWidth, 0);
   Ln(O.PointA, O.PointB);
@@ -1510,15 +1577,12 @@ begin
   if O.Ticks <> 0 then
   begin
     Zm := FT.GetZoomFactor;
-    if O.UnitMode = 1 then
+    if O.UnitMode >= 1 then
       Step := 25.4 * 5 / 16
     else
       Step := 5.0;   // 1/16 inch or 1 mm, in internal units
     while Step * Zm < 6 do
-      if O.UnitMode = 1 then
-        Step := Step * 2
-      else
-        Step := Step * 2;
+      Step := Step * 2;
     T := Step; Cnt := 0;
     while (T < Len) and (Cnt < 2000) do
     begin
@@ -1535,17 +1599,90 @@ begin
   { the distance, beside the middle of the line }
   Txt := O.DisplayText;
   SetFont(O.FontStyle, O.FontColor, H);
-  Mid := Px(DPoint((O.PointA.x + O.PointB.x) / 2 + Nx * 9, (O.PointA.y + O.PointB.y) / 2 + Ny * 9));
+  Zm := Max(FT.GetZoomFactor, 0.0001);
   Ang := Round(ArcTan2(-(O.PointB.y - O.PointA.y), O.PointB.x - O.PointA.x) * 1800 / Pi);
   if (Ang > 900) then
     Ang := Ang - 1800;
   if (Ang < -900) then
     Ang := Ang + 1800;
+  { the text box is turned with the line; its centre is where it sits beside the middle of the line (centred on it), plus the offset the user has dragged it by }
+  Th := Ang * Pi / 1800;
+  Ex := Cos(Th); Ey := -Sin(Th);
+  Tw := FCanvas.TextWidth(Txt); Tht := FCanvas.TextHeight(Txt);
+  Cx := (O.PointA.x + O.PointB.x) / 2 + Nx * 9 + ((-Ey) * Tht / 2) / Zm + O.TextOff.x;
+  Cy := (O.PointA.y + O.PointB.y) / 2 + Ny * 9 + (Ex * Tht / 2) / Zm + O.TextOff.y;
+  O.TextC := DPoint(Cx, Cy);
+  O.TextEx := DPoint(Ex, Ey);
+  O.TextHW := Tw / 2 / Zm; O.TextHH := Tht / 2 / Zm;
+  O.TextShown := True;
+  { moved further than MEASURE_TEXT_FAR: an arrow from the text to the middle of the ruler, kept MEASURE_ARROW_GAP away from each }
+  Mx := (O.PointA.x + O.PointB.x) / 2; My := (O.PointA.y + O.PointB.y) / 2;
+  Dl := Hypot(Mx - Cx, My - Cy);
+  if (Hypot(O.TextOff.x, O.TextOff.y) > MEASURE_TEXT_FAR) and (Dl > 2 * MEASURE_ARROW_GAP + 1) then
+  begin
+    Ux := (Mx - Cx) / Dl; Uy := (My - Cy) / Dl;
+    Ax := Mx - Ux * MEASURE_ARROW_GAP; Ay := My - Uy * MEASURE_ARROW_GAP;
+    Ln(DPoint(Cx + Ux * MEASURE_ARROW_GAP, Cy + Uy * MEASURE_ARROW_GAP), DPoint(Ax, Ay));
+    ArrowHead(DPoint(Ax, Ay), Ux, Uy);
+  end;
+  Mid := Px(DPoint(Cx - (Ex * Tw / 2 + (-Ey) * Tht / 2) / Zm, Cy - (Ey * Tw / 2 + Ex * Tht / 2) / Zm));
   FCanvas.Font.Orientation := Ang;
   FCanvas.TextOut(Mid.x, Mid.y, Txt);
   FCanvas.Font.Orientation := 0;
-  i := 0; if i = 1 then
-    ;
+end;
+
+{ ===========================================================================
+  TSchematicPainter.PaintTable  (procedure)
+  Parameters:
+    O: TDrawTable - the table
+  Notes:
+    Draws the grid (solid or dashed lines round every cell, none when hidden) and the text of each cell in the table's font, from the top left of the cell.
+  =========================================================================== }
+procedure TSchematicPainter.PaintTable(O: TDrawTable);
+var
+  ColW, RowH: TTableSizes;
+  L, T, X, Y, Tot: Double;
+  r, c, r0, H: Integer;
+  P: TPoint;
+begin
+  O.Fit;
+  O.Layout(ColW, RowH);
+  r0 := O.FirstRow;
+  L := Min(O.PointA.x, O.PointB.x); T := Min(O.PointA.y, O.PointB.y);
+  if O.GridStyle <> 2 then
+  begin
+    SetPen(O.FontColor, 1, O.GridStyle);
+    Y := T; Tot := 0;
+    for c := 0 to High(ColW) do Tot := Tot + ColW[c];
+    for r := 0 to Length(RowH) do
+    begin
+      Ln(DPoint(L, Y), DPoint(L + Tot, Y));
+      if r <= High(RowH) then Y := Y + RowH[r];
+    end;
+    X := L;
+    for c := 0 to Length(ColW) do
+    begin
+      Ln(DPoint(X, T), DPoint(X, Y));
+      if c <= High(ColW) then X := X + ColW[c];
+    end;
+  end;
+  SetFont(O.FontStyle, O.FontColor, H);
+  FCanvas.Brush.Style := bsClear;
+  Y := T;
+  for r := r0 to O.Rows - 1 do
+  begin
+    X := L;
+    for c := 0 to O.Cols - 1 do
+    begin
+      if O.Cells[r][c] <> '' then
+      begin
+        P := Px(DPoint(X + TABLE_PAD, Y + TABLE_PAD));
+        FCanvas.TextOut(P.x, P.y, O.Cells[r][c]);
+      end;
+      X := X + ColW[c];
+    end;
+    Y := Y + RowH[r - r0];
+  end;
 end;
 
 { ===========================================================================
@@ -1685,6 +1822,8 @@ begin
       PaintMeasure(Obj as TDrawMeasure)
     else if Obj is TDrawCloud then
       PaintCloud(Obj as TDrawCloud)
+    else if Obj is TDrawTable then
+      PaintTable(Obj as TDrawTable)
     else if Obj is TDrawRefText then
       PaintRefText(Obj as TDrawRefText);
   finally
@@ -2141,7 +2280,7 @@ end;
     side so they can be seen when the sheet is zoomed out. Screen only: a printout or a picture
     does not have them (the view paints them after the sheet).
   =========================================================================== }
-procedure TSchematicPainter.PaintLineHandles(L: TDrawLine);
+procedure TSchematicPainter.PaintLineHandles(L: TDrawingObject);
 var
   k, Half: Integer;
   Pt: TPoint;
@@ -2349,6 +2488,40 @@ begin
   for i := HANDLE_TOPLEFT to HANDLE_LEFT do
   begin
     R := O.ResizeHandleRect(i, HandleSize);
+    H1 := Px(DPoint(R.Left, R.Top));
+    H2 := Px(DPoint(R.Right, R.Bottom));
+    FCanvas.Rectangle(Min(H1.x, H2.x), Min(H1.y, H2.y), Max(H1.x, H2.x) + 1, Max(H1.y, H2.y) + 1);
+  end;
+  FCanvas.Brush.Style := bsClear;
+end;
+
+{ ===========================================================================
+  TSchematicPainter.PaintGroupHandles  (procedure)
+  Parameters:
+    const B: TDRect - the box round the selection
+    HandleSize: Double - side of a handle in design units
+  Notes:
+    The dotted box and the eight handles of Resize All, drawn as those of a single rectangle.
+  =========================================================================== }
+procedure TSchematicPainter.PaintGroupHandles(const B: TDRect; HandleSize: Double);
+var
+  P1, P2, H1, H2: TPoint;
+  i: Integer;
+  R: TDRect;
+begin
+  P1 := Px(DPoint(B.Left, B.Top));
+  P2 := Px(DPoint(B.Right, B.Bottom));
+  FCanvas.Brush.Style := bsClear;
+  FCanvas.Pen.Style := psDot;
+  FCanvas.Pen.Width := 1;
+  FCanvas.Pen.Color := clBlack;
+  FCanvas.Rectangle(Min(P1.x, P2.x) - 1, Min(P1.y, P2.y) - 1, Max(P1.x, P2.x) + 2, Max(P1.y, P2.y) + 2);
+  FCanvas.Pen.Style := psSolid;
+  FCanvas.Brush.Style := bsSolid;
+  FCanvas.Brush.Color := clBlack;
+  for i := HANDLE_TOPLEFT to HANDLE_LEFT do
+  begin
+    R := GroupHandleRect(B, i, HandleSize);
     H1 := Px(DPoint(R.Left, R.Top));
     H2 := Px(DPoint(R.Right, R.Bottom));
     FCanvas.Rectangle(Min(H1.x, H2.x), Min(H1.y, H2.y), Max(H1.x, H2.x) + 1, Max(H1.y, H2.y) + 1);

@@ -33,6 +33,8 @@ type
     xLadder = 150,   // not in TinyCAD: the schematic version's ladder rails (tag LADDER)
     xMeasure = 151,  // A-to-B ruler (tag MEASURE)
     xCloud = 152,    // revision-cloud rectangle (tag CLOUD)
+    xTable = 156,    // a table of text cells, edited in a spreadsheet-like window (tag TABLE)
+    xArrow = 155,    // a line with an arrow head at B (tag ARROW; a TDrawLine)
     xRungGrid = 154, // the sheet's rung number grid: the hidden spreadsheet whose first column holds the rung numbers (tag RUNGS)
     xRefText = 153,  // text linked to another object, e.g. its ladder line number (tag XREF)
     xNULL = 255

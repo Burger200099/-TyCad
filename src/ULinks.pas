@@ -17,7 +17,7 @@ unit ULinks;
 interface
 
 uses
-  Classes, SysUtils, Math, UDPoint, UDrawTypes, UDrawingObjects, USymbols, UDesign;
+  Classes, SysUtils, Math, UDPoint, UDrawTypes, UDrawingObjects, USymbols, UDesign, UTableLinks;
 
 { Recompute every linked text in the design (and its layout) }
 procedure UpdateLinks(Design: TDesignFile);
@@ -486,6 +486,8 @@ begin
         X.CachedText := TextFor(Design, i, X);
         X.UpdateLayout;
       end;
+  for i := 0 to Design.SheetCount - 1 do
+    ResolveTableLinks(Design.Sheets[i]);         // (the cells of a table that show the text of other objects)
 end;
 
 end.

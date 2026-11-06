@@ -38,6 +38,9 @@ type
     SymbolFontName: String;        // the symbol font (what TinyCAD calls the pin font: the reference and the other fields of a symbol, and pin names and numbers)
     SymbolFontPoints: Integer;     // ... its size in points
     SymbolFontBold, SymbolFontItalic: Boolean;
+    TextFontName: String;          // the default text font (text and wire labels of a design made from now on; not the open design)
+    TextFontPoints: Integer;       // ... its size in points
+    TextFontBold, TextFontItalic: Boolean;
     SheetBorder, SheetRulers: Boolean;   // what the sheet of a new design starts with: a border, rulers ...
     SheetCols, SheetRows: Integer;       // ... the rulers' columns and rows (1 to 26; the rows are shown as a letter)
     SheetMarginMm: Double;               // ... the distance of the border from the edge of the page, millimetres
@@ -342,7 +345,11 @@ begin
   else if Trim(D.SymbolFontName) = '' then
     Result := rsTheSymbolFontNeedsA
   else if (D.SymbolFontPoints < SYMBOL_FONT_MIN_POINTS) or (D.SymbolFontPoints > SYMBOL_FONT_MAX_POINTS) then
-    Result := Format(rsTheSymbolFontSizeMust, [SYMBOL_FONT_MIN_POINTS, SYMBOL_FONT_MAX_POINTS]);
+    Result := Format(rsTheSymbolFontSizeMust, [SYMBOL_FONT_MIN_POINTS, SYMBOL_FONT_MAX_POINTS])
+  else if Trim(D.TextFontName) = '' then
+    Result := rsTheDefaultTextFontNeeds
+  else if (D.TextFontPoints < SYMBOL_FONT_MIN_POINTS) or (D.TextFontPoints > SYMBOL_FONT_MAX_POINTS) then
+    Result := Format(rsTheDefaultTextFontSize, [SYMBOL_FONT_MIN_POINTS, SYMBOL_FONT_MAX_POINTS]);
 end;
 
 { ===========================================================================
@@ -371,6 +378,10 @@ begin
     Result.SymbolFontPoints := SymbolFontPoints;
     Result.SymbolFontBold := SymbolFontBold;
     Result.SymbolFontItalic := SymbolFontItalic;
+    Result.TextFontName := TextFontName;
+    Result.TextFontPoints := TextFontPoints;
+    Result.TextFontBold := TextFontBold;
+    Result.TextFontItalic := TextFontItalic;
     Result.SheetBorder := NewSheetBorder;
     Result.SheetRulers := NewSheetRulers;
     Result.SheetCols := NewSheetCols;
@@ -406,6 +417,10 @@ begin
     SymbolFontPoints := D.SymbolFontPoints;
     SymbolFontBold := D.SymbolFontBold;
     SymbolFontItalic := D.SymbolFontItalic;
+    TextFontName := D.TextFontName;
+    TextFontPoints := D.TextFontPoints;
+    TextFontBold := D.TextFontBold;
+    TextFontItalic := D.TextFontItalic;
     NewSheetBorder := D.SheetBorder;
     NewSheetRulers := D.SheetRulers;
     NewSheetCols := D.SheetCols;

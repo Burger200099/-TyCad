@@ -9,7 +9,7 @@ unit TyCad_Components;
 interface
 
 uses
-  CSplitButton, CFontNameCombo, LazarusPackageIntf;
+  CSplitButton, CFontNameCombo, CSheetTabs, LazarusPackageIntf;
 
 implementation
 
@@ -17,6 +17,7 @@ procedure Register;
 begin
   RegisterUnit('CSplitButton', @CSplitButton.Register);
   RegisterUnit('CFontNameCombo', @CFontNameCombo.Register);
+  RegisterUnit('CSheetTabs', @CSheetTabs.Register);
 end;
 
 initialization
